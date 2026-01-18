@@ -14,6 +14,406 @@ export type Database = {
   }
   public: {
     Tables: {
+      activities: {
+        Row: {
+          call_duration: number | null
+          call_outcome: string | null
+          call_recording_url: string | null
+          completed_at: string | null
+          contact_id: string | null
+          content: string | null
+          created_at: string | null
+          created_by: string | null
+          deal_id: string | null
+          direction: string | null
+          due_date: string | null
+          email_cc: string[] | null
+          email_from: string | null
+          email_message_id: string | null
+          email_to: string[] | null
+          id: string
+          is_completed: boolean | null
+          matter_id: string | null
+          meeting_attendees: string[] | null
+          meeting_end: string | null
+          meeting_location: string | null
+          meeting_start: string | null
+          metadata: Json | null
+          organization_id: string
+          owner_type: string
+          subject: string | null
+          type: string
+        }
+        Insert: {
+          call_duration?: number | null
+          call_outcome?: string | null
+          call_recording_url?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deal_id?: string | null
+          direction?: string | null
+          due_date?: string | null
+          email_cc?: string[] | null
+          email_from?: string | null
+          email_message_id?: string | null
+          email_to?: string[] | null
+          id?: string
+          is_completed?: boolean | null
+          matter_id?: string | null
+          meeting_attendees?: string[] | null
+          meeting_end?: string | null
+          meeting_location?: string | null
+          meeting_start?: string | null
+          metadata?: Json | null
+          organization_id: string
+          owner_type?: string
+          subject?: string | null
+          type: string
+        }
+        Update: {
+          call_duration?: number | null
+          call_outcome?: string | null
+          call_recording_url?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deal_id?: string | null
+          direction?: string | null
+          due_date?: string | null
+          email_cc?: string[] | null
+          email_from?: string | null
+          email_message_id?: string | null
+          email_to?: string[] | null
+          id?: string
+          is_completed?: boolean | null
+          matter_id?: string | null
+          meeting_attendees?: string[] | null
+          meeting_end?: string | null
+          meeting_location?: string | null
+          meeting_start?: string | null
+          metadata?: Json | null
+          organization_id?: string
+          owner_type?: string
+          subject?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activities_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contacts: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          annual_revenue: number | null
+          assigned_to: string | null
+          avatar_url: string | null
+          city: string | null
+          company_name: string | null
+          country: string | null
+          created_at: string | null
+          created_by: string | null
+          custom_fields: Json | null
+          department: string | null
+          email: string | null
+          employee_count: string | null
+          id: string
+          industry: string | null
+          job_title: string | null
+          last_contacted_at: string | null
+          lifecycle_stage: string | null
+          mobile: string | null
+          name: string
+          notes: string | null
+          organization_id: string
+          owner_type: string
+          phone: string | null
+          postal_code: string | null
+          source: string | null
+          source_detail: string | null
+          state: string | null
+          tags: string[] | null
+          tax_id: string | null
+          type: string
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          annual_revenue?: number | null
+          assigned_to?: string | null
+          avatar_url?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          department?: string | null
+          email?: string | null
+          employee_count?: string | null
+          id?: string
+          industry?: string | null
+          job_title?: string | null
+          last_contacted_at?: string | null
+          lifecycle_stage?: string | null
+          mobile?: string | null
+          name: string
+          notes?: string | null
+          organization_id: string
+          owner_type?: string
+          phone?: string | null
+          postal_code?: string | null
+          source?: string | null
+          source_detail?: string | null
+          state?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
+          type?: string
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          annual_revenue?: number | null
+          assigned_to?: string | null
+          avatar_url?: string | null
+          city?: string | null
+          company_name?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          custom_fields?: Json | null
+          department?: string | null
+          email?: string | null
+          employee_count?: string | null
+          id?: string
+          industry?: string | null
+          job_title?: string | null
+          last_contacted_at?: string | null
+          lifecycle_stage?: string | null
+          mobile?: string | null
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          owner_type?: string
+          phone?: string | null
+          postal_code?: string | null
+          source?: string | null
+          source_detail?: string | null
+          state?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
+          type?: string
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contacts_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      deals: {
+        Row: {
+          actual_close_date: string | null
+          assigned_to: string | null
+          closed_at: string | null
+          company_id: string | null
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          custom_fields: Json | null
+          description: string | null
+          expected_close_date: string | null
+          id: string
+          lost_reason: string | null
+          matter_id: string | null
+          organization_id: string
+          owner_type: string
+          pipeline_id: string
+          priority: string | null
+          stage_id: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          value: number | null
+          won_reason: string | null
+        }
+        Insert: {
+          actual_close_date?: string | null
+          assigned_to?: string | null
+          closed_at?: string | null
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          custom_fields?: Json | null
+          description?: string | null
+          expected_close_date?: string | null
+          id?: string
+          lost_reason?: string | null
+          matter_id?: string | null
+          organization_id: string
+          owner_type?: string
+          pipeline_id: string
+          priority?: string | null
+          stage_id: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          value?: number | null
+          won_reason?: string | null
+        }
+        Update: {
+          actual_close_date?: string | null
+          assigned_to?: string | null
+          closed_at?: string | null
+          company_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          custom_fields?: Json | null
+          description?: string | null
+          expected_close_date?: string | null
+          id?: string
+          lost_reason?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          owner_type?: string
+          pipeline_id?: string
+          priority?: string | null
+          stage_id?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          value?: number | null
+          won_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deals_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matter_documents: {
         Row: {
           category: string | null
@@ -328,6 +728,106 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      pipeline_stages: {
+        Row: {
+          auto_actions: Json | null
+          color: string | null
+          created_at: string | null
+          id: string
+          is_lost_stage: boolean | null
+          is_won_stage: boolean | null
+          name: string
+          pipeline_id: string
+          position: number
+          probability: number | null
+          required_fields: string[] | null
+        }
+        Insert: {
+          auto_actions?: Json | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          is_lost_stage?: boolean | null
+          is_won_stage?: boolean | null
+          name: string
+          pipeline_id: string
+          position: number
+          probability?: number | null
+          required_fields?: string[] | null
+        }
+        Update: {
+          auto_actions?: Json | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          is_lost_stage?: boolean | null
+          is_won_stage?: boolean | null
+          name?: string
+          pipeline_id?: string
+          position?: number
+          probability?: number | null
+          required_fields?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipeline_stages_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pipelines: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          organization_id: string
+          owner_type: string
+          pipeline_type: string | null
+          position: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          organization_id: string
+          owner_type?: string
+          pipeline_type?: string | null
+          position?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          organization_id?: string
+          owner_type?: string
+          pipeline_type?: string | null
+          position?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pipelines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       users: {
         Row: {
