@@ -34,11 +34,11 @@ export function usePayments() {
 }
 
 // ===== SENT EMAILS =====
-export function useSentEmails() {
+export function useSentEmails(limit = 100) {
   const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['sent-emails', currentOrganization?.id],
+    queryKey: ['sent-emails', currentOrganization?.id, limit],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
       
@@ -47,12 +47,46 @@ export function useSentEmails() {
         .select('*')
         .eq('organization_id', currentOrganization.id)
         .order('created_at', { ascending: false })
-        .limit(100);
+        .limit(limit);
       
       if (error) throw error;
       return data as SentEmail[];
     },
     enabled: !!currentOrganization?.id,
+  });
+}
+
+// ===== SEND EMAIL =====
+export function useSendEmail() {
+  const { currentOrganization } = useOrganization();
+
+  return useMutation({
+    mutationFn: async (request: {
+      to: string | string[];
+      subject?: string;
+      template_code?: string;
+      template_data?: Record<string, any>;
+      html?: string;
+      text?: string;
+      from_name?: string;
+      reply_to?: string;
+    }) => {
+      const { data, error } = await supabase.functions.invoke('send-email', {
+        body: {
+          ...request,
+          organization_id: currentOrganization?.id,
+        },
+      });
+      
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Email enviado');
+    },
+    onError: (error: Error) => {
+      toast.error(`Error: ${error.message}`);
+    },
   });
 }
 

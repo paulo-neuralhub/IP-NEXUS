@@ -51,6 +51,8 @@ import RenewalSchedulePage from "./pages/app/finance/renewals";
 import CostsPage from "./pages/app/finance/costs";
 import TeamSettingsPage from "./pages/app/settings/team";
 import BillingSettingsPage from "./pages/app/settings/billing";
+import IntegrationsPage from "./pages/app/settings/integrations";
+import EmailHistoryPage from "./pages/app/settings/email-history";
 import NotFound from "./pages/NotFound";
 
 // Admin Pages
@@ -138,6 +140,8 @@ const App = () => (
                 <Route path="help/*" element={<HelpPlaceholder />} />
                 <Route path="settings/team" element={<TeamSettingsPage />} />
                 <Route path="settings/billing" element={<BillingSettingsPage />} />
+                <Route path="settings/integrations" element={<IntegrationsPage />} />
+                <Route path="settings/emails" element={<EmailHistoryPage />} />
               </Route>
               
               {/* ADMIN PANEL */}
