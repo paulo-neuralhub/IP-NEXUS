@@ -47,3 +47,18 @@ verify_jwt = true
 
 [functions.generate-certificate]
 verify_jwt = true
+
+[functions.parse-file]
+verify_jwt = false
+
+[functions.validate-import]
+verify_jwt = true
+
+[functions.execute-import]
+verify_jwt = true
+
+[functions.test-connector]
+verify_jwt = true
+
+[functions.sync-connector]
+verify_jwt = true
