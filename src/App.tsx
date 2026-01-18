@@ -54,6 +54,9 @@ import BillingSettingsPage from "./pages/app/settings/billing";
 import IntegrationsPage from "./pages/app/settings/integrations";
 import EmailHistoryPage from "./pages/app/settings/email-history";
 import NotificationSettingsPage from "./pages/app/settings/notifications";
+import ApiKeysPage from "./pages/app/settings/api-keys";
+import IPChainPage from "./pages/app/ip-chain";
+import ToolsPage from "./pages/app/tools";
 import NotFound from "./pages/NotFound";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
@@ -149,6 +152,9 @@ const App = () => (
                 <Route path="settings/integrations" element={<IntegrationsPage />} />
                 <Route path="settings/emails" element={<EmailHistoryPage />} />
                 <Route path="settings/notifications" element={<NotificationSettingsPage />} />
+                <Route path="settings/api-keys" element={<ApiKeysPage />} />
+                <Route path="ip-chain" element={<IPChainPage />} />
+                <Route path="tools" element={<ToolsPage />} />
               </Route>
               
               {/* ADMIN PANEL */}
