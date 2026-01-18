@@ -35,3 +35,15 @@ verify_jwt = false
 
 [functions.wipo-madrid-search]
 verify_jwt = false
+
+[functions.submit-timestamp]
+verify_jwt = true
+
+[functions.process-ocr]
+verify_jwt = true
+
+[functions.analyze-image]
+verify_jwt = true
+
+[functions.generate-certificate]
+verify_jwt = true

@@ -987,6 +987,93 @@ export type Database = {
           },
         ]
       }
+      blockchain_timestamps: {
+        Row: {
+          block_number: number | null
+          block_timestamp: string | null
+          blockchain: string | null
+          certificate_data: Json | null
+          certificate_url: string | null
+          confirmed_at: string | null
+          content_hash: string
+          created_at: string | null
+          created_by: string | null
+          error_message: string | null
+          file_hash: string
+          file_name: string | null
+          file_size: number | null
+          id: string
+          metadata: Json | null
+          organization_id: string
+          resource_id: string | null
+          resource_type: string
+          status: string | null
+          submitted_at: string | null
+          tx_hash: string | null
+        }
+        Insert: {
+          block_number?: number | null
+          block_timestamp?: string | null
+          blockchain?: string | null
+          certificate_data?: Json | null
+          certificate_url?: string | null
+          confirmed_at?: string | null
+          content_hash: string
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          file_hash: string
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          metadata?: Json | null
+          organization_id: string
+          resource_id?: string | null
+          resource_type: string
+          status?: string | null
+          submitted_at?: string | null
+          tx_hash?: string | null
+        }
+        Update: {
+          block_number?: number | null
+          block_timestamp?: string | null
+          blockchain?: string | null
+          certificate_data?: Json | null
+          certificate_url?: string | null
+          confirmed_at?: string | null
+          content_hash?: string
+          created_at?: string | null
+          created_by?: string | null
+          error_message?: string | null
+          file_hash?: string
+          file_name?: string | null
+          file_size?: number | null
+          id?: string
+          metadata?: Json | null
+          organization_id?: string
+          resource_id?: string | null
+          resource_type?: string
+          status?: string | null
+          submitted_at?: string | null
+          tx_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blockchain_timestamps_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blockchain_timestamps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_list_members: {
         Row: {
           added_at: string | null
@@ -3220,6 +3307,75 @@ export type Database = {
           },
         ]
       }
+      ocr_results: {
+        Row: {
+          completed_at: string | null
+          confidence: number | null
+          created_at: string | null
+          document_id: string | null
+          entities: Json | null
+          error_message: string | null
+          extracted_text: string | null
+          file_name: string | null
+          file_url: string | null
+          id: string
+          language: string | null
+          organization_id: string
+          pages: Json | null
+          processing_time_ms: number | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          document_id?: string | null
+          entities?: Json | null
+          error_message?: string | null
+          extracted_text?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          language?: string | null
+          organization_id: string
+          pages?: Json | null
+          processing_time_ms?: number | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          confidence?: number | null
+          created_at?: string | null
+          document_id?: string | null
+          entities?: Json | null
+          error_message?: string | null
+          extracted_text?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          language?: string | null
+          organization_id?: string
+          pages?: Json | null
+          processing_time_ms?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ocr_results_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocr_results_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       official_fees: {
         Row: {
           amount: number
@@ -4716,6 +4872,72 @@ export type Database = {
           },
         ]
       }
+      trademark_visuals: {
+        Row: {
+          color_histogram: Json | null
+          created_at: string | null
+          id: string
+          image_hash: string
+          image_url: string
+          is_combination: boolean | null
+          is_device_mark: boolean | null
+          is_text_mark: boolean | null
+          mark_name: string | null
+          matter_id: string | null
+          nice_classes: number[] | null
+          organization_id: string | null
+          shape_descriptor: Json | null
+          thumbnail_url: string | null
+        }
+        Insert: {
+          color_histogram?: Json | null
+          created_at?: string | null
+          id?: string
+          image_hash: string
+          image_url: string
+          is_combination?: boolean | null
+          is_device_mark?: boolean | null
+          is_text_mark?: boolean | null
+          mark_name?: string | null
+          matter_id?: string | null
+          nice_classes?: number[] | null
+          organization_id?: string | null
+          shape_descriptor?: Json | null
+          thumbnail_url?: string | null
+        }
+        Update: {
+          color_histogram?: Json | null
+          created_at?: string | null
+          id?: string
+          image_hash?: string
+          image_url?: string
+          is_combination?: boolean | null
+          is_device_mark?: boolean | null
+          is_text_mark?: boolean | null
+          mark_name?: string | null
+          matter_id?: string | null
+          nice_classes?: number[] | null
+          organization_id?: string | null
+          shape_descriptor?: Json | null
+          thumbnail_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trademark_visuals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trademark_visuals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       usage_metrics: {
         Row: {
           created_at: string | null
@@ -4862,6 +5084,65 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      vision_analyses: {
+        Row: {
+          analysis_type: string
+          compare_with_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          image_hash: string | null
+          image_url: string
+          model_version: string | null
+          organization_id: string
+          processing_time_ms: number | null
+          results: Json | null
+          similarity_score: number | null
+          status: string | null
+        }
+        Insert: {
+          analysis_type: string
+          compare_with_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          image_hash?: string | null
+          image_url: string
+          model_version?: string | null
+          organization_id: string
+          processing_time_ms?: number | null
+          results?: Json | null
+          similarity_score?: number | null
+          status?: string | null
+        }
+        Update: {
+          analysis_type?: string
+          compare_with_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          image_hash?: string | null
+          image_url?: string
+          model_version?: string | null
+          organization_id?: string
+          processing_time_ms?: number | null
+          results?: Json | null
+          similarity_score?: number | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vision_analyses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       watch_results: {
         Row: {
