@@ -1408,6 +1408,68 @@ export type Database = {
           },
         ]
       }
+      data_connectors: {
+        Row: {
+          config: Json | null
+          connection_status: string | null
+          connector_type: string
+          created_at: string | null
+          credentials: Json | null
+          id: string
+          is_active: boolean | null
+          last_error: string | null
+          last_sync_at: string | null
+          name: string
+          next_sync_at: string | null
+          organization_id: string
+          sync_enabled: boolean | null
+          sync_frequency: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          config?: Json | null
+          connection_status?: string | null
+          connector_type: string
+          created_at?: string | null
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_error?: string | null
+          last_sync_at?: string | null
+          name: string
+          next_sync_at?: string | null
+          organization_id: string
+          sync_enabled?: boolean | null
+          sync_frequency?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json | null
+          connection_status?: string | null
+          connector_type?: string
+          created_at?: string | null
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_error?: string | null
+          last_sync_at?: string | null
+          name?: string
+          next_sync_at?: string | null
+          organization_id?: string
+          sync_enabled?: boolean | null
+          sync_frequency?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_connectors_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deals: {
         Row: {
           actual_close_date: string | null
@@ -2235,6 +2297,146 @@ export type Database = {
             columns: ["template_id"]
             isOneToOne: false
             referencedRelation: "report_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_templates: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          import_type: string
+          is_system: boolean | null
+          mapping: Json
+          name: string
+          options: Json | null
+          organization_id: string | null
+          source_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          import_type: string
+          is_system?: boolean | null
+          mapping: Json
+          name: string
+          options?: Json | null
+          organization_id?: string | null
+          source_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          import_type?: string
+          is_system?: boolean | null
+          mapping?: Json
+          name?: string
+          options?: Json | null
+          organization_id?: string | null
+          source_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      imports: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          created_ids: Json | null
+          error_rows: number | null
+          errors: Json | null
+          file_name: string | null
+          file_size: number | null
+          file_url: string | null
+          id: string
+          import_type: string
+          mapping: Json | null
+          options: Json | null
+          organization_id: string
+          processed_rows: number | null
+          skipped_rows: number | null
+          source_type: string
+          started_at: string | null
+          status: string | null
+          success_rows: number | null
+          total_rows: number | null
+          updated_ids: Json | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          created_ids?: Json | null
+          error_rows?: number | null
+          errors?: Json | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          import_type: string
+          mapping?: Json | null
+          options?: Json | null
+          organization_id: string
+          processed_rows?: number | null
+          skipped_rows?: number | null
+          source_type: string
+          started_at?: string | null
+          status?: string | null
+          success_rows?: number | null
+          total_rows?: number | null
+          updated_ids?: Json | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          created_ids?: Json | null
+          error_rows?: number | null
+          errors?: Json | null
+          file_name?: string | null
+          file_size?: number | null
+          file_url?: string | null
+          id?: string
+          import_type?: string
+          mapping?: Json | null
+          options?: Json | null
+          organization_id?: string
+          processed_rows?: number | null
+          skipped_rows?: number | null
+          source_type?: string
+          started_at?: string | null
+          status?: string | null
+          success_rows?: number | null
+          total_rows?: number | null
+          updated_ids?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -4759,6 +4961,78 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sync_jobs: {
+        Row: {
+          completed_at: string | null
+          connector_id: string
+          created_at: string | null
+          error_message: string | null
+          errors: number | null
+          filters: Json | null
+          id: string
+          new_items: number | null
+          organization_id: string
+          processed_items: number | null
+          result: Json | null
+          started_at: string | null
+          status: string | null
+          sync_type: string
+          total_items: number | null
+          updated_items: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          connector_id: string
+          created_at?: string | null
+          error_message?: string | null
+          errors?: number | null
+          filters?: Json | null
+          id?: string
+          new_items?: number | null
+          organization_id: string
+          processed_items?: number | null
+          result?: Json | null
+          started_at?: string | null
+          status?: string | null
+          sync_type: string
+          total_items?: number | null
+          updated_items?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          connector_id?: string
+          created_at?: string | null
+          error_message?: string | null
+          errors?: number | null
+          filters?: Json | null
+          id?: string
+          new_items?: number | null
+          organization_id?: string
+          processed_items?: number | null
+          result?: Json | null
+          started_at?: string | null
+          status?: string | null
+          sync_type?: string
+          total_items?: number | null
+          updated_items?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_jobs_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "data_connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
