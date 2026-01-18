@@ -14,7 +14,10 @@ import {
   Database,
   Loader2,
   ArrowRight,
-  Sparkles
+  Sparkles,
+  Zap,
+  RefreshCw,
+  Settings2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +26,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -36,6 +40,9 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { useMigrationProjects, useDeleteMigrationProject } from '@/hooks/use-migration';
+import { useMigrationConnections, useTestConnection, useDeleteConnection } from '@/hooks/use-migration-connections';
+import { MIGRATION_SYSTEMS } from '@/lib/constants/migration-systems';
+import { ConnectionWizard } from '@/components/features/migrator/connection-wizard';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
@@ -67,16 +74,38 @@ const STATUS_CONFIG: Record<string, { label: string; color: string; icon: React.
   cancelled: { label: 'Cancelado', color: 'bg-slate-100 text-slate-500', icon: Clock },
 };
 
+const CONNECTION_STATUS: Record<string, { label: string; color: string }> = {
+  pending: { label: 'Pendiente', color: 'bg-slate-100 text-slate-700' },
+  testing: { label: 'Probando', color: 'bg-blue-100 text-blue-700' },
+  connected: { label: 'Conectado', color: 'bg-green-100 text-green-700' },
+  error: { label: 'Error', color: 'bg-red-100 text-red-700' },
+  expired: { label: 'Expirado', color: 'bg-yellow-100 text-yellow-700' },
+  revoked: { label: 'Revocado', color: 'bg-slate-100 text-slate-500' },
+};
+
 export default function MigratorPage() {
   const navigate = useNavigate();
   const { data: projects, isLoading } = useMigrationProjects();
+  const { connections, isLoading: loadingConnections } = useMigrationConnections();
   const deleteMutation = useDeleteMigrationProject();
+  const testConnection = useTestConnection();
+  const deleteConnection = useDeleteConnection();
+  
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleteConnectionId, setDeleteConnectionId] = useState<string | null>(null);
+  const [showConnectionWizard, setShowConnectionWizard] = useState(false);
 
   const handleDelete = async () => {
     if (deleteId) {
       await deleteMutation.mutateAsync(deleteId);
       setDeleteId(null);
+    }
+  };
+
+  const handleDeleteConnection = async () => {
+    if (deleteConnectionId) {
+      await deleteConnection.mutateAsync(deleteConnectionId);
+      setDeleteConnectionId(null);
     }
   };
 
@@ -104,23 +133,42 @@ export default function MigratorPage() {
             Migra tus datos desde otros sistemas de gestión de PI
           </p>
         </div>
-        <Button onClick={() => navigate('/app/migrator/new')} size="lg">
-          <Plus className="h-5 w-5 mr-2" />
-          Nueva Migración
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowConnectionWizard(true)}>
+            <Zap className="h-4 w-4 mr-2" />
+            Nueva Conexión
+          </Button>
+          <Button onClick={() => navigate('/app/migrator/new')} size="lg">
+            <Plus className="h-5 w-5 mr-2" />
+            Nueva Migración
+          </Button>
+        </div>
       </div>
 
       {/* Stats rápidos */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
         <Card>
           <CardContent className="pt-6">
             <div className="flex items-center gap-4">
               <div className="p-3 bg-primary/10 rounded-lg">
-                <Database className="h-6 w-6 text-primary" />
+                <Zap className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{connections.length}</p>
+                <p className="text-sm text-muted-foreground">Conexiones</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-6">
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-muted rounded-lg">
+                <Database className="h-6 w-6 text-muted-foreground" />
               </div>
               <div>
                 <p className="text-2xl font-bold">{projects?.length || 0}</p>
-                <p className="text-sm text-muted-foreground">Total Migraciones</p>
+                <p className="text-sm text-muted-foreground">Migraciones</p>
               </div>
             </div>
           </CardContent>
@@ -161,12 +209,120 @@ export default function MigratorPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold">{getTotalRecords().toLocaleString()}</p>
-                <p className="text-sm text-muted-foreground">Registros Migrados</p>
+                <p className="text-sm text-muted-foreground">Registros</p>
               </div>
             </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Conexiones Activas */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Zap className="h-5 w-5 text-primary" />
+                Conexiones Activas
+              </CardTitle>
+              <CardDescription>
+                Conecta directamente a tus sistemas para migración automática
+              </CardDescription>
+            </div>
+            <Button variant="outline" size="sm" onClick={() => setShowConnectionWizard(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Nueva
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {loadingConnections ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : connections.length === 0 ? (
+            <div className="text-center py-8 border-2 border-dashed rounded-lg">
+              <Database className="h-12 w-12 mx-auto mb-4 text-muted-foreground/30" />
+              <h3 className="font-medium mb-2">Sin conexiones configuradas</h3>
+              <p className="text-sm text-muted-foreground mb-4">
+                Conecta directamente a PatSnap, Anaqua, CPA Global y más
+              </p>
+              <Button onClick={() => setShowConnectionWizard(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Crear primera conexión
+              </Button>
+            </div>
+          ) : (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {connections.map(conn => {
+                const system = MIGRATION_SYSTEMS[conn.system_type];
+                const status = CONNECTION_STATUS[conn.status] || CONNECTION_STATUS.pending;
+                
+                return (
+                  <Card key={conn.id} className="relative">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-3">
+                        <div 
+                          className="w-10 h-10 rounded-lg flex items-center justify-center text-white font-bold shrink-0"
+                          style={{ backgroundColor: system?.color || '#666' }}
+                        >
+                          {system?.name.slice(0, 2).toUpperCase() || '??'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium truncate">{conn.name}</h4>
+                          <p className="text-sm text-muted-foreground">{system?.name}</p>
+                          <div className="flex items-center gap-2 mt-2">
+                            <Badge className={status.color}>
+                              {status.label}
+                            </Badge>
+                            {conn.system_metadata?.total_matters && (
+                              <span className="text-xs text-muted-foreground">
+                                {conn.system_metadata.total_matters.toLocaleString()} exp.
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="shrink-0">
+                              <MoreHorizontal className="h-4 w-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem 
+                              onClick={() => testConnection.mutate(conn.id)}
+                              disabled={testConnection.isPending}
+                            >
+                              <RefreshCw className="h-4 w-4 mr-2" />
+                              Probar conexión
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigate(`/app/migrator/new?connection=${conn.id}`)}>
+                              <Play className="h-4 w-4 mr-2" />
+                              Migrar desde aquí
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem>
+                              <Settings2 className="h-4 w-4 mr-2" />
+                              Configurar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem 
+                              onClick={() => setDeleteConnectionId(conn.id)}
+                              className="text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4 mr-2" />
+                              Eliminar
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Proyectos activos */}
       {activeProjects.length > 0 && (
@@ -346,7 +502,16 @@ export default function MigratorPage() {
         </CardContent>
       </Card>
 
-      {/* Dialog de confirmación de eliminación */}
+      {/* Connection Wizard */}
+      <ConnectionWizard 
+        open={showConnectionWizard} 
+        onOpenChange={setShowConnectionWizard}
+        onComplete={(connectionId) => {
+          navigate(`/app/migrator/new?connection=${connectionId}`);
+        }}
+      />
+
+      {/* Dialog de confirmación de eliminación de proyecto */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -359,6 +524,27 @@ export default function MigratorPage() {
             <AlertDialogCancel>Cancelar</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Dialog de confirmación de eliminación de conexión */}
+      <AlertDialog open={!!deleteConnectionId} onOpenChange={() => setDeleteConnectionId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar conexión?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará la conexión y todas las credenciales asociadas.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConnection}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Eliminar
