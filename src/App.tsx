@@ -15,10 +15,10 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import Onboarding from "./pages/app/Onboarding";
 import Dashboard from "./pages/app/Dashboard";
 import {
-  DataHubPlaceholder,
   MarketPlaceholder,
   HelpPlaceholder
 } from "./pages/app/placeholders";
+import DataHubPage from "./pages/app/data-hub";
 import GeniusPage from "./pages/app/genius";
 import SpiderLayout from "./pages/app/spider/SpiderLayout";
 import SpiderDashboard from "./pages/app/spider";
@@ -109,7 +109,7 @@ const App = () => (
                 <Route path="docket/new" element={<MatterForm />} />
                 <Route path="docket/:id" element={<MatterDetail />} />
                 <Route path="docket/:id/edit" element={<MatterForm />} />
-                <Route path="data-hub/*" element={<DataHubPlaceholder />} />
+                <Route path="data-hub" element={<DataHubPage />} />
                 <Route path="spider" element={<SpiderLayout />}>
                   <Route index element={<SpiderDashboard />} />
                   <Route path="results" element={<WatchResultList />} />
