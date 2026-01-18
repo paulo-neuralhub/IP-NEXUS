@@ -16,12 +16,17 @@ import Onboarding from "./pages/app/Onboarding";
 import Dashboard from "./pages/app/Dashboard";
 import {
   DataHubPlaceholder, SpiderPlaceholder,
-  CRMPlaceholder, MarketingPlaceholder, MarketPlaceholder,
+  MarketingPlaceholder, MarketPlaceholder,
   GeniusPlaceholder, FinancePlaceholder, HelpPlaceholder
 } from "./pages/app/placeholders";
 import MatterList from "./pages/app/docket";
 import MatterDetail from "./pages/app/docket/MatterDetail";
 import MatterForm from "./pages/app/docket/MatterForm";
+import CRMLayout from "./pages/app/crm/CRMLayout";
+import ContactList from "./pages/app/crm/contacts";
+import ContactDetail from "./pages/app/crm/contacts/ContactDetail";
+import DealList from "./pages/app/crm/deals";
+import PipelineList from "./pages/app/crm/pipelines";
 import BackofficePlaceholder from "./pages/backoffice/BackofficePlaceholder";
 import NotFound from "./pages/NotFound";
 
@@ -62,7 +67,13 @@ const App = () => (
                 <Route path="docket/:id/edit" element={<MatterForm />} />
                 <Route path="data-hub/*" element={<DataHubPlaceholder />} />
                 <Route path="spider/*" element={<SpiderPlaceholder />} />
-                <Route path="crm/*" element={<CRMPlaceholder />} />
+                <Route path="crm" element={<CRMLayout />}>
+                  <Route index element={<ContactList />} />
+                  <Route path="contacts" element={<ContactList />} />
+                  <Route path="contacts/:id" element={<ContactDetail />} />
+                  <Route path="deals" element={<DealList />} />
+                  <Route path="pipelines" element={<PipelineList />} />
+                </Route>
                 <Route path="marketing/*" element={<MarketingPlaceholder />} />
                 <Route path="market/*" element={<MarketPlaceholder />} />
                 <Route path="genius/*" element={<GeniusPlaceholder />} />

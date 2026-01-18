@@ -350,8 +350,8 @@ export function ContactFormModal({ open, onClose, contact }: Props) {
                                 </SelectTrigger>
                               </FormControl>
                               <SelectContent>
-                                {Object.entries(INDUSTRIES).map(([key, value]) => (
-                                  <SelectItem key={key} value={key}>{value}</SelectItem>
+                                {INDUSTRIES.map((ind) => (
+                                  <SelectItem key={ind.value} value={ind.value}>{ind.label}</SelectItem>
                                 ))}
                               </SelectContent>
                             </Select>
@@ -540,8 +540,8 @@ export function ContactFormModal({ open, onClose, contact }: Props) {
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {Object.entries(CONTACT_SOURCES).map(([key, label]) => (
-                                <SelectItem key={key} value={key}>{label}</SelectItem>
+                              {CONTACT_SOURCES.map((src) => (
+                                <SelectItem key={src.value} value={src.value}>{src.label}</SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
