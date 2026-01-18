@@ -541,6 +541,176 @@ export type Database = {
           },
         ]
       }
+      api_keys: {
+        Row: {
+          allowed_ips: Json | null
+          allowed_origins: Json | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          organization_id: string
+          rate_limit_per_day: number | null
+          rate_limit_per_minute: number | null
+          scopes: Json | null
+        }
+        Insert: {
+          allowed_ips?: Json | null
+          allowed_origins?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          organization_id: string
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          scopes?: Json | null
+        }
+        Update: {
+          allowed_ips?: Json | null
+          allowed_origins?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          organization_id?: string
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          scopes?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_keys_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "api_keys_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string | null
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip_address: string | null
+          method: string
+          organization_id: string | null
+          query_params: Json | null
+          request_body: Json | null
+          response_size_bytes: number | null
+          response_time_ms: number | null
+          status_code: number
+          user_agent: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          method: string
+          organization_id?: string | null
+          query_params?: Json | null
+          request_body?: Json | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code: number
+          user_agent?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string | null
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip_address?: string | null
+          method?: string
+          organization_id?: string | null
+          query_params?: Json | null
+          request_body?: Json | null
+          response_size_bytes?: number | null
+          response_time_ms?: number | null
+          status_code?: number
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "api_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      api_rate_limits: {
+        Row: {
+          api_key_id: string
+          id: string
+          request_count: number | null
+          window_start: string
+          window_type: string
+        }
+        Insert: {
+          api_key_id: string
+          id?: string
+          request_count?: number | null
+          window_start: string
+          window_type: string
+        }
+        Update: {
+          api_key_id?: string
+          id?: string
+          request_count?: number | null
+          window_start?: string
+          window_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_rate_limits_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -4956,6 +5126,62 @@ export type Database = {
           },
         ]
       }
+      webhook_deliveries: {
+        Row: {
+          attempt_count: number | null
+          created_at: string | null
+          delivered_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          next_retry_at: string | null
+          payload: Json
+          response_body: string | null
+          response_status: number | null
+          response_time_ms: number | null
+          status: string | null
+          webhook_id: string
+        }
+        Insert: {
+          attempt_count?: number | null
+          created_at?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          next_retry_at?: string | null
+          payload: Json
+          response_body?: string | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          status?: string | null
+          webhook_id: string
+        }
+        Update: {
+          attempt_count?: number | null
+          created_at?: string | null
+          delivered_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          next_retry_at?: string | null
+          payload?: Json
+          response_body?: string | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          status?: string | null
+          webhook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_deliveries_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       webhook_events: {
         Row: {
           created_at: string | null
@@ -4995,14 +5221,97 @@ export type Database = {
         }
         Relationships: []
       }
+      webhooks: {
+        Row: {
+          created_at: string | null
+          events: Json
+          failed_deliveries: number | null
+          headers: Json | null
+          id: string
+          is_active: boolean | null
+          last_delivery_at: string | null
+          last_error: string | null
+          max_retries: number | null
+          name: string
+          organization_id: string
+          retry_delay_seconds: number | null
+          secret: string
+          successful_deliveries: number | null
+          total_deliveries: number | null
+          updated_at: string | null
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          events?: Json
+          failed_deliveries?: number | null
+          headers?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_delivery_at?: string | null
+          last_error?: string | null
+          max_retries?: number | null
+          name: string
+          organization_id: string
+          retry_delay_seconds?: number | null
+          secret: string
+          successful_deliveries?: number | null
+          total_deliveries?: number | null
+          updated_at?: string | null
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          events?: Json
+          failed_deliveries?: number | null
+          headers?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_delivery_at?: string | null
+          last_error?: string | null
+          max_retries?: number | null
+          name?: string
+          organization_id?: string
+          retry_delay_seconds?: number | null
+          secret?: string
+          successful_deliveries?: number | null
+          total_deliveries?: number | null
+          updated_at?: string | null
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhooks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      cleanup_rate_limits: { Args: never; Returns: undefined }
       get_user_org_ids: { Args: never; Returns: string[] }
       get_user_role_in_org: { Args: { org_id: string }; Returns: string }
+      increment_rate_limit: {
+        Args: { p_api_key_id: string }
+        Returns: undefined
+      }
       is_member_of_org: { Args: { org_id: string }; Returns: boolean }
+      verify_api_key: {
+        Args: { p_key: string }
+        Returns: {
+          api_key_id: string
+          is_valid: boolean
+          organization_id: string
+          rate_limit_exceeded: boolean
+          scopes: Json
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
