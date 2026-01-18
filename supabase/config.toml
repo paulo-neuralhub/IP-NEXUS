@@ -62,3 +62,15 @@ verify_jwt = true
 
 [functions.sync-connector]
 verify_jwt = true
+
+[functions.analyze-migration-file]
+verify_jwt = true
+
+[functions.auto-map-columns]
+verify_jwt = true
+
+[functions.validate-migration-file]
+verify_jwt = true
+
+[functions.execute-migration]
+verify_jwt = true
