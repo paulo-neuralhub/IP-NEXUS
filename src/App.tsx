@@ -17,7 +17,7 @@ import Dashboard from "./pages/app/Dashboard";
 import {
   DataHubPlaceholder,
   MarketPlaceholder,
-  FinancePlaceholder, HelpPlaceholder
+  HelpPlaceholder
 } from "./pages/app/placeholders";
 import GeniusPage from "./pages/app/genius";
 import SpiderLayout from "./pages/app/spider/SpiderLayout";
@@ -44,6 +44,11 @@ import CampaignAnalytics from "./pages/app/marketing/campaigns/CampaignAnalytics
 import ContactListPage from "./pages/app/marketing/lists";
 import AutomationList from "./pages/app/marketing/automations";
 import AutomationEditor from "./pages/app/marketing/automations/AutomationEditor";
+import FinanceLayout from "./pages/app/finance/FinanceLayout";
+import FinanceDashboard from "./pages/app/finance/FinanceDashboard";
+import InvoiceListPage from "./pages/app/finance/invoices";
+import RenewalSchedulePage from "./pages/app/finance/renewals";
+import CostsPage from "./pages/app/finance/costs";
 import BackofficePlaceholder from "./pages/backoffice/BackofficePlaceholder";
 import NotFound from "./pages/NotFound";
 
@@ -111,7 +116,12 @@ const App = () => (
                 </Route>
                 <Route path="market/*" element={<MarketPlaceholder />} />
                 <Route path="genius/*" element={<GeniusPage />} />
-                <Route path="finance/*" element={<FinancePlaceholder />} />
+                <Route path="finance" element={<FinanceLayout />}>
+                  <Route index element={<FinanceDashboard />} />
+                  <Route path="costs" element={<CostsPage />} />
+                  <Route path="invoices" element={<InvoiceListPage />} />
+                  <Route path="renewals" element={<RenewalSchedulePage />} />
+                </Route>
                 <Route path="help/*" element={<HelpPlaceholder />} />
               </Route>
               
