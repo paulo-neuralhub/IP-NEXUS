@@ -170,9 +170,18 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
   const hasAddon = (addon: string): boolean => {
     if (!currentOrganization) return false;
     
-    // Business and Enterprise plans include CRM and Marketing
+    // Durante desarrollo, todos los addons están disponibles
+    // TODO: Remover en producción
+    if (import.meta.env.DEV) return true;
+    
+    // Professional plan includes basic Genius
+    if (currentOrganization.plan === "professional") {
+      if (addon === "genius") return true;
+    }
+    
+    // Business and Enterprise plans include CRM, Marketing and Genius
     if (["business", "enterprise"].includes(currentOrganization.plan)) {
-      if (["crm", "marketing"].includes(addon)) return true;
+      if (["crm", "marketing", "genius"].includes(addon)) return true;
     }
     
     return currentOrganization.addons?.includes(addon) || false;
