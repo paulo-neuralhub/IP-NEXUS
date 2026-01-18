@@ -17,8 +17,9 @@ import Dashboard from "./pages/app/Dashboard";
 import {
   DataHubPlaceholder,
   MarketPlaceholder,
-  GeniusPlaceholder, FinancePlaceholder, HelpPlaceholder
+  FinancePlaceholder, HelpPlaceholder
 } from "./pages/app/placeholders";
+import GeniusPage from "./pages/app/genius";
 import SpiderLayout from "./pages/app/spider/SpiderLayout";
 import SpiderDashboard from "./pages/app/spider";
 import WatchResultList from "./pages/app/spider/results";
@@ -109,7 +110,7 @@ const App = () => (
                   <Route path="automations/:id" element={<AutomationEditor />} />
                 </Route>
                 <Route path="market/*" element={<MarketPlaceholder />} />
-                <Route path="genius/*" element={<GeniusPlaceholder />} />
+                <Route path="genius/*" element={<GeniusPage />} />
                 <Route path="finance/*" element={<FinancePlaceholder />} />
                 <Route path="help/*" element={<HelpPlaceholder />} />
               </Route>
