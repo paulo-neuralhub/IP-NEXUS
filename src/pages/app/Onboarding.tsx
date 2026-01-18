@@ -25,64 +25,97 @@ const Onboarding = () => {
 
     setIsLoading(true);
 
-    const slug = slugify(orgName);
+    try {
+      // 1. Ensure user profile exists (in case trigger failed)
+      const { data: existingUser } = await supabase
+        .from("users")
+        .select("id")
+        .eq("id", user.id)
+        .maybeSingle();
 
-    // Create organization
-    const { data: org, error: orgError } = await supabase
-      .from("organizations")
-      .insert({
-        name: orgName.trim(),
-        slug,
-        plan: "starter",
-        status: "active",
-      })
-      .select()
-      .single();
+      if (!existingUser) {
+        const { error: userError } = await supabase.from("users").insert({
+          id: user.id,
+          email: user.email || "",
+          full_name: user.user_metadata?.full_name || null,
+        });
 
-    if (orgError) {
-      console.error("Error creating organization:", orgError);
-      let message = "No se pudo crear la organización";
-      if (orgError.message.includes("duplicate")) {
-        message = "Ya existe una organización con ese nombre";
+        if (userError) {
+          console.error("Error creating user profile:", userError);
+          // Continue anyway - trigger might have created it
+        }
       }
+
+      const slug = slugify(orgName);
+
+      // 2. Create organization
+      const { data: org, error: orgError } = await supabase
+        .from("organizations")
+        .insert({
+          name: orgName.trim(),
+          slug,
+          plan: "starter",
+          status: "active",
+        })
+        .select()
+        .single();
+
+      if (orgError) {
+        console.error("Error creating organization:", JSON.stringify(orgError, null, 2));
+        let message = `No se pudo crear la organización: ${orgError.message}`;
+        if (orgError.code === "23505" || orgError.message.includes("duplicate")) {
+          message = "Ya existe una organización con ese nombre";
+        } else if (orgError.code === "42501") {
+          message = "Error de permisos. Intenta cerrar sesión y volver a entrar.";
+        }
+        toast({
+          title: "Error",
+          description: message,
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // 3. Create membership with owner role
+      const { error: membershipError } = await supabase
+        .from("memberships")
+        .insert({
+          user_id: user.id,
+          organization_id: org.id,
+          role: "owner",
+        });
+
+      if (membershipError) {
+        console.error("Error creating membership:", membershipError);
+        toast({
+          title: "Error",
+          description: "No se pudo asociar tu cuenta a la organización",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // Refresh memberships and navigate
+      await refreshMemberships();
+
       toast({
-        title: "Error",
-        description: message,
+        title: "¡Organización creada!",
+        description: `Bienvenido a ${orgName}`,
+      });
+
+      navigate("/app/dashboard", { replace: true });
+    } catch (error) {
+      console.error("Unexpected error:", error);
+      toast({
+        title: "Error inesperado",
+        description: "Por favor, intenta de nuevo",
         variant: "destructive",
       });
+    } finally {
       setIsLoading(false);
-      return;
     }
-
-    // Create membership with owner role
-    const { error: membershipError } = await supabase
-      .from("memberships")
-      .insert({
-        user_id: user.id,
-        organization_id: org.id,
-        role: "owner",
-      });
-
-    if (membershipError) {
-      console.error("Error creating membership:", membershipError);
-      toast({
-        title: "Error",
-        description: "No se pudo asociar tu cuenta a la organización",
-        variant: "destructive",
-      });
-      setIsLoading(false);
-      return;
-    }
-
-    // Refresh memberships and navigate
-    await refreshMemberships();
-
-    toast({
-      title: "¡Organización creada!",
-      description: `Bienvenido a ${orgName}`,
-    });
-
-    navigate("/app/dashboard", { replace: true });
   };
 
   return (
