@@ -42,24 +42,28 @@ const OrganizationContext = createContext<OrganizationContextType | undefined>(u
 const ORG_STORAGE_KEY = "ip-nexus-current-org";
 
 export function OrganizationProvider({ children }: { children: ReactNode }) {
-  const { user, session } = useAuth();
+  const { user, session, isLoading: authLoading } = useAuth();
   const [currentOrganization, setCurrentOrganizationState] = useState<Organization | null>(null);
   const [memberships, setMemberships] = useState<Membership[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
 
   const fetchMemberships = async () => {
-    if (!user) {
+    // NOTE: during init there can be a brief moment where session is set but user isn't yet.
+    const effectiveUser = user ?? session?.user ?? null;
+
+    if (!effectiveUser) {
       setMemberships([]);
       setCurrentOrganizationState(null);
-      setIsLoading(false);
+      setNeedsOnboarding(false);
+      setIsLoading(true);
       return;
     }
 
     const { data: membershipData, error: membershipError } = await supabase
       .from("memberships")
       .select("*")
-      .eq("user_id", user.id);
+      .eq("user_id", effectiveUser.id);
 
     if (membershipError) {
       console.error("Error fetching memberships:", membershipError);
@@ -69,6 +73,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 
     if (!membershipData || membershipData.length === 0) {
       setMemberships([]);
+      setCurrentOrganizationState(null);
       setNeedsOnboarding(true);
       setIsLoading(false);
       return;
@@ -102,12 +107,8 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
 
     if (savedOrg) {
       setCurrentOrganizationState(savedOrg as Organization);
-    } else if (orgData && orgData.length === 1) {
-      // Only one org, auto-select
-      setCurrentOrganizationState(orgData[0] as Organization);
-      localStorage.setItem(ORG_STORAGE_KEY, orgData[0].id);
-    } else if (orgData && orgData.length > 1) {
-      // Multiple orgs, select first
+    } else if (orgData && orgData.length >= 1) {
+      // Pick first (or only) org
       setCurrentOrganizationState(orgData[0] as Organization);
       localStorage.setItem(ORG_STORAGE_KEY, orgData[0].id);
     }
@@ -116,7 +117,13 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    if (session) {
+    // Don’t decide anything org-related until AuthProvider finished initializing.
+    if (authLoading) {
+      setIsLoading(true);
+      return;
+    }
+
+    if (session?.user) {
       fetchMemberships();
     } else {
       setMemberships([]);
@@ -124,7 +131,7 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
       setNeedsOnboarding(false);
       setIsLoading(false);
     }
-  }, [session, user]);
+  }, [authLoading, session, user]);
 
   const setCurrentOrganization = (org: Organization) => {
     setCurrentOrganizationState(org);

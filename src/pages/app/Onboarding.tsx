@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
@@ -16,9 +16,17 @@ const Onboarding = () => {
   const [orgName, setOrgName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { user, profile, signOut } = useAuth();
-  const { refreshMemberships } = useOrganization();
+  const { refreshMemberships, currentOrganization, needsOnboarding, isLoading: orgLoading } = useOrganization();
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // If the user already has an org, onboarding should not block them.
+  useEffect(() => {
+    if (orgLoading) return;
+    if (currentOrganization && !needsOnboarding) {
+      navigate("/app/dashboard", { replace: true });
+    }
+  }, [orgLoading, currentOrganization?.id, needsOnboarding, navigate]);
 
   const handleSignOut = async () => {
     await signOut();
