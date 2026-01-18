@@ -52,27 +52,24 @@ const Onboarding = () => {
       }
 
       const slug = slugify(orgName);
+      const orgId = crypto.randomUUID();
 
-      // 2. Create organization
-      const { data: org, error: orgError } = await supabase
+      // 2. Crear organización (sin RETURNING).
+      // Nota: si pedimos "return=representation" aquí, la SELECT policy puede bloquear la fila
+      // porque todavía no existe la membership.
+      const { error: orgError } = await supabase
         .from("organizations")
         .insert({
+          id: orgId,
           name: orgName.trim(),
           slug,
           plan: "starter",
           status: "active",
-        })
-        .select()
-        .single();
+        });
 
       if (orgError) {
         console.error("Error creating organization:", JSON.stringify(orgError, null, 2));
-        let message = `No se pudo crear la organización: ${orgError.message}`;
-        if (orgError.code === "23505" || orgError.message.includes("duplicate")) {
-          message = "Ya existe una organización con ese nombre";
-        } else if (orgError.code === "42501") {
-          message = "Error de permisos. Intenta cerrar sesión y volver a entrar.";
-        }
+        const message = `No se pudo crear la organización (${orgError.code ?? ""}): ${orgError.message}`;
         toast({
           title: "Error",
           description: message,
@@ -82,12 +79,12 @@ const Onboarding = () => {
         return;
       }
 
-      // 3. Create membership with owner role
+      // 3. Crear membership como owner
       const { error: membershipError } = await supabase
         .from("memberships")
         .insert({
           user_id: user.id,
-          organization_id: org.id,
+          organization_id: orgId,
           role: "owner",
         });
 
@@ -95,11 +92,22 @@ const Onboarding = () => {
         console.error("Error creating membership:", membershipError);
         toast({
           title: "Error",
-          description: "No se pudo asociar tu cuenta a la organización",
+          description: `No se pudo asociar tu cuenta a la organización (${membershipError.code ?? ""}): ${membershipError.message}`,
           variant: "destructive",
         });
         setIsLoading(false);
         return;
+      }
+
+      // Ya con la membership creada, ahora sí podemos leer la organización.
+      const { error: orgFetchError } = await supabase
+        .from("organizations")
+        .select("*")
+        .eq("id", orgId)
+        .single();
+
+      if (orgFetchError) {
+        console.warn("Organization created but could not be fetched:", orgFetchError);
       }
 
       // Refresh memberships and navigate
