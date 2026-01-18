@@ -60,6 +60,9 @@ import ToolsPage from "./pages/app/tools";
 import NotFound from "./pages/NotFound";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
+import MigratorPage from "./pages/app/migrator";
+import NewMigrationPage from "./pages/app/migrator/new";
+import MigrationDetailPage from "./pages/app/migrator/MigrationDetail";
 
 // Admin Pages
 import AdminLayout from "./layouts/admin-layout";
@@ -155,6 +158,9 @@ const App = () => (
                 <Route path="settings/api-keys" element={<ApiKeysPage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
                 <Route path="tools" element={<ToolsPage />} />
+                <Route path="migrator" element={<MigratorPage />} />
+                <Route path="migrator/new" element={<NewMigrationPage />} />
+                <Route path="migrator/:id" element={<MigrationDetailPage />} />
               </Route>
               
               {/* ADMIN PANEL */}
