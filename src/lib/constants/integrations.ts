@@ -1,0 +1,170 @@
+export const INTEGRATION_PROVIDERS = {
+  // Pagos
+  stripe: {
+    name: 'Stripe',
+    category: 'billing',
+    description: 'Pagos y suscripciones',
+    website: 'https://stripe.com',
+    docsUrl: 'https://stripe.com/docs',
+  },
+  
+  // Email
+  resend: {
+    name: 'Resend',
+    category: 'email',
+    description: 'Emails transaccionales',
+    website: 'https://resend.com',
+    docsUrl: 'https://resend.com/docs',
+  },
+  sendgrid: {
+    name: 'SendGrid',
+    category: 'email',
+    description: 'Email marketing y transaccional',
+    website: 'https://sendgrid.com',
+    docsUrl: 'https://docs.sendgrid.com',
+  },
+  
+  // Oficinas PI
+  euipo: {
+    name: 'EUIPO',
+    category: 'ip_office',
+    description: 'Oficina de PI de la UE',
+    website: 'https://euipo.europa.eu',
+    docsUrl: 'https://euipo.europa.eu/ohimportal/en/web-services',
+  },
+  tmview: {
+    name: 'TMView',
+    category: 'ip_office',
+    description: 'Base de datos mundial de marcas',
+    website: 'https://www.tmdn.org/tmview',
+  },
+  wipo: {
+    name: 'WIPO',
+    category: 'ip_office',
+    description: 'Sistema Madrid y PCT',
+    website: 'https://www.wipo.int',
+    docsUrl: 'https://www.wipo.int/webservices/',
+  },
+  oepm: {
+    name: 'OEPM',
+    category: 'ip_office',
+    description: 'Oficina Española de Patentes y Marcas',
+    website: 'https://www.oepm.es',
+  },
+  uspto: {
+    name: 'USPTO',
+    category: 'ip_office',
+    description: 'Oficina de Patentes de EE.UU.',
+    website: 'https://www.uspto.gov',
+    docsUrl: 'https://developer.uspto.gov/',
+  },
+  
+  // IA
+  openai: {
+    name: 'OpenAI',
+    category: 'ai',
+    description: 'GPT y procesamiento de lenguaje',
+    website: 'https://openai.com',
+    docsUrl: 'https://platform.openai.com/docs',
+  },
+  anthropic: {
+    name: 'Anthropic',
+    category: 'ai',
+    description: 'Claude AI',
+    website: 'https://anthropic.com',
+    docsUrl: 'https://docs.anthropic.com',
+  },
+} as const;
+
+export const WEBHOOK_SOURCES = {
+  stripe: { name: 'Stripe', events: [
+    'checkout.session.completed',
+    'invoice.paid',
+    'invoice.payment_failed',
+    'customer.subscription.created',
+    'customer.subscription.updated',
+    'customer.subscription.deleted',
+  ]},
+  resend: { name: 'Resend', events: [
+    'email.sent',
+    'email.delivered',
+    'email.bounced',
+    'email.complained',
+  ]},
+} as const;
+
+export const EMAIL_TEMPLATE_CODES = {
+  welcome: 'Bienvenida',
+  invitation: 'Invitación al equipo',
+  password_reset: 'Restablecer contraseña',
+  renewal_reminder: 'Recordatorio de renovación',
+  invoice_sent: 'Factura enviada',
+  deadline_alert: 'Alerta de plazo',
+  watch_alert: 'Alerta de vigilancia',
+  campaign: 'Campaña de marketing',
+} as const;
+
+export const NICE_CLASSES_SHORT: Record<number, string> = {
+  1: 'Productos químicos',
+  2: 'Pinturas',
+  3: 'Cosméticos',
+  4: 'Combustibles',
+  5: 'Productos farmacéuticos',
+  6: 'Metales',
+  7: 'Máquinas',
+  8: 'Herramientas',
+  9: 'Electrónica',
+  10: 'Aparatos médicos',
+  11: 'Iluminación',
+  12: 'Vehículos',
+  13: 'Armas',
+  14: 'Joyería',
+  15: 'Instrumentos musicales',
+  16: 'Papel',
+  17: 'Caucho',
+  18: 'Cuero',
+  19: 'Materiales construcción',
+  20: 'Muebles',
+  21: 'Utensilios domésticos',
+  22: 'Cuerdas y toldos',
+  23: 'Hilos',
+  24: 'Tejidos',
+  25: 'Ropa',
+  26: 'Mercería',
+  27: 'Alfombras',
+  28: 'Juguetes',
+  29: 'Alimentos procesados',
+  30: 'Café, té, pastelería',
+  31: 'Productos agrícolas',
+  32: 'Bebidas',
+  33: 'Bebidas alcohólicas',
+  34: 'Tabaco',
+  35: 'Publicidad',
+  36: 'Finanzas',
+  37: 'Construcción',
+  38: 'Telecomunicaciones',
+  39: 'Transporte',
+  40: 'Tratamiento materiales',
+  41: 'Educación',
+  42: 'Tecnología',
+  43: 'Hostelería',
+  44: 'Servicios médicos',
+  45: 'Servicios jurídicos',
+};
+
+export const IP_OFFICES = [
+  { code: 'EM', name: 'EUIPO', flag: '🇪🇺', region: 'europe' },
+  { code: 'ES', name: 'OEPM (España)', flag: '🇪🇸', region: 'europe' },
+  { code: 'US', name: 'USPTO', flag: '🇺🇸', region: 'americas' },
+  { code: 'GB', name: 'UKIPO', flag: '🇬🇧', region: 'europe' },
+  { code: 'DE', name: 'DPMA (Alemania)', flag: '🇩🇪', region: 'europe' },
+  { code: 'FR', name: 'INPI (Francia)', flag: '🇫🇷', region: 'europe' },
+  { code: 'IT', name: 'UIBM (Italia)', flag: '🇮🇹', region: 'europe' },
+  { code: 'PT', name: 'INPI (Portugal)', flag: '🇵🇹', region: 'europe' },
+  { code: 'CN', name: 'CNIPA (China)', flag: '🇨🇳', region: 'asia' },
+  { code: 'JP', name: 'JPO (Japón)', flag: '🇯🇵', region: 'asia' },
+  { code: 'KR', name: 'KIPO (Corea)', flag: '🇰🇷', region: 'asia' },
+  { code: 'MX', name: 'IMPI (México)', flag: '🇲🇽', region: 'americas' },
+  { code: 'BR', name: 'INPI (Brasil)', flag: '🇧🇷', region: 'americas' },
+  { code: 'AU', name: 'IP Australia', flag: '🇦🇺', region: 'oceania' },
+] as const;
