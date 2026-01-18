@@ -494,6 +494,53 @@ export type Database = {
           },
         ]
       }
+      api_connections: {
+        Row: {
+          config: Json | null
+          created_at: string | null
+          credentials: Json | null
+          id: string
+          is_active: boolean | null
+          last_error: string | null
+          last_sync_at: string | null
+          organization_id: string
+          provider: string
+          updated_at: string | null
+        }
+        Insert: {
+          config?: Json | null
+          created_at?: string | null
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_error?: string | null
+          last_sync_at?: string | null
+          organization_id: string
+          provider: string
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json | null
+          created_at?: string | null
+          credentials?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_error?: string | null
+          last_sync_at?: string | null
+          organization_id?: string
+          provider?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -2662,6 +2709,82 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          failure_message: string | null
+          id: string
+          internal_invoice_id: string | null
+          metadata: Json | null
+          organization_id: string
+          paid_at: string | null
+          status: string
+          stripe_charge_id: string | null
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          subscription_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          failure_message?: string | null
+          id?: string
+          internal_invoice_id?: string | null
+          metadata?: Json | null
+          organization_id: string
+          paid_at?: string | null
+          status?: string
+          stripe_charge_id?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subscription_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          failure_message?: string | null
+          id?: string
+          internal_invoice_id?: string | null
+          metadata?: Json | null
+          organization_id?: string
+          paid_at?: string | null
+          status?: string
+          stripe_charge_id?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_internal_invoice_id_fkey"
+            columns: ["internal_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pipeline_stages: {
         Row: {
           auto_actions: Json | null
@@ -3119,6 +3242,68 @@ export type Database = {
           },
           {
             foreignKeyName: "renewal_schedule_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sent_emails: {
+        Row: {
+          clicked_at: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          opened_at: string | null
+          organization_id: string | null
+          provider: string | null
+          provider_id: string | null
+          status: string | null
+          subject: string
+          template_data: Json | null
+          template_id: string | null
+          to_email: string
+          to_name: string | null
+        }
+        Insert: {
+          clicked_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          opened_at?: string | null
+          organization_id?: string | null
+          provider?: string | null
+          provider_id?: string | null
+          status?: string | null
+          subject: string
+          template_data?: Json | null
+          template_id?: string | null
+          to_email: string
+          to_name?: string | null
+        }
+        Update: {
+          clicked_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          opened_at?: string | null
+          organization_id?: string | null
+          provider?: string | null
+          provider_id?: string | null
+          status?: string | null
+          subject?: string
+          template_data?: Json | null
+          template_id?: string | null
+          to_email?: string
+          to_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sent_emails_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -4138,6 +4323,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      webhook_events: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_id: string | null
+          event_type: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          retry_count: number | null
+          source: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id?: string | null
+          event_type: string
+          id?: string
+          payload: Json
+          processed_at?: string | null
+          retry_count?: number | null
+          source: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_id?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          retry_count?: number | null
+          source?: string
+          status?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
