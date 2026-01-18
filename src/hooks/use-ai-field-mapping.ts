@@ -103,19 +103,30 @@ export function useLearnedMappings(sourceSystem: string) {
       targetEntity: string;
       targetField: string;
       confirmed: boolean;
-    }) => {
+    }): Promise<void> => {
       if (!currentOrganization?.id) throw new Error('No organization');
 
-      // First, try to get existing record
-      const { data: existing } = await supabase
-        .from('migration_learned_mappings')
-        .select('*')
-        .eq('organization_id', currentOrganization.id)
-        .eq('source_system', sourceSystem)
-        .eq('source_field', params.sourceField)
-        .eq('target_entity', params.targetEntity)
-        .eq('target_field', params.targetField)
-        .maybeSingle();
+      // Use RPC or simple query to avoid deeply nested types
+      const table = supabase.from('migration_learned_mappings');
+      
+      // Check if exists with a simple query
+      const selectResult = await table
+        .select('id, times_used, times_confirmed, times_rejected')
+        .match({
+          organization_id: currentOrganization.id,
+          source_system: sourceSystem,
+          source_field: params.sourceField,
+          target_entity: params.targetEntity,
+          target_field: params.targetField
+        })
+        .limit(1);
+
+      const existing = selectResult.data?.[0] as { 
+        id: string; 
+        times_used: number | null; 
+        times_confirmed: number | null; 
+        times_rejected: number | null; 
+      } | undefined;
 
       if (existing) {
         // Update existing record
@@ -124,8 +135,7 @@ export function useLearnedMappings(sourceSystem: string) {
         const newTimesRejected = (existing.times_rejected || 0) + (params.confirmed ? 0 : 1);
         const newConfidenceScore = newTimesConfirmed / newTimesUsed;
 
-        const { error } = await supabase
-          .from('migration_learned_mappings')
+        const { error } = await table
           .update({
             times_used: newTimesUsed,
             times_confirmed: newTimesConfirmed,
@@ -137,8 +147,7 @@ export function useLearnedMappings(sourceSystem: string) {
         if (error) throw error;
       } else {
         // Insert new record
-        const { error } = await supabase
-          .from('migration_learned_mappings')
+        const { error } = await table
           .insert({
             organization_id: currentOrganization.id,
             source_system: sourceSystem,
@@ -168,19 +177,20 @@ export function useGetLearnedMappings(sourceSystem: string) {
 
   return useQuery({
     queryKey: ['learned-mappings', currentOrganization?.id, sourceSystem],
-    queryFn: async () => {
+    queryFn: async (): Promise<unknown[]> => {
       if (!currentOrganization?.id) return [];
 
-      const { data, error } = await supabase
-        .from('migration_learned_mappings')
-        .select('*')
-        .eq('organization_id', currentOrganization.id)
-        .eq('source_system', sourceSystem)
-        .gte('confidence_score', 0.5)
-        .order('confidence_score', { ascending: false });
+      const table = supabase.from('migration_learned_mappings');
+      const result = await table
+        .select('id, source_system, source_field, target_entity, target_field, confidence_score')
+        .match({
+          organization_id: currentOrganization.id,
+          source_system: sourceSystem
+        })
+        .gte('confidence_score', 0.5);
 
-      if (error) throw error;
-      return data || [];
+      if (result.error) throw result.error;
+      return result.data || [];
     },
     enabled: !!currentOrganization?.id && !!sourceSystem
   });

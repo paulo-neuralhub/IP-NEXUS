@@ -83,3 +83,9 @@ verify_jwt = true
 
 [functions.execute-live-migration]
 verify_jwt = true
+
+[functions.ai-analyze-mapping]
+verify_jwt = true
+
+[functions.ai-validate-data]
+verify_jwt = true
