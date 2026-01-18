@@ -1,1 +1,37 @@
 project_id = "dcdbpmbzizzzzdfkvohl"
+
+[functions.send-email]
+verify_jwt = false
+
+[functions.genius-chat]
+verify_jwt = true
+
+[functions.generate-report]
+verify_jwt = true
+
+[functions.stripe-checkout]
+verify_jwt = true
+
+[functions.stripe-webhooks]
+verify_jwt = false
+
+[functions.stripe-portal]
+verify_jwt = true
+
+[functions.test-webhook]
+verify_jwt = true
+
+[functions.retry-webhook]
+verify_jwt = true
+
+[functions.api-v1]
+verify_jwt = false
+
+[functions.euipo-search]
+verify_jwt = false
+
+[functions.tmview-search]
+verify_jwt = false
+
+[functions.wipo-madrid-search]
+verify_jwt = false
