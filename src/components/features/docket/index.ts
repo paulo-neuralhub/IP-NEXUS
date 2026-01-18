@@ -4,3 +4,7 @@ export { ExpiryIndicator } from './expiry-indicator';
 export { MatterTypeSelector } from './matter-type-selector';
 export { NiceClassSelector } from './nice-class-selector';
 export { TagInput } from './tag-input';
+export { MarkImageUpload } from './mark-image-upload';
+export { DocumentList } from './document-list';
+export { DocumentUploadModal } from './document-upload-modal';
+export { DocumentPreviewModal } from './document-preview-modal';

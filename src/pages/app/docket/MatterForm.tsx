@@ -10,7 +10,8 @@ import { useAuth } from '@/contexts/auth-context';
 import { 
   MatterTypeSelector, 
   NiceClassSelector, 
-  TagInput 
+  TagInput,
+  MarkImageUpload,
 } from '@/components/features/docket';
 import { MATTER_STATUSES, MARK_TYPES, JURISDICTIONS } from '@/lib/constants/matters';
 import type { MatterType, MatterStatus, MarkType } from '@/types/matters';
@@ -452,6 +453,14 @@ export default function MatterForm() {
                     </FormItem>
                   )}
                 />
+                
+                {/* Mark Image Upload - only show in edit mode */}
+                {isEdit && id && (
+                  <MarkImageUpload
+                    matterId={id}
+                    currentImageUrl={existingMatter?.mark_image_url}
+                  />
+                )}
               </CardContent>
             </Card>
           )}
