@@ -14,13 +14,13 @@ interface Props {
 }
 
 export function LanguageSelector({ variant = 'dropdown' }: Props) {
-  const { currentLanguage, currentLanguageInfo, setLanguage, supportedLanguages } = useLanguage();
+  const { currentLanguage, currentLanguageInfo, setUserLanguage, supportedLanguages } = useLanguage();
   
   if (variant === 'compact') {
     return (
       <select
         value={currentLanguage}
-        onChange={(e) => setLanguage(e.target.value as UILanguageCode)}
+        onChange={(e) => setUserLanguage(e.target.value as UILanguageCode)}
         className="bg-transparent border-none text-sm cursor-pointer focus:outline-none"
       >
         {supportedLanguages.map(lang => (
@@ -45,7 +45,7 @@ export function LanguageSelector({ variant = 'dropdown' }: Props) {
         {supportedLanguages.map(lang => (
           <DropdownMenuItem
             key={lang.code}
-            onClick={() => setLanguage(lang.code)}
+            onClick={() => setUserLanguage(lang.code)}
             className={currentLanguage === lang.code ? 'bg-accent' : ''}
           >
             <span className="mr-2">{lang.flag}</span>

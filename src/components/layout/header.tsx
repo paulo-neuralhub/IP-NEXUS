@@ -6,6 +6,7 @@ import { ChevronRight, Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/utils";
+import { LanguageSwitcher } from "@/components/ui/language-switcher";
 
 export function Header() {
   const { profile } = useAuth();
@@ -26,7 +27,10 @@ export function Header() {
       </div>
 
       {/* Right Side */}
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
+        {/* Language Switcher */}
+        <LanguageSwitcher />
+        
         {/* Notifications */}
         <Button variant="ghost" size="icon" className="relative">
           <Bell className="h-5 w-5" />

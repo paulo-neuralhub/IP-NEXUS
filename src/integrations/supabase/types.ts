@@ -1489,6 +1489,7 @@ export type Database = {
         Row: {
           addons: string[] | null
           created_at: string | null
+          default_language: string | null
           id: string
           name: string
           plan: string
@@ -1500,6 +1501,7 @@ export type Database = {
         Insert: {
           addons?: string[] | null
           created_at?: string | null
+          default_language?: string | null
           id?: string
           name: string
           plan?: string
@@ -1511,6 +1513,7 @@ export type Database = {
         Update: {
           addons?: string[] | null
           created_at?: string | null
+          default_language?: string | null
           id?: string
           name?: string
           plan?: string
@@ -1810,6 +1813,7 @@ export type Database = {
           full_name: string | null
           id: string
           phone: string | null
+          preferred_language: string | null
           settings: Json | null
           updated_at: string | null
         }
@@ -1820,6 +1824,7 @@ export type Database = {
           full_name?: string | null
           id: string
           phone?: string | null
+          preferred_language?: string | null
           settings?: Json | null
           updated_at?: string | null
         }
@@ -1830,6 +1835,7 @@ export type Database = {
           full_name?: string | null
           id?: string
           phone?: string | null
+          preferred_language?: string | null
           settings?: Json | null
           updated_at?: string | null
         }
