@@ -74,3 +74,12 @@ verify_jwt = true
 
 [functions.execute-migration]
 verify_jwt = true
+
+[functions.test-migration-connection]
+verify_jwt = true
+
+[functions.store-migration-credentials]
+verify_jwt = true
+
+[functions.execute-live-migration]
+verify_jwt = true
