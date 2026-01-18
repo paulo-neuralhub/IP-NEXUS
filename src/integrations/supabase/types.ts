@@ -3267,6 +3267,149 @@ export type Database = {
           },
         ]
       }
+      migration_agents: {
+        Row: {
+          active_connections: number | null
+          agent_key: string
+          agent_secret_hash: string
+          agent_version: string | null
+          capabilities: Json | null
+          created_at: string | null
+          hostname: string | null
+          id: string
+          last_activity: string | null
+          last_error: string | null
+          last_heartbeat: string | null
+          name: string
+          organization_id: string
+          os_type: string | null
+          os_version: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_connections?: number | null
+          agent_key: string
+          agent_secret_hash: string
+          agent_version?: string | null
+          capabilities?: Json | null
+          created_at?: string | null
+          hostname?: string | null
+          id?: string
+          last_activity?: string | null
+          last_error?: string | null
+          last_heartbeat?: string | null
+          name: string
+          organization_id: string
+          os_type?: string | null
+          os_version?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_connections?: number | null
+          agent_key?: string
+          agent_secret_hash?: string
+          agent_version?: string | null
+          capabilities?: Json | null
+          created_at?: string | null
+          hostname?: string | null
+          id?: string
+          last_activity?: string | null
+          last_error?: string | null
+          last_heartbeat?: string | null
+          name?: string
+          organization_id?: string
+          os_type?: string | null
+          os_version?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_agents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_connections: {
+        Row: {
+          agent_id: string | null
+          auth_type: string
+          connection_config: Json | null
+          created_at: string | null
+          created_by: string | null
+          credentials_vault_id: string | null
+          description: string | null
+          id: string
+          last_successful_connection: string | null
+          last_test_at: string | null
+          last_test_result: Json | null
+          name: string
+          organization_id: string
+          status: string | null
+          system_metadata: Json | null
+          system_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          auth_type: string
+          connection_config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          credentials_vault_id?: string | null
+          description?: string | null
+          id?: string
+          last_successful_connection?: string | null
+          last_test_at?: string | null
+          last_test_result?: Json | null
+          name: string
+          organization_id: string
+          status?: string | null
+          system_metadata?: Json | null
+          system_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          auth_type?: string
+          connection_config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          credentials_vault_id?: string | null
+          description?: string | null
+          id?: string
+          last_successful_connection?: string | null
+          last_test_at?: string | null
+          last_test_result?: Json | null
+          name?: string
+          organization_id?: string
+          status?: string | null
+          system_metadata?: Json | null
+          system_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_connections_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "migration_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "migration_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       migration_files: {
         Row: {
           analysis: Json | null
@@ -3385,6 +3528,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      migration_learned_mappings: {
+        Row: {
+          confidence_score: number | null
+          created_at: string | null
+          id: string
+          recommended_transform: Json | null
+          source_field: string
+          source_field_type: string | null
+          source_sample_values: Json | null
+          source_system: string
+          target_entity: string
+          target_field: string
+          times_confirmed: number | null
+          times_rejected: number | null
+          times_used: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          recommended_transform?: Json | null
+          source_field: string
+          source_field_type?: string | null
+          source_sample_values?: Json | null
+          source_system: string
+          target_entity: string
+          target_field: string
+          times_confirmed?: number | null
+          times_rejected?: number | null
+          times_used?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string | null
+          id?: string
+          recommended_transform?: Json | null
+          source_field?: string
+          source_field_type?: string | null
+          source_sample_values?: Json | null
+          source_system?: string
+          target_entity?: string
+          target_field?: string
+          times_confirmed?: number | null
+          times_rejected?: number | null
+          times_used?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       migration_logs: {
         Row: {
@@ -3517,6 +3711,197 @@ export type Database = {
           },
           {
             foreignKeyName: "migration_projects_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_scraping_sessions: {
+        Row: {
+          completed_at: string | null
+          connection_id: string
+          current_entity: string | null
+          current_page: string | null
+          errors: Json | null
+          extracted_data: Json | null
+          id: string
+          items_scraped: number | null
+          items_total: number | null
+          last_request_at: string | null
+          project_id: string | null
+          rate_limit_until: string | null
+          requests_made: number | null
+          retry_count: number | null
+          session_data_vault_id: string | null
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          connection_id: string
+          current_entity?: string | null
+          current_page?: string | null
+          errors?: Json | null
+          extracted_data?: Json | null
+          id?: string
+          items_scraped?: number | null
+          items_total?: number | null
+          last_request_at?: string | null
+          project_id?: string | null
+          rate_limit_until?: string | null
+          requests_made?: number | null
+          retry_count?: number | null
+          session_data_vault_id?: string | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          connection_id?: string
+          current_entity?: string | null
+          current_page?: string | null
+          errors?: Json | null
+          extracted_data?: Json | null
+          id?: string
+          items_scraped?: number | null
+          items_total?: number | null
+          last_request_at?: string | null
+          project_id?: string | null
+          rate_limit_until?: string | null
+          requests_made?: number | null
+          retry_count?: number | null
+          session_data_vault_id?: string | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_scraping_sessions_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "migration_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "migration_scraping_sessions_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "migration_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_sync_history: {
+        Row: {
+          changes: Json | null
+          completed_at: string | null
+          errors: Json | null
+          id: string
+          started_at: string
+          stats: Json | null
+          status: string
+          sync_id: string
+          triggered_by: string | null
+        }
+        Insert: {
+          changes?: Json | null
+          completed_at?: string | null
+          errors?: Json | null
+          id?: string
+          started_at?: string
+          stats?: Json | null
+          status: string
+          sync_id: string
+          triggered_by?: string | null
+        }
+        Update: {
+          changes?: Json | null
+          completed_at?: string | null
+          errors?: Json | null
+          id?: string
+          started_at?: string
+          stats?: Json | null
+          status?: string
+          sync_id?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_sync_history_sync_id_fkey"
+            columns: ["sync_id"]
+            isOneToOne: false
+            referencedRelation: "migration_syncs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      migration_syncs: {
+        Row: {
+          connection_id: string
+          created_at: string | null
+          entities_config: Json
+          id: string
+          last_sync_at: string | null
+          last_sync_stats: Json | null
+          last_sync_status: string | null
+          name: string
+          next_sync_at: string | null
+          organization_id: string
+          schedule_cron: string | null
+          schedule_timezone: string | null
+          status: string | null
+          sync_cursors: Json | null
+          sync_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          connection_id: string
+          created_at?: string | null
+          entities_config: Json
+          id?: string
+          last_sync_at?: string | null
+          last_sync_stats?: Json | null
+          last_sync_status?: string | null
+          name: string
+          next_sync_at?: string | null
+          organization_id: string
+          schedule_cron?: string | null
+          schedule_timezone?: string | null
+          status?: string | null
+          sync_cursors?: Json | null
+          sync_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          connection_id?: string
+          created_at?: string | null
+          entities_config?: Json
+          id?: string
+          last_sync_at?: string | null
+          last_sync_stats?: Json | null
+          last_sync_status?: string | null
+          name?: string
+          next_sync_at?: string | null
+          organization_id?: string
+          schedule_cron?: string | null
+          schedule_timezone?: string | null
+          status?: string | null
+          sync_cursors?: Json | null
+          sync_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "migration_syncs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "migration_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "migration_syncs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
