@@ -418,9 +418,13 @@ export type Database = {
         Row: {
           category: string | null
           created_at: string | null
+          description: string | null
+          document_date: string | null
+          expiry_date: string | null
           file_path: string
           file_size: number | null
           id: string
+          is_official: boolean | null
           matter_id: string
           mime_type: string | null
           name: string
@@ -430,9 +434,13 @@ export type Database = {
         Insert: {
           category?: string | null
           created_at?: string | null
+          description?: string | null
+          document_date?: string | null
+          expiry_date?: string | null
           file_path: string
           file_size?: number | null
           id?: string
+          is_official?: boolean | null
           matter_id: string
           mime_type?: string | null
           name: string
@@ -442,9 +450,13 @@ export type Database = {
         Update: {
           category?: string | null
           created_at?: string | null
+          description?: string | null
+          document_date?: string | null
+          expiry_date?: string | null
           file_path?: string
           file_size?: number | null
           id?: string
+          is_official?: boolean | null
           matter_id?: string
           mime_type?: string | null
           name?: string
@@ -544,8 +556,10 @@ export type Database = {
           filing_date: string | null
           goods_services: string | null
           id: string
+          images: string[] | null
           jurisdiction: string | null
           jurisdiction_code: string | null
+          mark_image_url: string | null
           mark_name: string | null
           mark_type: string | null
           next_renewal_date: string | null
@@ -575,8 +589,10 @@ export type Database = {
           filing_date?: string | null
           goods_services?: string | null
           id?: string
+          images?: string[] | null
           jurisdiction?: string | null
           jurisdiction_code?: string | null
+          mark_image_url?: string | null
           mark_name?: string | null
           mark_type?: string | null
           next_renewal_date?: string | null
@@ -606,8 +622,10 @@ export type Database = {
           filing_date?: string | null
           goods_services?: string | null
           id?: string
+          images?: string[] | null
           jurisdiction?: string | null
           jurisdiction_code?: string | null
+          mark_image_url?: string | null
           mark_name?: string | null
           mark_type?: string | null
           next_renewal_date?: string | null

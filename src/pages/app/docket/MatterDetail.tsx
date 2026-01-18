@@ -7,9 +7,9 @@ import {
 } from 'lucide-react';
 import { useMatter, useMatterDocuments, useMatterEvents, useDeleteMatter } from '@/hooks/use-matters';
 import { useOrganization } from '@/contexts/organization-context';
-import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator } from '@/components/features/docket';
+import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator, DocumentList } from '@/components/features/docket';
 import { MATTER_TYPES, MATTER_STATUSES, MARK_TYPES, JURISDICTIONS } from '@/lib/constants/matters';
-import type { MatterType, MatterStatus, MarkType } from '@/types/matters';
+import type { MatterType, MatterStatus, MarkType, Matter } from '@/types/matters';
 import { formatDate, formatCurrency } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -234,7 +234,17 @@ export default function MatterDetail() {
                   <CardHeader>
                     <CardTitle className="text-base">Datos de Marca</CardTitle>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-4">
+                    {/* Mark Image */}
+                    {(matter as Matter).mark_image_url && (
+                      <div className="flex justify-center">
+                        <img 
+                          src={(matter as Matter).mark_image_url!} 
+                          alt={matter.mark_name || matter.title}
+                          className="max-w-full max-h-48 rounded-lg border object-contain bg-muted"
+                        />
+                      </div>
+                    )}
                     <dl className="grid grid-cols-2 gap-4 text-sm">
                       <div>
                         <dt className="text-muted-foreground">Nombre de marca</dt>
@@ -302,48 +312,8 @@ export default function MatterDetail() {
             
             <TabsContent value="documents" className="mt-4">
               <Card>
-                <CardHeader className="flex-row items-center justify-between">
-                  <CardTitle className="text-base">Documentos</CardTitle>
-                  <Button size="sm" onClick={() => toast({ title: 'Subir documento', description: 'Próximamente' })}>
-                    <Upload className="h-4 w-4 mr-2" />
-                    Subir
-                  </Button>
-                </CardHeader>
-                <CardContent>
-                  {!documents?.length ? (
-                    <EmptyState
-                      icon={<File className="h-8 w-8" />}
-                      title="Sin documentos"
-                      description="Aún no hay documentos adjuntos a este expediente."
-                    />
-                  ) : (
-                    <div className="space-y-2">
-                      {documents.map(doc => (
-                        <div 
-                          key={doc.id}
-                          className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50"
-                        >
-                          <div className="flex items-center gap-3">
-                            <File className="h-5 w-5 text-muted-foreground" />
-                            <div>
-                              <p className="font-medium text-sm">{doc.name}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {doc.file_size ? `${(doc.file_size / 1024).toFixed(1)} KB` : ''} 
-                                {doc.created_at && ` · ${formatDate(doc.created_at)}`}
-                              </p>
-                            </div>
-                          </div>
-                          <Button 
-                            variant="ghost" 
-                            size="icon"
-                            onClick={() => handleDownloadDocument(doc.file_path, doc.name)}
-                          >
-                            <Download className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                <CardContent className="pt-6">
+                  <DocumentList matterId={id!} />
                 </CardContent>
               </Card>
             </TabsContent>

@@ -35,6 +35,9 @@ export interface Matter {
   currency?: string | null;
   tags?: string[] | null;
   notes?: string | null;
+  // NEW: Mark image and gallery
+  mark_image_url?: string | null;
+  images?: string[] | null;
   created_at: string;
   updated_at: string;
   created_by?: string | null;
@@ -49,6 +52,10 @@ export interface MatterDocument {
   file_size?: number | null;
   mime_type?: string | null;
   category?: DocumentCategory | null;
+  description?: string | null;
+  is_official?: boolean | null;
+  document_date?: string | null;
+  expiry_date?: string | null;
   uploaded_by?: string | null;
   created_at: string;
 }
@@ -73,3 +80,8 @@ export interface MatterFilters {
   assigned_to?: string;
   tags?: string[];
 }
+
+// File type validations
+export const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg+xml'];
+export const ALLOWED_DOCUMENT_TYPES = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'image/jpeg', 'image/png', 'image/tiff'];
+export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
