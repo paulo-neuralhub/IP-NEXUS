@@ -9,7 +9,8 @@ import {
   Megaphone,
   MessageSquare,
   FileText,
-  Shield
+  Shield,
+  Key
 } from 'lucide-react';
 import { useIsSuperadmin } from '@/hooks/use-admin';
 import { cn } from '@/lib/utils';
@@ -20,6 +21,7 @@ const ADMIN_NAV = [
   { path: '/admin/organizations', label: 'Organizaciones', icon: Building2 },
   { path: '/admin/users', label: 'Usuarios', icon: Users },
   { path: '/admin/subscriptions', label: 'Suscripciones', icon: CreditCard },
+  { path: '/admin/api-keys', label: 'API Keys', icon: Key },
   { path: '/admin/feature-flags', label: 'Feature Flags', icon: Flag },
   { path: '/admin/announcements', label: 'Anuncios', icon: Megaphone },
   { path: '/admin/feedback', label: 'Feedback', icon: MessageSquare },

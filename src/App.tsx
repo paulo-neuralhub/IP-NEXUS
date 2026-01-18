@@ -66,6 +66,7 @@ import AnnouncementsPage from "./pages/admin/announcements";
 import AdminFeedbackPage from "./pages/admin/feedback";
 import AdminAuditLogsPage from "./pages/admin/audit-logs";
 import AdminSettingsPage from "./pages/admin/settings";
+import AdminApiKeysPage from "./pages/admin/api-keys";
 
 // Layout
 import { AppLayout } from "@/components/layout/app-layout";
@@ -150,6 +151,7 @@ const App = () => (
                 <Route path="organizations" element={<AdminOrganizationsPage />} />
                 <Route path="users" element={<AdminUsersPage />} />
                 <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
+                <Route path="api-keys" element={<AdminApiKeysPage />} />
                 <Route path="feature-flags" element={<FeatureFlagsPage />} />
                 <Route path="announcements" element={<AnnouncementsPage />} />
                 <Route path="feedback" element={<AdminFeedbackPage />} />
