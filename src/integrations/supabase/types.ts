@@ -2898,6 +2898,158 @@ export type Database = {
           },
         ]
       }
+      notification_preferences: {
+        Row: {
+          created_at: string | null
+          deadline_reminder_days: number[] | null
+          deadline_reminders: boolean | null
+          email_enabled: boolean | null
+          id: string
+          in_app_enabled: boolean | null
+          invoice_notifications: boolean | null
+          marketing_notifications: boolean | null
+          push_enabled: boolean | null
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          renewal_reminder_days: number[] | null
+          renewal_reminders: boolean | null
+          team_notifications: boolean | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string
+          watch_alerts: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          deadline_reminder_days?: number[] | null
+          deadline_reminders?: boolean | null
+          email_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          invoice_notifications?: boolean | null
+          marketing_notifications?: boolean | null
+          push_enabled?: boolean | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          renewal_reminder_days?: number[] | null
+          renewal_reminders?: boolean | null
+          team_notifications?: boolean | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id: string
+          watch_alerts?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          deadline_reminder_days?: number[] | null
+          deadline_reminders?: boolean | null
+          email_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          invoice_notifications?: boolean | null
+          marketing_notifications?: boolean | null
+          push_enabled?: boolean | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          renewal_reminder_days?: number[] | null
+          renewal_reminders?: boolean | null
+          team_notifications?: boolean | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string
+          watch_alerts?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notification_preferences_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          action_data: Json | null
+          action_url: string | null
+          body: string
+          created_at: string | null
+          expires_at: string | null
+          icon: string | null
+          id: string
+          image_url: string | null
+          is_read: boolean | null
+          metadata: Json | null
+          organization_id: string | null
+          read_at: string | null
+          reference_id: string | null
+          reference_type: string | null
+          sent_via: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          action_data?: Json | null
+          action_url?: string | null
+          body: string
+          created_at?: string | null
+          expires_at?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_read?: boolean | null
+          metadata?: Json | null
+          organization_id?: string | null
+          read_at?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          sent_via?: Json | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          action_data?: Json | null
+          action_url?: string | null
+          body?: string
+          created_at?: string | null
+          expires_at?: string | null
+          icon?: string | null
+          id?: string
+          image_url?: string | null
+          is_read?: boolean | null
+          metadata?: Json | null
+          organization_id?: string | null
+          read_at?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          sent_via?: Json | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       official_fees: {
         Row: {
           amount: number
@@ -3244,6 +3396,53 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      push_subscriptions: {
+        Row: {
+          auth_key: string
+          created_at: string | null
+          device_type: string | null
+          endpoint: string
+          id: string
+          is_active: boolean | null
+          last_used_at: string | null
+          p256dh_key: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth_key: string
+          created_at?: string | null
+          device_type?: string | null
+          endpoint: string
+          id?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          p256dh_key: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          auth_key?: string
+          created_at?: string | null
+          device_type?: string | null
+          endpoint?: string
+          id?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          p256dh_key?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_subscriptions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
