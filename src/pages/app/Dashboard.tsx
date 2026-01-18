@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
+import { SpiderWidget } from "@/components/features/spider/spider-widget";
 import { PLANS } from "@/lib/constants";
 import { FileText, Clock, Bell, Calendar, Brain, ChevronRight, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -135,27 +136,8 @@ const Dashboard = () => {
 
         {/* Right Column */}
         <div className="space-y-6">
-          {/* Alerts */}
-          <Card className="border-l-4 border-l-module-spider">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Bell className="h-5 w-5 text-module-spider" />
-                Alertas Recientes
-              </CardTitle>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/app/spider">Ver más</Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <EmptyState
-                icon={<Bell className="h-12 w-12" />}
-                title="Sin alertas activas"
-                description="Configura vigilancia para proteger tus derechos de PI"
-                actionLabel="Configurar Spider"
-                onAction={() => {}}
-              />
-            </CardContent>
-          </Card>
+          {/* Spider Widget */}
+          <SpiderWidget />
 
           {/* Genius */}
           <Card className="border-l-4 border-l-module-genius bg-background-warm">
