@@ -51,8 +51,19 @@ import RenewalSchedulePage from "./pages/app/finance/renewals";
 import CostsPage from "./pages/app/finance/costs";
 import TeamSettingsPage from "./pages/app/settings/team";
 import BillingSettingsPage from "./pages/app/settings/billing";
-import BackofficePlaceholder from "./pages/backoffice/BackofficePlaceholder";
 import NotFound from "./pages/NotFound";
+
+// Admin Pages
+import AdminLayout from "./layouts/admin-layout";
+import AdminDashboard from "./pages/admin";
+import AdminOrganizationsPage from "./pages/admin/organizations";
+import AdminUsersPage from "./pages/admin/users";
+import AdminSubscriptionsPage from "./pages/admin/subscriptions";
+import FeatureFlagsPage from "./pages/admin/feature-flags";
+import AnnouncementsPage from "./pages/admin/announcements";
+import AdminFeedbackPage from "./pages/admin/feedback";
+import AdminAuditLogsPage from "./pages/admin/audit-logs";
+import AdminSettingsPage from "./pages/admin/settings";
 
 // Layout
 import { AppLayout } from "@/components/layout/app-layout";
@@ -129,8 +140,18 @@ const App = () => (
                 <Route path="settings/billing" element={<BillingSettingsPage />} />
               </Route>
               
-              {/* BACKOFFICE */}
-              <Route path="/backoffice/*" element={<BackofficePlaceholder />} />
+              {/* ADMIN PANEL */}
+              <Route path="/admin" element={<AdminLayout />}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="organizations" element={<AdminOrganizationsPage />} />
+                <Route path="users" element={<AdminUsersPage />} />
+                <Route path="subscriptions" element={<AdminSubscriptionsPage />} />
+                <Route path="feature-flags" element={<FeatureFlagsPage />} />
+                <Route path="announcements" element={<AnnouncementsPage />} />
+                <Route path="feedback" element={<AdminFeedbackPage />} />
+                <Route path="audit-logs" element={<AdminAuditLogsPage />} />
+                <Route path="settings" element={<AdminSettingsPage />} />
+              </Route>
               
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
