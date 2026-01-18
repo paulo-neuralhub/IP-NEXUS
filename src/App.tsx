@@ -33,8 +33,11 @@ import MarketingDashboard from "./pages/app/marketing/MarketingDashboard";
 import TemplateList from "./pages/app/marketing/templates";
 import TemplateEditor from "./pages/app/marketing/templates/TemplateEditor";
 import CampaignList from "./pages/app/marketing/campaigns";
+import CampaignWizard from "./pages/app/marketing/campaigns/CampaignWizard";
+import CampaignAnalytics from "./pages/app/marketing/campaigns/CampaignAnalytics";
 import ContactListPage from "./pages/app/marketing/lists";
 import AutomationList from "./pages/app/marketing/automations";
+import AutomationEditor from "./pages/app/marketing/automations/AutomationEditor";
 import BackofficePlaceholder from "./pages/backoffice/BackofficePlaceholder";
 import NotFound from "./pages/NotFound";
 
@@ -87,8 +90,13 @@ const App = () => (
                   <Route path="templates" element={<TemplateList />} />
                   <Route path="templates/:id" element={<TemplateEditor />} />
                   <Route path="campaigns" element={<CampaignList />} />
+                  <Route path="campaigns/new" element={<CampaignWizard />} />
+                  <Route path="campaigns/:id/edit" element={<CampaignWizard />} />
+                  <Route path="campaigns/:id/analytics" element={<CampaignAnalytics />} />
                   <Route path="lists" element={<ContactListPage />} />
                   <Route path="automations" element={<AutomationList />} />
+                  <Route path="automations/new" element={<AutomationEditor />} />
+                  <Route path="automations/:id" element={<AutomationEditor />} />
                 </Route>
                 <Route path="market/*" element={<MarketPlaceholder />} />
                 <Route path="genius/*" element={<GeniusPlaceholder />} />
