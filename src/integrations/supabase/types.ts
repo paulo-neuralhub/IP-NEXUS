@@ -1053,6 +1053,51 @@ export type Database = {
           },
         ]
       }
+      gazette_sources: {
+        Row: {
+          code: string
+          country: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          last_issue_date: string | null
+          last_scraped_at: string | null
+          name: string
+          scrape_config: Json | null
+          scrape_frequency: string | null
+          source_type: string
+          url: string | null
+        }
+        Insert: {
+          code: string
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_issue_date?: string | null
+          last_scraped_at?: string | null
+          name: string
+          scrape_config?: Json | null
+          scrape_frequency?: string | null
+          source_type: string
+          url?: string | null
+        }
+        Update: {
+          code?: string
+          country?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_issue_date?: string | null
+          last_scraped_at?: string | null
+          name?: string
+          scrape_config?: Json | null
+          scrape_frequency?: string | null
+          source_type?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
       matter_documents: {
         Row: {
           category: string | null
@@ -1350,6 +1395,96 @@ export type Database = {
           },
         ]
       }
+      monitored_deadlines: {
+        Row: {
+          assigned_to: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          deadline_date: string
+          deadline_type: string
+          description: string | null
+          id: string
+          last_reminder_sent: string | null
+          matter_id: string | null
+          organization_id: string
+          reminder_days: number[] | null
+          status: string | null
+          title: string
+          watch_result_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          deadline_date: string
+          deadline_type: string
+          description?: string | null
+          id?: string
+          last_reminder_sent?: string | null
+          matter_id?: string | null
+          organization_id: string
+          reminder_days?: number[] | null
+          status?: string | null
+          title: string
+          watch_result_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          deadline_date?: string
+          deadline_type?: string
+          description?: string | null
+          id?: string
+          last_reminder_sent?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          reminder_days?: number[] | null
+          status?: string | null
+          title?: string
+          watch_result_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "monitored_deadlines_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monitored_deadlines_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monitored_deadlines_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monitored_deadlines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monitored_deadlines_watch_result_id_fkey"
+            columns: ["watch_result_id"]
+            isOneToOne: false
+            referencedRelation: "watch_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           addons: string[] | null
@@ -1486,6 +1621,187 @@ export type Database = {
           },
         ]
       }
+      similarity_analyses: {
+        Row: {
+          ai_explanation: string | null
+          ai_recommendation: string | null
+          analysis_details: Json | null
+          analysis_method: string | null
+          conceptual_score: number | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          image_a_url: string | null
+          image_b_url: string | null
+          organization_id: string
+          overall_score: number
+          phonetic_score: number | null
+          term_a: string
+          term_b: string
+          visual_score: number | null
+        }
+        Insert: {
+          ai_explanation?: string | null
+          ai_recommendation?: string | null
+          analysis_details?: Json | null
+          analysis_method?: string | null
+          conceptual_score?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_a_url?: string | null
+          image_b_url?: string | null
+          organization_id: string
+          overall_score: number
+          phonetic_score?: number | null
+          term_a: string
+          term_b: string
+          visual_score?: number | null
+        }
+        Update: {
+          ai_explanation?: string | null
+          ai_recommendation?: string | null
+          analysis_details?: Json | null
+          analysis_method?: string | null
+          conceptual_score?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          image_a_url?: string | null
+          image_b_url?: string | null
+          organization_id?: string
+          overall_score?: number
+          phonetic_score?: number | null
+          term_a?: string
+          term_b?: string
+          visual_score?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "similarity_analyses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "similarity_analyses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spider_alerts: {
+        Row: {
+          action_url: string | null
+          actioned_at: string | null
+          actioned_by: string | null
+          alert_type: string
+          created_at: string | null
+          data: Json | null
+          id: string
+          matter_id: string | null
+          message: string
+          notified_at: string | null
+          notified_via: string[] | null
+          organization_id: string
+          read_at: string | null
+          read_by: string | null
+          severity: string | null
+          status: string | null
+          title: string
+          watch_result_id: string | null
+          watchlist_id: string | null
+        }
+        Insert: {
+          action_url?: string | null
+          actioned_at?: string | null
+          actioned_by?: string | null
+          alert_type: string
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          matter_id?: string | null
+          message: string
+          notified_at?: string | null
+          notified_via?: string[] | null
+          organization_id: string
+          read_at?: string | null
+          read_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title: string
+          watch_result_id?: string | null
+          watchlist_id?: string | null
+        }
+        Update: {
+          action_url?: string | null
+          actioned_at?: string | null
+          actioned_by?: string | null
+          alert_type?: string
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          matter_id?: string | null
+          message?: string
+          notified_at?: string | null
+          notified_via?: string[] | null
+          organization_id?: string
+          read_at?: string | null
+          read_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title?: string
+          watch_result_id?: string | null
+          watchlist_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spider_alerts_actioned_by_fkey"
+            columns: ["actioned_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_read_by_fkey"
+            columns: ["read_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_watch_result_id_fkey"
+            columns: ["watch_result_id"]
+            isOneToOne: false
+            referencedRelation: "watch_results"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       users: {
         Row: {
           avatar_url: string | null
@@ -1518,6 +1834,269 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      watch_results: {
+        Row: {
+          action_by: string | null
+          action_date: string | null
+          action_notes: string | null
+          action_taken: string | null
+          applicant_country: string | null
+          applicant_name: string | null
+          classes: number[] | null
+          description: string | null
+          detected_at: string | null
+          domain_name: string | null
+          expiry_date: string | null
+          filing_date: string | null
+          found_text: string | null
+          found_url: string | null
+          id: string
+          opposition_deadline: string | null
+          organization_id: string
+          priority: string | null
+          publication_date: string | null
+          raw_data: Json | null
+          registrar: string | null
+          registration_date: string | null
+          related_deal_id: string | null
+          related_matter_id: string | null
+          result_type: string
+          reviewed_at: string | null
+          reviewed_by: string | null
+          screenshot_url: string | null
+          similarity_details: Json | null
+          similarity_score: number | null
+          similarity_type: string | null
+          source: string | null
+          source_id: string | null
+          source_url: string | null
+          status: string | null
+          title: string
+          watchlist_id: string
+        }
+        Insert: {
+          action_by?: string | null
+          action_date?: string | null
+          action_notes?: string | null
+          action_taken?: string | null
+          applicant_country?: string | null
+          applicant_name?: string | null
+          classes?: number[] | null
+          description?: string | null
+          detected_at?: string | null
+          domain_name?: string | null
+          expiry_date?: string | null
+          filing_date?: string | null
+          found_text?: string | null
+          found_url?: string | null
+          id?: string
+          opposition_deadline?: string | null
+          organization_id: string
+          priority?: string | null
+          publication_date?: string | null
+          raw_data?: Json | null
+          registrar?: string | null
+          registration_date?: string | null
+          related_deal_id?: string | null
+          related_matter_id?: string | null
+          result_type: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          screenshot_url?: string | null
+          similarity_details?: Json | null
+          similarity_score?: number | null
+          similarity_type?: string | null
+          source?: string | null
+          source_id?: string | null
+          source_url?: string | null
+          status?: string | null
+          title: string
+          watchlist_id: string
+        }
+        Update: {
+          action_by?: string | null
+          action_date?: string | null
+          action_notes?: string | null
+          action_taken?: string | null
+          applicant_country?: string | null
+          applicant_name?: string | null
+          classes?: number[] | null
+          description?: string | null
+          detected_at?: string | null
+          domain_name?: string | null
+          expiry_date?: string | null
+          filing_date?: string | null
+          found_text?: string | null
+          found_url?: string | null
+          id?: string
+          opposition_deadline?: string | null
+          organization_id?: string
+          priority?: string | null
+          publication_date?: string | null
+          raw_data?: Json | null
+          registrar?: string | null
+          registration_date?: string | null
+          related_deal_id?: string | null
+          related_matter_id?: string | null
+          result_type?: string
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          screenshot_url?: string | null
+          similarity_details?: Json | null
+          similarity_score?: number | null
+          similarity_type?: string | null
+          source?: string | null
+          source_id?: string | null
+          source_url?: string | null
+          status?: string | null
+          title?: string
+          watchlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watch_results_action_by_fkey"
+            columns: ["action_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_results_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_results_related_deal_id_fkey"
+            columns: ["related_deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_results_related_matter_id_fkey"
+            columns: ["related_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_results_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_results_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      watchlists: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          filter_config: Json | null
+          id: string
+          is_active: boolean | null
+          last_run_at: string | null
+          matter_id: string | null
+          name: string
+          next_run_at: string | null
+          notify_email: boolean | null
+          notify_frequency: string | null
+          notify_in_app: boolean | null
+          notify_users: string[] | null
+          organization_id: string
+          owner_type: string
+          run_frequency: string | null
+          similarity_threshold: number | null
+          type: string
+          updated_at: string | null
+          watch_classes: number[] | null
+          watch_jurisdictions: string[] | null
+          watch_terms: string[]
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filter_config?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          matter_id?: string | null
+          name: string
+          next_run_at?: string | null
+          notify_email?: boolean | null
+          notify_frequency?: string | null
+          notify_in_app?: boolean | null
+          notify_users?: string[] | null
+          organization_id: string
+          owner_type?: string
+          run_frequency?: string | null
+          similarity_threshold?: number | null
+          type: string
+          updated_at?: string | null
+          watch_classes?: number[] | null
+          watch_jurisdictions?: string[] | null
+          watch_terms?: string[]
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filter_config?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          matter_id?: string | null
+          name?: string
+          next_run_at?: string | null
+          notify_email?: boolean | null
+          notify_frequency?: string | null
+          notify_in_app?: boolean | null
+          notify_users?: string[] | null
+          organization_id?: string
+          owner_type?: string
+          run_frequency?: string | null
+          similarity_threshold?: number | null
+          type?: string
+          updated_at?: string | null
+          watch_classes?: number[] | null
+          watch_jurisdictions?: string[] | null
+          watch_terms?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "watchlists_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlists_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlists_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
