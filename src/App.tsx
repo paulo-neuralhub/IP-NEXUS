@@ -23,6 +23,7 @@ import MatterList from "./pages/app/docket";
 import MatterDetail from "./pages/app/docket/MatterDetail";
 import MatterForm from "./pages/app/docket/MatterForm";
 import CRMLayout from "./pages/app/crm/CRMLayout";
+import CRMDashboard from "./pages/app/crm/CRMDashboard";
 import ContactList from "./pages/app/crm/contacts";
 import ContactDetail from "./pages/app/crm/contacts/ContactDetail";
 import DealList from "./pages/app/crm/deals";
@@ -68,7 +69,7 @@ const App = () => (
                 <Route path="data-hub/*" element={<DataHubPlaceholder />} />
                 <Route path="spider/*" element={<SpiderPlaceholder />} />
                 <Route path="crm" element={<CRMLayout />}>
-                  <Route index element={<ContactList />} />
+                  <Route index element={<CRMDashboard />} />
                   <Route path="contacts" element={<ContactList />} />
                   <Route path="contacts/:id" element={<ContactDetail />} />
                   <Route path="deals" element={<DealList />} />

@@ -1,10 +1,11 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { Users, TrendingUp, Settings } from 'lucide-react';
+import { LayoutGrid, Users, TrendingUp, Settings } from 'lucide-react';
 
 const navItems = [
+  { to: '/app/crm', label: 'Kanban', icon: LayoutGrid, exact: true },
   { to: '/app/crm/contacts', label: 'Contactos', icon: Users },
-  { to: '/app/crm/deals', label: 'Deals', icon: TrendingUp },
+  { to: '/app/crm/deals', label: 'Lista Deals', icon: TrendingUp },
   { to: '/app/crm/pipelines', label: 'Pipelines', icon: Settings },
 ];
 
@@ -17,7 +18,9 @@ export default function CRMLayout() {
       <div className="border-b">
         <nav className="flex gap-6 -mb-px">
           {navItems.map((item) => {
-            const isActive = location.pathname.startsWith(item.to);
+            const isActive = item.exact 
+              ? location.pathname === item.to
+              : location.pathname.startsWith(item.to);
             return (
               <NavLink
                 key={item.to}
