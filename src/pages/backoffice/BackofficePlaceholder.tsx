@@ -28,7 +28,7 @@ const BackofficePlaceholder = () => {
       <main className="flex-1 flex items-center justify-center px-6">
         <div className="bg-background-card rounded-2xl p-12 shadow-lg">
           <EmptyState
-            icon={Construction}
+            icon={<Construction className="h-12 w-12" />}
             title="Backoffice en Construcción"
             description="El panel de administración interna está siendo desarrollado. Aquí gestionarás tenants, facturación, IA y más."
             action={
