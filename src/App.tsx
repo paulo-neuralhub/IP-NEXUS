@@ -16,7 +16,7 @@ import Onboarding from "./pages/app/Onboarding";
 import Dashboard from "./pages/app/Dashboard";
 import {
   DataHubPlaceholder, SpiderPlaceholder,
-  MarketingPlaceholder, MarketPlaceholder,
+  MarketPlaceholder,
   GeniusPlaceholder, FinancePlaceholder, HelpPlaceholder
 } from "./pages/app/placeholders";
 import MatterList from "./pages/app/docket";
@@ -28,6 +28,13 @@ import ContactList from "./pages/app/crm/contacts";
 import ContactDetail from "./pages/app/crm/contacts/ContactDetail";
 import DealList from "./pages/app/crm/deals";
 import PipelineList from "./pages/app/crm/pipelines";
+import MarketingLayout from "./pages/app/marketing/MarketingLayout";
+import MarketingDashboard from "./pages/app/marketing/MarketingDashboard";
+import TemplateList from "./pages/app/marketing/templates";
+import TemplateEditor from "./pages/app/marketing/templates/TemplateEditor";
+import CampaignList from "./pages/app/marketing/campaigns";
+import ContactListPage from "./pages/app/marketing/lists";
+import AutomationList from "./pages/app/marketing/automations";
 import BackofficePlaceholder from "./pages/backoffice/BackofficePlaceholder";
 import NotFound from "./pages/NotFound";
 
@@ -75,7 +82,14 @@ const App = () => (
                   <Route path="deals" element={<DealList />} />
                   <Route path="pipelines" element={<PipelineList />} />
                 </Route>
-                <Route path="marketing/*" element={<MarketingPlaceholder />} />
+                <Route path="marketing" element={<MarketingLayout />}>
+                  <Route index element={<MarketingDashboard />} />
+                  <Route path="templates" element={<TemplateList />} />
+                  <Route path="templates/:id" element={<TemplateEditor />} />
+                  <Route path="campaigns" element={<CampaignList />} />
+                  <Route path="lists" element={<ContactListPage />} />
+                  <Route path="automations" element={<AutomationList />} />
+                </Route>
                 <Route path="market/*" element={<MarketPlaceholder />} />
                 <Route path="genius/*" element={<GeniusPlaceholder />} />
                 <Route path="finance/*" element={<FinancePlaceholder />} />
