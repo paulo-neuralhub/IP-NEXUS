@@ -14,6 +14,243 @@ export type Database = {
   }
   public: {
     Tables: {
+      matter_documents: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          file_path: string
+          file_size: number | null
+          id: string
+          matter_id: string
+          mime_type: string | null
+          name: string
+          organization_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          file_path: string
+          file_size?: number | null
+          id?: string
+          matter_id: string
+          mime_type?: string | null
+          name: string
+          organization_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          matter_id?: string
+          mime_type?: string | null
+          name?: string
+          organization_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_documents_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matter_events: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          event_date: string | null
+          id: string
+          matter_id: string
+          organization_id: string
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          event_date?: string | null
+          id?: string
+          matter_id: string
+          organization_id: string
+          title: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          event_date?: string | null
+          id?: string
+          matter_id?: string
+          organization_id?: string
+          title?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_events_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_events_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      matters: {
+        Row: {
+          application_number: string | null
+          assigned_to: string | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          expiry_date: string | null
+          filing_date: string | null
+          goods_services: string | null
+          id: string
+          jurisdiction: string | null
+          jurisdiction_code: string | null
+          mark_name: string | null
+          mark_type: string | null
+          next_renewal_date: string | null
+          nice_classes: number[] | null
+          notes: string | null
+          official_fees: number | null
+          organization_id: string
+          owner_name: string | null
+          professional_fees: number | null
+          reference: string
+          registration_date: string | null
+          registration_number: string | null
+          status: string
+          tags: string[] | null
+          title: string
+          total_cost: number | null
+          type: string
+          updated_at: string | null
+        }
+        Insert: {
+          application_number?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          expiry_date?: string | null
+          filing_date?: string | null
+          goods_services?: string | null
+          id?: string
+          jurisdiction?: string | null
+          jurisdiction_code?: string | null
+          mark_name?: string | null
+          mark_type?: string | null
+          next_renewal_date?: string | null
+          nice_classes?: number[] | null
+          notes?: string | null
+          official_fees?: number | null
+          organization_id: string
+          owner_name?: string | null
+          professional_fees?: number | null
+          reference: string
+          registration_date?: string | null
+          registration_number?: string | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          total_cost?: number | null
+          type: string
+          updated_at?: string | null
+        }
+        Update: {
+          application_number?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          expiry_date?: string | null
+          filing_date?: string | null
+          goods_services?: string | null
+          id?: string
+          jurisdiction?: string | null
+          jurisdiction_code?: string | null
+          mark_name?: string | null
+          mark_type?: string | null
+          next_renewal_date?: string | null
+          nice_classes?: number[] | null
+          notes?: string | null
+          official_fees?: number | null
+          organization_id?: string
+          owner_name?: string | null
+          professional_fees?: number | null
+          reference?: string
+          registration_date?: string | null
+          registration_number?: string | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          total_cost?: number | null
+          type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matters_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       memberships: {
         Row: {
           created_at: string | null

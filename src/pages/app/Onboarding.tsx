@@ -69,13 +69,23 @@ const Onboarding = () => {
 
       if (orgError) {
         console.error("Error creating organization:", JSON.stringify(orgError, null, 2));
+
+        // Common case: unique constraint violation (slug already exists)
+        if (orgError.code === "23505") {
+          toast({
+            title: "Ese nombre ya existe",
+            description: `La URL \"${slug}\" ya está en uso. Prueba con otro nombre (o añade una palabra extra).`,
+            variant: "destructive",
+          });
+          return;
+        }
+
         const message = `No se pudo crear la organización (${orgError.code ?? ""}): ${orgError.message}`;
         toast({
           title: "Error",
           description: message,
           variant: "destructive",
         });
-        setIsLoading(false);
         return;
       }
 
