@@ -1,51 +1,76 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { GeniusChat, ConversationSidebar, AgentSelector } from '@/components/features/genius';
 import type { AgentType, AIConversation } from '@/types/genius';
+import { usePageTitle } from '@/contexts/page-context';
 
 export default function GeniusPage() {
-  const [selectedAgent, setSelectedAgent] = useState<AgentType>('legal');
-  const [selectedConversation, setSelectedConversation] = useState<string | undefined>();
+  const { setTitle } = usePageTitle();
+  const [searchParams, setSearchParams] = useSearchParams();
   
-  const handleNewChat = () => {
-    setSelectedConversation(undefined);
+  const [agentType, setAgentType] = useState<AgentType>(
+    (searchParams.get('agent') as AgentType) || 'legal'
+  );
+  const [conversationId, setConversationId] = useState<string | undefined>(
+    searchParams.get('conversation') || undefined
+  );
+  
+  useEffect(() => {
+    setTitle('IP-GENIUS');
+  }, [setTitle]);
+  
+  const handleAgentChange = (agent: AgentType) => {
+    setAgentType(agent);
+    setConversationId(undefined);
+    setSearchParams({ agent });
   };
   
   const handleSelectConversation = (conv: AIConversation) => {
-    setSelectedConversation(conv.id);
-    setSelectedAgent(conv.agent_type);
+    setAgentType(conv.agent_type);
+    setConversationId(conv.id);
+    setSearchParams({ agent: conv.agent_type, conversation: conv.id });
+  };
+  
+  const handleNewChat = () => {
+    setConversationId(undefined);
+    setSearchParams({ agent: agentType });
+  };
+  
+  const handleConversationChange = (id: string) => {
+    setConversationId(id);
+    setSearchParams({ agent: agentType, conversation: id });
   };
   
   return (
-    <div className="h-[calc(100vh-8rem)]">
-      {/* Agent selector */}
-      <div className="mb-4">
-        <AgentSelector 
-          selected={selectedAgent} 
-          onChange={(agent) => {
-            setSelectedAgent(agent);
-            setSelectedConversation(undefined);
-          }} 
+    <div className="h-[calc(100vh-8rem)] flex rounded-xl border bg-card overflow-hidden">
+      {/* Sidebar */}
+      <div className="w-72 flex-shrink-0 hidden lg:block border-r">
+        <ConversationSidebar
+          agentType={agentType}
+          selectedId={conversationId}
+          onSelect={handleSelectConversation}
+          onNewChat={handleNewChat}
         />
       </div>
       
-      {/* Main content */}
-      <div className="flex h-[calc(100%-4rem)] rounded-xl border bg-card overflow-hidden">
-        {/* Sidebar */}
-        <div className="w-72 flex-shrink-0 hidden md:block">
-          <ConversationSidebar
-            agentType={selectedAgent}
-            selectedId={selectedConversation}
-            onSelect={handleSelectConversation}
-            onNewChat={handleNewChat}
+      {/* Main area */}
+      <div className="flex-1 flex flex-col">
+        {/* Agent selector */}
+        <div className="p-4 border-b bg-muted/30">
+          <AgentSelector
+            selected={agentType}
+            onChange={handleAgentChange}
+            variant="tabs"
           />
         </div>
         
         {/* Chat */}
-        <div className="flex-1">
+        <div className="flex-1 overflow-hidden">
           <GeniusChat
-            agentType={selectedAgent}
-            initialConversationId={selectedConversation}
-            onConversationChange={setSelectedConversation}
+            key={`${agentType}-${conversationId}`}
+            agentType={agentType}
+            initialConversationId={conversationId}
+            onConversationChange={handleConversationChange}
           />
         </div>
       </div>

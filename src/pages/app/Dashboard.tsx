@@ -7,8 +7,9 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SpiderWidget } from "@/components/features/spider/spider-widget";
+import { GeniusWidget } from "@/components/features/genius/genius-widget";
 import { PLANS } from "@/lib/constants";
-import { FileText, Clock, Bell, Calendar, Brain, ChevronRight, Plus } from "lucide-react";
+import { FileText, Clock, Bell, Calendar, ChevronRight, Plus } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
@@ -139,39 +140,8 @@ const Dashboard = () => {
           {/* Spider Widget */}
           <SpiderWidget />
 
-          {/* Genius */}
-          <Card className="border-l-4 border-l-module-genius bg-background-warm">
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Brain className="h-5 w-5 text-module-genius" />
-                NEXUS Genius
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground">¿En qué puedo ayudarte hoy?</p>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  placeholder="Escribe tu pregunta..."
-                  className="flex-1 px-4 py-2 rounded-lg border border-border bg-background-card focus:outline-none focus:ring-2 focus:ring-module-genius"
-                />
-                <Button className="bg-module-genius hover:bg-module-genius/90">
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs text-muted-foreground">Sugerencias rápidas:</p>
-                <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                    ¿Qué plazos tengo esta semana?
-                  </Badge>
-                  <Badge variant="outline" className="cursor-pointer hover:bg-accent">
-                    Resume mi cartera
-                  </Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          {/* Genius Widget */}
+          <GeniusWidget />
         </div>
       </div>
     </div>

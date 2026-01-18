@@ -315,3 +315,98 @@ export function useKnowledgeSearch(query: string) {
     enabled: query.length > 2,
   });
 }
+
+// ===== DOCUMENT ANALYSIS =====
+export function useDocumentAnalysis() {
+  return useMutation({
+    mutationFn: async ({ 
+      content, 
+      type 
+    }: { 
+      content: string; 
+      type: 'extract' | 'summarize' | 'compare';
+    }) => {
+      const prompts = {
+        summarize: `Resume el siguiente documento de forma clara y concisa:\n\n${content}`,
+        extract: `Extrae los datos clave del siguiente documento:\n\n${content}`,
+        compare: `Analiza el siguiente documento identificando inconsistencias:\n\n${content}`,
+      };
+      
+      const { data, error } = await supabase.functions.invoke('genius-chat', {
+        body: {
+          messages: [{ role: 'user', content: prompts[type] }],
+          agentType: 'docs',
+          context: {},
+        },
+      });
+      
+      if (error) throw error;
+      
+      return { 
+        result: typeof data === 'string' ? data : data?.content || '' 
+      };
+    },
+  });
+}
+
+// ===== DOCUMENT GENERATION =====
+export function useDocumentGeneration() {
+  const { user } = useAuth();
+  const { currentOrganization } = useOrganization();
+  
+  return useMutation({
+    mutationFn: async ({ 
+      templateCode, 
+      variables 
+    }: { 
+      templateCode: string; 
+      variables: Record<string, string>;
+    }) => {
+      if (!currentOrganization?.id) throw new Error('No organization selected');
+      
+      // Build prompt from variables
+      const varsText = Object.entries(variables)
+        .filter(([_, v]) => v)
+        .map(([k, v]) => `- ${k}: ${v}`)
+        .join('\n');
+      
+      const prompt = `Genera un documento profesional basado en:\n${varsText}`;
+      
+      const { data, error } = await supabase.functions.invoke('genius-chat', {
+        body: {
+          messages: [{ role: 'user', content: prompt }],
+          agentType: 'docs',
+          context: {},
+        },
+      });
+      
+      if (error) throw error;
+      
+      const content = typeof data === 'string' ? data : data?.content || '';
+      
+      // Save to database
+      const { data: savedDoc, error: saveError } = await supabase
+        .from('ai_generated_documents')
+        .insert({
+          organization_id: currentOrganization.id,
+          document_type: templateCode.replace('legal_', '') as any,
+          title: `Documento generado - ${new Date().toLocaleDateString('es-ES')}`,
+          content,
+          content_format: 'markdown',
+          matter_id: variables.matter_id || null,
+          created_by: user?.id,
+          status: 'draft',
+          version: 1,
+        })
+        .select()
+        .single();
+      
+      if (saveError) throw saveError;
+      
+      return { 
+        content, 
+        document_id: savedDoc.id 
+      };
+    },
+  });
+}
