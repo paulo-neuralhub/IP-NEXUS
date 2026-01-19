@@ -30,7 +30,11 @@ import MarketFavorites from "./pages/app/market/favorites";
 import MarketAlerts from "./pages/app/market/alerts";
 import MarketProfile from "./pages/app/market/profile";
 import DataHubPage from "./pages/app/data-hub";
-import GeniusPage from "./pages/app/genius";
+import GeniusLayout from "./pages/app/genius/GeniusLayout";
+import GeniusChatPage from "./pages/app/genius/chat";
+import GeniusComparatorPage from "./pages/app/genius/comparator";
+import GeniusOppositionPage from "./pages/app/genius/opposition";
+import GeniusDocumentsPage from "./pages/app/genius/documents";
 import SpiderLayout from "./pages/app/spider/SpiderLayout";
 import SpiderDashboard from "./pages/app/spider";
 import WatchResultList from "./pages/app/spider/results";
@@ -175,8 +179,13 @@ const App = () => (
                   <Route path="kyc" element={<MarketKycPage />} />
                   <Route path="kyc/:type" element={<KycVerificationPage />} />
                 </Route>
-                <Route path="genius/*" element={<GeniusPage />} />
-                <Route path="genius/translator" element={<TranslatorPage />} />
+                <Route path="genius" element={<GeniusLayout />}>
+                  <Route index element={<GeniusChatPage />} />
+                  <Route path="comparator" element={<GeniusComparatorPage />} />
+                  <Route path="opposition" element={<GeniusOppositionPage />} />
+                  <Route path="translator" element={<TranslatorPage />} />
+                  <Route path="documents" element={<GeniusDocumentsPage />} />
+                </Route>
                 <Route path="finance" element={<FinanceLayout />}>
                   <Route index element={<FinanceDashboard />} />
                   <Route path="costs" element={<CostsPage />} />

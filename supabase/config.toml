@@ -92,3 +92,18 @@ verify_jwt = true
 
 [functions.ai-legal-translate]
 verify_jwt = true
+
+[functions.genius-conceptual-analysis]
+verify_jwt = true
+
+[functions.genius-generate-opposition]
+verify_jwt = true
+
+[functions.analyze-import-file]
+verify_jwt = true
+
+[functions.execute-shadow-import]
+verify_jwt = true
+
+[functions.apply-shadow-import]
+verify_jwt = true
