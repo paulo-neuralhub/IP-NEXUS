@@ -4532,6 +4532,514 @@ export type Database = {
           },
         ]
       }
+      help_announcement_reads: {
+        Row: {
+          announcement_id: string
+          id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          announcement_id: string
+          id?: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          announcement_id?: string
+          id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_announcement_reads_announcement_id_fkey"
+            columns: ["announcement_id"]
+            isOneToOne: false
+            referencedRelation: "help_announcements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_announcement_reads_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_announcements: {
+        Row: {
+          affected_modules: string[] | null
+          announcement_type: string
+          audience: string | null
+          content: string
+          created_at: string | null
+          created_by: string | null
+          expire_at: string | null
+          id: string
+          image_url: string | null
+          is_breaking_change: boolean | null
+          is_featured: boolean | null
+          is_published: boolean | null
+          learn_more_url: string | null
+          publish_at: string | null
+          summary: string | null
+          title: string
+          updated_at: string | null
+          version: string | null
+          video_url: string | null
+        }
+        Insert: {
+          affected_modules?: string[] | null
+          announcement_type: string
+          audience?: string | null
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          expire_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking_change?: boolean | null
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          learn_more_url?: string | null
+          publish_at?: string | null
+          summary?: string | null
+          title: string
+          updated_at?: string | null
+          version?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          affected_modules?: string[] | null
+          announcement_type?: string
+          audience?: string | null
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          expire_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_breaking_change?: boolean | null
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          learn_more_url?: string | null
+          publish_at?: string | null
+          summary?: string | null
+          title?: string
+          updated_at?: string | null
+          version?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_announcements_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_article_feedback: {
+        Row: {
+          article_id: string
+          created_at: string | null
+          feedback_text: string | null
+          id: string
+          is_helpful: boolean
+          organization_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          is_helpful: boolean
+          organization_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string | null
+          feedback_text?: string | null
+          id?: string
+          is_helpful?: boolean
+          organization_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_article_feedback_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_article_feedback_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_article_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_articles: {
+        Row: {
+          article_type: string | null
+          category_id: string | null
+          content: string
+          created_at: string | null
+          created_by: string | null
+          display_order: number | null
+          featured_image: string | null
+          helpful_count: number | null
+          id: string
+          is_featured: boolean | null
+          is_published: boolean | null
+          language: string | null
+          meta_description: string | null
+          meta_title: string | null
+          module: string | null
+          not_helpful_count: number | null
+          published_at: string | null
+          search_vector: unknown
+          slug: string
+          summary: string | null
+          tags: string[] | null
+          title: string
+          translations: Json | null
+          updated_at: string | null
+          video_duration: number | null
+          video_url: string | null
+          view_count: number | null
+        }
+        Insert: {
+          article_type?: string | null
+          category_id?: string | null
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number | null
+          featured_image?: string | null
+          helpful_count?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          language?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          module?: string | null
+          not_helpful_count?: number | null
+          published_at?: string | null
+          search_vector?: unknown
+          slug: string
+          summary?: string | null
+          tags?: string[] | null
+          title: string
+          translations?: Json | null
+          updated_at?: string | null
+          video_duration?: number | null
+          video_url?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          article_type?: string | null
+          category_id?: string | null
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          display_order?: number | null
+          featured_image?: string | null
+          helpful_count?: number | null
+          id?: string
+          is_featured?: boolean | null
+          is_published?: boolean | null
+          language?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          module?: string | null
+          not_helpful_count?: number | null
+          published_at?: string | null
+          search_vector?: unknown
+          slug?: string
+          summary?: string | null
+          tags?: string[] | null
+          title?: string
+          translations?: Json | null
+          updated_at?: string | null
+          video_duration?: number | null
+          video_url?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_articles_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "help_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_articles_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_categories: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          parent_id: string | null
+          slug: string
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          parent_id?: string | null
+          slug: string
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          parent_id?: string | null
+          slug?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "help_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_system_status: {
+        Row: {
+          component: string
+          created_at: string | null
+          description: string | null
+          expected_resolution_at: string | null
+          id: string
+          impact: string | null
+          resolved_at: string | null
+          started_at: string | null
+          status: string
+          title: string | null
+          updated_at: string | null
+          updates: Json | null
+        }
+        Insert: {
+          component: string
+          created_at?: string | null
+          description?: string | null
+          expected_resolution_at?: string | null
+          id?: string
+          impact?: string | null
+          resolved_at?: string | null
+          started_at?: string | null
+          status: string
+          title?: string | null
+          updated_at?: string | null
+          updates?: Json | null
+        }
+        Update: {
+          component?: string
+          created_at?: string | null
+          description?: string | null
+          expected_resolution_at?: string | null
+          id?: string
+          impact?: string | null
+          resolved_at?: string | null
+          started_at?: string | null
+          status?: string
+          title?: string | null
+          updated_at?: string | null
+          updates?: Json | null
+        }
+        Relationships: []
+      }
+      help_tooltips: {
+        Row: {
+          content: string
+          created_at: string | null
+          element_selector: string | null
+          help_article_id: string | null
+          help_url: string | null
+          id: string
+          is_active: boolean | null
+          page_path: string | null
+          show_conditions: Json | null
+          title: string | null
+          tooltip_key: string
+          tooltip_type: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          element_selector?: string | null
+          help_article_id?: string | null
+          help_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          page_path?: string | null
+          show_conditions?: Json | null
+          title?: string | null
+          tooltip_key: string
+          tooltip_type?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          element_selector?: string | null
+          help_article_id?: string | null
+          help_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          page_path?: string | null
+          show_conditions?: Json | null
+          title?: string | null
+          tooltip_key?: string
+          tooltip_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_tooltips_help_article_id_fkey"
+            columns: ["help_article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_tour_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          current_step: number | null
+          id: string
+          skipped_at: string | null
+          status: string | null
+          tour_id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          current_step?: number | null
+          id?: string
+          skipped_at?: string | null
+          status?: string | null
+          tour_id: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          current_step?: number | null
+          id?: string
+          skipped_at?: string | null
+          status?: string | null
+          tour_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_tour_progress_tour_id_fkey"
+            columns: ["tour_id"]
+            isOneToOne: false
+            referencedRelation: "help_tours"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_tour_progress_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_tours: {
+        Row: {
+          can_skip: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          show_once: boolean | null
+          steps: Json
+          tour_key: string
+          trigger_conditions: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          can_skip?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          show_once?: boolean | null
+          steps?: Json
+          tour_key: string
+          trigger_conditions?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          can_skip?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          show_once?: boolean | null
+          steps?: Json
+          tour_key?: string
+          trigger_conditions?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       import_files: {
         Row: {
           analysis_result: Json | null
@@ -13234,6 +13742,116 @@ export type Database = {
           },
         ]
       }
+      support_tickets: {
+        Row: {
+          affected_module: string | null
+          assigned_at: string | null
+          assigned_to: string | null
+          attachments: Json | null
+          browser_info: Json | null
+          category: string
+          created_at: string | null
+          description: string
+          first_response_at: string | null
+          id: string
+          organization_id: string
+          page_url: string | null
+          priority: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          satisfaction_feedback: string | null
+          satisfaction_rating: number | null
+          sla_due_at: string | null
+          status: string | null
+          subject: string
+          ticket_number: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          affected_module?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          attachments?: Json | null
+          browser_info?: Json | null
+          category: string
+          created_at?: string | null
+          description: string
+          first_response_at?: string | null
+          id?: string
+          organization_id: string
+          page_url?: string | null
+          priority?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          satisfaction_feedback?: string | null
+          satisfaction_rating?: number | null
+          sla_due_at?: string | null
+          status?: string | null
+          subject: string
+          ticket_number: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          affected_module?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          attachments?: Json | null
+          browser_info?: Json | null
+          category?: string
+          created_at?: string | null
+          description?: string
+          first_response_at?: string | null
+          id?: string
+          organization_id?: string
+          page_url?: string | null
+          priority?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          satisfaction_feedback?: string | null
+          satisfaction_rating?: number | null
+          sla_due_at?: string | null
+          status?: string | null
+          subject?: string
+          ticket_number?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_tickets_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sync_jobs: {
         Row: {
           completed_at: string | null
@@ -13514,6 +14132,57 @@ export type Database = {
             columns: ["parent_team_id"]
             isOneToOne: false
             referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ticket_messages: {
+        Row: {
+          attachments: Json | null
+          author_id: string | null
+          author_name: string | null
+          author_type: string
+          created_at: string | null
+          id: string
+          is_internal: boolean | null
+          message: string
+          ticket_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          author_id?: string | null
+          author_name?: string | null
+          author_type: string
+          created_at?: string | null
+          id?: string
+          is_internal?: boolean | null
+          message: string
+          ticket_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          author_id?: string | null
+          author_name?: string | null
+          author_type?: string
+          created_at?: string | null
+          id?: string
+          is_internal?: boolean | null
+          message?: string
+          ticket_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ticket_messages_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ticket_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
             referencedColumns: ["id"]
           },
         ]
@@ -14827,6 +15496,10 @@ export type Database = {
           successful: number
           total_executions: number
         }[]
+      }
+      increment_article_feedback: {
+        Args: { p_article_id: string; p_is_helpful: boolean }
+        Returns: undefined
       }
       increment_rate_limit: {
         Args: { p_api_key_id: string }
