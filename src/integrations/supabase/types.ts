@@ -4562,6 +4562,60 @@ export type Database = {
           },
         ]
       }
+      ipo_fee_history: {
+        Row: {
+          amount_new: number
+          amount_old: number | null
+          change_date: string
+          change_reason: string | null
+          created_at: string | null
+          currency: string
+          fee_id: string
+          id: string
+          source_document_id: string | null
+          source_url: string | null
+        }
+        Insert: {
+          amount_new: number
+          amount_old?: number | null
+          change_date: string
+          change_reason?: string | null
+          created_at?: string | null
+          currency: string
+          fee_id: string
+          id?: string
+          source_document_id?: string | null
+          source_url?: string | null
+        }
+        Update: {
+          amount_new?: number
+          amount_old?: number | null
+          change_date?: string
+          change_reason?: string | null
+          created_at?: string | null
+          currency?: string
+          fee_id?: string
+          id?: string
+          source_document_id?: string | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_fee_history_fee_id_fkey"
+            columns: ["fee_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_official_fees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_fee_history_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ipo_field_mappings: {
         Row: {
           created_at: string | null
@@ -4784,6 +4838,591 @@ export type Database = {
           },
         ]
       }
+      ipo_legal_articles: {
+        Row: {
+          article_type: string
+          citation_format: string | null
+          content: string
+          content_english: string | null
+          created_at: string | null
+          document_id: string
+          full_reference: string | null
+          heading: string | null
+          hierarchy_path: string | null
+          id: string
+          ip_types: string[] | null
+          keywords: string[] | null
+          number: string | null
+          parent_id: string | null
+          sort_order: number | null
+          status: string | null
+          updated_at: string | null
+          version_id: string | null
+        }
+        Insert: {
+          article_type: string
+          citation_format?: string | null
+          content: string
+          content_english?: string | null
+          created_at?: string | null
+          document_id: string
+          full_reference?: string | null
+          heading?: string | null
+          hierarchy_path?: string | null
+          id?: string
+          ip_types?: string[] | null
+          keywords?: string[] | null
+          number?: string | null
+          parent_id?: string | null
+          sort_order?: number | null
+          status?: string | null
+          updated_at?: string | null
+          version_id?: string | null
+        }
+        Update: {
+          article_type?: string
+          citation_format?: string | null
+          content?: string
+          content_english?: string | null
+          created_at?: string | null
+          document_id?: string
+          full_reference?: string | null
+          heading?: string | null
+          hierarchy_path?: string | null
+          id?: string
+          ip_types?: string[] | null
+          keywords?: string[] | null
+          number?: string | null
+          parent_id?: string | null
+          sort_order?: number | null
+          status?: string | null
+          updated_at?: string | null
+          version_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_articles_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_articles_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_articles_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_document_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_legal_change_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          affected_ip_types: string[] | null
+          change_type: string
+          created_at: string | null
+          detected_at: string | null
+          diff_data: Json | null
+          document_id: string | null
+          effective_date: string | null
+          id: string
+          impact_level: string
+          office_id: string
+          source_url: string | null
+          status: string | null
+          summary: string | null
+          title: string
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          affected_ip_types?: string[] | null
+          change_type: string
+          created_at?: string | null
+          detected_at?: string | null
+          diff_data?: Json | null
+          document_id?: string | null
+          effective_date?: string | null
+          id?: string
+          impact_level: string
+          office_id: string
+          source_url?: string | null
+          status?: string | null
+          summary?: string | null
+          title: string
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          affected_ip_types?: string[] | null
+          change_type?: string
+          created_at?: string | null
+          detected_at?: string | null
+          diff_data?: Json | null
+          document_id?: string | null
+          effective_date?: string | null
+          id?: string
+          impact_level?: string
+          office_id?: string
+          source_url?: string | null
+          status?: string | null
+          summary?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_change_alerts_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_change_alerts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_change_alerts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_legal_chunks: {
+        Row: {
+          article_id: string | null
+          chunk_index: number
+          chunk_size: number | null
+          chunk_text: string
+          citation_info: Json
+          context_after: string | null
+          context_before: string | null
+          created_at: string | null
+          document_id: string | null
+          id: string
+          ip_types: string[] | null
+          keywords: string[] | null
+          language: string | null
+          office_id: string | null
+        }
+        Insert: {
+          article_id?: string | null
+          chunk_index: number
+          chunk_size?: number | null
+          chunk_text: string
+          citation_info: Json
+          context_after?: string | null
+          context_before?: string | null
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          ip_types?: string[] | null
+          keywords?: string[] | null
+          language?: string | null
+          office_id?: string | null
+        }
+        Update: {
+          article_id?: string | null
+          chunk_index?: number
+          chunk_size?: number | null
+          chunk_text?: string
+          citation_info?: Json
+          context_after?: string | null
+          context_before?: string | null
+          created_at?: string | null
+          document_id?: string | null
+          id?: string
+          ip_types?: string[] | null
+          keywords?: string[] | null
+          language?: string | null
+          office_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_chunks_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_chunks_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_chunks_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_legal_document_versions: {
+        Row: {
+          change_date: string
+          change_description: string | null
+          change_type: string
+          content_snapshot: string | null
+          created_at: string | null
+          diff_from_previous: Json | null
+          document_id: string
+          file_hash: string | null
+          file_path: string | null
+          id: string
+          is_current: boolean | null
+          superseded_at: string | null
+          superseded_by: string | null
+          version_label: string | null
+          version_number: number
+        }
+        Insert: {
+          change_date: string
+          change_description?: string | null
+          change_type: string
+          content_snapshot?: string | null
+          created_at?: string | null
+          diff_from_previous?: Json | null
+          document_id: string
+          file_hash?: string | null
+          file_path?: string | null
+          id?: string
+          is_current?: boolean | null
+          superseded_at?: string | null
+          superseded_by?: string | null
+          version_label?: string | null
+          version_number: number
+        }
+        Update: {
+          change_date?: string
+          change_description?: string | null
+          change_type?: string
+          content_snapshot?: string | null
+          created_at?: string | null
+          diff_from_previous?: Json | null
+          document_id?: string
+          file_hash?: string | null
+          file_path?: string | null
+          id?: string
+          is_current?: boolean | null
+          superseded_at?: string | null
+          superseded_by?: string | null
+          version_label?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_document_versions_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_document_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_legal_documents: {
+        Row: {
+          applies_to_foreigners: boolean | null
+          applies_to_nationals: boolean | null
+          chunk_count: number | null
+          content_full: string | null
+          content_summary: string | null
+          content_url: string | null
+          created_at: string | null
+          created_by: string | null
+          document_level: string
+          document_type: string
+          effective_date: string
+          expiry_date: string | null
+          file_hash: string | null
+          file_path: string | null
+          file_size_bytes: number | null
+          id: string
+          indexed_at: string | null
+          ip_types: string[] | null
+          is_indexed: boolean | null
+          language_original: string
+          languages_available: string[] | null
+          last_verified_at: string | null
+          last_verified_by: string | null
+          notes: string | null
+          office_id: string
+          official_number: string | null
+          processing_error: string | null
+          processing_status: string | null
+          publication_date: string | null
+          source_reliability: string
+          source_type: string
+          source_url: string | null
+          status: string
+          tags: string[] | null
+          title: string
+          title_english: string | null
+          title_original: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          applies_to_foreigners?: boolean | null
+          applies_to_nationals?: boolean | null
+          chunk_count?: number | null
+          content_full?: string | null
+          content_summary?: string | null
+          content_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_level: string
+          document_type: string
+          effective_date: string
+          expiry_date?: string | null
+          file_hash?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          indexed_at?: string | null
+          ip_types?: string[] | null
+          is_indexed?: boolean | null
+          language_original: string
+          languages_available?: string[] | null
+          last_verified_at?: string | null
+          last_verified_by?: string | null
+          notes?: string | null
+          office_id: string
+          official_number?: string | null
+          processing_error?: string | null
+          processing_status?: string | null
+          publication_date?: string | null
+          source_reliability?: string
+          source_type: string
+          source_url?: string | null
+          status?: string
+          tags?: string[] | null
+          title: string
+          title_english?: string | null
+          title_original?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          applies_to_foreigners?: boolean | null
+          applies_to_nationals?: boolean | null
+          chunk_count?: number | null
+          content_full?: string | null
+          content_summary?: string | null
+          content_url?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_level?: string
+          document_type?: string
+          effective_date?: string
+          expiry_date?: string | null
+          file_hash?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          id?: string
+          indexed_at?: string | null
+          ip_types?: string[] | null
+          is_indexed?: boolean | null
+          language_original?: string
+          languages_available?: string[] | null
+          last_verified_at?: string | null
+          last_verified_by?: string | null
+          notes?: string | null
+          office_id?: string
+          official_number?: string | null
+          processing_error?: string | null
+          processing_status?: string | null
+          publication_date?: string | null
+          source_reliability?: string
+          source_type?: string
+          source_url?: string | null
+          status?: string
+          tags?: string[] | null
+          title?: string
+          title_english?: string | null
+          title_original?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_documents_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_documents_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_legal_ingestion_jobs: {
+        Row: {
+          channel: string
+          completed_at: string | null
+          config: Json | null
+          created_at: string | null
+          created_by: string | null
+          documents_found: number | null
+          documents_imported: number | null
+          documents_skipped: number | null
+          documents_updated: number | null
+          errors: Json | null
+          id: string
+          office_id: string | null
+          source_url: string | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          channel: string
+          completed_at?: string | null
+          config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          documents_found?: number | null
+          documents_imported?: number | null
+          documents_skipped?: number | null
+          documents_updated?: number | null
+          errors?: Json | null
+          id?: string
+          office_id?: string | null
+          source_url?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          channel?: string
+          completed_at?: string | null
+          config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          documents_found?: number | null
+          documents_imported?: number | null
+          documents_skipped?: number | null
+          documents_updated?: number | null
+          errors?: Json | null
+          id?: string
+          office_id?: string | null
+          source_url?: string | null
+          started_at?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_ingestion_jobs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_ingestion_jobs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_legal_relations: {
+        Row: {
+          created_at: string | null
+          effective_date: string | null
+          id: string
+          notes: string | null
+          relation_type: string
+          source_article_id: string | null
+          source_document_id: string
+          target_article_id: string | null
+          target_document_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          effective_date?: string | null
+          id?: string
+          notes?: string | null
+          relation_type: string
+          source_article_id?: string | null
+          source_document_id: string
+          target_article_id?: string | null
+          target_document_id: string
+        }
+        Update: {
+          created_at?: string | null
+          effective_date?: string | null
+          id?: string
+          notes?: string | null
+          relation_type?: string
+          source_article_id?: string | null
+          source_document_id?: string
+          target_article_id?: string | null
+          target_document_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_legal_relations_source_article_id_fkey"
+            columns: ["source_article_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_relations_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_relations_target_article_id_fkey"
+            columns: ["target_article_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_legal_relations_target_document_id_fkey"
+            columns: ["target_document_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ipo_office_contacts: {
         Row: {
           contact_type: string
@@ -4987,6 +5626,105 @@ export type Database = {
           },
           {
             foreignKeyName: "ipo_official_fees_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_official_forms: {
+        Row: {
+          created_at: string | null
+          effective_date: string | null
+          efiling_format: string | null
+          efiling_schema: string | null
+          efiling_url: string | null
+          expiry_date: string | null
+          file_format: string | null
+          file_path_fillable: string | null
+          file_path_original: string | null
+          form_code: string | null
+          form_name: string
+          form_name_english: string | null
+          form_type: string
+          id: string
+          ip_type: string | null
+          language: string
+          last_verified_at: string | null
+          office_id: string
+          requires_legalization: boolean | null
+          requires_notarization: boolean | null
+          requires_signature: boolean | null
+          status: string | null
+          supports_efiling: boolean | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          effective_date?: string | null
+          efiling_format?: string | null
+          efiling_schema?: string | null
+          efiling_url?: string | null
+          expiry_date?: string | null
+          file_format?: string | null
+          file_path_fillable?: string | null
+          file_path_original?: string | null
+          form_code?: string | null
+          form_name: string
+          form_name_english?: string | null
+          form_type: string
+          id?: string
+          ip_type?: string | null
+          language: string
+          last_verified_at?: string | null
+          office_id: string
+          requires_legalization?: boolean | null
+          requires_notarization?: boolean | null
+          requires_signature?: boolean | null
+          status?: string | null
+          supports_efiling?: boolean | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          effective_date?: string | null
+          efiling_format?: string | null
+          efiling_schema?: string | null
+          efiling_url?: string | null
+          expiry_date?: string | null
+          file_format?: string | null
+          file_path_fillable?: string | null
+          file_path_original?: string | null
+          form_code?: string | null
+          form_name?: string
+          form_name_english?: string | null
+          form_type?: string
+          id?: string
+          ip_type?: string | null
+          language?: string
+          last_verified_at?: string | null
+          office_id?: string
+          requires_legalization?: boolean | null
+          requires_notarization?: boolean | null
+          requires_signature?: boolean | null
+          status?: string | null
+          supports_efiling?: boolean | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_official_forms_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_official_forms_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "ipo_offices"
@@ -5222,6 +5960,72 @@ export type Database = {
           },
           {
             foreignKeyName: "ipo_sync_logs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_treaty_status: {
+        Row: {
+          created_at: string | null
+          entry_into_force_date: string | null
+          has_reservations: boolean | null
+          id: string
+          last_verified_at: string | null
+          office_id: string
+          ratification_date: string | null
+          reservations_text: string | null
+          source_url: string | null
+          status: string
+          treaty_code: string
+          treaty_name: string
+          updated_at: string | null
+          withdrawal_date: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          entry_into_force_date?: string | null
+          has_reservations?: boolean | null
+          id?: string
+          last_verified_at?: string | null
+          office_id: string
+          ratification_date?: string | null
+          reservations_text?: string | null
+          source_url?: string | null
+          status: string
+          treaty_code: string
+          treaty_name: string
+          updated_at?: string | null
+          withdrawal_date?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          entry_into_force_date?: string | null
+          has_reservations?: boolean | null
+          id?: string
+          last_verified_at?: string | null
+          office_id?: string
+          ratification_date?: string | null
+          reservations_text?: string | null
+          source_url?: string | null
+          status?: string
+          treaty_code?: string
+          treaty_name?: string
+          updated_at?: string | null
+          withdrawal_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_treaty_status_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_treaty_status_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "ipo_offices"
