@@ -185,34 +185,42 @@ export function TaskDialog({
             </div>
             <div className="space-y-2">
               <Label>Fallback 1</Label>
-              <Select 
-                value={form.fallback_1_model_id} 
-                onValueChange={(v) => setForm({ ...form, fallback_1_model_id: v })}
+              <Select
+                value={form.fallback_1_model_id || "__none__"}
+                onValueChange={(v) =>
+                  setForm({ ...form, fallback_1_model_id: v === "__none__" ? "" : v })
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
+                  <SelectValue placeholder="Ninguno" />
                 </SelectTrigger>
                 <SelectContent className="bg-background">
-                  <SelectItem value="">Ninguno</SelectItem>
-                  {activeModels.map(m => (
-                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                  <SelectItem value="__none__">Ninguno</SelectItem>
+                  {activeModels.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
             </div>
             <div className="space-y-2">
               <Label>Fallback 2</Label>
-              <Select 
-                value={form.fallback_2_model_id} 
-                onValueChange={(v) => setForm({ ...form, fallback_2_model_id: v })}
+              <Select
+                value={form.fallback_2_model_id || "__none__"}
+                onValueChange={(v) =>
+                  setForm({ ...form, fallback_2_model_id: v === "__none__" ? "" : v })
+                }
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Seleccionar" />
+                  <SelectValue placeholder="Ninguno" />
                 </SelectTrigger>
                 <SelectContent className="bg-background">
-                  <SelectItem value="">Ninguno</SelectItem>
-                  {activeModels.map(m => (
-                    <SelectItem key={m.id} value={m.id}>{m.name}</SelectItem>
+                  <SelectItem value="__none__">Ninguno</SelectItem>
+                  {activeModels.map((m) => (
+                    <SelectItem key={m.id} value={m.id}>
+                      {m.name}
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
