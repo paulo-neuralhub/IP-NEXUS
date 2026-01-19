@@ -355,7 +355,12 @@ export async function compareTrademarks(
 ): Promise<TrademarkComparison> {
   // Run analyses (phonetic is sync, others can be parallel)
   const phonetic = analyzePhonetic(markA.text, markB.text);
-  const goods = analyzeGoods(markA.goods, markA.classes, markB.goods, markB.classes);
+  const goods = analyzeGoods(
+    Array.isArray(markA.goods) ? markA.goods.join(', ') : markA.goods,
+    markA.classes,
+    Array.isArray(markB.goods) ? markB.goods.join(', ') : markB.goods,
+    markB.classes
+  );
   
   // Run async analyses in parallel
   const [conceptual, visual] = await Promise.all([
