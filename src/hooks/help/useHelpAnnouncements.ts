@@ -78,8 +78,33 @@ export function useMarkAnnouncementRead() {
 }
 
 export function useUnreadAnnouncementCount() {
-  const { data: announcements } = useHelpAnnouncements({ unreadOnly: true });
-  return announcements?.length || 0;
+  return useQuery({
+    queryKey: ['help-announcements-unread-count'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return 0;
+
+      const now = new Date().toISOString();
+      
+      const { data: announcements, error: annError } = await supabase
+        .from('help_announcements')
+        .select('id')
+        .eq('is_published', true)
+        .lte('publish_at', now);
+
+      if (annError) throw annError;
+
+      const { data: reads } = await supabase
+        .from('help_announcement_reads')
+        .select('announcement_id')
+        .eq('user_id', user.id);
+
+      const readIds = new Set(reads?.map(r => r.announcement_id) || []);
+      const unreadCount = (announcements || []).filter(a => !readIds.has(a.id)).length;
+      
+      return unreadCount;
+    },
+  });
 }
 
 // ADMIN

@@ -97,7 +97,10 @@ export function useHelpArticle(slug: string) {
   });
 }
 
-export function useSearchHelpArticles(query: string) {
+export function useSearchHelpArticles(
+  query: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['help-search', query],
     queryFn: async () => {
@@ -105,20 +108,23 @@ export function useSearchHelpArticles(query: string) {
 
       const { data, error } = await supabase
         .from('help_articles')
-        .select('id, slug, title, summary, article_type, video_url, module')
+        .select('*, category:help_categories(*)')
         .eq('is_published', true)
         .textSearch('search_vector', query, { type: 'websearch', config: 'spanish' })
         .order('view_count', { ascending: false })
         .limit(10);
 
       if (error) throw error;
-      return data as Partial<HelpArticle>[];
+      return data as HelpArticle[];
     },
-    enabled: query.length >= 2,
+    enabled: options?.enabled !== false && query.length >= 2,
   });
 }
 
-export function useRelatedArticles(articleId: string, limit = 5) {
+export function useRelatedArticles(
+  articleId: string,
+  options?: { enabled?: boolean }
+) {
   return useQuery({
     queryKey: ['help-related', articleId],
     queryFn: async () => {
@@ -133,16 +139,16 @@ export function useRelatedArticles(articleId: string, limit = 5) {
 
       const { data, error } = await supabase
         .from('help_articles')
-        .select('id, slug, title, summary')
+        .select('*, category:help_categories(*)')
         .eq('is_published', true)
         .neq('id', articleId)
         .or(`category_id.eq.${article.category_id},module.eq.${article.module}`)
-        .limit(limit);
+        .limit(5);
 
       if (error) throw error;
-      return data as Partial<HelpArticle>[];
+      return data as HelpArticle[];
     },
-    enabled: !!articleId,
+    enabled: options?.enabled !== false && !!articleId,
   });
 }
 
