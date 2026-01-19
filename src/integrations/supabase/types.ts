@@ -5873,6 +5873,54 @@ export type Database = {
           },
         ]
       }
+      importable_fields: {
+        Row: {
+          allowed_values: string[] | null
+          available_transforms: string[] | null
+          data_type: string
+          description: string | null
+          display_order: number | null
+          entity_type: string
+          example_value: string | null
+          field_label: string
+          field_name: string
+          id: string
+          is_required: boolean | null
+          is_unique: boolean | null
+          max_length: number | null
+        }
+        Insert: {
+          allowed_values?: string[] | null
+          available_transforms?: string[] | null
+          data_type: string
+          description?: string | null
+          display_order?: number | null
+          entity_type: string
+          example_value?: string | null
+          field_label: string
+          field_name: string
+          id?: string
+          is_required?: boolean | null
+          is_unique?: boolean | null
+          max_length?: number | null
+        }
+        Update: {
+          allowed_values?: string[] | null
+          available_transforms?: string[] | null
+          data_type?: string
+          description?: string | null
+          display_order?: number | null
+          entity_type?: string
+          example_value?: string | null
+          field_label?: string
+          field_name?: string
+          id?: string
+          is_required?: boolean | null
+          is_unique?: boolean | null
+          max_length?: number | null
+        }
+        Relationships: []
+      }
       imports: {
         Row: {
           completed_at: string | null
