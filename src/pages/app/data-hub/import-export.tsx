@@ -42,17 +42,17 @@ import {
 } from '@/components/ui/select';
 
 const ENTITY_TYPES = [
-  { value: 'assets', label: 'Activos / Expedientes' },
-  { value: 'contacts', label: 'Contactos' },
-  { value: 'deadlines', label: 'Plazos / Vencimientos' },
-  { value: 'costs', label: 'Costes' }
+  { value: 'asset', label: 'Activos / Expedientes' },
+  { value: 'contact', label: 'Contactos' },
+  { value: 'deadline', label: 'Plazos / Vencimientos' },
+  { value: 'cost', label: 'Costes' }
 ];
 
 export default function ImportExportPage() {
   const [importWizardOpen, setImportWizardOpen] = useState(false);
   const [exportWizardOpen, setExportWizardOpen] = useState(false);
   const [migrationWizardOpen, setMigrationWizardOpen] = useState(false);
-  const [selectedEntityType, setSelectedEntityType] = useState('assets');
+  const [selectedEntityType, setSelectedEntityType] = useState('asset');
 
   const { data: importJobs, isLoading: loadingImports } = useImportJobsV2();
   const { data: exportJobs, isLoading: loadingExports } = useExportJobs();
@@ -61,11 +61,11 @@ export default function ImportExportPage() {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <Badge className="bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400">
+        return <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
           <CheckCircle2 className="h-3 w-3 mr-1" />Completado
         </Badge>;
       case 'processing':
-        return <Badge className="bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400">
+        return <Badge className="bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400">
           <Loader2 className="h-3 w-3 mr-1 animate-spin" />Procesando
         </Badge>;
       case 'failed':
@@ -77,7 +77,7 @@ export default function ImportExportPage() {
           <Clock className="h-3 w-3 mr-1" />Pendiente
         </Badge>;
       case 'completed_with_errors':
-        return <Badge className="bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400">
+        return <Badge className="bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
           Parcial
         </Badge>;
       default:
@@ -120,8 +120,8 @@ export default function ImportExportPage() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setExportWizardOpen(true)}>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <Download className="h-6 w-6 text-green-600" />
+            <div className="h-12 w-12 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+              <Download className="h-6 w-6 text-emerald-600" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold">Exportar datos</h3>
@@ -133,8 +133,8 @@ export default function ImportExportPage() {
 
         <Card className="cursor-pointer hover:shadow-md transition-shadow" onClick={() => setMigrationWizardOpen(true)}>
           <CardContent className="flex items-center gap-4 p-6">
-            <div className="h-12 w-12 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center">
-              <Database className="h-6 w-6 text-purple-600" />
+            <div className="h-12 w-12 rounded-full bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+              <Database className="h-6 w-6 text-violet-600" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold">Migrar sistema</h3>
@@ -224,7 +224,7 @@ export default function ImportExportPage() {
                         <div className="flex items-center gap-4">
                           <FileText className="h-8 w-8 text-muted-foreground" />
                           <div>
-                            <p className="font-medium">{job.source_name || job.file_name}</p>
+                            <p className="font-medium">{job.source_file_name || job.file_name}</p>
                             <p className="text-sm text-muted-foreground">
                               {job.entity_type} • {job.total_rows} registros
                             </p>
@@ -302,7 +302,7 @@ export default function ImportExportPage() {
                         <div className="flex items-center gap-4">
                           <Download className="h-8 w-8 text-muted-foreground" />
                           <div>
-                            <p className="font-medium">{job.entity_type}.{job.export_format}</p>
+                            <p className="font-medium">{job.entity_type}.{job.target_format}</p>
                             <p className="text-sm text-muted-foreground">
                               {job.total_records || 0} registros
                             </p>
@@ -368,9 +368,9 @@ export default function ImportExportPage() {
                         <div className="flex items-center gap-4">
                           <RefreshCw className="h-8 w-8 text-muted-foreground" />
                           <div>
-                            <p className="font-medium">Migración #{job.id.slice(0, 8)}</p>
+                            <p className="font-medium">Migración #{String(job.id).slice(0, 8)}</p>
                             <p className="text-sm text-muted-foreground">
-                              {job.total_records_processed || 0} registros procesados
+                              {job.stats ? (Object.values(job.stats as any) as any[]).reduce((acc: number, s: any) => acc + (s.processed || 0), 0) : 0} registros procesados
                             </p>
                           </div>
                         </div>

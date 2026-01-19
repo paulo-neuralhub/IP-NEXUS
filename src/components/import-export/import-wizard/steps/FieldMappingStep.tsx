@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowRight, Sparkles, AlertCircle } from 'lucide-react';
 import { useImportableFields } from '@/hooks/import-export';
-import type { FieldMapping } from '@/types/import-export';
+import type { FieldMapping, EntityType } from '@/types/import-export';
 
 interface FieldMappingStepProps {
   entityType: string;
@@ -25,7 +25,7 @@ export function FieldMappingStep({
   onMappingsChange,
   templateId
 }: FieldMappingStepProps) {
-  const { data: targetFields, isLoading } = useImportableFields(entityType);
+  const { data: targetFields, isLoading } = useImportableFields(entityType as EntityType);
 
   // Auto-suggest mappings based on header names
   useEffect(() => {
@@ -36,26 +36,26 @@ export function FieldMappingStep({
       const normalizedHeader = header.toLowerCase().replace(/[_\s-]/g, '');
       const matchedField = targetFields.find(field => {
         const normalizedField = field.field_name.toLowerCase().replace(/[_\s-]/g, '');
-        const normalizedLabel = (field.display_name || '').toLowerCase().replace(/[_\s-]/g, '');
+        const normalizedLabel = (field.field_label || '').toLowerCase().replace(/[_\s-]/g, '');
         return normalizedField === normalizedHeader || normalizedLabel === normalizedHeader;
       });
 
       return {
-        sourceField: header,
+        sourceColumn: header,
         targetField: matchedField?.field_name || '',
-        dataType: matchedField?.data_type,
-        isRequired: matchedField?.is_required || false,
-        defaultValue: matchedField?.default_value || undefined
+        transform: undefined,
+        required: matchedField?.is_required || false,
+        defaultValue: undefined
       };
     });
 
     onMappingsChange(autoMappings);
   }, [sourceHeaders, targetFields, mappings.length, onMappingsChange]);
 
-  const handleMappingChange = (sourceField: string, updates: Partial<FieldMapping>) => {
+  const handleMappingChange = (sourceColumn: string, updates: Partial<FieldMapping>) => {
     onMappingsChange(
       mappings.map(m => 
-        m.sourceField === sourceField 
+        m.sourceColumn === sourceColumn 
           ? { ...m, ...updates }
           : m
       )
@@ -99,7 +99,7 @@ export function FieldMappingStep({
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Faltan campos requeridos: {requiredMissing.map(f => f.display_name || f.field_name).join(', ')}
+            Faltan campos requeridos: {requiredMissing.map(f => f.field_label || f.field_name).join(', ')}
           </AlertDescription>
         </Alert>
       )}
@@ -120,14 +120,14 @@ export function FieldMappingStep({
           
           return (
             <div 
-              key={mapping.sourceField} 
+              key={mapping.sourceColumn} 
               className={`grid grid-cols-12 gap-4 px-4 py-3 items-center ${
-                mapping.isRequired && !mapping.targetField ? 'bg-destructive/5' : ''
+                mapping.required && !mapping.targetField ? 'bg-destructive/5' : ''
               }`}
             >
               <div className="col-span-3">
                 <code className="text-sm bg-muted px-2 py-1 rounded">
-                  {mapping.sourceField}
+                  {mapping.sourceColumn}
                 </code>
               </div>
               
@@ -140,10 +140,9 @@ export function FieldMappingStep({
                   value={mapping.targetField || 'none'}
                   onValueChange={(value) => {
                     const field = targetFields?.find(f => f.field_name === value);
-                    handleMappingChange(mapping.sourceField, {
+                    handleMappingChange(mapping.sourceColumn, {
                       targetField: value === 'none' ? '' : value,
-                      dataType: field?.data_type,
-                      isRequired: field?.is_required || false
+                      required: field?.is_required || false
                     });
                   }}
                 >
@@ -154,7 +153,7 @@ export function FieldMappingStep({
                     <SelectItem value="none">— No importar —</SelectItem>
                     {targetFields?.map(field => (
                       <SelectItem key={field.field_name} value={field.field_name}>
-                        {field.display_name || field.field_name}
+                        {field.field_label || field.field_name}
                         {field.is_required && <span className="text-destructive ml-1">*</span>}
                       </SelectItem>
                     ))}
@@ -175,7 +174,7 @@ export function FieldMappingStep({
                   <Input
                     placeholder="Valor por defecto"
                     value={mapping.defaultValue || ''}
-                    onChange={(e) => handleMappingChange(mapping.sourceField, {
+                    onChange={(e) => handleMappingChange(mapping.sourceColumn, {
                       defaultValue: e.target.value || undefined
                     })}
                     className="h-8 text-sm"
@@ -186,9 +185,9 @@ export function FieldMappingStep({
               <div className="col-span-1 flex justify-center">
                 {mapping.targetField && (
                   <Switch
-                    checked={mapping.isRequired}
-                    onCheckedChange={(checked) => handleMappingChange(mapping.sourceField, {
-                      isRequired: checked
+                    checked={mapping.required || false}
+                    onCheckedChange={(checked) => handleMappingChange(mapping.sourceColumn, {
+                      required: checked
                     })}
                   />
                 )}

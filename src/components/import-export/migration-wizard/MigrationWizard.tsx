@@ -4,15 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Database, 
   Globe, 
-  Key, 
   Shield, 
   Loader2, 
   CheckCircle2, 
@@ -23,8 +20,6 @@ import {
   Server,
   FileCode
 } from 'lucide-react';
-import { useOrganization } from '@/contexts/organization-context';
-import { useMigrationConfigs, useMigrationJobs } from '@/hooks/import-export';
 
 interface MigrationWizardProps {
   open: boolean;
@@ -61,10 +56,6 @@ const STEPS: { id: MigrationStep; label: string }[] = [
 ];
 
 export function MigrationWizard({ open, onOpenChange }: MigrationWizardProps) {
-  const { currentOrganization } = useOrganization();
-  const { createConfig } = useMigrationConfigs();
-  const { startMigration } = useMigrationJobs();
-  
   const [currentStep, setCurrentStep] = useState<MigrationStep>('source');
   const [selectedSource, setSelectedSource] = useState<string>('');
   const [connectionType, setConnectionType] = useState<string>('api');
@@ -123,8 +114,6 @@ export function MigrationWizard({ open, onOpenChange }: MigrationWizardProps) {
   };
 
   const handleStartMigration = async () => {
-    if (!currentOrganization) return;
-
     setCurrentStep('migrating');
     
     // Simulate migration progress
@@ -316,7 +305,7 @@ export function MigrationWizard({ open, onOpenChange }: MigrationWizardProps) {
                 </Button>
 
                 {connectionStatus === 'success' && (
-                  <span className="flex items-center gap-1 text-green-600">
+                  <span className="flex items-center gap-1 text-emerald-600">
                     <CheckCircle2 className="h-4 w-4" />
                     Conexión exitosa
                   </span>
@@ -393,7 +382,7 @@ export function MigrationWizard({ open, onOpenChange }: MigrationWizardProps) {
                   </div>
                   <div>
                     <span className="text-muted-foreground">Estado:</span>
-                    <p className="font-medium text-green-600">Conexión verificada</p>
+                    <p className="font-medium text-emerald-600">Conexión verificada</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Entidades a migrar:</span>
@@ -434,8 +423,8 @@ export function MigrationWizard({ open, onOpenChange }: MigrationWizardProps) {
           {/* Step: Complete */}
           {currentStep === 'complete' && (
             <div className="flex flex-col items-center justify-center gap-6 py-8">
-              <div className="h-20 w-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-                <CheckCircle2 className="h-10 w-10 text-green-600" />
+              <div className="h-20 w-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                <CheckCircle2 className="h-10 w-10 text-emerald-600" />
               </div>
               <div className="text-center">
                 <h3 className="text-lg font-semibold">¡Migración completada!</h3>

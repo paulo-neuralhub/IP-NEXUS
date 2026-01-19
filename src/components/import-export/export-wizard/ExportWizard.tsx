@@ -5,7 +5,6 @@ import { Card } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -21,9 +20,10 @@ import {
   Filter
 } from 'lucide-react';
 import { useOrganization } from '@/contexts/organization-context';
-import { useExportJobs } from '@/hooks/import-export';
+import { useCreateExportJob } from '@/hooks/import-export';
 import { ImportExportService } from '@/services/import-export-service';
 import { useImportableFields } from '@/hooks/import-export';
+import type { EntityType } from '@/types/import-export';
 
 interface ExportWizardProps {
   open: boolean;
@@ -42,12 +42,12 @@ const FORMATS: { value: ExportFormat; label: string; icon: React.ElementType }[]
 
 export function ExportWizard({ open, onOpenChange, entityType }: ExportWizardProps) {
   const { currentOrganization } = useOrganization();
-  const { createJob } = useExportJobs();
-  const { data: fields } = useImportableFields(entityType);
+  const createJob = useCreateExportJob();
+  const { data: fields } = useImportableFields(entityType as EntityType);
   
   const [format, setFormat] = useState<ExportFormat>('csv');
   const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
-  const [filters, setFilters] = useState<Record<string, unknown>>({});
+  const [filters] = useState<Record<string, unknown>>({});
   const [isExporting, setIsExporting] = useState(false);
   const [exportResult, setExportResult] = useState<{ url: string; records: number } | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -87,9 +87,9 @@ export function ExportWizard({ open, onOpenChange, entityType }: ExportWizardPro
       // Create export job
       const job = await createJob.mutateAsync({
         organization_id: currentOrganization.id,
-        entity_type: entityType,
+        entity_type: entityType as EntityType,
         export_format: format,
-        columns: selectedColumns,
+        columns: selectedColumns as any,
         filters,
         include_headers: true,
         status: 'pending'
@@ -140,8 +140,8 @@ export function ExportWizard({ open, onOpenChange, entityType }: ExportWizardPro
         {exportResult ? (
           // Success state
           <div className="flex-1 flex flex-col items-center justify-center gap-6 py-8">
-            <div className="h-20 w-20 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <CheckCircle2 className="h-10 w-10 text-green-600" />
+            <div className="h-20 w-20 rounded-full bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+              <CheckCircle2 className="h-10 w-10 text-emerald-600" />
             </div>
             <div className="text-center">
               <h3 className="text-lg font-semibold">Exportación completada</h3>
@@ -231,7 +231,7 @@ export function ExportWizard({ open, onOpenChange, entityType }: ExportWizardPro
                           onCheckedChange={() => toggleColumn(field.field_name)}
                         />
                         <span className="text-sm">
-                          {field.display_name || field.field_name}
+                          {field.field_label || field.field_name}
                         </span>
                       </Label>
                     ))}

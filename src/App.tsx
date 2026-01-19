@@ -30,6 +30,7 @@ import MarketFavorites from "./pages/app/market/favorites";
 import MarketAlerts from "./pages/app/market/alerts";
 import MarketProfile from "./pages/app/market/profile";
 import DataHubPage from "./pages/app/data-hub";
+import ImportExportPage from "./pages/app/data-hub/import-export";
 import GeniusLayout from "./pages/app/genius/GeniusLayout";
 import GeniusChatPage from "./pages/app/genius/chat";
 import GeniusComparatorPage from "./pages/app/genius/comparator";
@@ -163,6 +164,7 @@ const App = () => (
                 <Route path="docket/:id" element={<MatterDetail />} />
                 <Route path="docket/:id/edit" element={<MatterForm />} />
                 <Route path="data-hub" element={<DataHubPage />} />
+                <Route path="data-hub/import-export" element={<ImportExportPage />} />
                 <Route path="spider" element={<SpiderLayout />}>
                   <Route index element={<SpiderDashboard />} />
                   <Route path="results" element={<WatchResultList />} />

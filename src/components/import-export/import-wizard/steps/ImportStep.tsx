@@ -52,8 +52,8 @@ export function ImportStep({
       setPhase('creating_job');
       setProgress(10);
 
-      const { data: job, error: jobError } = await supabase
-        .from('import_jobs_v2' as any)
+      const { data: jobData, error: jobError } = await (supabase as any)
+        .from('import_jobs_v2')
         .insert({
           organization_id: currentOrganization.id,
           entity_type: entityType,
@@ -62,13 +62,15 @@ export function ImportStep({
           file_name: file.name,
           file_size: file.size,
           total_rows: data.length,
-          field_mappings: mappings,
+          field_mappings: mappings as any,
           status: 'pending'
         })
         .select()
         .single();
 
       if (jobError) throw jobError;
+      
+      const job = jobData as any;
       setJobId(job.id);
 
       // Phase 2: Upload file
@@ -90,13 +92,13 @@ export function ImportStep({
         .from('imports')
         .getPublicUrl(filePath);
 
-      await supabase
-        .from('import_jobs_v2' as any)
+      await (supabase as any)
+        .from('import_jobs_v2')
         .update({ 
           file_url: urlData.publicUrl,
           status: 'processing',
           started_at: new Date().toISOString()
-        })
+        } as any)
         .eq('id', job.id);
 
       // Phase 3: Process import
@@ -167,14 +169,14 @@ export function ImportStep({
         <div className="flex flex-col items-center gap-6">
           <div className={`p-4 rounded-full ${
             phase === 'completed' 
-              ? 'bg-green-100 dark:bg-green-900/30' 
+              ? 'bg-emerald-100 dark:bg-emerald-900/30' 
               : phase === 'failed'
                 ? 'bg-destructive/10'
                 : 'bg-primary/10'
           }`}>
             <PhaseIcon className={`h-12 w-12 ${
               phase === 'completed' 
-                ? 'text-green-600' 
+                ? 'text-emerald-600' 
                 : phase === 'failed'
                   ? 'text-destructive'
                   : 'text-primary'
@@ -206,8 +208,8 @@ export function ImportStep({
             <div className="text-2xl font-bold">{stats.processed || data.length}</div>
             <div className="text-sm text-muted-foreground">Total</div>
           </Card>
-          <Card className="p-4 text-center border-green-500/50">
-            <div className="text-2xl font-bold text-green-600">{stats.success}</div>
+          <Card className="p-4 text-center border-emerald-500/50">
+            <div className="text-2xl font-bold text-emerald-600">{stats.success}</div>
             <div className="text-sm text-muted-foreground">Exitosos</div>
           </Card>
           <Card className="p-4 text-center border-destructive/50">

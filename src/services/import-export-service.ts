@@ -1,11 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import type { 
-  ImportJobV2, 
-  ImportRecord, 
-  ExportJob, 
-  MigrationJob,
-  FieldMapping 
-} from '@/types/import-export';
+import type { FieldMapping } from '@/types/import-export';
 
 interface ParsedData {
   headers: string[];
@@ -158,24 +152,24 @@ export class ImportExportService {
       mappings.forEach(mapping => {
         if (!mapping.targetField) return;
         
-        const value = row[mapping.sourceField];
+        const value = row[mapping.sourceColumn];
         
         // Check required fields
-        if (mapping.isRequired && (value === undefined || value === null || value === '')) {
+        if (mapping.required && (value === undefined || value === null || value === '')) {
           errors.push({
             row: index + 1,
-            field: mapping.sourceField,
+            field: mapping.sourceColumn,
             message: `Required field "${mapping.targetField}" is empty`
           });
         }
         
-        // Type validation
-        if (value !== undefined && value !== null && value !== '') {
-          const typeError = this.validateType(value, mapping.dataType || 'text');
+        // Type validation based on transform
+        if (value !== undefined && value !== null && value !== '' && mapping.transform) {
+          const typeError = this.validateTransform(value, mapping.transform);
           if (typeError) {
             errors.push({
               row: index + 1,
-              field: mapping.sourceField,
+              field: mapping.sourceColumn,
               message: typeError
             });
           }
@@ -190,28 +184,16 @@ export class ImportExportService {
     };
   }
   
-  private static validateType(value: unknown, expectedType: string): string | null {
-    switch (expectedType) {
-      case 'number':
+  private static validateTransform(value: unknown, transform: string): string | null {
+    switch (transform) {
+      case 'parse_number':
         if (isNaN(Number(value))) {
           return `Value "${value}" is not a valid number`;
         }
         break;
-      case 'date':
+      case 'parse_date':
         if (isNaN(Date.parse(String(value)))) {
           return `Value "${value}" is not a valid date`;
-        }
-        break;
-      case 'email':
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(String(value))) {
-          return `Value "${value}" is not a valid email`;
-        }
-        break;
-      case 'boolean':
-        const boolValues = ['true', 'false', '1', '0', 'yes', 'no'];
-        if (!boolValues.includes(String(value).toLowerCase())) {
-          return `Value "${value}" is not a valid boolean`;
         }
         break;
     }
@@ -241,12 +223,12 @@ export class ImportExportService {
       const batch = data.slice(start, end);
       
       // Update job progress
-      await supabase
-        .from('import_jobs_v2' as any)
+      await (supabase as any)
+        .from('import_jobs_v2')
         .update({
           processed_rows: start,
           status: 'processing'
-        })
+        } as any)
         .eq('id', jobId);
       
       // Process each row
@@ -258,8 +240,8 @@ export class ImportExportService {
           const transformedData = this.transformRow(row, mappings, entityType);
           
           // Insert into shadow table first
-          const { error: recordError } = await supabase
-            .from('import_records' as any)
+          await (supabase as any)
+            .from('import_records')
             .insert({
               job_id: jobId,
               row_number: rowIndex + 1,
@@ -267,23 +249,19 @@ export class ImportExportService {
               target_data: transformedData,
               status: 'pending',
               organization_id: organizationId
-            });
-          
-          if (recordError) {
-            throw recordError;
-          }
+            } as any);
           
           // Actually insert into target table
           const insertResult = await this.insertEntity(entityType, transformedData, organizationId);
           
           if (insertResult.success) {
             totalSuccess++;
-            await supabase
-              .from('import_records' as any)
+            await (supabase as any)
+              .from('import_records')
               .update({ 
                 status: 'imported',
                 created_entity_id: insertResult.id
-              })
+              } as any)
               .eq('job_id', jobId)
               .eq('row_number', rowIndex + 1);
           } else {
@@ -296,12 +274,12 @@ export class ImportExportService {
             message: error instanceof Error ? error.message : 'Unknown error'
           });
           
-          await supabase
-            .from('import_records' as any)
+          await (supabase as any)
+            .from('import_records')
             .update({ 
               status: 'failed',
               error_message: error instanceof Error ? error.message : 'Unknown error'
-            })
+            } as any)
             .eq('job_id', jobId)
             .eq('row_number', rowIndex + 1);
         }
@@ -309,15 +287,15 @@ export class ImportExportService {
     }
     
     // Update final job status
-    await supabase
-      .from('import_jobs_v2' as any)
+    await (supabase as any)
+      .from('import_jobs_v2')
       .update({
         status: totalFailed === 0 ? 'completed' : 'completed_with_errors',
         processed_rows: data.length,
         success_rows: totalSuccess,
         failed_rows: totalFailed,
         completed_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', jobId);
     
     return {
@@ -339,21 +317,16 @@ export class ImportExportService {
     mappings.forEach(mapping => {
       if (!mapping.targetField) return;
       
-      let value = row[mapping.sourceField];
+      let value = row[mapping.sourceColumn];
       
       // Apply transformation
-      if (mapping.transformRule && value !== undefined && value !== null) {
-        value = this.applyTransform(value, mapping.transformRule);
+      if (mapping.transform && value !== undefined && value !== null) {
+        value = this.applyTransform(value, mapping.transform);
       }
       
       // Apply default value if empty
       if ((value === undefined || value === null || value === '') && mapping.defaultValue) {
         value = mapping.defaultValue;
-      }
-      
-      // Type conversion
-      if (value !== undefined && value !== null && mapping.dataType) {
-        value = this.convertType(value, mapping.dataType);
       }
       
       result[mapping.targetField] = value;
@@ -362,37 +335,22 @@ export class ImportExportService {
     return result;
   }
   
-  private static applyTransform(value: unknown, rule: string): unknown {
+  private static applyTransform(value: unknown, transform: string): unknown {
     const strValue = String(value);
     
-    switch (rule) {
+    switch (transform) {
       case 'uppercase':
         return strValue.toUpperCase();
       case 'lowercase':
         return strValue.toLowerCase();
       case 'trim':
         return strValue.trim();
-      case 'capitalize':
-        return strValue.charAt(0).toUpperCase() + strValue.slice(1).toLowerCase();
-      default:
-        return value;
-    }
-  }
-  
-  private static convertType(value: unknown, dataType: string): unknown {
-    switch (dataType) {
-      case 'number':
-        return Number(value);
-      case 'boolean':
-        const strVal = String(value).toLowerCase();
-        return strVal === 'true' || strVal === '1' || strVal === 'yes';
-      case 'date':
-        return new Date(String(value)).toISOString();
-      case 'array':
-        if (typeof value === 'string') {
-          return value.split(',').map(s => s.trim());
-        }
-        return value;
+      case 'parse_date':
+        return new Date(strValue).toISOString();
+      case 'parse_number':
+        return Number(strValue);
+      case 'split_array':
+        return strValue.split(',').map(s => s.trim());
       default:
         return value;
     }
@@ -420,16 +378,21 @@ export class ImportExportService {
       return { success: false, error: error.message };
     }
     
-    return { success: true, id: result?.id };
+    return { success: true, id: (result as any)?.id };
   }
   
   private static getTableName(entityType: string): string {
     const tableMap: Record<string, string> = {
       'assets': 'matters',
+      'asset': 'matters',
       'contacts': 'contacts',
+      'contact': 'contacts',
       'deadlines': 'matter_deadlines',
+      'deadline': 'matter_deadlines',
       'costs': 'matter_costs',
-      'documents': 'matter_documents'
+      'cost': 'matter_costs',
+      'documents': 'matter_documents',
+      'document': 'matter_documents'
     };
     
     return tableMap[entityType] || entityType;
@@ -477,13 +440,13 @@ export class ImportExportService {
         extension = 'json';
         break;
       case 'xml':
-        content = this.toXml(data as Record<string, unknown>[], entityType);
+        content = this.toXml((data as unknown) as Record<string, unknown>[], entityType);
         contentType = 'application/xml';
         extension = 'xml';
         break;
       case 'csv':
       default:
-        content = this.toCsv(data as Record<string, unknown>[], columns);
+        content = this.toCsv((data as unknown) as Record<string, unknown>[], columns);
         contentType = 'text/csv';
         extension = 'csv';
         break;
@@ -507,15 +470,15 @@ export class ImportExportService {
       .getPublicUrl(filePath);
     
     // Update job
-    await supabase
-      .from('export_jobs' as any)
+    await (supabase as any)
+      .from('export_jobs')
       .update({
         status: 'completed',
         file_url: urlData.publicUrl,
         file_size: content.length,
         total_records: (data as unknown[])?.length || 0,
         completed_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', jobId);
     
     return urlData.publicUrl;
@@ -567,8 +530,8 @@ export class ImportExportService {
   
   static async rollbackImport(jobId: string): Promise<{ success: boolean; rolledBack: number }> {
     // Get all imported records
-    const { data: records, error } = await supabase
-      .from('import_records' as any)
+    const { data: records, error } = await (supabase as any)
+      .from('import_records')
       .select('*')
       .eq('job_id', jobId)
       .eq('status', 'imported');
@@ -580,26 +543,26 @@ export class ImportExportService {
     let rolledBack = 0;
     
     // Delete each created entity
-    for (const record of records || []) {
+    for (const record of (records as any[]) || []) {
       if (record.created_entity_id) {
         // We need to know the entity type from the job
-        const { data: job } = await supabase
-          .from('import_jobs_v2' as any)
+        const { data: job } = await (supabase as any)
+          .from('import_jobs_v2')
           .select('entity_type')
           .eq('id', jobId)
-          .single();
+          .maybeSingle();
         
         if (job) {
-          const tableName = this.getTableName(job.entity_type);
+          const tableName = this.getTableName((job as any).entity_type);
           await supabase
             .from(tableName as any)
             .delete()
             .eq('id', record.created_entity_id);
           
           // Update record status
-          await supabase
-            .from('import_records' as any)
-            .update({ status: 'rolled_back' })
+          await (supabase as any)
+            .from('import_records')
+            .update({ status: 'rolled_back' } as any)
             .eq('id', record.id);
           
           rolledBack++;
@@ -608,12 +571,12 @@ export class ImportExportService {
     }
     
     // Update job status
-    await supabase
-      .from('import_jobs_v2' as any)
+    await (supabase as any)
+      .from('import_jobs_v2')
       .update({
         status: 'rolled_back',
         rollback_at: new Date().toISOString()
-      })
+      } as any)
       .eq('id', jobId);
     
     return { success: true, rolledBack };

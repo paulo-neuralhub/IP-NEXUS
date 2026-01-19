@@ -74,14 +74,14 @@ export function ValidationStep({
           <div className="text-3xl font-bold text-foreground">{data.length}</div>
           <div className="text-sm text-muted-foreground">Total registros</div>
         </Card>
-        <Card className={`p-4 text-center ${errors.length > 0 ? 'border-destructive' : 'border-green-500'}`}>
-          <div className={`text-3xl font-bold ${errors.length > 0 ? 'text-destructive' : 'text-green-600'}`}>
+        <Card className={`p-4 text-center ${errors.length > 0 ? 'border-destructive' : 'border-emerald-500'}`}>
+          <div className={`text-3xl font-bold ${errors.length > 0 ? 'text-destructive' : 'text-emerald-600'}`}>
             {errors.length}
           </div>
           <div className="text-sm text-muted-foreground">Errores</div>
         </Card>
-        <Card className={`p-4 text-center ${warnings.length > 0 ? 'border-yellow-500' : ''}`}>
-          <div className={`text-3xl font-bold ${warnings.length > 0 ? 'text-yellow-600' : 'text-muted-foreground'}`}>
+        <Card className={`p-4 text-center ${warnings.length > 0 ? 'border-amber-500' : ''}`}>
+          <div className={`text-3xl font-bold ${warnings.length > 0 ? 'text-amber-600' : 'text-muted-foreground'}`}>
             {warnings.length}
           </div>
           <div className="text-sm text-muted-foreground">Advertencias</div>
@@ -90,9 +90,9 @@ export function ValidationStep({
 
       {/* Status alert */}
       {isValid ? (
-        <Alert className="border-green-500 bg-green-50 dark:bg-green-950/20">
-          <CheckCircle2 className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-700 dark:text-green-400">
+        <Alert className="border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20">
+          <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          <AlertDescription className="text-emerald-700 dark:text-emerald-400">
             ¡Todos los datos son válidos! Puedes proceder con la importación.
           </AlertDescription>
         </Alert>
@@ -156,7 +156,7 @@ export function ValidationStep({
                   <div className="divide-y">
                     {warnings.map((warning, index) => (
                       <div key={index} className="p-3 flex items-start gap-3">
-                        <Badge variant="outline" className="shrink-0 border-yellow-500 text-yellow-600">
+                        <Badge variant="outline" className="shrink-0 border-amber-500 text-amber-600">
                           Fila {warning.row}
                         </Badge>
                         <div className="flex-1">

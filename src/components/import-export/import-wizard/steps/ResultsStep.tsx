@@ -26,12 +26,16 @@ export function ResultsStep({ result, entityType, onClose }: ResultsStepProps) {
   const getEntityRoute = () => {
     switch (entityType) {
       case 'assets':
+      case 'asset':
         return '/app/docket';
       case 'contacts':
+      case 'contact':
         return '/app/crm/contacts';
       case 'deadlines':
+      case 'deadline':
         return '/app/docket';
       case 'costs':
+      case 'cost':
         return '/app/finance/costs';
       default:
         return '/app/dashboard';
@@ -42,9 +46,9 @@ export function ResultsStep({ result, entityType, onClose }: ResultsStepProps) {
     <div className="space-y-6">
       {/* Success/Failure banner */}
       {result.success ? (
-        <Alert className="border-green-500 bg-green-50 dark:bg-green-950/20">
-          <CheckCircle2 className="h-5 w-5 text-green-600" />
-          <AlertDescription className="text-green-700 dark:text-green-400 text-base">
+        <Alert className="border-emerald-500 bg-emerald-50 dark:bg-emerald-950/20">
+          <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+          <AlertDescription className="text-emerald-700 dark:text-emerald-400 text-base">
             ¡Importación completada exitosamente! Se importaron {result.totalSuccess} registros.
           </AlertDescription>
         </Alert>
@@ -63,8 +67,8 @@ export function ResultsStep({ result, entityType, onClose }: ResultsStepProps) {
           <div className="text-4xl font-bold text-foreground">{result.totalProcessed}</div>
           <div className="text-sm text-muted-foreground mt-1">Procesados</div>
         </Card>
-        <Card className="p-6 text-center border-green-500/50">
-          <div className="text-4xl font-bold text-green-600">{result.totalSuccess}</div>
+        <Card className="p-6 text-center border-emerald-500/50">
+          <div className="text-4xl font-bold text-emerald-600">{result.totalSuccess}</div>
           <div className="text-sm text-muted-foreground mt-1">Exitosos</div>
         </Card>
         <Card className="p-6 text-center border-destructive/50">
@@ -72,7 +76,7 @@ export function ResultsStep({ result, entityType, onClose }: ResultsStepProps) {
           <div className="text-sm text-muted-foreground mt-1">Fallidos</div>
         </Card>
         <Card className="p-6 text-center">
-          <div className={`text-4xl font-bold ${successRate >= 90 ? 'text-green-600' : successRate >= 70 ? 'text-yellow-600' : 'text-destructive'}`}>
+          <div className={`text-4xl font-bold ${successRate >= 90 ? 'text-emerald-600' : successRate >= 70 ? 'text-amber-600' : 'text-destructive'}`}>
             {successRate}%
           </div>
           <div className="text-sm text-muted-foreground mt-1">Tasa de éxito</div>
@@ -86,7 +90,7 @@ export function ResultsStep({ result, entityType, onClose }: ResultsStepProps) {
         </div>
         <div className="h-4 rounded-full overflow-hidden bg-muted flex">
           <div 
-            className="bg-green-500 transition-all"
+            className="bg-emerald-500 transition-all"
             style={{ width: `${(result.totalSuccess / result.totalProcessed) * 100}%` }}
           />
           <div 
@@ -96,7 +100,7 @@ export function ResultsStep({ result, entityType, onClose }: ResultsStepProps) {
         </div>
         <div className="flex justify-between text-xs text-muted-foreground mt-2">
           <span className="flex items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-green-500" />
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
             Exitosos ({result.totalSuccess})
           </span>
           <span className="flex items-center gap-1">
