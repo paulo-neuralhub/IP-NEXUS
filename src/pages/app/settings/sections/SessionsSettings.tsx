@@ -21,7 +21,7 @@ export default function SessionsSettings() {
             <CardTitle>Sesiones Activas</CardTitle>
             <CardDescription>Dispositivos donde has iniciado sesión</CardDescription>
           </div>
-          <Button variant="outline" className="text-destructive" onClick={() => revokeAllMutation.mutate()}>
+          <Button variant="outline" className="text-destructive" onClick={() => revokeAllMutation.mutate(undefined)}>
             Cerrar todas las demás
           </Button>
         </div>

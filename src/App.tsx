@@ -66,6 +66,7 @@ import RenewalSchedulePage from "./pages/app/finance/renewals";
 import CostsPage from "./pages/app/finance/costs";
 import ValuationDashboardPage from "./pages/app/finance/valuation";
 import PortfolioDetailPage from "./pages/app/finance/valuation/[id]";
+import SettingsPage from "./pages/app/settings";
 import TeamSettingsPage from "./pages/app/settings/team";
 import RolesSettingsPage from "./pages/app/settings/roles";
 import TeamsSettingsPage from "./pages/app/settings/teams";
@@ -220,6 +221,7 @@ const App = () => (
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="reports/new" element={<NewReportPage />} />
                 <Route path="help/*" element={<HelpPlaceholder />} />
+                <Route path="settings" element={<SettingsPage />} />
                 <Route path="settings/team" element={<TeamSettingsPage />} />
                 <Route path="settings/roles" element={<RolesSettingsPage />} />
                 <Route path="settings/teams" element={<TeamsSettingsPage />} />
