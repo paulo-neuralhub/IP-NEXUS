@@ -2818,6 +2818,289 @@ export type Database = {
           },
         ]
       }
+      genius_generated_documents: {
+        Row: {
+          citations: Json | null
+          content_html: string | null
+          content_markdown: string | null
+          created_at: string | null
+          disclaimer_accepted: boolean | null
+          disclaimer_accepted_at: string | null
+          document_type: string
+          estimated_fees: Json | null
+          export_formats: Json | null
+          id: string
+          input_data: Json
+          legal_analysis: Json | null
+          organization_id: string
+          risk_assessment: Json | null
+          title: string | null
+          tone: string | null
+          trademark_analysis: Json | null
+          updated_at: string | null
+          user_approved: boolean | null
+          user_id: string
+          user_notes: string | null
+          verification_status: string | null
+          verification_warnings: Json | null
+          verified_at: string | null
+        }
+        Insert: {
+          citations?: Json | null
+          content_html?: string | null
+          content_markdown?: string | null
+          created_at?: string | null
+          disclaimer_accepted?: boolean | null
+          disclaimer_accepted_at?: string | null
+          document_type: string
+          estimated_fees?: Json | null
+          export_formats?: Json | null
+          id?: string
+          input_data: Json
+          legal_analysis?: Json | null
+          organization_id: string
+          risk_assessment?: Json | null
+          title?: string | null
+          tone?: string | null
+          trademark_analysis?: Json | null
+          updated_at?: string | null
+          user_approved?: boolean | null
+          user_id: string
+          user_notes?: string | null
+          verification_status?: string | null
+          verification_warnings?: Json | null
+          verified_at?: string | null
+        }
+        Update: {
+          citations?: Json | null
+          content_html?: string | null
+          content_markdown?: string | null
+          created_at?: string | null
+          disclaimer_accepted?: boolean | null
+          disclaimer_accepted_at?: string | null
+          document_type?: string
+          estimated_fees?: Json | null
+          export_formats?: Json | null
+          id?: string
+          input_data?: Json
+          legal_analysis?: Json | null
+          organization_id?: string
+          risk_assessment?: Json | null
+          title?: string | null
+          tone?: string | null
+          trademark_analysis?: Json | null
+          updated_at?: string | null
+          user_approved?: boolean | null
+          user_id?: string
+          user_notes?: string | null
+          verification_status?: string | null
+          verification_warnings?: Json | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "genius_generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      genius_legal_sources: {
+        Row: {
+          content: string
+          created_at: string | null
+          effective_date: string | null
+          expiry_date: string | null
+          id: string
+          is_current: boolean | null
+          jurisdiction: string
+          language: string | null
+          reference_number: string | null
+          source_type: string
+          title: string
+          updated_at: string | null
+          url: string | null
+          version: number | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          effective_date?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          jurisdiction: string
+          language?: string | null
+          reference_number?: string | null
+          source_type: string
+          title: string
+          updated_at?: string | null
+          url?: string | null
+          version?: number | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          effective_date?: string | null
+          expiry_date?: string | null
+          id?: string
+          is_current?: boolean | null
+          jurisdiction?: string
+          language?: string | null
+          reference_number?: string | null
+          source_type?: string
+          title?: string
+          updated_at?: string | null
+          url?: string | null
+          version?: number | null
+        }
+        Relationships: []
+      }
+      genius_official_fees: {
+        Row: {
+          base_fee: number
+          created_at: string | null
+          currency: string | null
+          effective_from: string
+          effective_until: string | null
+          extension_fee: number | null
+          id: string
+          last_verified_at: string | null
+          office: string
+          per_class_fee: number | null
+          procedure_type: string
+          source_url: string | null
+        }
+        Insert: {
+          base_fee: number
+          created_at?: string | null
+          currency?: string | null
+          effective_from: string
+          effective_until?: string | null
+          extension_fee?: number | null
+          id?: string
+          last_verified_at?: string | null
+          office: string
+          per_class_fee?: number | null
+          procedure_type: string
+          source_url?: string | null
+        }
+        Update: {
+          base_fee?: number
+          created_at?: string | null
+          currency?: string | null
+          effective_from?: string
+          effective_until?: string | null
+          extension_fee?: number | null
+          id?: string
+          last_verified_at?: string | null
+          office?: string
+          per_class_fee?: number | null
+          procedure_type?: string
+          source_url?: string | null
+        }
+        Relationships: []
+      }
+      genius_trademark_comparisons: {
+        Row: {
+          analysis_methodology: Json | null
+          conceptual_analysis: string | null
+          conceptual_details: Json | null
+          conceptual_similarity: number | null
+          created_at: string | null
+          goods_analysis: string | null
+          goods_details: Json | null
+          goods_similarity: number | null
+          id: string
+          mark_a_classes: number[] | null
+          mark_a_goods: string | null
+          mark_a_image_url: string | null
+          mark_a_text: string | null
+          mark_b_classes: number[] | null
+          mark_b_goods: string | null
+          mark_b_image_url: string | null
+          mark_b_text: string | null
+          organization_id: string
+          overall_risk: string | null
+          overall_score: number | null
+          phonetic_analysis: string | null
+          phonetic_details: Json | null
+          phonetic_similarity: number | null
+          recommendation: string | null
+          user_id: string
+          visual_analysis: string | null
+          visual_similarity: number | null
+        }
+        Insert: {
+          analysis_methodology?: Json | null
+          conceptual_analysis?: string | null
+          conceptual_details?: Json | null
+          conceptual_similarity?: number | null
+          created_at?: string | null
+          goods_analysis?: string | null
+          goods_details?: Json | null
+          goods_similarity?: number | null
+          id?: string
+          mark_a_classes?: number[] | null
+          mark_a_goods?: string | null
+          mark_a_image_url?: string | null
+          mark_a_text?: string | null
+          mark_b_classes?: number[] | null
+          mark_b_goods?: string | null
+          mark_b_image_url?: string | null
+          mark_b_text?: string | null
+          organization_id: string
+          overall_risk?: string | null
+          overall_score?: number | null
+          phonetic_analysis?: string | null
+          phonetic_details?: Json | null
+          phonetic_similarity?: number | null
+          recommendation?: string | null
+          user_id: string
+          visual_analysis?: string | null
+          visual_similarity?: number | null
+        }
+        Update: {
+          analysis_methodology?: Json | null
+          conceptual_analysis?: string | null
+          conceptual_details?: Json | null
+          conceptual_similarity?: number | null
+          created_at?: string | null
+          goods_analysis?: string | null
+          goods_details?: Json | null
+          goods_similarity?: number | null
+          id?: string
+          mark_a_classes?: number[] | null
+          mark_a_goods?: string | null
+          mark_a_image_url?: string | null
+          mark_a_text?: string | null
+          mark_b_classes?: number[] | null
+          mark_b_goods?: string | null
+          mark_b_image_url?: string | null
+          mark_b_text?: string | null
+          organization_id?: string
+          overall_risk?: string | null
+          overall_score?: number | null
+          phonetic_analysis?: string | null
+          phonetic_details?: Json | null
+          phonetic_similarity?: number | null
+          recommendation?: string | null
+          user_id?: string
+          visual_analysis?: string | null
+          visual_similarity?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "genius_trademark_comparisons_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       import_files: {
         Row: {
           analysis_result: Json | null
