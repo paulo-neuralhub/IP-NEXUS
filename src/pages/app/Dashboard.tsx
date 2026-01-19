@@ -2,20 +2,34 @@ import { useEffect } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
 import { usePageTitle } from "@/contexts/page-context";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/ui/empty-state";
-import { SpiderWidget } from "@/components/features/spider/spider-widget";
-import { GeniusWidget } from "@/components/features/genius/genius-widget";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useDashboardHome } from "@/hooks/use-dashboard-home";
 import { PLANS } from "@/lib/constants";
-import { FileText, Clock, Bell, Calendar, ChevronRight, Plus } from "lucide-react";
+import { 
+  LayoutDashboard, 
+  Plus, 
+  Sparkles,
+  RefreshCw
+} from "lucide-react";
 import { Link } from "react-router-dom";
+import {
+  QuickStats,
+  CriticalAlertsBanner,
+  PortfolioSummary,
+  RecentActivity,
+  UpcomingDeadlines,
+  AICreditsCard,
+  QuickAccess,
+  ExpiringAssetsWarning,
+} from "@/components/dashboard";
 
 const Dashboard = () => {
   const { profile } = useAuth();
   const { currentOrganization } = useOrganization();
   const { setTitle } = usePageTitle();
+  const { data, isLoading, refetch, isRefetching } = useDashboardHome();
 
   useEffect(() => {
     setTitle("Dashboard");
@@ -24,128 +38,144 @@ const Dashboard = () => {
   const planInfo = PLANS[currentOrganization?.plan as keyof typeof PLANS];
   const firstName = profile?.full_name?.split(" ")[0] || "Usuario";
 
+  if (isLoading) {
+    return <DashboardSkeleton />;
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <p className="text-muted-foreground">No se pudo cargar el dashboard</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Welcome Section */}
-      <div className="bg-background-card rounded-xl p-6 border border-border">
-        <h1 className="text-2xl font-bold text-secondary">
-          👋 Bienvenido, {firstName}
-        </h1>
-        <p className="text-muted-foreground mt-1">
-          {currentOrganization?.name} · Plan{" "}
-          <Badge variant="secondary">{planInfo?.name || "Starter"}</Badge>
-        </p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="bg-background-card rounded-xl p-6 border border-border flex-1 mr-4">
+          <h1 className="text-2xl font-bold text-secondary flex items-center gap-2">
+            <LayoutDashboard className="h-6 w-6" />
+            👋 Bienvenido, {firstName}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {currentOrganization?.name} · Plan{" "}
+            <Badge variant="secondary">{planInfo?.name || "Starter"}</Badge>
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={() => refetch()}
+            disabled={isRefetching}
+          >
+            <RefreshCw className={`h-4 w-4 ${isRefetching ? 'animate-spin' : ''}`} />
+          </Button>
+          <Button variant="outline" asChild>
+            <Link to="/app/spider/watchlists/new">
+              <Plus className="h-4 w-4 mr-2" />
+              Nueva vigilancia
+            </Link>
+          </Button>
+          <Button asChild>
+            <Link to="/app/genius">
+              <Sparkles className="h-4 w-4 mr-2" />
+              Consultar IA
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Expedientes</CardTitle>
-            <FileText className="h-4 w-4 text-module-docket" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">+0 este mes</p>
-          </CardContent>
-        </Card>
+      {/* Critical Alerts */}
+      <CriticalAlertsBanner count={data.criticalAlerts} />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Pendientes</CardTitle>
-            <Clock className="h-4 w-4 text-warning" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <Link to="/app/docket" className="text-xs text-primary hover:underline flex items-center">
-              Ver todos <ChevronRight className="h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
+      {/* Expiring Assets Warning */}
+      <ExpiringAssetsWarning count={data.expiringMatters} />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Alertas Activas</CardTitle>
-            <Bell className="h-4 w-4 text-module-spider" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <Link to="/app/spider" className="text-xs text-primary hover:underline flex items-center">
-              Ver todas <ChevronRight className="h-3 w-3" />
-            </Link>
-          </CardContent>
-        </Card>
+      {/* Quick Stats */}
+      <QuickStats
+        totalMatters={data.totalMatters}
+        activeWatchlists={data.activeWatchlists}
+        pendingDeals={data.pendingDeals}
+        upcomingDeadlines={data.upcomingDeadlines}
+        criticalAlerts={data.criticalAlerts}
+        totalContacts={data.totalContacts}
+      />
 
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Próximos Vencimientos</CardTitle>
-            <Calendar className="h-4 w-4 text-module-finance" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">0</div>
-            <p className="text-xs text-muted-foreground">Próximos 30 días</p>
-          </CardContent>
-        </Card>
-      </div>
+      {/* Main Grid */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Left Column - Portfolio & Activity */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Portfolio Value */}
+          <PortfolioSummary
+            value={data.portfolioValue}
+            change={data.portfolioChange}
+            currency={data.portfolioCurrency}
+            breakdown={data.portfolioBreakdown}
+          />
 
-      {/* Main Content */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left Column */}
-        <div className="space-y-6">
-          {/* Recent Files */}
-          <Card className="border-l-4 border-l-module-docket">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <FileText className="h-5 w-5 text-module-docket" />
-                Expedientes Recientes
-              </CardTitle>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/app/docket">Ver más</Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <EmptyState
-                icon={<FileText className="h-12 w-12" />}
-                title="No hay expedientes aún"
-                description="Crea tu primer expediente para empezar a gestionar tu cartera de PI"
-                actionLabel="Crear Expediente"
-                onAction={() => {}}
-              />
-            </CardContent>
-          </Card>
-
-          {/* Upcoming Deadlines */}
-          <Card className="border-l-4 border-l-module-finance">
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-module-finance" />
-                Próximos Vencimientos
-              </CardTitle>
-              <Button variant="ghost" size="sm" asChild>
-                <Link to="/app/finance">Ver más</Link>
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <EmptyState
-                icon={<Calendar className="h-12 w-12" />}
-                title="Sin vencimientos próximos"
-                description="Los vencimientos de tu cartera aparecerán aquí"
-              />
-            </CardContent>
-          </Card>
+          {/* Recent Activity */}
+          <RecentActivity activities={data.recentActivity} />
         </div>
 
-        {/* Right Column */}
+        {/* Right Column - Deadlines, AI Credits, Quick Access */}
         <div className="space-y-6">
-          {/* Spider Widget */}
-          <SpiderWidget />
+          {/* Upcoming Deadlines */}
+          <UpcomingDeadlines deadlines={data.deadlines} />
 
-          {/* Genius Widget */}
-          <GeniusWidget />
+          {/* AI Credits */}
+          <AICreditsCard
+            used={data.aiCreditsUsed}
+            total={data.aiCreditsTotal}
+          />
+
+          {/* Quick Access */}
+          <QuickAccess />
         </div>
       </div>
     </div>
   );
 };
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6 animate-fade-in">
+      {/* Header skeleton */}
+      <div className="flex items-center justify-between">
+        <div className="bg-background-card rounded-xl p-6 border border-border flex-1 mr-4">
+          <Skeleton className="h-8 w-64 mb-2" />
+          <Skeleton className="h-4 w-48" />
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="h-10 w-10" />
+          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-10 w-32" />
+        </div>
+      </div>
+
+      {/* Stats skeleton */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-24 rounded-xl" />
+        ))}
+      </div>
+
+      {/* Main grid skeleton */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 space-y-6">
+          <Skeleton className="h-64 rounded-xl" />
+          <Skeleton className="h-96 rounded-xl" />
+        </div>
+        <div className="space-y-6">
+          <Skeleton className="h-64 rounded-xl" />
+          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-48 rounded-xl" />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default Dashboard;
