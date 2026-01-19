@@ -2177,6 +2177,357 @@ export type Database = {
         }
         Relationships: []
       }
+      finance_portfolio_assets: {
+        Row: {
+          acquisition_cost: number | null
+          acquisition_currency: string | null
+          acquisition_date: string | null
+          asset_id: string | null
+          asset_type: string
+          created_at: string | null
+          current_value: number | null
+          expiry_date: string | null
+          external_reference: string | null
+          id: string
+          jurisdiction: string | null
+          last_valuation_date: string | null
+          matter_id: string | null
+          nice_classes: number[] | null
+          notes: string | null
+          portfolio_id: string
+          registration_number: string | null
+          registration_office: string | null
+          status: string | null
+          title: string
+          updated_at: string | null
+          valuation_method: string | null
+        }
+        Insert: {
+          acquisition_cost?: number | null
+          acquisition_currency?: string | null
+          acquisition_date?: string | null
+          asset_id?: string | null
+          asset_type: string
+          created_at?: string | null
+          current_value?: number | null
+          expiry_date?: string | null
+          external_reference?: string | null
+          id?: string
+          jurisdiction?: string | null
+          last_valuation_date?: string | null
+          matter_id?: string | null
+          nice_classes?: number[] | null
+          notes?: string | null
+          portfolio_id: string
+          registration_number?: string | null
+          registration_office?: string | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          valuation_method?: string | null
+        }
+        Update: {
+          acquisition_cost?: number | null
+          acquisition_currency?: string | null
+          acquisition_date?: string | null
+          asset_id?: string | null
+          asset_type?: string
+          created_at?: string | null
+          current_value?: number | null
+          expiry_date?: string | null
+          external_reference?: string | null
+          id?: string
+          jurisdiction?: string | null
+          last_valuation_date?: string | null
+          matter_id?: string | null
+          nice_classes?: number[] | null
+          notes?: string | null
+          portfolio_id?: string
+          registration_number?: string | null
+          registration_office?: string | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          valuation_method?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_portfolio_assets_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_portfolio_assets_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "finance_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      finance_portfolios: {
+        Row: {
+          auto_revalue: boolean | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          name: string
+          organization_id: string
+          total_assets: number | null
+          total_cost: number | null
+          total_value: number | null
+          unrealized_gain: number | null
+          updated_at: string | null
+          valuation_frequency: string | null
+        }
+        Insert: {
+          auto_revalue?: boolean | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          total_assets?: number | null
+          total_cost?: number | null
+          total_value?: number | null
+          unrealized_gain?: number | null
+          updated_at?: string | null
+          valuation_frequency?: string | null
+        }
+        Update: {
+          auto_revalue?: boolean | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          total_assets?: number | null
+          total_cost?: number | null
+          total_value?: number | null
+          unrealized_gain?: number | null
+          updated_at?: string | null
+          valuation_frequency?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_portfolios_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_portfolios_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      finance_valuation_parameters: {
+        Row: {
+          asset_type: string | null
+          brand_strength_factor: number | null
+          created_at: string | null
+          development_cost_multiplier: number | null
+          discount_rate: number | null
+          effective_date: string | null
+          growth_rate: number | null
+          id: string
+          jurisdiction: string | null
+          legal_cost_base: number | null
+          legal_strength_factor: number | null
+          maintenance_cost_annual: number | null
+          market_multiplier_high: number | null
+          market_multiplier_low: number | null
+          market_multiplier_mid: number | null
+          market_position_factor: number | null
+          royalty_rate_high: number | null
+          royalty_rate_low: number | null
+          royalty_rate_mid: number | null
+          useful_life_years: number | null
+        }
+        Insert: {
+          asset_type?: string | null
+          brand_strength_factor?: number | null
+          created_at?: string | null
+          development_cost_multiplier?: number | null
+          discount_rate?: number | null
+          effective_date?: string | null
+          growth_rate?: number | null
+          id?: string
+          jurisdiction?: string | null
+          legal_cost_base?: number | null
+          legal_strength_factor?: number | null
+          maintenance_cost_annual?: number | null
+          market_multiplier_high?: number | null
+          market_multiplier_low?: number | null
+          market_multiplier_mid?: number | null
+          market_position_factor?: number | null
+          royalty_rate_high?: number | null
+          royalty_rate_low?: number | null
+          royalty_rate_mid?: number | null
+          useful_life_years?: number | null
+        }
+        Update: {
+          asset_type?: string | null
+          brand_strength_factor?: number | null
+          created_at?: string | null
+          development_cost_multiplier?: number | null
+          discount_rate?: number | null
+          effective_date?: string | null
+          growth_rate?: number | null
+          id?: string
+          jurisdiction?: string | null
+          legal_cost_base?: number | null
+          legal_strength_factor?: number | null
+          maintenance_cost_annual?: number | null
+          market_multiplier_high?: number | null
+          market_multiplier_low?: number | null
+          market_multiplier_mid?: number | null
+          market_position_factor?: number | null
+          royalty_rate_high?: number | null
+          royalty_rate_low?: number | null
+          royalty_rate_mid?: number | null
+          useful_life_years?: number | null
+        }
+        Relationships: []
+      }
+      finance_valuations: {
+        Row: {
+          adjustments: Json | null
+          ai_analysis: string | null
+          ai_confidence: number | null
+          approved_at: string | null
+          approved_by: string | null
+          asset_id: string | null
+          comparable_transactions: Json | null
+          confidence_level: number | null
+          cost_approach_value: number | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          estimated_value: number
+          factors: Json | null
+          id: string
+          income_approach_value: number | null
+          market_approach_value: number | null
+          methods_used: Json | null
+          notes: string | null
+          organization_id: string
+          portfolio_id: string | null
+          primary_method: string | null
+          status: string | null
+          valuation_date: string
+          valuation_type: string
+          value_range_high: number | null
+          value_range_low: number | null
+        }
+        Insert: {
+          adjustments?: Json | null
+          ai_analysis?: string | null
+          ai_confidence?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
+          asset_id?: string | null
+          comparable_transactions?: Json | null
+          confidence_level?: number | null
+          cost_approach_value?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          estimated_value: number
+          factors?: Json | null
+          id?: string
+          income_approach_value?: number | null
+          market_approach_value?: number | null
+          methods_used?: Json | null
+          notes?: string | null
+          organization_id: string
+          portfolio_id?: string | null
+          primary_method?: string | null
+          status?: string | null
+          valuation_date?: string
+          valuation_type: string
+          value_range_high?: number | null
+          value_range_low?: number | null
+        }
+        Update: {
+          adjustments?: Json | null
+          ai_analysis?: string | null
+          ai_confidence?: number | null
+          approved_at?: string | null
+          approved_by?: string | null
+          asset_id?: string | null
+          comparable_transactions?: Json | null
+          confidence_level?: number | null
+          cost_approach_value?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          estimated_value?: number
+          factors?: Json | null
+          id?: string
+          income_approach_value?: number | null
+          market_approach_value?: number | null
+          methods_used?: Json | null
+          notes?: string | null
+          organization_id?: string
+          portfolio_id?: string | null
+          primary_method?: string | null
+          status?: string | null
+          valuation_date?: string
+          valuation_type?: string
+          value_range_high?: number | null
+          value_range_low?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "finance_valuations_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_valuations_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "finance_portfolio_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_valuations_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_valuations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_valuations_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "finance_portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gazette_sources: {
         Row: {
           code: string
