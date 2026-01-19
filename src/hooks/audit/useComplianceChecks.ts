@@ -5,22 +5,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
-import type { 
-  ComplianceCheck, 
-  ComplianceFramework, 
-  ComplianceStatus,
-  ComplianceStats 
-} from '@/types/audit';
+import type { ComplianceCheck, ComplianceStats, ComplianceFramework, ComplianceStatus } from '@/types/audit';
 
 // ==========================================
 // COMPLIANCE CHECKS
 // ==========================================
 
-export function useComplianceChecks(framework?: ComplianceFramework) {
+export function useComplianceChecks(filters?: { 
+  framework?: string; 
+  status?: string;
+  category?: string;
+}) {
   const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['compliance-checks', currentOrganization?.id, framework],
+    queryKey: ['compliance-checks', currentOrganization?.id, filters],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
@@ -29,43 +28,51 @@ export function useComplianceChecks(framework?: ComplianceFramework) {
         .select('*')
         .eq('organization_id', currentOrganization.id);
 
-      if (framework) {
-        query = query.eq('framework', framework);
+      if (filters?.framework) {
+        query = query.eq('framework', filters.framework);
+      }
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+      if (filters?.category) {
+        query = query.eq('category', filters.category);
       }
 
-      const { data, error } = await query.order('check_code');
+      const { data, error } = await query.order('framework', { ascending: true });
 
       if (error) throw error;
-      return data as ComplianceCheck[];
+      return (data || []) as ComplianceCheck[];
     },
     enabled: !!currentOrganization?.id,
   });
 }
 
-export function useComplianceCheck(checkId: string | undefined) {
+export function useComplianceCheck(id: string) {
   return useQuery({
-    queryKey: ['compliance-check', checkId],
+    queryKey: ['compliance-check', id],
     queryFn: async () => {
-      if (!checkId) return null;
-
       const { data, error } = await supabase
         .from('compliance_checks')
         .select('*')
-        .eq('id', checkId)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
       return data as ComplianceCheck;
     },
-    enabled: !!checkId,
+    enabled: !!id,
   });
 }
+
+// ==========================================
+// PENDING REVIEW & NON-COMPLIANT
+// ==========================================
 
 export function usePendingReviewChecks() {
   const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['pending-compliance-checks', currentOrganization?.id],
+    queryKey: ['pending-review-checks', currentOrganization?.id],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
@@ -74,10 +81,10 @@ export function usePendingReviewChecks() {
         .select('*')
         .eq('organization_id', currentOrganization.id)
         .eq('status', 'pending_review')
-        .order('next_review_at');
+        .order('next_review_at', { ascending: true });
 
       if (error) throw error;
-      return data as ComplianceCheck[];
+      return (data || []) as ComplianceCheck[];
     },
     enabled: !!currentOrganization?.id,
   });
@@ -96,17 +103,17 @@ export function useNonCompliantChecks() {
         .select('*')
         .eq('organization_id', currentOrganization.id)
         .in('status', ['non_compliant', 'partial'])
-        .order('remediation_due_date');
+        .order('remediation_due_date', { ascending: true });
 
       if (error) throw error;
-      return data as ComplianceCheck[];
+      return (data || []) as ComplianceCheck[];
     },
     enabled: !!currentOrganization?.id,
   });
 }
 
 // ==========================================
-// MUTATIONS
+// CREATE COMPLIANCE CHECK
 // ==========================================
 
 export function useCreateComplianceCheck() {
@@ -121,8 +128,10 @@ export function useCreateComplianceCheck() {
       check_description?: string;
       category?: string;
       status?: ComplianceStatus;
+      owner_id?: string;
+      next_review_at?: string;
     }) => {
-      if (!currentOrganization?.id) throw new Error('No organization selected');
+      if (!currentOrganization?.id) throw new Error('No organization');
 
       const { data, error } = await supabase
         .from('compliance_checks')
@@ -134,6 +143,8 @@ export function useCreateComplianceCheck() {
           check_description: check.check_description,
           category: check.category,
           status: check.status || 'pending_review',
+          owner_id: check.owner_id,
+          next_review_at: check.next_review_at,
         })
         .select()
         .single();
@@ -143,25 +154,23 @@ export function useCreateComplianceCheck() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['compliance-checks'] });
-      queryClient.invalidateQueries({ queryKey: ['compliance-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['pending-review-checks'] });
     },
   });
 }
+
+// ==========================================
+// UPDATE COMPLIANCE CHECK
+// ==========================================
 
 export function useUpdateComplianceCheck() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      ...updates
-    }: Partial<ComplianceCheck> & { id: string }) => {
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<ComplianceCheck, 'id' | 'organization_id' | 'created_at'>>) => {
       const { data, error } = await supabase
         .from('compliance_checks')
-        .update({
-          ...updates,
-          last_checked_at: new Date().toISOString(),
-        })
+        .update(updates)
         .eq('id', id)
         .select()
         .single();
@@ -169,31 +178,35 @@ export function useUpdateComplianceCheck() {
       if (error) throw error;
       return data as ComplianceCheck;
     },
-    onSuccess: (data) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['compliance-checks'] });
-      queryClient.invalidateQueries({ queryKey: ['compliance-check', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['pending-compliance-checks'] });
+      queryClient.invalidateQueries({ queryKey: ['compliance-check', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['pending-review-checks'] });
       queryClient.invalidateQueries({ queryKey: ['non-compliant-checks'] });
-      queryClient.invalidateQueries({ queryKey: ['compliance-stats'] });
     },
   });
 }
+
+// ==========================================
+// DELETE COMPLIANCE CHECK
+// ==========================================
 
 export function useDeleteComplianceCheck() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (checkId: string) => {
+    mutationFn: async (id: string) => {
       const { error } = await supabase
         .from('compliance_checks')
         .delete()
-        .eq('id', checkId);
+        .eq('id', id);
 
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['compliance-checks'] });
-      queryClient.invalidateQueries({ queryKey: ['compliance-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['pending-review-checks'] });
+      queryClient.invalidateQueries({ queryKey: ['non-compliant-checks'] });
     },
   });
 }
@@ -204,91 +217,45 @@ export function useDeleteComplianceCheck() {
 
 export function useRunComplianceCheck() {
   const queryClient = useQueryClient();
-  const { currentOrganization } = useOrganization();
 
   return useMutation({
-    mutationFn: async (framework: ComplianceFramework) => {
-      if (!currentOrganization?.id) throw new Error('No organization selected');
+    mutationFn: async ({ 
+      id, 
+      status, 
+      notes 
+    }: { 
+      id: string; 
+      status: ComplianceStatus; 
+      notes?: string;
+    }) => {
+      const updateData: Record<string, unknown> = {
+        status,
+        last_checked_at: new Date().toISOString(),
+        evidence_notes: notes,
+      };
 
-      // Get predefined checks for the framework
-      const predefinedChecks = getPredefiedChecks(framework);
+      // Set next review date (e.g., 90 days from now)
+      const nextReview = new Date();
+      nextReview.setDate(nextReview.getDate() + 90);
+      updateData.next_review_at = nextReview.toISOString();
 
-      // Upsert checks
-      const results: ComplianceCheck[] = [];
+      const { data, error } = await supabase
+        .from('compliance_checks')
+        .update(updateData)
+        .eq('id', id)
+        .select()
+        .single();
 
-      for (const check of predefinedChecks) {
-        const { data, error } = await supabase
-          .from('compliance_checks')
-          .upsert({
-            organization_id: currentOrganization.id,
-            framework,
-            check_code: check.code,
-            check_name: check.name,
-            check_description: check.description,
-            category: check.category,
-            status: 'pending_review',
-            last_checked_at: new Date().toISOString(),
-          }, {
-            onConflict: 'organization_id,framework,check_code',
-          })
-          .select()
-          .single();
-
-        if (!error && data) {
-          results.push(data as ComplianceCheck);
-        }
-      }
-
-      return results;
+      if (error) throw error;
+      return data as ComplianceCheck;
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['compliance-checks'] });
-      queryClient.invalidateQueries({ queryKey: ['compliance-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['compliance-check', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['pending-review-checks'] });
+      queryClient.invalidateQueries({ queryKey: ['non-compliant-checks'] });
     },
   });
-}
-
-// Predefined checks per framework
-function getPredefiedChecks(framework: ComplianceFramework) {
-  const checks: Record<ComplianceFramework, Array<{ code: string; name: string; description: string; category: string }>> = {
-    gdpr: [
-      { code: 'GDPR-01', name: 'Consentimiento documentado', description: 'Los usuarios deben proporcionar consentimiento explícito para el tratamiento de datos', category: 'consent' },
-      { code: 'GDPR-02', name: 'Derecho de acceso implementado', description: 'Los usuarios pueden acceder a sus datos personales', category: 'rights' },
-      { code: 'GDPR-03', name: 'Derecho de borrado implementado', description: 'Los usuarios pueden solicitar la eliminación de sus datos', category: 'rights' },
-      { code: 'GDPR-04', name: 'Registro de actividades de tratamiento', description: 'Se mantiene un registro de todas las actividades de tratamiento de datos', category: 'accountability' },
-      { code: 'GDPR-05', name: 'Políticas de retención definidas', description: 'Existen políticas claras de retención y eliminación de datos', category: 'data_management' },
-      { code: 'GDPR-06', name: 'Notificación de brechas', description: 'Existe un proceso para notificar brechas de seguridad en 72 horas', category: 'security' },
-      { code: 'GDPR-07', name: 'DPO designado', description: 'Se ha designado un Delegado de Protección de Datos si es requerido', category: 'organization' },
-    ],
-    soc2: [
-      { code: 'SOC2-CC6.1', name: 'Control de acceso lógico', description: 'Controles de acceso implementados para proteger sistemas', category: 'access' },
-      { code: 'SOC2-CC6.2', name: 'Autenticación de usuarios', description: 'Mecanismos robustos de autenticación implementados', category: 'access' },
-      { code: 'SOC2-CC6.3', name: 'Gestión de credenciales', description: 'Políticas de contraseñas y credenciales establecidas', category: 'access' },
-      { code: 'SOC2-CC7.1', name: 'Detección de incidentes', description: 'Sistemas de detección de incidentes de seguridad', category: 'security' },
-      { code: 'SOC2-CC7.2', name: 'Monitoreo de sistemas', description: 'Monitoreo continuo de la infraestructura', category: 'security' },
-      { code: 'SOC2-CC8.1', name: 'Gestión de cambios', description: 'Proceso formal de gestión de cambios', category: 'operations' },
-    ],
-    iso27001: [
-      { code: 'ISO-A5', name: 'Políticas de seguridad', description: 'Políticas de seguridad de la información documentadas', category: 'policies' },
-      { code: 'ISO-A6', name: 'Organización de la seguridad', description: 'Estructura organizativa de seguridad definida', category: 'organization' },
-      { code: 'ISO-A7', name: 'Seguridad de recursos humanos', description: 'Controles de seguridad para empleados', category: 'hr' },
-      { code: 'ISO-A8', name: 'Gestión de activos', description: 'Inventario y clasificación de activos', category: 'assets' },
-      { code: 'ISO-A9', name: 'Control de acceso', description: 'Políticas y procedimientos de control de acceso', category: 'access' },
-      { code: 'ISO-A12', name: 'Seguridad de operaciones', description: 'Procedimientos operativos de seguridad', category: 'operations' },
-    ],
-    hipaa: [
-      { code: 'HIPAA-164.308', name: 'Salvaguardas administrativas', description: 'Políticas y procedimientos administrativos de seguridad', category: 'administrative' },
-      { code: 'HIPAA-164.310', name: 'Salvaguardas físicas', description: 'Controles de acceso físico implementados', category: 'physical' },
-      { code: 'HIPAA-164.312', name: 'Salvaguardas técnicas', description: 'Controles técnicos de seguridad', category: 'technical' },
-    ],
-    internal: [
-      { code: 'INT-01', name: 'Política de contraseñas', description: 'Política de contraseñas robusta implementada', category: 'access' },
-      { code: 'INT-02', name: 'Backups regulares', description: 'Backups automatizados y verificados', category: 'operations' },
-      { code: 'INT-03', name: 'Actualizaciones de seguridad', description: 'Proceso de aplicación de parches de seguridad', category: 'security' },
-    ],
-  };
-
-  return checks[framework] || [];
 }
 
 // ==========================================
@@ -300,62 +267,53 @@ export function useComplianceStats() {
 
   return useQuery({
     queryKey: ['compliance-stats', currentOrganization?.id],
-    queryFn: async (): Promise<ComplianceStats> => {
-      if (!currentOrganization?.id) {
-        return {
-          total_checks: 0,
-          compliant: 0,
-          non_compliant: 0,
-          partial: 0,
-          pending_review: 0,
-          compliance_percentage: 0,
-          by_framework: {},
-        };
-      }
+    queryFn: async (): Promise<ComplianceStats | null> => {
+      if (!currentOrganization?.id) return null;
 
+      // Get all checks
       const { data: checks } = await supabase
         .from('compliance_checks')
         .select('framework, status')
         .eq('organization_id', currentOrganization.id);
 
-      const stats = {
-        total_checks: checks?.length || 0,
-        compliant: 0,
-        non_compliant: 0,
-        partial: 0,
-        pending_review: 0,
-        by_framework: {} as Record<string, { total: number; compliant: number; percentage: number }>,
-      };
+      const allChecks = checks || [];
+      const total = allChecks.length;
+      const compliant = allChecks.filter(c => c.status === 'compliant').length;
+      const nonCompliant = allChecks.filter(c => c.status === 'non_compliant').length;
+      const partial = allChecks.filter(c => c.status === 'partial').length;
+      const pendingReview = allChecks.filter(c => c.status === 'pending_review').length;
 
-      (checks || []).forEach((check) => {
-        // Count by status
-        if (check.status === 'compliant') stats.compliant++;
-        else if (check.status === 'non_compliant') stats.non_compliant++;
-        else if (check.status === 'partial') stats.partial++;
-        else if (check.status === 'pending_review') stats.pending_review++;
-
-        // Count by framework
-        if (!stats.by_framework[check.framework]) {
-          stats.by_framework[check.framework] = { total: 0, compliant: 0, percentage: 0 };
+      // By framework
+      const byFramework: Record<string, { total: number; compliant: number; percentage: number }> = {};
+      allChecks.forEach((c) => {
+        const fw = c.framework || 'unknown';
+        if (!byFramework[fw]) {
+          byFramework[fw] = { total: 0, compliant: 0, percentage: 0 };
         }
-        stats.by_framework[check.framework].total++;
-        if (check.status === 'compliant') {
-          stats.by_framework[check.framework].compliant++;
+        byFramework[fw].total++;
+        if (c.status === 'compliant') {
+          byFramework[fw].compliant++;
         }
       });
 
       // Calculate percentages
-      Object.keys(stats.by_framework).forEach((framework) => {
-        const fw = stats.by_framework[framework];
-        fw.percentage = fw.total > 0 ? Math.round((fw.compliant / fw.total) * 100) : 0;
+      Object.keys(byFramework).forEach((fw) => {
+        byFramework[fw].percentage = byFramework[fw].total > 0
+          ? Math.round((byFramework[fw].compliant / byFramework[fw].total) * 100)
+          : 0;
       });
 
-      const applicableChecks = stats.total_checks - (checks?.filter(c => c.status === 'not_applicable').length || 0);
-      stats.compliance_percentage = applicableChecks > 0 
-        ? Math.round((stats.compliant / applicableChecks) * 100) 
-        : 0;
+      const compliancePercentage = total > 0 ? Math.round((compliant / total) * 100) : 0;
 
-      return stats;
+      return {
+        total_checks: total,
+        compliant,
+        non_compliant: nonCompliant,
+        partial,
+        pending_review: pendingReview,
+        compliance_percentage: compliancePercentage,
+        by_framework: byFramework,
+      };
     },
     enabled: !!currentOrganization?.id,
   });

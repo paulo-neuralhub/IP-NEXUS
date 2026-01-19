@@ -2,98 +2,48 @@
 // IP-NEXUS - AUDIT & COMPLIANCE TYPES
 // ============================================================
 
+import type { Json } from '@/integrations/supabase/types';
+
 // ==========================================
-// AUDIT LOGS
+// AUDIT LOGS (Aligned with existing DB schema)
 // ==========================================
-
-export type AuditAction = 
-  | 'create' 
-  | 'read' 
-  | 'update' 
-  | 'delete' 
-  | 'export' 
-  | 'login' 
-  | 'logout' 
-  | 'permission_change' 
-  | 'bulk_action' 
-  | 'api_call'
-  | 'gdpr_request_created'
-  | 'gdpr_request_completed';
-
-export type AuditActionCategory = 
-  | 'data' 
-  | 'auth' 
-  | 'admin' 
-  | 'system' 
-  | 'api' 
-  | 'security';
-
-export type AuditLogStatus = 'success' | 'failure' | 'partial';
-
-export interface AuditLogChanges {
-  before?: Record<string, unknown>;
-  after?: Record<string, unknown>;
-  fields_changed?: string[];
-}
-
-export interface AuditLogMetadata {
-  ip_address?: string;
-  user_agent?: string;
-  session_id?: string;
-  request_id?: string;
-  api_key_id?: string;
-  source?: 'web' | 'api' | 'system' | 'import';
-  [key: string]: unknown;
-}
-
-export interface GeoLocation {
-  country?: string;
-  city?: string;
-  lat?: number;
-  lng?: number;
-}
 
 export interface AuditLog {
   id: string;
   organization_id: string | null;
   user_id: string | null;
-  user_email?: string;
-  user_name?: string;
-  user_role?: string;
   action: string;
-  action_category: AuditActionCategory;
   resource_type: string;
   resource_id: string | null;
-  resource_name?: string;
-  changes: AuditLogChanges | null;
-  metadata: AuditLogMetadata | null;
-  ip_address: string | null;
-  geo_location: GeoLocation | null;
-  status: AuditLogStatus;
-  error_message?: string;
-  duration_ms?: number;
-  description?: string;
-  created_at: string;
+  description: string | null;
+  changes: Json | null;
+  metadata: Json | null;
+  ip_address: unknown;
+  user_agent: string | null;
+  created_at: string | null;
 }
 
 export interface AuditLogFilters {
-  organizationId?: string;
   userId?: string;
+  action?: string;
   resourceType?: string;
   resourceId?: string;
-  action?: string;
-  actionCategory?: AuditActionCategory;
-  status?: AuditLogStatus;
   dateFrom?: string;
   dateTo?: string;
   search?: string;
 }
 
+export interface AuditStats {
+  total_logs: number;
+  logs_today: number;
+  logs_this_week: number;
+  by_action: Record<string, number>;
+  by_resource_type: Record<string, number>;
+}
+
 // ==========================================
 // CHANGE HISTORY
 // ==========================================
-
-export type ChangeDataType = 'string' | 'number' | 'boolean' | 'date' | 'json' | 'array';
 
 export interface ChangeHistoryRecord {
   id: string;
@@ -101,11 +51,11 @@ export interface ChangeHistoryRecord {
   resource_type: string;
   resource_id: string;
   field_name: string;
-  field_path?: string;
-  old_value?: string;
-  new_value?: string;
-  data_type?: ChangeDataType;
-  created_at: string;
+  field_path: string | null;
+  old_value: string | null;
+  new_value: string | null;
+  data_type: string | null;
+  created_at: string | null;
 }
 
 // ==========================================
@@ -113,221 +63,179 @@ export interface ChangeHistoryRecord {
 // ==========================================
 
 export type AccessEventType = 
-  | 'login_success' 
-  | 'login_failed' 
-  | 'logout' 
+  | 'login_success'
+  | 'login_failure'
+  | 'logout'
+  | 'password_change'
+  | 'password_reset'
+  | 'mfa_enabled'
+  | 'mfa_disabled'
   | 'session_expired'
-  | 'password_reset' 
-  | '2fa_enabled' 
-  | '2fa_disabled' 
-  | 'api_key_used';
-
-export type AuthMethod = 'password' | 'sso' | 'api_key' | 'oauth' | '2fa';
-
-export interface DeviceInfo {
-  browser?: string;
-  os?: string;
-  device?: string;
-  is_mobile?: boolean;
-}
+  | 'session_revoked'
+  | 'api_access';
 
 export interface AccessLog {
   id: string;
+  organization_id: string | null;
   user_id: string | null;
   user_email: string;
-  organization_id: string | null;
-  event_type: AccessEventType;
-  auth_method?: AuthMethod;
-  ip_address?: string;
-  user_agent?: string;
-  device_info: DeviceInfo | null;
-  geo_location: GeoLocation | null;
-  status: 'success' | 'failure';
-  failure_reason?: string;
-  session_id?: string;
-  created_at: string;
+  event_type: string;
+  status: string;
+  auth_method: string | null;
+  failure_reason: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  device_info: Json | null;
+  geo_location: Json | null;
+  session_id: string | null;
+  created_at: string | null;
 }
 
 export interface AccessLogFilters {
-  organizationId?: string;
   userId?: string;
-  eventType?: AccessEventType;
+  eventType?: string;
   status?: 'success' | 'failure';
   dateFrom?: string;
   dateTo?: string;
+}
+
+export interface AccessStats {
+  logins_today: number;
+  failed_today: number;
+  unique_users_this_week: number;
+  by_auth_method: Record<string, number>;
 }
 
 // ==========================================
 // RETENTION POLICIES
 // ==========================================
 
-export type RetentionDataType = 
-  | 'audit_logs' 
-  | 'assets' 
-  | 'documents' 
-  | 'comments' 
-  | 'notifications'
-  | 'access_logs'
-  | 'activities';
-
-export type RetentionAction = 'archive' | 'delete' | 'anonymize';
+export type RetentionAction = 'delete' | 'archive' | 'anonymize';
 
 export interface RetentionConditions {
-  status?: string[];
   older_than_days?: number;
+  status?: string[];
+  exclude_tags?: string[];
+  include_tags?: string[];
   [key: string]: unknown;
 }
 
 export interface RetentionPolicy {
   id: string;
-  organization_id: string | null;
+  organization_id: string;
   name: string;
-  description?: string;
+  description: string | null;
   data_type: string;
   retention_days: number;
-  conditions: RetentionConditions;
-  action: RetentionAction;
-  is_active: boolean;
-  legal_hold: boolean;
-  legal_hold_reason?: string;
-  legal_hold_until?: string;
-  last_run_at?: string;
-  last_run_count?: number;
-  created_at: string;
-  updated_at: string;
+  conditions: Json | null;
+  action: string;
+  is_active: boolean | null;
+  legal_hold: boolean | null;
+  legal_hold_reason: string | null;
+  legal_hold_set_by: string | null;
+  legal_hold_set_at: string | null;
+  last_run_at: string | null;
+  last_run_count: number | null;
+  next_run_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
-
-export type RetentionExecutionStatus = 'running' | 'completed' | 'failed' | 'cancelled';
 
 export interface RetentionExecution {
   id: string;
   policy_id: string;
-  started_at: string;
-  completed_at?: string;
-  records_processed: number;
-  records_archived: number;
-  records_deleted: number;
-  records_anonymized: number;
-  records_skipped: number;
-  status: RetentionExecutionStatus;
-  error_message?: string;
-  details: Record<string, unknown>;
+  started_at: string | null;
+  completed_at: string | null;
+  status: string | null;
+  records_processed: number | null;
+  records_affected: number | null;
+  errors: Json | null;
+  execution_log: Json | null;
 }
 
 // ==========================================
-// GDPR REQUESTS
+// GDPR
 // ==========================================
 
 export type GdprRequestType = 
-  | 'access'        // Derecho de acceso
-  | 'rectification' // Derecho de rectificación
-  | 'erasure'       // Derecho al olvido
-  | 'portability'   // Derecho de portabilidad
-  | 'restriction'   // Derecho a limitar el tratamiento
-  | 'objection';    // Derecho de oposición
+  | 'access'
+  | 'rectification'
+  | 'erasure'
+  | 'portability'
+  | 'restriction'
+  | 'objection';
 
 export type GdprRequestStatus = 
-  | 'pending' 
-  | 'in_progress' 
-  | 'completed' 
-  | 'rejected' 
+  | 'pending'
+  | 'identity_verification'
+  | 'in_progress'
+  | 'completed'
+  | 'rejected'
   | 'cancelled';
 
 export interface GdprRequest {
   id: string;
   organization_id: string;
-  requester_user_id?: string;
   requester_email: string;
-  requester_name?: string;
-  request_type: GdprRequestType;
-  description?: string;
-  status: GdprRequestStatus;
-  assigned_to?: string;
-  due_date: string;
-  extended_until?: string;
-  extension_reason?: string;
-  identity_verified: boolean;
-  identity_verified_at?: string;
-  identity_verified_by?: string;
-  resolution_notes?: string;
-  completed_at?: string;
-  export_file_url?: string;
-  export_file_expires_at?: string;
-  created_at: string;
-  updated_at: string;
+  requester_name: string | null;
+  request_type: string;
+  status: string | null;
+  description: string | null;
+  data_categories: string[] | null;
+  identity_verified: boolean | null;
+  identity_verified_at: string | null;
+  identity_verified_by: string | null;
+  processing_notes: string | null;
+  completed_at: string | null;
+  completed_by: string | null;
+  due_date: string | null;
+  response_data: Json | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
-
-// ==========================================
-// USER CONSENTS
-// ==========================================
-
-export type ConsentType = 
-  | 'terms_of_service' 
-  | 'privacy_policy' 
-  | 'marketing_email'
-  | 'analytics' 
-  | 'third_party_sharing' 
-  | 'data_processing';
 
 export interface UserConsent {
   id: string;
-  user_id: string;
-  organization_id?: string;
-  consent_type: ConsentType;
-  document_version?: string;
-  document_url?: string;
-  granted: boolean;
-  ip_address?: string;
-  user_agent?: string;
-  granted_at: string;
-  revoked_at?: string;
-}
-
-// ==========================================
-// DATA EXPORTS
-// ==========================================
-
-export type DataExportType = 
-  | 'full_backup' 
-  | 'gdpr_request' 
-  | 'report' 
-  | 'partial' 
-  | 'user_data';
-
-export type DataExportStatus = 
-  | 'pending' 
-  | 'processing' 
-  | 'completed' 
-  | 'failed' 
-  | 'expired';
-
-export interface DataExportConfig {
-  include_assets?: boolean;
-  include_contacts?: boolean;
-  include_documents?: boolean;
-  include_audit_logs?: boolean;
-  date_from?: string;
-  date_to?: string;
-  format?: 'json' | 'csv' | 'xlsx';
-  target_user_id?: string;
+  organization_id: string;
+  user_id: string | null;
+  user_email: string;
+  consent_type: string;
+  is_granted: boolean | null;
+  granted_at: string | null;
+  revoked_at: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  consent_version: string | null;
+  legal_basis: string | null;
+  metadata: Json | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface DataExport {
   id: string;
   organization_id: string;
-  user_id: string;
-  export_type: DataExportType;
-  config: DataExportConfig;
-  status: DataExportStatus;
-  progress: number;
-  current_step?: string;
-  file_url?: string;
-  file_size_bytes?: number;
-  file_expires_at?: string;
-  started_at?: string;
-  completed_at?: string;
-  error_message?: string;
-  created_at: string;
+  gdpr_request_id: string | null;
+  user_id: string | null;
+  user_email: string;
+  export_type: string | null;
+  status: string | null;
+  data_categories: string[] | null;
+  file_path: string | null;
+  file_size: number | null;
+  download_count: number | null;
+  expires_at: string | null;
+  created_at: string | null;
+  completed_at: string | null;
+}
+
+export interface GdprStats {
+  total_requests: number;
+  pending_requests: number;
+  completed_requests: number;
+  avg_completion_days: number;
+  by_type: Record<string, number>;
+  by_status: Record<string, number>;
 }
 
 // ==========================================
@@ -335,52 +243,45 @@ export interface DataExport {
 // ==========================================
 
 export type SecurityAlertType = 
-  | 'multiple_failed_logins' 
-  | 'unusual_location' 
-  | 'mass_delete'
-  | 'permission_escalation' 
-  | 'data_exfiltration' 
-  | 'api_abuse'
-  | 'suspicious_activity';
+  | 'suspicious_login'
+  | 'brute_force'
+  | 'unauthorized_access'
+  | 'data_breach'
+  | 'policy_violation'
+  | 'anomaly_detected'
+  | 'rate_limit_exceeded';
 
-export type SecurityAlertSeverity = 'low' | 'medium' | 'high' | 'critical';
-
-export type SecurityAlertStatus = 
-  | 'open' 
-  | 'investigating' 
-  | 'resolved' 
-  | 'false_positive' 
-  | 'escalated';
-
-export interface SecurityAlertEvidence {
-  ip_addresses?: string[];
-  timestamps?: string[];
-  actions?: string[];
-  threshold_exceeded?: string;
-  [key: string]: unknown;
-}
-
-export interface SecurityAlertAction {
-  action: string;
-  timestamp: string;
-  by: string;
-}
+export type SecuritySeverity = 'low' | 'medium' | 'high' | 'critical';
+export type SecurityAlertStatus = 'open' | 'investigating' | 'resolved' | 'false_positive';
 
 export interface SecurityAlert {
   id: string;
-  organization_id: string | null;
-  alert_type: SecurityAlertType;
-  severity: SecurityAlertSeverity;
+  organization_id: string;
+  alert_type: string;
+  severity: string;
+  status: string | null;
   title: string;
-  description?: string;
-  user_id?: string;
-  evidence: SecurityAlertEvidence | null;
-  status: SecurityAlertStatus;
-  resolved_by?: string;
-  resolved_at?: string;
-  resolution_notes?: string;
-  actions_taken: SecurityAlertAction[];
-  created_at: string;
+  description: string | null;
+  source: string | null;
+  source_ip: string | null;
+  user_id: string | null;
+  resource_type: string | null;
+  resource_id: string | null;
+  evidence: Json | null;
+  actions_taken: Json | null;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  resolution_notes: string | null;
+  created_at: string | null;
+}
+
+export interface SecurityStats {
+  total_alerts: number;
+  open_alerts: number;
+  critical_alerts: number;
+  resolved_today: number;
+  by_type: Record<string, number>;
+  by_severity: Record<string, number>;
 }
 
 // ==========================================
@@ -388,72 +289,39 @@ export interface SecurityAlert {
 // ==========================================
 
 export type ComplianceFramework = 
-  | 'gdpr' 
-  | 'soc2' 
-  | 'iso27001' 
-  | 'hipaa' 
+  | 'gdpr'
+  | 'ccpa'
+  | 'hipaa'
+  | 'soc2'
+  | 'iso27001'
+  | 'pci_dss'
   | 'internal';
 
 export type ComplianceStatus = 
-  | 'compliant' 
-  | 'non_compliant' 
-  | 'partial' 
-  | 'not_applicable' 
-  | 'pending_review';
+  | 'compliant'
+  | 'non_compliant'
+  | 'partial'
+  | 'pending_review'
+  | 'not_applicable';
 
 export interface ComplianceCheck {
   id: string;
   organization_id: string;
-  framework: ComplianceFramework;
+  framework: string;
   check_code: string;
   check_name: string;
-  check_description?: string;
-  category?: string;
-  status: ComplianceStatus;
-  evidence_notes?: string;
-  evidence_documents?: string[];
-  owner_id?: string;
-  last_checked_at?: string;
-  next_review_at?: string;
-  remediation_plan?: string;
-  remediation_due_date?: string;
-  created_at: string;
-  updated_at: string;
-}
-
-// ==========================================
-// STATISTICS
-// ==========================================
-
-export interface AuditStats {
-  total_logs: number;
-  logs_today: number;
-  logs_this_week: number;
-  logs_by_action: Record<string, number>;
-  logs_by_category: Record<string, number>;
-  logs_by_resource: Record<string, number>;
-}
-
-export interface GdprStats {
-  total: number;
-  pending: number;
-  in_progress: number;
-  completed: number;
-  rejected: number;
-  overdue: number;
-  compliance_score: number;
-  consents_ok: boolean;
-  retention_ok: boolean;
-  rights_ok: boolean;
-}
-
-export interface SecurityStats {
-  total_alerts: number;
-  open_alerts: number;
-  critical_alerts: number;
-  high_alerts: number;
-  resolved_today: number;
-  avg_resolution_time_hours: number;
+  check_description: string | null;
+  category: string | null;
+  status: string;
+  owner_id: string | null;
+  evidence_notes: string | null;
+  evidence_documents: string[] | null;
+  remediation_plan: string | null;
+  remediation_due_date: string | null;
+  last_checked_at: string | null;
+  next_review_at: string | null;
+  created_at: string | null;
+  updated_at: string | null;
 }
 
 export interface ComplianceStats {
