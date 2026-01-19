@@ -92,6 +92,8 @@ import WorkflowDetailPage from "./pages/app/workflow/[id]";
 import EditWorkflowPage from "./pages/app/workflow/[id]/edit";
 import AnalyticsPage from "./pages/app/analytics";
 import AnalyticsChartsPage from "./pages/app/analytics/charts";
+import CollabIndexPage from "./pages/app/collab";
+import CollabDetailPage from "./pages/app/collab/[id]";
 
 // Admin Pages
 import AdminLayout from "./layouts/admin-layout";
@@ -238,6 +240,8 @@ const App = () => (
                 <Route path="workflow/:id/edit" element={<EditWorkflowPage />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="analytics/charts" element={<AnalyticsChartsPage />} />
+                <Route path="collab" element={<CollabIndexPage />} />
+                <Route path="collab/:id" element={<CollabDetailPage />} />
               </Route>
               
               {/* ADMIN PANEL - Protected */}

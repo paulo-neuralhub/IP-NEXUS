@@ -150,7 +150,6 @@ export function useSendApprovalReminder() {
         .eq('id', id);
       
       if (error) throw error;
-    },
       // TODO: Send email reminder via edge function
     },
     onSuccess: () => {

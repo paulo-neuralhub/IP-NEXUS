@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 import {
   Dialog,
   DialogContent,
@@ -30,7 +31,6 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useShareContent, useUnshareContent } from '@/hooks/collab';
-import { useMatters } from '@/hooks/docket/useMatters';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -150,11 +150,11 @@ export default function PortalSharedContentTab({ portalId, sharedContent }: Port
                   <h4 className="font-medium flex items-center gap-2 mb-3">
                     {getContentTypeIcon(type)}
                     {getContentTypeLabel(type)}
-                    <Badge variant="secondary">{items.length}</Badge>
+                    <Badge variant="secondary">{(items as any[]).length}</Badge>
                   </h4>
                   
                   <div className="space-y-2">
-                    {items.map((item) => {
+                    {(items as any[]).map((item) => {
                       const permissions = item.permissions || {};
                       
                       return (

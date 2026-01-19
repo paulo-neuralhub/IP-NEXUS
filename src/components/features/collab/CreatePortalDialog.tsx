@@ -17,7 +17,7 @@ import {
   SelectTrigger,
   SelectValue
 } from '@/components/ui/select';
-import { useContacts } from '@/hooks/crm';
+import { useContacts } from '@/hooks/use-crm';
 import { useCreatePortal } from '@/hooks/collab';
 
 interface CreatePortalDialogProps {
