@@ -98,6 +98,14 @@ import KycReviewPage from "./pages/admin/kyc-review";
 import ModerationPage from "./pages/admin/moderation";
 import ComplianceDashboard from "./pages/admin/compliance";
 
+// Backoffice Pages
+import BackofficeLayout from "./layouts/backoffice-layout";
+import BackofficeDashboard from "./pages/backoffice";
+import IPORegistryPage from "./pages/backoffice/ipo";
+import IPOOfficeDetailPage from "./pages/backoffice/ipo/[officeId]";
+import NewIPOOfficePage from "./pages/backoffice/ipo/new";
+import EditIPOOfficePage from "./pages/backoffice/ipo/edit";
+
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
 import KycVerificationPage from "./pages/app/market/kyc/[type]";
@@ -225,6 +233,15 @@ const App = () => (
                 <Route path="kyc-review" element={<KycReviewPage />} />
                 <Route path="moderation" element={<ModerationPage />} />
                 <Route path="compliance" element={<ComplianceDashboard />} />
+              </Route>
+              
+              {/* BACKOFFICE - Protected */}
+              <Route path="/backoffice" element={<AuthGuard><BackofficeLayout /></AuthGuard>}>
+                <Route index element={<BackofficeDashboard />} />
+                <Route path="ipo" element={<IPORegistryPage />} />
+                <Route path="ipo/new" element={<NewIPOOfficePage />} />
+                <Route path="ipo/:officeId" element={<IPOOfficeDetailPage />} />
+                <Route path="ipo/:officeId/edit" element={<EditIPOOfficePage />} />
               </Route>
               
               {/* 404 */}
