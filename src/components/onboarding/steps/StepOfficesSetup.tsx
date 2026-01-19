@@ -11,7 +11,7 @@ interface StepOfficesSetupProps {
 interface IPOOffice {
   id: string;
   code: string;
-  name: string;
+  name_short: string;
   country_code: string;
 }
 
@@ -52,13 +52,13 @@ export function StepOfficesSetup({ data, updateData }: StepOfficesSetupProps) {
     const loadOffices = async () => {
       const { data: officesData } = await supabase
         .from('ipo_offices')
-        .select('id, code, name, country_code')
-        .eq('is_active', true)
+        .select('id, code, name_short, country_code')
+        .eq('status', 'active')
         .order('tier', { ascending: true })
-        .order('name', { ascending: true })
+        .order('name_short', { ascending: true })
         .limit(20);
       
-      setOffices(officesData || []);
+      setOffices((officesData as IPOOffice[]) || []);
       setIsLoading(false);
     };
     loadOffices();
@@ -111,7 +111,7 @@ export function StepOfficesSetup({ data, updateData }: StepOfficesSetupProps) {
             <span className="text-2xl">{getFlag(office.code, office.country_code)}</span>
             <div className="min-w-0 flex-1">
               <p className="font-medium text-sm truncate">{office.code}</p>
-              <p className="text-xs text-muted-foreground truncate">{office.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{office.name_short}</p>
             </div>
           </div>
         ))}
