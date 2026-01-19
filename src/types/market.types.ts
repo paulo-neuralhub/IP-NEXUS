@@ -1070,10 +1070,30 @@ export interface MarketMessage {
   transaction_id: string | null;
   sender_id: string;
   recipient_id: string;
-  message: string;
-  attachments: Record<string, unknown>[] | null;
+  content: string;
+  message_type?: 'text' | 'image' | 'file';
+  attachments?: string[] | null;
+  is_read?: boolean;
   read_at: string | null;
   created_at: string;
+  // Joined fields
+  sender?: MarketUserProfile;
+}
+
+export interface MarketConversation {
+  id: string;
+  listing_id?: string | null;
+  transaction_id?: string | null;
+  participant_1_id: string;
+  participant_2_id: string;
+  last_message?: string;
+  last_message_at?: string;
+  unread_count?: number;
+  created_at: string;
+  // Joined fields
+  listing?: MarketListing;
+  participant_1?: MarketUserProfile;
+  participant_2?: MarketUserProfile;
 }
 
 export interface MarketFavorite {

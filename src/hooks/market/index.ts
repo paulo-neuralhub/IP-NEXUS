@@ -1,6 +1,6 @@
 // src/hooks/market/index.ts
 export * from './useTransaction';
 export * from './useOffers';
-export * from './useMessages';
+export { useConversations, useThreadMessages, useSendMessage, useMarkAsRead } from './useMessages';
 export * from './useEscrow';
 export * from './useStripeConnect';

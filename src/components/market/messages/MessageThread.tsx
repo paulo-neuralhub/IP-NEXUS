@@ -45,6 +45,8 @@ export function MessageThread({ messages, currentUserId, isLoading }: MessageThr
         const sender = message.sender as any;
         const showAvatar = index === 0 || 
           messages[index - 1].sender_id !== message.sender_id;
+        const messageType = message.message_type || 'text';
+        const attachments = message.attachments as string[] | null;
 
         return (
           <div
@@ -74,19 +76,19 @@ export function MessageThread({ messages, currentUserId, isLoading }: MessageThr
                   ? 'bg-primary text-primary-foreground rounded-br-md' 
                   : 'bg-muted rounded-bl-md'
               )}>
-                {message.message_type === 'image' && message.attachments?.[0] && (
+                {messageType === 'image' && attachments?.[0] && (
                   <div className="mb-2">
                     <img 
-                      src={message.attachments[0]} 
+                      src={attachments[0]} 
                       alt="Imagen adjunta"
                       className="rounded-lg max-w-full"
                     />
                   </div>
                 )}
                 
-                {message.message_type === 'file' && message.attachments?.[0] && (
+                {messageType === 'file' && attachments?.[0] && (
                   <a 
-                    href={message.attachments[0]}
+                    href={attachments[0]}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 text-sm underline mb-2"

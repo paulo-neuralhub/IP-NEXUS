@@ -1,47 +1,83 @@
 // src/pages/app/market/messages/index.tsx
 import { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { MessageSquare, Search, ArrowLeft } from 'lucide-react';
-import { useMarketConversations, useConversationMessages } from '@/hooks/market';
+import { useConversations, useThreadMessages, useSendMessage } from '@/hooks/market';
 import { ConversationsList, MessageThread, MessageInput } from '@/components/market/messages';
 import { useAuth } from '@/contexts/auth-context';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { cn } from '@/lib/utils';
-import type { MarketConversation } from '@/types/market.types';
+
+interface ConversationItem {
+  id: string;
+  threadId?: string;
+  listing_id?: string | null;
+  transaction_id?: string | null;
+  participant_1_id?: string;
+  participant_2_id?: string;
+  last_message?: string;
+  last_message_at?: string;
+  unread_count?: number;
+  listing?: any;
+  participant_1?: any;
+  participant_2?: any;
+  otherParty?: any;
+}
 
 export default function MessagesPage() {
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const [search, setSearch] = useState('');
-  const [selectedConversation, setSelectedConversation] = useState<MarketConversation | null>(null);
+  const [selectedConversation, setSelectedConversation] = useState<ConversationItem | null>(null);
 
-  const { data: conversations, isLoading: conversationsLoading } = useMarketConversations();
-  const { 
-    messages, 
-    isLoading: messagesLoading,
-    sendMessage 
-  } = useConversationMessages(selectedConversation?.id);
+  const { data: rawConversations, isLoading: conversationsLoading } = useConversations();
+  
+  // Transform conversations to the expected format
+  const conversations: ConversationItem[] = (rawConversations || []).map((conv: any) => ({
+    id: conv.threadId || conv.id,
+    threadId: conv.threadId,
+    listing_id: conv.listingId,
+    transaction_id: conv.transactionId,
+    participant_1_id: user?.id || '',
+    participant_2_id: conv.otherParty?.id || '',
+    last_message: conv.lastMessage,
+    last_message_at: conv.lastMessageAt,
+    unread_count: conv.unreadCount,
+    listing: conv.listing,
+    participant_1: { id: user?.id, display_name: 'Tú' },
+    participant_2: conv.otherParty,
+    otherParty: conv.otherParty,
+  }));
 
-  const filteredConversations = conversations?.filter((conv: any) => {
+  const threadId = selectedConversation?.threadId || selectedConversation?.id;
+  const { messages, isLoading: messagesLoading } = useThreadMessages(threadId);
+  const sendMessage = useSendMessage();
+
+  const filteredConversations = conversations.filter((conv) => {
     if (!search) return true;
     const searchLower = search.toLowerCase();
-    const otherParticipant = conv.participant_1_id === user?.id
-      ? conv.participant_2
-      : conv.participant_1;
+    const otherParticipant = conv.otherParty || conv.participant_2;
     return otherParticipant?.display_name?.toLowerCase().includes(searchLower) ||
            conv.listing?.title?.toLowerCase().includes(searchLower);
-  }) || [];
+  });
 
   const handleSendMessage = async (content: string) => {
     if (!selectedConversation) return;
-    await sendMessage({ content });
+    const recipientId = selectedConversation.otherParty?.id || selectedConversation.participant_2_id;
+    if (!recipientId) return;
+    
+    await sendMessage.mutateAsync({
+      threadId: selectedConversation.threadId || selectedConversation.id,
+      recipientId,
+      listingId: selectedConversation.listing_id || undefined,
+      transactionId: selectedConversation.transaction_id || undefined,
+      content,
+    });
   };
 
-  const handleSelectConversation = (conv: MarketConversation) => {
+  const handleSelectConversation = (conv: ConversationItem) => {
     setSelectedConversation(conv);
   };
 
@@ -49,11 +85,7 @@ export default function MessagesPage() {
     setSelectedConversation(null);
   };
 
-  const otherParticipant = selectedConversation
-    ? (selectedConversation.participant_1_id === user?.id
-        ? selectedConversation.participant_2
-        : selectedConversation.participant_1) as any
-    : null;
+  const otherParticipant = selectedConversation?.otherParty || selectedConversation?.participant_2;
 
   // Mobile: show either list or conversation
   if (isMobile) {
@@ -74,7 +106,7 @@ export default function MessagesPage() {
             <div>
               <p className="font-medium">{otherParticipant?.display_name || 'Usuario'}</p>
               <p className="text-xs text-muted-foreground">
-                {(selectedConversation.listing as any)?.title}
+                {selectedConversation.listing?.title}
               </p>
             </div>
           </div>
@@ -181,7 +213,7 @@ export default function MessagesPage() {
                 <div>
                   <p className="font-medium">{otherParticipant?.display_name || 'Usuario'}</p>
                   <p className="text-xs text-muted-foreground">
-                    {(selectedConversation.listing as any)?.title}
+                    {selectedConversation.listing?.title}
                   </p>
                 </div>
               </div>

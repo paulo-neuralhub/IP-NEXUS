@@ -5,12 +5,27 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import type { MarketConversation } from '@/types/market.types';
+
+// Local interface for conversations - flexible to accept various formats
+interface ConversationItem {
+  id: string;
+  listing_id?: string | null;
+  transaction_id?: string | null;
+  participant_1_id?: string;
+  participant_2_id?: string;
+  last_message?: string;
+  last_message_at?: string;
+  unread_count?: number;
+  listing?: any;
+  participant_1?: any;
+  participant_2?: any;
+  otherParty?: any;
+}
 
 interface ConversationsListProps {
-  conversations: MarketConversation[];
+  conversations: ConversationItem[];
   selectedId?: string;
-  onSelect: (conversation: MarketConversation) => void;
+  onSelect: (conversation: ConversationItem) => void;
   currentUserId: string;
 }
 
@@ -32,9 +47,10 @@ export function ConversationsList({
     <ScrollArea className="h-full">
       <div className="divide-y">
         {conversations.map((conversation) => {
-          const otherParticipant = conversation.participant_1_id === currentUserId
-            ? conversation.participant_2 as any
-            : conversation.participant_1 as any;
+          const otherParticipant = conversation.otherParty ||
+            (conversation.participant_1_id === currentUserId
+              ? conversation.participant_2
+              : conversation.participant_1) as any;
           
           const listing = conversation.listing as any;
           const isSelected = selectedId === conversation.id;

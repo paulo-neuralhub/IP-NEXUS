@@ -24,6 +24,8 @@ import CreateListingPage from "./pages/app/market/listings/new";
 import ListingDetailPage from "./pages/app/market/listings/[id]";
 import MarketAssets from "./pages/app/market/assets";
 import MarketTransactions from "./pages/app/market/transactions";
+import TransactionDetailPage from "./pages/app/market/transactions/[id]";
+import MarketMessages from "./pages/app/market/messages";
 import MarketFavorites from "./pages/app/market/favorites";
 import MarketAlerts from "./pages/app/market/alerts";
 import MarketProfile from "./pages/app/market/profile";
@@ -155,6 +157,8 @@ const App = () => (
                   <Route path="listings/:id" element={<ListingDetailPage />} />
                   <Route path="assets" element={<MarketAssets />} />
                   <Route path="transactions" element={<MarketTransactions />} />
+                  <Route path="transactions/:id" element={<TransactionDetailPage />} />
+                  <Route path="messages" element={<MarketMessages />} />
                   <Route path="favorites" element={<MarketFavorites />} />
                   <Route path="alerts" element={<MarketAlerts />} />
                   <Route path="profile" element={<MarketProfile />} />
