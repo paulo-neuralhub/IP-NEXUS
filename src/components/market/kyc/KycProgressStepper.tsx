@@ -34,7 +34,11 @@ const ICONS: Record<string, any> = {
   Shield,
 };
 
-export function KycProgressStepper() {
+interface KycProgressStepperProps {
+  onStartVerification?: (type: VerificationType) => void;
+}
+
+export function KycProgressStepper({ onStartVerification }: KycProgressStepperProps) {
   const { data: kycStatus, isLoading } = useKycStatus();
 
   if (isLoading || !kycStatus) {
@@ -119,12 +123,19 @@ export function KycProgressStepper() {
                   </Badge>
                 )}
                 {!isCompleted && !isPending && !isLocked && (
-                  <Button variant="ghost" size="sm" asChild>
-                    <Link to={route}>
+                  onStartVerification ? (
+                    <Button variant="ghost" size="sm" onClick={() => onStartVerification(type)}>
                       Verificar
                       <ChevronRight className="h-4 w-4 ml-1" />
-                    </Link>
-                  </Button>
+                    </Button>
+                  ) : (
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link to={route}>
+                        Verificar
+                        <ChevronRight className="h-4 w-4 ml-1" />
+                      </Link>
+                    </Button>
+                  )
                 )}
               </div>
             </div>
