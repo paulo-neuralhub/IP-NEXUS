@@ -30,7 +30,7 @@ export function HelpFloatingButton({
 }: HelpFloatingButtonProps) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-  const unreadCount = useUnreadAnnouncementCount();
+  const { data: unreadCount = 0 } = useUnreadAnnouncementCount();
   const { data: incidents } = useActiveIncidents();
 
   // Don't show on help pages
