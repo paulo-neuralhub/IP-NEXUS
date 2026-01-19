@@ -4133,6 +4133,83 @@ export type Database = {
           },
         ]
       }
+      ipo_automend_jobs: {
+        Row: {
+          actions_taken: Json | null
+          completed_at: string | null
+          connection_method_id: string | null
+          created_at: string | null
+          diagnosis_results: Json | null
+          error_summary: string | null
+          final_status: string | null
+          id: string
+          office_id: string
+          started_at: string | null
+          status: string
+          trigger_type: string
+          triggered_by: string | null
+        }
+        Insert: {
+          actions_taken?: Json | null
+          completed_at?: string | null
+          connection_method_id?: string | null
+          created_at?: string | null
+          diagnosis_results?: Json | null
+          error_summary?: string | null
+          final_status?: string | null
+          id?: string
+          office_id: string
+          started_at?: string | null
+          status?: string
+          trigger_type: string
+          triggered_by?: string | null
+        }
+        Update: {
+          actions_taken?: Json | null
+          completed_at?: string | null
+          connection_method_id?: string | null
+          created_at?: string | null
+          diagnosis_results?: Json | null
+          error_summary?: string | null
+          final_status?: string | null
+          id?: string
+          office_id?: string
+          started_at?: string | null
+          status?: string
+          trigger_type?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_automend_jobs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_automend_jobs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+          {
+            foreignKeyName: "ipo_automend_jobs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_automend_jobs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ipo_bulk_configs: {
         Row: {
           chunk_size: number | null
@@ -4421,6 +4498,63 @@ export type Database = {
           },
           {
             foreignKeyName: "ipo_deadline_rules_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_error_patterns: {
+        Row: {
+          auto_fixable: boolean | null
+          category: string | null
+          created_at: string | null
+          error_code: string | null
+          error_message_pattern: string | null
+          http_status_codes: number[] | null
+          id: string
+          office_id: string | null
+          office_specific: boolean | null
+          probable_cause: string | null
+          recommended_action: string | null
+        }
+        Insert: {
+          auto_fixable?: boolean | null
+          category?: string | null
+          created_at?: string | null
+          error_code?: string | null
+          error_message_pattern?: string | null
+          http_status_codes?: number[] | null
+          id?: string
+          office_id?: string | null
+          office_specific?: boolean | null
+          probable_cause?: string | null
+          recommended_action?: string | null
+        }
+        Update: {
+          auto_fixable?: boolean | null
+          category?: string | null
+          created_at?: string | null
+          error_code?: string | null
+          error_message_pattern?: string | null
+          http_status_codes?: number[] | null
+          id?: string
+          office_id?: string | null
+          office_specific?: boolean | null
+          probable_cause?: string | null
+          recommended_action?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_error_patterns_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_error_patterns_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "ipo_offices"
@@ -4947,6 +5081,65 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "ipo_health_overview"
             referencedColumns: ["connection_method_id"]
+          },
+        ]
+      }
+      ipo_scraper_versions: {
+        Row: {
+          activated_at: string | null
+          created_at: string | null
+          deactivated_at: string | null
+          deactivation_reason: string | null
+          generated_by: string
+          generation_prompt: string | null
+          id: string
+          is_active: boolean | null
+          scraper_config_id: string
+          script_content: string
+          selectors: Json
+          test_results: Json | null
+          test_status: string | null
+          version: string
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string | null
+          deactivated_at?: string | null
+          deactivation_reason?: string | null
+          generated_by: string
+          generation_prompt?: string | null
+          id?: string
+          is_active?: boolean | null
+          scraper_config_id: string
+          script_content: string
+          selectors: Json
+          test_results?: Json | null
+          test_status?: string | null
+          version: string
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string | null
+          deactivated_at?: string | null
+          deactivation_reason?: string | null
+          generated_by?: string
+          generation_prompt?: string | null
+          id?: string
+          is_active?: boolean | null
+          scraper_config_id?: string
+          script_content?: string
+          selectors?: Json
+          test_results?: Json | null
+          test_status?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_scraper_versions_scraper_config_id_fkey"
+            columns: ["scraper_config_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_scraper_configs"
+            referencedColumns: ["id"]
           },
         ]
       }
