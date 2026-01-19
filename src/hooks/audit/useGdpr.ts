@@ -308,9 +308,9 @@ export function useCreateDataExport() {
 
   return useMutation({
     mutationFn: async (params: {
-      user_email: string;
-      gdpr_request_id?: string;
-      data_categories?: string[];
+      user_id: string;
+      export_type: string;
+      config?: Record<string, unknown>;
     }) => {
       if (!currentOrganization?.id) throw new Error('No organization');
 
@@ -320,14 +320,13 @@ export function useCreateDataExport() {
       const { data, error } = await supabase
         .from('data_exports')
         .insert({
-          organization_id: currentOrganization.id,
-          user_email: params.user_email,
-          gdpr_request_id: params.gdpr_request_id,
-          data_categories: params.data_categories,
-          export_type: 'full',
+          user_id: params.user_id,
+          export_type: params.export_type,
+          config: params.config || {},
           status: 'pending',
-          expires_at: expiresAt.toISOString(),
-        })
+          file_expires_at: expiresAt.toISOString(),
+          organization_id: currentOrganization.id,
+        } as any)
         .select()
         .single();
 
