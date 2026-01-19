@@ -86,13 +86,14 @@ export function ExportWizard({ open, onOpenChange, entityType }: ExportWizardPro
     try {
       // Create export job
       const job = await createJob.mutateAsync({
-        organization_id: currentOrganization.id,
         entity_type: entityType as EntityType,
-        export_format: format,
-        columns: selectedColumns as any,
+        target_format: format === 'xlsx' ? 'excel' : format as any,
+        columns: selectedColumns.map(col => ({
+          field: col,
+          header: fields?.find(f => f.field_name === col)?.field_label || col
+        })),
         filters,
-        include_headers: true,
-        status: 'pending'
+        format_options: { include_header: true }
       });
 
       // Process export
