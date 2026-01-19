@@ -87,6 +87,13 @@ import AdminFeedbackPage from "./pages/admin/feedback";
 import AdminAuditLogsPage from "./pages/admin/audit-logs";
 import AdminSettingsPage from "./pages/admin/settings";
 import AdminApiKeysPage from "./pages/admin/api-keys";
+import KycReviewPage from "./pages/admin/kyc-review";
+import ModerationPage from "./pages/admin/moderation";
+import ComplianceDashboard from "./pages/admin/compliance";
+
+// KYC Pages
+import MarketKycPage from "./pages/app/market/kyc";
+import KycVerificationPage from "./pages/app/market/kyc/[type]";
 
 // Layout
 import { AppLayout } from "@/components/layout/app-layout";
@@ -162,6 +169,8 @@ const App = () => (
                   <Route path="favorites" element={<MarketFavorites />} />
                   <Route path="alerts" element={<MarketAlerts />} />
                   <Route path="profile" element={<MarketProfile />} />
+                  <Route path="kyc" element={<MarketKycPage />} />
+                  <Route path="kyc/:type" element={<KycVerificationPage />} />
                 </Route>
                 <Route path="genius/*" element={<GeniusPage />} />
                 <Route path="finance" element={<FinanceLayout />}>
@@ -198,6 +207,9 @@ const App = () => (
                 <Route path="feedback" element={<AdminFeedbackPage />} />
                 <Route path="audit-logs" element={<AdminAuditLogsPage />} />
                 <Route path="settings" element={<AdminSettingsPage />} />
+                <Route path="kyc-review" element={<KycReviewPage />} />
+                <Route path="moderation" element={<ModerationPage />} />
+                <Route path="compliance" element={<ComplianceDashboard />} />
               </Route>
               
               {/* 404 */}
