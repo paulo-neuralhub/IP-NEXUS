@@ -57,12 +57,12 @@ export default function AdminFeedbackPage() {
           <p className="text-muted-foreground">Gestiona el feedback recibido</p>
         </div>
         
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
+        <Select value={statusFilter || 'all'} onValueChange={(v) => setStatusFilter(v === 'all' ? '' : v)}>
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Filtrar por estado" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
             {Object.entries(FEEDBACK_STATUSES).map(([key, config]) => (
               <SelectItem key={key} value={key}>{config.label}</SelectItem>
             ))}

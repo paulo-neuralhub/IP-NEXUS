@@ -313,14 +313,17 @@ export function DealFormModal({ open, onClose, deal, defaultPipelineId, defaultS
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Contacto</FormLabel>
-                    <Select value={field.value} onValueChange={field.onChange}>
+                    <Select
+                      value={field.value ? field.value : '__none__'}
+                      onValueChange={(v) => field.onChange(v === '__none__' ? '' : v)}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccionar contacto" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        <SelectItem value="">Sin contacto</SelectItem>
+                        <SelectItem value="__none__">Sin contacto</SelectItem>
                         {contacts.map((c) => (
                           <SelectItem key={c.id} value={c.id}>
                             {c.name} {c.company_name && `(${c.company_name})`}

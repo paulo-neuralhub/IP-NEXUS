@@ -272,14 +272,14 @@ export function ImportWizardModal({ open, onOpenChange }: ImportWizardModalProps
                   </div>
                   <ArrowRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                   <Select
-                    value={mapping[sourceCol] || ''}
-                    onValueChange={(v) => handleMappingChange(sourceCol, v)}
+                    value={mapping[sourceCol] ? mapping[sourceCol] : '__skip__'}
+                    onValueChange={(v) => handleMappingChange(sourceCol, v === '__skip__' ? '' : v)}
                   >
                     <SelectTrigger className="flex-1">
                       <SelectValue placeholder="Seleccionar campo" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">-- No importar --</SelectItem>
+                      <SelectItem value="__skip__">-- No importar --</SelectItem>
                       {targetColumns.map(col => (
                         <SelectItem key={col.value} value={col.value}>
                           {col.label}

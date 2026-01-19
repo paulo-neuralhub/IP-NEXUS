@@ -47,14 +47,14 @@ export default function AdminAuditLogsPage() {
       {/* Filters */}
       <div className="flex gap-4">
         <Select 
-          value={filters.resource_type || ''} 
-          onValueChange={(value) => setFilters({ ...filters, resource_type: value || undefined })}
+          value={filters.resource_type || 'all'} 
+          onValueChange={(value) => setFilters({ ...filters, resource_type: value === 'all' ? undefined : value })}
         >
           <SelectTrigger className="w-48">
             <SelectValue placeholder="Tipo de recurso" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos</SelectItem>
+            <SelectItem value="all">Todos</SelectItem>
             {RESOURCE_TYPES.map((type) => (
               <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
             ))}
