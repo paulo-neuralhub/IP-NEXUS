@@ -8402,37 +8402,46 @@ export type Database = {
       }
       metrics_cache: {
         Row: {
-          calculated_at: string | null
+          computed_at: string | null
+          dimensions: Json | null
           expires_at: string | null
           id: string
-          metric_code: string
-          metric_value: Json
+          is_stale: boolean | null
+          metric_key: string
           organization_id: string
           period_end: string | null
           period_start: string | null
-          period_type: string
+          period_type: string | null
+          value_json: Json | null
+          value_numeric: number | null
         }
         Insert: {
-          calculated_at?: string | null
+          computed_at?: string | null
+          dimensions?: Json | null
           expires_at?: string | null
           id?: string
-          metric_code: string
-          metric_value: Json
+          is_stale?: boolean | null
+          metric_key: string
           organization_id: string
           period_end?: string | null
           period_start?: string | null
-          period_type: string
+          period_type?: string | null
+          value_json?: Json | null
+          value_numeric?: number | null
         }
         Update: {
-          calculated_at?: string | null
+          computed_at?: string | null
+          dimensions?: Json | null
           expires_at?: string | null
           id?: string
-          metric_code?: string
-          metric_value?: Json
+          is_stale?: boolean | null
+          metric_key?: string
           organization_id?: string
           period_end?: string | null
           period_start?: string | null
-          period_type?: string
+          period_type?: string | null
+          value_json?: Json | null
+          value_numeric?: number | null
         }
         Relationships: [
           {
@@ -10128,6 +10137,155 @@ export type Database = {
           },
         ]
       }
+      report_definitions: {
+        Row: {
+          available_formats: string[] | null
+          category: string
+          color: string | null
+          config: Json
+          created_at: string | null
+          created_by: string | null
+          default_view: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_favorite: boolean | null
+          is_scheduled: boolean | null
+          last_run_at: string | null
+          name: string
+          organization_id: string | null
+          report_type: string
+          run_count: number | null
+          schedule_config: Json | null
+          slug: string
+          tags: string[] | null
+          updated_at: string | null
+          visibility: string | null
+        }
+        Insert: {
+          available_formats?: string[] | null
+          category: string
+          color?: string | null
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          default_view?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_favorite?: boolean | null
+          is_scheduled?: boolean | null
+          last_run_at?: string | null
+          name: string
+          organization_id?: string | null
+          report_type?: string
+          run_count?: number | null
+          schedule_config?: Json | null
+          slug: string
+          tags?: string[] | null
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          available_formats?: string[] | null
+          category?: string
+          color?: string | null
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          default_view?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_favorite?: boolean | null
+          is_scheduled?: boolean | null
+          last_run_at?: string | null
+          name?: string
+          organization_id?: string | null
+          report_type?: string
+          run_count?: number | null
+          schedule_config?: Json | null
+          slug?: string
+          tags?: string[] | null
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_definitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      report_executions: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          executed_by: string | null
+          id: string
+          organization_id: string
+          output_files: Json | null
+          parameters: Json | null
+          report_id: string
+          result_summary: Json | null
+          started_at: string | null
+          status: string
+          triggered_by: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          executed_by?: string | null
+          id?: string
+          organization_id: string
+          output_files?: Json | null
+          parameters?: Json | null
+          report_id: string
+          result_summary?: Json | null
+          started_at?: string | null
+          status?: string
+          triggered_by?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          executed_by?: string | null
+          id?: string
+          organization_id?: string
+          output_files?: Json | null
+          parameters?: Json | null
+          report_id?: string
+          result_summary?: Json | null
+          started_at?: string | null
+          status?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "report_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_executions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "report_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       report_templates: {
         Row: {
           code: string
@@ -10187,6 +10345,75 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      scheduled_exports: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          export_format: string
+          failure_count: number | null
+          fixed_parameters: Json | null
+          id: string
+          is_active: boolean | null
+          last_run_at: string | null
+          next_run_at: string | null
+          organization_id: string
+          recipients: Json
+          report_id: string
+          schedule_config: Json
+          schedule_type: string
+          success_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          export_format?: string
+          failure_count?: number | null
+          fixed_parameters?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          next_run_at?: string | null
+          organization_id: string
+          recipients?: Json
+          report_id: string
+          schedule_config: Json
+          schedule_type: string
+          success_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          export_format?: string
+          failure_count?: number | null
+          fixed_parameters?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_run_at?: string | null
+          next_run_at?: string | null
+          organization_id?: string
+          recipients?: Json
+          report_id?: string
+          schedule_config?: Json
+          schedule_type?: string
+          success_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scheduled_exports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_exports_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "report_definitions"
             referencedColumns: ["id"]
           },
         ]
@@ -12136,6 +12363,17 @@ export type Database = {
     Functions: {
       calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      get_analytics_stats: {
+        Args: { p_days?: number; p_organization_id: string }
+        Returns: Json
+      }
+      get_assets_grouped: {
+        Args: { p_group_by: string; p_organization_id: string }
+        Returns: {
+          label: string
+          value: number
+        }[]
+      }
       get_user_org_ids: { Args: never; Returns: string[] }
       get_user_role_in_org: { Args: { org_id: string }; Returns: string }
       get_workflow_stats: {
