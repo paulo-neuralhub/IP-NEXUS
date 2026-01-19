@@ -115,7 +115,7 @@ function DocumentDetail({ id, onClose }: { id: string; onClose: () => void }) {
       <Alert variant="default" className="bg-amber-50 border-amber-200">
         <AlertTriangle className="h-4 w-4 text-amber-600" />
         <AlertDescription className="text-amber-800">
-          {GENIUS_PRO_DISCLAIMERS.general}
+          {GENIUS_PRO_DISCLAIMERS.general.es}
         </AlertDescription>
       </Alert>
       
@@ -274,7 +274,7 @@ export function DocumentsList() {
       {/* Documents Grid */}
       {filteredDocs.length === 0 ? (
         <EmptyState
-          icon={FileText}
+          icon={<FileText className="h-8 w-8" />}
           title="No hay documentos"
           description="Los documentos generados con IP-GENIUS PRO aparecerán aquí"
         />

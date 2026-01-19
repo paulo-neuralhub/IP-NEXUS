@@ -383,7 +383,7 @@ function GeneratedDocumentView({ document }: { document: GeneratedDocument }) {
       <Alert variant="default" className="bg-amber-50 border-amber-200">
         <AlertTriangle className="h-4 w-4 text-amber-600" />
         <AlertDescription className="text-amber-800">
-          {GENIUS_PRO_DISCLAIMERS.opposition}
+          {GENIUS_PRO_DISCLAIMERS.opposition.es}
         </AlertDescription>
       </Alert>
       
