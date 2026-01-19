@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { LucideIcon, AlertTriangle } from "lucide-react";
+import { LucideIcon, AlertTriangle, FileText, Eye, Handshake, Users, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -81,21 +81,21 @@ export function QuickStats({
       <StatCard
         title="Expedientes"
         value={totalMatters}
-        icon={require("lucide-react").FileText}
+        icon={FileText}
         link="/app/docket"
         color="text-module-docket"
       />
       <StatCard
         title="Vigilancias"
         value={activeWatchlists}
-        icon={require("lucide-react").Eye}
+        icon={Eye}
         link="/app/spider"
         color="text-module-spider"
       />
       <StatCard
         title="Deals Abiertos"
         value={pendingDeals}
-        icon={require("lucide-react").Handshake}
+        icon={Handshake}
         link="/app/crm/deals"
         badge={pendingDeals > 0 ? "Activos" : undefined}
         color="text-module-crm"
@@ -103,14 +103,14 @@ export function QuickStats({
       <StatCard
         title="Contactos"
         value={totalContacts}
-        icon={require("lucide-react").Users}
+        icon={Users}
         link="/app/crm/contacts"
         color="text-module-crm"
       />
       <StatCard
         title="Plazos"
         value={upcomingDeadlines}
-        icon={require("lucide-react").Calendar}
+        icon={Calendar}
         link="/app/docket"
         badge={upcomingDeadlines > 5 ? "⚠️" : undefined}
         color="text-module-finance"
