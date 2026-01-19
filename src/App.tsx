@@ -149,6 +149,7 @@ const App = () => (
                 <Route path="market" element={<MarketLayout />}>
                   <Route index element={<MarketDashboard />} />
                   <Route path="listings" element={<MarketListings />} />
+                  <Route path="listings/new" element={<CreateListingPage />} />
                   <Route path="assets" element={<MarketAssets />} />
                   <Route path="transactions" element={<MarketTransactions />} />
                   <Route path="favorites" element={<MarketFavorites />} />
