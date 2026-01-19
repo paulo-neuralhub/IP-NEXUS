@@ -2343,6 +2343,586 @@ export type Database = {
         }
         Relationships: []
       }
+      filing_applications: {
+        Row: {
+          applicant_data: Json
+          applicant_id: string | null
+          application_data: Json
+          created_at: string | null
+          created_by: string | null
+          deadline_payment: string | null
+          deadline_submission: string | null
+          documents: Json | null
+          fees_calculated: Json | null
+          fees_paid: boolean | null
+          filing_type: string
+          id: string
+          ip_type: string
+          last_submission_at: string | null
+          matter_id: string | null
+          office_code: string
+          office_id: string
+          official_filing_date: string | null
+          official_filing_number: string | null
+          official_receipt_url: string | null
+          organization_id: string
+          payment_date: string | null
+          payment_reference: string | null
+          power_of_attorney_id: string | null
+          priority_claims: Json | null
+          representative_data: Json | null
+          representative_id: string | null
+          status: string
+          submission_attempts: number | null
+          submission_method: string | null
+          submission_response: Json | null
+          submitted_at: string | null
+          submitted_by: string | null
+          tracking_number: string | null
+          updated_at: string | null
+          validated_at: string | null
+          validation_errors: Json | null
+          validation_status: string | null
+          validation_warnings: Json | null
+        }
+        Insert: {
+          applicant_data?: Json
+          applicant_id?: string | null
+          application_data?: Json
+          created_at?: string | null
+          created_by?: string | null
+          deadline_payment?: string | null
+          deadline_submission?: string | null
+          documents?: Json | null
+          fees_calculated?: Json | null
+          fees_paid?: boolean | null
+          filing_type: string
+          id?: string
+          ip_type: string
+          last_submission_at?: string | null
+          matter_id?: string | null
+          office_code: string
+          office_id: string
+          official_filing_date?: string | null
+          official_filing_number?: string | null
+          official_receipt_url?: string | null
+          organization_id: string
+          payment_date?: string | null
+          payment_reference?: string | null
+          power_of_attorney_id?: string | null
+          priority_claims?: Json | null
+          representative_data?: Json | null
+          representative_id?: string | null
+          status?: string
+          submission_attempts?: number | null
+          submission_method?: string | null
+          submission_response?: Json | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          validated_at?: string | null
+          validation_errors?: Json | null
+          validation_status?: string | null
+          validation_warnings?: Json | null
+        }
+        Update: {
+          applicant_data?: Json
+          applicant_id?: string | null
+          application_data?: Json
+          created_at?: string | null
+          created_by?: string | null
+          deadline_payment?: string | null
+          deadline_submission?: string | null
+          documents?: Json | null
+          fees_calculated?: Json | null
+          fees_paid?: boolean | null
+          filing_type?: string
+          id?: string
+          ip_type?: string
+          last_submission_at?: string | null
+          matter_id?: string | null
+          office_code?: string
+          office_id?: string
+          official_filing_date?: string | null
+          official_filing_number?: string | null
+          official_receipt_url?: string | null
+          organization_id?: string
+          payment_date?: string | null
+          payment_reference?: string | null
+          power_of_attorney_id?: string | null
+          priority_claims?: Json | null
+          representative_data?: Json | null
+          representative_id?: string | null
+          status?: string
+          submission_attempts?: number | null
+          submission_method?: string | null
+          submission_response?: Json | null
+          submitted_at?: string | null
+          submitted_by?: string | null
+          tracking_number?: string | null
+          updated_at?: string | null
+          validated_at?: string | null
+          validation_errors?: Json | null
+          validation_status?: string | null
+          validation_warnings?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_applications_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_power_of_attorney_id_fkey"
+            columns: ["power_of_attorney_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_representative_id_fkey"
+            columns: ["representative_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filing_communication_logs: {
+        Row: {
+          comm_type: string
+          direction: string
+          endpoint: string | null
+          error_code: string | null
+          error_message: string | null
+          filing_id: string
+          id: string
+          ip_address: string | null
+          method: string | null
+          request_body: string | null
+          request_headers: Json | null
+          response_body: string | null
+          response_headers: Json | null
+          response_status: number | null
+          response_time_ms: number | null
+          sent_at: string | null
+          success: boolean | null
+          user_agent: string | null
+        }
+        Insert: {
+          comm_type: string
+          direction: string
+          endpoint?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          filing_id: string
+          id?: string
+          ip_address?: string | null
+          method?: string | null
+          request_body?: string | null
+          request_headers?: Json | null
+          response_body?: string | null
+          response_headers?: Json | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          sent_at?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Update: {
+          comm_type?: string
+          direction?: string
+          endpoint?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          filing_id?: string
+          id?: string
+          ip_address?: string | null
+          method?: string | null
+          request_body?: string | null
+          request_headers?: Json | null
+          response_body?: string | null
+          response_headers?: Json | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          sent_at?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_communication_logs_filing_id_fkey"
+            columns: ["filing_id"]
+            isOneToOne: false
+            referencedRelation: "filing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filing_drafts: {
+        Row: {
+          auto_saved_at: string | null
+          converted_to_filing_id: string | null
+          current_step: number | null
+          expires_at: string | null
+          filing_type: string
+          id: string
+          ip_type: string
+          office_id: string | null
+          organization_id: string
+          user_id: string
+          wizard_data: Json
+        }
+        Insert: {
+          auto_saved_at?: string | null
+          converted_to_filing_id?: string | null
+          current_step?: number | null
+          expires_at?: string | null
+          filing_type: string
+          id?: string
+          ip_type: string
+          office_id?: string | null
+          organization_id: string
+          user_id: string
+          wizard_data?: Json
+        }
+        Update: {
+          auto_saved_at?: string | null
+          converted_to_filing_id?: string | null
+          current_step?: number | null
+          expires_at?: string | null
+          filing_type?: string
+          id?: string
+          ip_type?: string
+          office_id?: string | null
+          organization_id?: string
+          user_id?: string
+          wizard_data?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_drafts_converted_to_filing_id_fkey"
+            columns: ["converted_to_filing_id"]
+            isOneToOne: false
+            referencedRelation: "filing_applications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_drafts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_drafts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_drafts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filing_status_history: {
+        Row: {
+          changed_at: string | null
+          changed_by: string | null
+          filing_id: string
+          id: string
+          metadata: Json | null
+          notes: string | null
+          status_from: string | null
+          status_to: string
+          system_message: string | null
+        }
+        Insert: {
+          changed_at?: string | null
+          changed_by?: string | null
+          filing_id: string
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          status_from?: string | null
+          status_to: string
+          system_message?: string | null
+        }
+        Update: {
+          changed_at?: string | null
+          changed_by?: string | null
+          filing_id?: string
+          id?: string
+          metadata?: Json | null
+          notes?: string | null
+          status_from?: string | null
+          status_to?: string
+          system_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_status_history_filing_id_fkey"
+            columns: ["filing_id"]
+            isOneToOne: false
+            referencedRelation: "filing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filing_submission_queue: {
+        Row: {
+          attempts: number | null
+          completed_at: string | null
+          created_at: string | null
+          filing_id: string
+          id: string
+          last_attempt_at: string | null
+          last_error: string | null
+          locked_at: string | null
+          max_attempts: number | null
+          next_attempt_at: string | null
+          priority: number | null
+          status: string | null
+          worker_id: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          filing_id: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          locked_at?: string | null
+          max_attempts?: number | null
+          next_attempt_at?: string | null
+          priority?: number | null
+          status?: string | null
+          worker_id?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          filing_id?: string
+          id?: string
+          last_attempt_at?: string | null
+          last_error?: string | null
+          locked_at?: string | null
+          max_attempts?: number | null
+          next_attempt_at?: string | null
+          priority?: number | null
+          status?: string | null
+          worker_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_submission_queue_filing_id_fkey"
+            columns: ["filing_id"]
+            isOneToOne: false
+            referencedRelation: "filing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filing_templates: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          filing_type: string
+          id: string
+          ip_type: string
+          is_active: boolean | null
+          last_used_at: string | null
+          name: string
+          office_id: string | null
+          organization_id: string | null
+          template_data: Json
+          use_count: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filing_type: string
+          id?: string
+          ip_type: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          name: string
+          office_id?: string | null
+          organization_id?: string | null
+          template_data?: Json
+          use_count?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          filing_type?: string
+          id?: string
+          ip_type?: string
+          is_active?: boolean | null
+          last_used_at?: string | null
+          name?: string
+          office_id?: string | null
+          organization_id?: string | null
+          template_data?: Json
+          use_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_templates_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_templates_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      filing_trademark_data: {
+        Row: {
+          collective_mark_regulations_id: string | null
+          color_description: string | null
+          colors_claimed: string[] | null
+          created_at: string | null
+          disclaimer: string | null
+          filing_id: string
+          filing_language: string | null
+          goods_services: Json
+          id: string
+          is_certification_mark: boolean | null
+          is_collective_mark: boolean | null
+          is_color_claimed: boolean | null
+          mark_description: string | null
+          mark_image_colors: string | null
+          mark_image_file_id: string | null
+          mark_image_format: string | null
+          mark_sound_file_id: string | null
+          mark_text: string | null
+          mark_type: string
+          mark_video_file_id: string | null
+          nice_classes: number[]
+          second_language: string | null
+          translation: string | null
+          transliteration: string | null
+          vienna_codes: string[] | null
+        }
+        Insert: {
+          collective_mark_regulations_id?: string | null
+          color_description?: string | null
+          colors_claimed?: string[] | null
+          created_at?: string | null
+          disclaimer?: string | null
+          filing_id: string
+          filing_language?: string | null
+          goods_services?: Json
+          id?: string
+          is_certification_mark?: boolean | null
+          is_collective_mark?: boolean | null
+          is_color_claimed?: boolean | null
+          mark_description?: string | null
+          mark_image_colors?: string | null
+          mark_image_file_id?: string | null
+          mark_image_format?: string | null
+          mark_sound_file_id?: string | null
+          mark_text?: string | null
+          mark_type: string
+          mark_video_file_id?: string | null
+          nice_classes?: number[]
+          second_language?: string | null
+          translation?: string | null
+          transliteration?: string | null
+          vienna_codes?: string[] | null
+        }
+        Update: {
+          collective_mark_regulations_id?: string | null
+          color_description?: string | null
+          colors_claimed?: string[] | null
+          created_at?: string | null
+          disclaimer?: string | null
+          filing_id?: string
+          filing_language?: string | null
+          goods_services?: Json
+          id?: string
+          is_certification_mark?: boolean | null
+          is_collective_mark?: boolean | null
+          is_color_claimed?: boolean | null
+          mark_description?: string | null
+          mark_image_colors?: string | null
+          mark_image_file_id?: string | null
+          mark_image_format?: string | null
+          mark_sound_file_id?: string | null
+          mark_text?: string | null
+          mark_type?: string
+          mark_video_file_id?: string | null
+          nice_classes?: number[]
+          second_language?: string | null
+          translation?: string | null
+          transliteration?: string | null
+          vienna_codes?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "filing_trademark_data_filing_id_fkey"
+            columns: ["filing_id"]
+            isOneToOne: false
+            referencedRelation: "filing_applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       finance_portfolio_assets: {
         Row: {
           acquisition_cost: number | null
