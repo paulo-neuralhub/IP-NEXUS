@@ -163,8 +163,8 @@ const App = () => (
                 <Route path="migrator/:id" element={<MigrationDetailPage />} />
               </Route>
               
-              {/* ADMIN PANEL */}
-              <Route path="/admin" element={<AdminLayout />}>
+              {/* ADMIN PANEL - Protected */}
+              <Route path="/admin" element={<AuthGuard><AdminLayout /></AuthGuard>}>
                 <Route index element={<AdminDashboard />} />
                 <Route path="organizations" element={<AdminOrganizationsPage />} />
                 <Route path="users" element={<AdminUsersPage />} />
