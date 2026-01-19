@@ -298,3 +298,90 @@ export function useDeleteHelpArticle() {
     },
   });
 }
+
+// ==========================================
+// ADMIN: CATEGORY MANAGEMENT
+// ==========================================
+
+export function useCreateHelpCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (category: Partial<HelpCategory>) => {
+      const { data, error } = await supabase
+        .from('help_categories')
+        .insert({
+          slug: category.slug || '',
+          name: category.name || '',
+          description: category.description,
+          icon: category.icon,
+          color: category.color,
+          parent_id: category.parent_id,
+          display_order: category.display_order ?? 0,
+          is_active: category.is_active ?? true,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Categoría creada');
+      queryClient.invalidateQueries({ queryKey: ['help-categories'] });
+    },
+    onError: () => {
+      toast.error('Error al crear categoría');
+    },
+  });
+}
+
+export function useUpdateHelpCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...updates }: Partial<HelpCategory> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('help_categories')
+        .update({
+          ...updates,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      toast.success('Categoría actualizada');
+      queryClient.invalidateQueries({ queryKey: ['help-categories'] });
+    },
+    onError: () => {
+      toast.error('Error al actualizar categoría');
+    },
+  });
+}
+
+export function useDeleteHelpCategory() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('help_categories')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Categoría eliminada');
+      queryClient.invalidateQueries({ queryKey: ['help-categories'] });
+    },
+    onError: () => {
+      toast.error('Error al eliminar categoría');
+    },
+  });
+}

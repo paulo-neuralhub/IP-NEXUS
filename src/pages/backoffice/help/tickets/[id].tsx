@@ -26,15 +26,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useSupportTicket, useTicketMessages, useAddTicketMessage, useUpdateSupportTicket } from '@/hooks/help/useSupportTickets';
+import { useSupportTicket, useAddAgentMessage, useUpdateSupportTicket } from '@/hooks/help/useSupportTickets';
+import { SupportTicket } from '@/types/help';
 import { formatDistanceToNow, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 
-const statusConfig: Record<string, { label: string; color: string; icon: any }> = {
+const statusConfig: Record<SupportTicket['status'], { label: string; color: string; icon: any }> = {
   open: { label: 'Abierto', color: 'bg-blue-500', icon: AlertCircle },
   in_progress: { label: 'En Proceso', color: 'bg-yellow-500', icon: Clock },
-  waiting_response: { label: 'Esperando Respuesta', color: 'bg-purple-500', icon: MessageSquare },
+  waiting_customer: { label: 'Esperando Cliente', color: 'bg-purple-500', icon: MessageSquare },
+  waiting_internal: { label: 'Esperando Interno', color: 'bg-orange-500', icon: Clock },
   resolved: { label: 'Resuelto', color: 'bg-green-500', icon: CheckCircle2 },
   closed: { label: 'Cerrado', color: 'bg-muted', icon: CheckCircle2 },
 };
@@ -46,8 +48,7 @@ export default function BackofficeTicketDetailPage() {
   const [isInternal, setIsInternal] = useState(false);
 
   const { data: ticket, isLoading: ticketLoading } = useSupportTicket(id!);
-  const { data: messages = [] } = useTicketMessages(id!);
-  const addMessage = useAddTicketMessage();
+  const addMessage = useAddAgentMessage();
   const updateTicket = useUpdateSupportTicket();
 
   const handleSendMessage = async () => {
@@ -55,17 +56,17 @@ export default function BackofficeTicketDetailPage() {
 
     try {
       await addMessage.mutateAsync({
-        ticket_id: ticket.id,
+        ticketId: ticket.id,
         message: newMessage,
-        is_internal: isInternal,
+        isInternal,
       });
       setNewMessage('');
       
-      // Update status to waiting_response if was open
+      // Update status to waiting_customer if was open
       if (ticket.status === 'open') {
         await updateTicket.mutateAsync({
           id: ticket.id,
-          status: 'waiting_response',
+          status: 'waiting_customer',
         });
       }
       
@@ -75,13 +76,13 @@ export default function BackofficeTicketDetailPage() {
     }
   };
 
-  const handleStatusChange = async (newStatus: string) => {
+  const handleStatusChange = async (newStatus: SupportTicket['status']) => {
     if (!ticket) return;
     
     try {
       await updateTicket.mutateAsync({
         id: ticket.id,
-        status: newStatus as any,
+        status: newStatus,
         resolved_at: newStatus === 'resolved' ? new Date().toISOString() : undefined,
       });
       toast.success('Estado actualizado');
@@ -90,13 +91,13 @@ export default function BackofficeTicketDetailPage() {
     }
   };
 
-  const handlePriorityChange = async (newPriority: string) => {
+  const handlePriorityChange = async (newPriority: SupportTicket['priority']) => {
     if (!ticket) return;
     
     try {
       await updateTicket.mutateAsync({
         id: ticket.id,
-        priority: newPriority as any,
+        priority: newPriority,
       });
       toast.success('Prioridad actualizada');
     } catch (error) {
@@ -124,6 +125,7 @@ export default function BackofficeTicketDetailPage() {
   }
 
   const StatusIcon = statusConfig[ticket.status]?.icon || AlertCircle;
+  const messages = ticket.messages || [];
 
   return (
     <div className="space-y-6">
@@ -179,21 +181,21 @@ export default function BackofficeTicketDetailPage() {
                   className={`p-4 rounded-lg border ${
                     msg.is_internal 
                       ? 'bg-yellow-500/10 border-yellow-500/30' 
-                      : msg.sender_type === 'agent'
+                      : msg.author_type === 'agent'
                         ? 'bg-primary/5 border-primary/20 ml-8'
                         : 'bg-muted/50 border-border'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-2">
                     <div className={`h-8 w-8 rounded-full flex items-center justify-center ${
-                      msg.sender_type === 'agent' ? 'bg-primary/10' : 'bg-muted'
+                      msg.author_type === 'agent' ? 'bg-primary/10' : 'bg-muted'
                     }`}>
-                      <User className={`h-4 w-4 ${msg.sender_type === 'agent' ? 'text-primary' : 'text-foreground'}`} />
+                      <User className={`h-4 w-4 ${msg.author_type === 'agent' ? 'text-primary' : 'text-foreground'}`} />
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
                         <p className="font-medium text-sm">
-                          {msg.sender_type === 'agent' ? 'Soporte' : 'Usuario'}
+                          {msg.author_type === 'agent' ? 'Soporte' : msg.author_type === 'system' ? 'Sistema' : 'Usuario'}
                         </p>
                         {msg.is_internal && (
                           <Badge variant="outline" className="text-xs">Interno</Badge>
@@ -273,7 +275,7 @@ export default function BackofficeTicketDetailPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="low">Baja</SelectItem>
-                  <SelectItem value="medium">Media</SelectItem>
+                  <SelectItem value="normal">Normal</SelectItem>
                   <SelectItem value="high">Alta</SelectItem>
                   <SelectItem value="urgent">Urgente</SelectItem>
                 </SelectContent>

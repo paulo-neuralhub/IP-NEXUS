@@ -13,22 +13,22 @@ import {
   Users
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useHelpCategories, useHelpArticles } from '@/hooks/help/useHelpArticles';
-import { useSupportTickets } from '@/hooks/help/useSupportTickets';
+import { useHelpCategories, useAllHelpArticles } from '@/hooks/help/useHelpArticles';
+import { useAllSupportTickets } from '@/hooks/help/useSupportTickets';
 import { useHelpAnnouncements } from '@/hooks/help/useHelpAnnouncements';
 
 export default function HelpDashboardPage() {
   const { data: categories = [] } = useHelpCategories();
-  const { data: articles = [] } = useHelpArticles({});
-  const { data: tickets = [] } = useSupportTickets();
+  const { data: articles = [] } = useAllHelpArticles();
+  const { data: tickets = [] } = useAllSupportTickets();
   const { data: announcements = [] } = useHelpAnnouncements();
 
   // Calculate stats
-  const publishedArticles = articles.filter(a => a.status === 'published').length;
+  const publishedArticles = articles.filter(a => a.is_published).length;
   const openTickets = tickets.filter(t => t.status === 'open' || t.status === 'in_progress').length;
-  const pendingTickets = tickets.filter(t => t.status === 'waiting_response').length;
+  const pendingTickets = tickets.filter(t => t.status === 'waiting_customer' || t.status === 'waiting_internal').length;
   const resolvedTickets = tickets.filter(t => t.status === 'resolved' || t.status === 'closed').length;
-  const activeAnnouncements = announcements.filter(a => a.is_active).length;
+  const activeAnnouncements = announcements.filter(a => a.is_published).length;
 
   const stats = [
     {
@@ -157,7 +157,7 @@ export default function HelpDashboardPage() {
                       <div>
                         <p className="font-medium text-foreground">{category.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          {category.article_count || 0} artículos
+                          {category.description || 'Sin descripción'}
                         </p>
                       </div>
                     </div>

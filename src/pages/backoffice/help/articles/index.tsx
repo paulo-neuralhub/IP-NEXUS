@@ -33,28 +33,32 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
-import { useHelpArticles, useHelpCategories, useCreateHelpArticle, useUpdateHelpArticle, useDeleteHelpArticle } from '@/hooks/help/useHelpArticles';
+import { useAllHelpArticles, useHelpCategories, useCreateHelpArticle, useUpdateHelpArticle, useDeleteHelpArticle } from '@/hooks/help/useHelpArticles';
+import { HelpArticle, CreateArticleForm } from '@/types/help';
 import { toast } from 'sonner';
+
+const articleTypes: Array<HelpArticle['article_type']> = ['guide', 'tutorial', 'faq', 'troubleshooting', 'reference', 'video'];
 
 export default function ArticlesManagementPage() {
   const [search, setSearch] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingArticle, setEditingArticle] = useState<any>(null);
+  const [editingArticle, setEditingArticle] = useState<HelpArticle | null>(null);
   
-  const { data: articles = [], isLoading } = useHelpArticles({});
+  const { data: articles = [], isLoading } = useAllHelpArticles();
   const { data: categories = [] } = useHelpCategories();
   const createArticle = useCreateHelpArticle();
   const updateArticle = useUpdateHelpArticle();
   const deleteArticle = useDeleteHelpArticle();
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<CreateArticleForm & { is_published: boolean }>({
     title: '',
     slug: '',
     content: '',
-    excerpt: '',
+    summary: '',
     category_id: '',
-    status: 'draft' as 'draft' | 'published' | 'archived',
+    article_type: 'guide',
     is_featured: false,
+    is_published: false,
   });
 
   const filteredArticles = articles.filter(a => 
@@ -62,17 +66,18 @@ export default function ArticlesManagementPage() {
     a.slug.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleOpenDialog = (article?: any) => {
+  const handleOpenDialog = (article?: HelpArticle) => {
     if (article) {
       setEditingArticle(article);
       setForm({
         title: article.title,
         slug: article.slug,
         content: article.content,
-        excerpt: article.excerpt || '',
-        category_id: article.category_id,
-        status: article.status,
+        summary: article.summary || '',
+        category_id: article.category_id || '',
+        article_type: article.article_type,
         is_featured: article.is_featured,
+        is_published: article.is_published,
       });
     } else {
       setEditingArticle(null);
@@ -80,24 +85,35 @@ export default function ArticlesManagementPage() {
         title: '',
         slug: '',
         content: '',
-        excerpt: '',
+        summary: '',
         category_id: '',
-        status: 'draft',
+        article_type: 'guide',
         is_featured: false,
+        is_published: false,
       });
     }
     setIsDialogOpen(true);
   };
 
   const handleSubmit = async () => {
-    if (!form.title || !form.slug || !form.content || !form.category_id) {
+    if (!form.title || !form.slug || !form.content) {
       toast.error('Completa todos los campos requeridos');
       return;
     }
 
     try {
       if (editingArticle) {
-        await updateArticle.mutateAsync({ id: editingArticle.id, ...form });
+        await updateArticle.mutateAsync({ 
+          id: editingArticle.id, 
+          title: form.title,
+          slug: form.slug,
+          content: form.content,
+          summary: form.summary,
+          category_id: form.category_id || null,
+          article_type: form.article_type,
+          is_featured: form.is_featured,
+          is_published: form.is_published,
+        });
         toast.success('Artículo actualizado');
       } else {
         await createArticle.mutateAsync(form);
@@ -120,11 +136,14 @@ export default function ArticlesManagementPage() {
     }
   };
 
-  const handleToggleStatus = async (article: any) => {
-    const newStatus = article.status === 'published' ? 'draft' : 'published';
+  const handleTogglePublish = async (article: HelpArticle) => {
     try {
-      await updateArticle.mutateAsync({ id: article.id, status: newStatus });
-      toast.success(`Artículo ${newStatus === 'published' ? 'publicado' : 'despublicado'}`);
+      await updateArticle.mutateAsync({ 
+        id: article.id, 
+        is_published: !article.is_published,
+        published_at: !article.is_published ? new Date().toISOString() : null,
+      });
+      toast.success(`Artículo ${article.is_published ? 'despublicado' : 'publicado'}`);
     } catch (error) {
       toast.error('Error al cambiar el estado');
     }
@@ -157,6 +176,7 @@ export default function ArticlesManagementPage() {
               <TableRow>
                 <TableHead>Título</TableHead>
                 <TableHead>Categoría</TableHead>
+                <TableHead>Tipo</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Vistas</TableHead>
                 <TableHead className="text-right">Acciones</TableHead>
@@ -165,13 +185,13 @@ export default function ArticlesManagementPage() {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8">
+                  <TableCell colSpan={6} className="text-center py-8">
                     Cargando...
                   </TableCell>
                 </TableRow>
               ) : filteredArticles.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                     No hay artículos
                   </TableCell>
                 </TableRow>
@@ -188,8 +208,13 @@ export default function ArticlesManagementPage() {
                       {categories.find(c => c.id === article.category_id)?.name || '-'}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={article.status === 'published' ? 'default' : 'secondary'}>
-                        {article.status}
+                      <Badge variant="outline" className="capitalize">
+                        {article.article_type}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={article.is_published ? 'default' : 'secondary'}>
+                        {article.is_published ? 'Publicado' : 'Borrador'}
                       </Badge>
                     </TableCell>
                     <TableCell>{article.view_count || 0}</TableCell>
@@ -198,9 +223,9 @@ export default function ArticlesManagementPage() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleToggleStatus(article)}
+                          onClick={() => handleTogglePublish(article)}
                         >
-                          {article.status === 'published' ? (
+                          {article.is_published ? (
                             <EyeOff className="h-4 w-4" />
                           ) : (
                             <Eye className="h-4 w-4" />
@@ -261,9 +286,9 @@ export default function ArticlesManagementPage() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Categoría *</Label>
+                <Label>Categoría</Label>
                 <Select
-                  value={form.category_id}
+                  value={form.category_id || ''}
                   onValueChange={(v) => setForm({ ...form, category_id: v })}
                 >
                   <SelectTrigger>
@@ -279,28 +304,30 @@ export default function ArticlesManagementPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Estado</Label>
+                <Label>Tipo</Label>
                 <Select
-                  value={form.status}
-                  onValueChange={(v: any) => setForm({ ...form, status: v })}
+                  value={form.article_type}
+                  onValueChange={(v: HelpArticle['article_type']) => setForm({ ...form, article_type: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft">Borrador</SelectItem>
-                    <SelectItem value="published">Publicado</SelectItem>
-                    <SelectItem value="archived">Archivado</SelectItem>
+                    {articleTypes.map((type) => (
+                      <SelectItem key={type} value={type} className="capitalize">
+                        {type}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Extracto</Label>
+              <Label>Resumen</Label>
               <Textarea
-                value={form.excerpt}
-                onChange={(e) => setForm({ ...form, excerpt: e.target.value })}
+                value={form.summary}
+                onChange={(e) => setForm({ ...form, summary: e.target.value })}
                 placeholder="Breve descripción del artículo"
                 rows={2}
               />
@@ -316,12 +343,21 @@ export default function ArticlesManagementPage() {
               />
             </div>
 
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={form.is_featured}
-                onCheckedChange={(v) => setForm({ ...form, is_featured: v })}
-              />
-              <Label>Artículo destacado</Label>
+            <div className="flex items-center gap-6">
+              <label className="flex items-center gap-2">
+                <Switch
+                  checked={form.is_featured}
+                  onCheckedChange={(v) => setForm({ ...form, is_featured: v })}
+                />
+                <span className="text-sm">Destacado</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <Switch
+                  checked={form.is_published}
+                  onCheckedChange={(v) => setForm({ ...form, is_published: v })}
+                />
+                <span className="text-sm">Publicado</span>
+              </label>
             </div>
           </div>
 

@@ -25,11 +25,12 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { useSystemStatus, useCreateSystemStatus, useUpdateSystemStatus, useDeleteSystemStatus } from '@/hooks/help/useHelpAnnouncements';
+import { HelpSystemStatus } from '@/types/help';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 
-const statusConfig: Record<string, { label: string; icon: any; color: string }> = {
+const statusConfig: Record<HelpSystemStatus['status'], { label: string; icon: any; color: string }> = {
   operational: { label: 'Operativo', icon: CheckCircle2, color: 'text-green-500' },
   degraded: { label: 'Degradado', icon: AlertTriangle, color: 'text-yellow-500' },
   partial_outage: { label: 'Interrupción Parcial', icon: AlertTriangle, color: 'text-orange-500' },
@@ -37,7 +38,7 @@ const statusConfig: Record<string, { label: string; icon: any; color: string }> 
   maintenance: { label: 'Mantenimiento', icon: Clock, color: 'text-blue-500' },
 };
 
-const services = [
+const components = [
   'platform',
   'authentication',
   'database',
@@ -50,7 +51,7 @@ const services = [
 
 export default function SystemStatusManagementPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingStatus, setEditingStatus] = useState<any>(null);
+  const [editingStatus, setEditingStatus] = useState<HelpSystemStatus | null>(null);
   
   const { data: statuses = [], isLoading } = useSystemStatus();
   const createStatus = useCreateSystemStatus();
@@ -58,48 +59,53 @@ export default function SystemStatusManagementPage() {
   const deleteStatus = useDeleteSystemStatus();
 
   const [form, setForm] = useState({
-    service_name: '',
-    status: 'operational' as string,
+    component: '',
+    status: 'operational' as HelpSystemStatus['status'],
     title: '',
     description: '',
-    is_active: true,
   });
 
-  const handleOpenDialog = (status?: any) => {
+  const handleOpenDialog = (status?: HelpSystemStatus) => {
     if (status) {
       setEditingStatus(status);
       setForm({
-        service_name: status.service_name,
+        component: status.component,
         status: status.status,
         title: status.title || '',
         description: status.description || '',
-        is_active: status.is_active,
       });
     } else {
       setEditingStatus(null);
       setForm({
-        service_name: '',
+        component: '',
         status: 'operational',
         title: '',
         description: '',
-        is_active: true,
       });
     }
     setIsDialogOpen(true);
   };
 
   const handleSubmit = async () => {
-    if (!form.service_name || !form.status) {
-      toast.error('Servicio y estado son requeridos');
+    if (!form.component || !form.status) {
+      toast.error('Componente y estado son requeridos');
       return;
     }
 
     try {
+      const payload = {
+        component: form.component,
+        status: form.status,
+        title: form.title,
+        description: form.description,
+        started_at: new Date().toISOString(),
+      };
+
       if (editingStatus) {
-        await updateStatus.mutateAsync({ id: editingStatus.id, ...form });
+        await updateStatus.mutateAsync({ id: editingStatus.id, ...payload });
         toast.success('Estado actualizado');
       } else {
-        await createStatus.mutateAsync(form);
+        await createStatus.mutateAsync(payload);
         toast.success('Estado creado');
       }
       setIsDialogOpen(false);
@@ -119,12 +125,11 @@ export default function SystemStatusManagementPage() {
     }
   };
 
-  const handleResolve = async (status: any) => {
+  const handleResolve = async (status: HelpSystemStatus) => {
     try {
       await updateStatus.mutateAsync({
         id: status.id,
         status: 'operational',
-        is_active: false,
         resolved_at: new Date().toISOString(),
       });
       toast.success('Incidencia resuelta');
@@ -133,9 +138,9 @@ export default function SystemStatusManagementPage() {
     }
   };
 
-  // Group by service
-  const activeIncidents = statuses.filter(s => s.is_active && s.status !== 'operational');
-  const resolvedIncidents = statuses.filter(s => !s.is_active);
+  // Group by status
+  const activeIncidents = statuses.filter(s => s.status !== 'operational' && !s.resolved_at);
+  const resolvedIncidents = statuses.filter(s => s.resolved_at);
 
   return (
     <div className="space-y-6">
@@ -157,16 +162,16 @@ export default function SystemStatusManagementPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {services.map((service) => {
-              const status = statuses.find(s => s.service_name === service && s.is_active);
+            {components.map((component) => {
+              const status = statuses.find(s => s.component === component && !s.resolved_at);
               const config = statusConfig[status?.status || 'operational'];
               const Icon = config.icon;
               
               return (
-                <div key={service} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
+                <div key={component} className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                   <Icon className={`h-5 w-5 ${config.color}`} />
                   <div>
-                    <p className="font-medium capitalize">{service}</p>
+                    <p className="font-medium capitalize">{component}</p>
                     <p className={`text-sm ${config.color}`}>{config.label}</p>
                   </div>
                 </div>
@@ -202,9 +207,9 @@ export default function SystemStatusManagementPage() {
                         <Icon className={`h-5 w-5 mt-0.5 ${config.color}`} />
                         <div>
                           <div className="flex items-center gap-2">
-                            <h3 className="font-semibold">{incident.title || incident.service_name}</h3>
+                            <h3 className="font-semibold">{incident.title || incident.component}</h3>
                             <Badge variant="outline" className="capitalize">
-                              {incident.service_name}
+                              {incident.component}
                             </Badge>
                           </div>
                           {incident.description && (
@@ -257,7 +262,7 @@ export default function SystemStatusManagementPage() {
               {resolvedIncidents.slice(0, 10).map((incident) => (
                 <div key={incident.id} className="flex items-center justify-between p-3 rounded-lg bg-muted/30">
                   <div>
-                    <p className="font-medium">{incident.title || incident.service_name}</p>
+                    <p className="font-medium">{incident.title || incident.component}</p>
                     <p className="text-sm text-muted-foreground">
                       {format(new Date(incident.resolved_at || incident.created_at), "d 'de' MMMM, yyyy", { locale: es })}
                     </p>
@@ -288,18 +293,18 @@ export default function SystemStatusManagementPage() {
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Servicio *</Label>
+                <Label>Componente *</Label>
                 <Select
-                  value={form.service_name}
-                  onValueChange={(v) => setForm({ ...form, service_name: v })}
+                  value={form.component}
+                  onValueChange={(v) => setForm({ ...form, component: v })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Selecciona servicio" />
+                    <SelectValue placeholder="Selecciona componente" />
                   </SelectTrigger>
                   <SelectContent>
-                    {services.map((service) => (
-                      <SelectItem key={service} value={service} className="capitalize">
-                        {service}
+                    {components.map((component) => (
+                      <SelectItem key={component} value={component} className="capitalize">
+                        {component}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -309,7 +314,7 @@ export default function SystemStatusManagementPage() {
                 <Label>Estado *</Label>
                 <Select
                   value={form.status}
-                  onValueChange={(v) => setForm({ ...form, status: v })}
+                  onValueChange={(v: HelpSystemStatus['status']) => setForm({ ...form, status: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />

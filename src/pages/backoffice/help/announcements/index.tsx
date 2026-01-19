@@ -26,21 +26,23 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { useHelpAnnouncements, useCreateAnnouncement, useUpdateAnnouncement, useDeleteAnnouncement } from '@/hooks/help/useHelpAnnouncements';
+import { HelpAnnouncement } from '@/types/help';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 
-const typeConfig: Record<string, { label: string; color: string }> = {
+const typeConfig: Record<HelpAnnouncement['announcement_type'], { label: string; color: string }> = {
   feature: { label: 'Nueva Función', color: 'bg-green-500' },
   improvement: { label: 'Mejora', color: 'bg-blue-500' },
   fix: { label: 'Corrección', color: 'bg-yellow-500' },
   security: { label: 'Seguridad', color: 'bg-red-500' },
   deprecation: { label: 'Deprecación', color: 'bg-orange-500' },
+  maintenance: { label: 'Mantenimiento', color: 'bg-purple-500' },
 };
 
 export default function AnnouncementsManagementPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingAnnouncement, setEditingAnnouncement] = useState<any>(null);
+  const [editingAnnouncement, setEditingAnnouncement] = useState<HelpAnnouncement | null>(null);
   
   const { data: announcements = [], isLoading } = useHelpAnnouncements();
   const createAnnouncement = useCreateAnnouncement();
@@ -51,13 +53,13 @@ export default function AnnouncementsManagementPage() {
     title: '',
     summary: '',
     content: '',
-    announcement_type: 'feature' as string,
-    is_active: true,
+    announcement_type: 'feature' as HelpAnnouncement['announcement_type'],
+    is_published: true,
     is_featured: false,
     learn_more_url: '',
   });
 
-  const handleOpenDialog = (announcement?: any) => {
+  const handleOpenDialog = (announcement?: HelpAnnouncement) => {
     if (announcement) {
       setEditingAnnouncement(announcement);
       setForm({
@@ -65,7 +67,7 @@ export default function AnnouncementsManagementPage() {
         summary: announcement.summary || '',
         content: announcement.content || '',
         announcement_type: announcement.announcement_type,
-        is_active: announcement.is_active,
+        is_published: announcement.is_published,
         is_featured: announcement.is_featured || false,
         learn_more_url: announcement.learn_more_url || '',
       });
@@ -76,7 +78,7 @@ export default function AnnouncementsManagementPage() {
         summary: '',
         content: '',
         announcement_type: 'feature',
-        is_active: true,
+        is_published: true,
         is_featured: false,
         learn_more_url: '',
       });
@@ -91,11 +93,22 @@ export default function AnnouncementsManagementPage() {
     }
 
     try {
+      const payload = {
+        title: form.title,
+        summary: form.summary,
+        content: form.content,
+        announcement_type: form.announcement_type,
+        is_published: form.is_published,
+        is_featured: form.is_featured,
+        learn_more_url: form.learn_more_url,
+        publish_at: new Date().toISOString(),
+      };
+
       if (editingAnnouncement) {
-        await updateAnnouncement.mutateAsync({ id: editingAnnouncement.id, ...form });
+        await updateAnnouncement.mutateAsync({ id: editingAnnouncement.id, ...payload });
         toast.success('Anuncio actualizado');
       } else {
-        await createAnnouncement.mutateAsync(form);
+        await createAnnouncement.mutateAsync(payload);
         toast.success('Anuncio creado');
       }
       setIsDialogOpen(false);
@@ -115,13 +128,13 @@ export default function AnnouncementsManagementPage() {
     }
   };
 
-  const handleToggleActive = async (announcement: any) => {
+  const handleTogglePublish = async (announcement: HelpAnnouncement) => {
     try {
       await updateAnnouncement.mutateAsync({ 
         id: announcement.id, 
-        is_active: !announcement.is_active 
+        is_published: !announcement.is_published,
       });
-      toast.success(`Anuncio ${announcement.is_active ? 'desactivado' : 'activado'}`);
+      toast.success(`Anuncio ${announcement.is_published ? 'despublicado' : 'publicado'}`);
     } catch (error) {
       toast.error('Error al cambiar el estado');
     }
@@ -172,6 +185,9 @@ export default function AnnouncementsManagementPage() {
                       {announcement.is_featured && (
                         <Badge>Destacado</Badge>
                       )}
+                      {!announcement.is_published && (
+                        <Badge variant="secondary">Borrador</Badge>
+                      )}
                     </div>
                     {announcement.summary && (
                       <p className="text-sm text-muted-foreground line-clamp-2">
@@ -184,6 +200,17 @@ export default function AnnouncementsManagementPage() {
                   </div>
 
                   <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleTogglePublish(announcement)}
+                    >
+                      {announcement.is_published ? (
+                        <EyeOff className="h-4 w-4" />
+                      ) : (
+                        <Eye className="h-4 w-4" />
+                      )}
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -230,7 +257,7 @@ export default function AnnouncementsManagementPage() {
                 <Label>Tipo</Label>
                 <Select
                   value={form.announcement_type}
-                  onValueChange={(v) => setForm({ ...form, announcement_type: v })}
+                  onValueChange={(v: HelpAnnouncement['announcement_type']) => setForm({ ...form, announcement_type: v })}
                 >
                   <SelectTrigger>
                     <SelectValue />
@@ -277,10 +304,10 @@ export default function AnnouncementsManagementPage() {
             <div className="flex items-center gap-6">
               <label className="flex items-center gap-2">
                 <Switch
-                  checked={form.is_active}
-                  onCheckedChange={(v) => setForm({ ...form, is_active: v })}
+                  checked={form.is_published}
+                  onCheckedChange={(v) => setForm({ ...form, is_published: v })}
                 />
-                <span className="text-sm">Activo</span>
+                <span className="text-sm">Publicado</span>
               </label>
               <label className="flex items-center gap-2">
                 <Switch

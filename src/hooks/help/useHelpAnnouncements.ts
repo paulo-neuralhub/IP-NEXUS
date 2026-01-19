@@ -315,6 +315,29 @@ export function useUpdateSystemStatus() {
   });
 }
 
+export function useDeleteSystemStatus() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('help_system_status')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Estado eliminado');
+      queryClient.invalidateQueries({ queryKey: ['system-status'] });
+      queryClient.invalidateQueries({ queryKey: ['active-incidents'] });
+    },
+    onError: () => {
+      toast.error('Error al eliminar estado');
+    },
+  });
+}
+
 // ==========================================
 // TOOLTIPS
 // ==========================================

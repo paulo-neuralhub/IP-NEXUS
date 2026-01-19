@@ -14,6 +14,9 @@ export {
   useCreateHelpArticle,
   useUpdateHelpArticle,
   useDeleteHelpArticle,
+  useCreateHelpCategory,
+  useUpdateHelpCategory,
+  useDeleteHelpCategory,
 } from './useHelpArticles';
 
 // Support Tickets
@@ -41,6 +44,7 @@ export {
   useActiveIncidents,
   useCreateSystemStatus,
   useUpdateSystemStatus,
+  useDeleteSystemStatus,
   useHelpTooltips,
   useHelpTour,
   useTourProgress,

@@ -16,14 +16,16 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Switch } from '@/components/ui/switch';
 import { useHelpCategories, useCreateHelpCategory, useUpdateHelpCategory, useDeleteHelpCategory } from '@/hooks/help/useHelpArticles';
+import { HelpCategory } from '@/types/help';
 import { toast } from 'sonner';
 
 const ICONS = ['📚', '🚀', '💡', '🔧', '📊', '🎯', '💰', '🔒', '📱', '🌐', '⚡', '📝'];
 
 export default function CategoriesManagementPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingCategory, setEditingCategory] = useState<HelpCategory | null>(null);
   
   const { data: categories = [], isLoading } = useHelpCategories();
   const createCategory = useCreateHelpCategory();
@@ -35,9 +37,10 @@ export default function CategoriesManagementPage() {
     slug: '',
     description: '',
     icon: '📚',
+    is_active: true,
   });
 
-  const handleOpenDialog = (category?: any) => {
+  const handleOpenDialog = (category?: HelpCategory) => {
     if (category) {
       setEditingCategory(category);
       setForm({
@@ -45,6 +48,7 @@ export default function CategoriesManagementPage() {
         slug: category.slug,
         description: category.description || '',
         icon: category.icon || '📚',
+        is_active: category.is_active,
       });
     } else {
       setEditingCategory(null);
@@ -53,6 +57,7 @@ export default function CategoriesManagementPage() {
         slug: '',
         description: '',
         icon: '📚',
+        is_active: true,
       });
     }
     setIsDialogOpen(true);
@@ -69,7 +74,10 @@ export default function CategoriesManagementPage() {
         await updateCategory.mutateAsync({ id: editingCategory.id, ...form });
         toast.success('Categoría actualizada');
       } else {
-        await createCategory.mutateAsync({ ...form, position: categories.length });
+        await createCategory.mutateAsync({ 
+          ...form, 
+          display_order: categories.length,
+        });
         toast.success('Categoría creada');
       }
       setIsDialogOpen(false);
@@ -79,12 +87,6 @@ export default function CategoriesManagementPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const category = categories.find(c => c.id === id);
-    if (category?.article_count && category.article_count > 0) {
-      toast.error('No puedes eliminar una categoría con artículos');
-      return;
-    }
-
     if (!confirm('¿Estás seguro de eliminar esta categoría?')) return;
     
     try {
@@ -139,7 +141,7 @@ export default function CategoriesManagementPage() {
                       {category.description || 'Sin descripción'}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      /{category.slug} • {category.article_count || 0} artículos
+                      /{category.slug}
                     </p>
                   </div>
 
@@ -155,7 +157,6 @@ export default function CategoriesManagementPage() {
                       variant="ghost"
                       size="icon"
                       onClick={() => handleDelete(category.id)}
-                      disabled={!!category.article_count && category.article_count > 0}
                     >
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
@@ -223,6 +224,14 @@ export default function CategoriesManagementPage() {
                 placeholder="Descripción de la categoría"
                 rows={3}
               />
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={form.is_active}
+                onCheckedChange={(v) => setForm({ ...form, is_active: v })}
+              />
+              <Label>Categoría activa</Label>
             </div>
           </div>
 
