@@ -5,17 +5,17 @@ import { toast } from 'sonner';
 import type { ImportFile, FieldMapping } from '@/types/universal-import';
 
 export function useImportFiles(jobId?: string) {
-  const { organization } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   const { data: files = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['import-files', organization?.id, jobId],
+    queryKey: ['import-files', currentOrganization?.id, jobId],
     queryFn: async () => {
-      if (!organization?.id) return [];
+      if (!currentOrganization?.id) return [];
 
       let query = supabase
         .from('import_files')
         .select('*')
-        .eq('organization_id', organization.id)
+        .eq('organization_id', currentOrganization.id)
         .order('uploaded_at', { ascending: false });
 
       if (jobId) {
@@ -25,9 +25,9 @@ export function useImportFiles(jobId?: string) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as ImportFile[];
+      return data as unknown as ImportFile[];
     },
-    enabled: !!organization?.id
+    enabled: !!currentOrganization?.id
   });
 
   return {
@@ -35,14 +35,14 @@ export function useImportFiles(jobId?: string) {
     isLoading,
     error,
     refetch,
-    pendingFiles: files.filter(f => f.analysis_status === 'pending'),
-    analyzedFiles: files.filter(f => f.analysis_status === 'completed'),
-    processedFiles: files.filter(f => f.processing_status === 'completed')
+    pendingFiles: files.filter((f: ImportFile) => f.analysis_status === 'pending'),
+    analyzedFiles: files.filter((f: ImportFile) => f.analysis_status === 'completed'),
+    processedFiles: files.filter((f: ImportFile) => f.processing_status === 'completed')
   };
 }
 
 export function useImportFile(id: string) {
-  const { organization } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['import-file', id],
@@ -54,10 +54,11 @@ export function useImportFile(id: string) {
         .single();
 
       if (error) throw error;
-      return data as ImportFile;
+      return data as unknown as ImportFile;
     },
-    enabled: !!id && !!organization?.id,
-    refetchInterval: (data) => {
+    enabled: !!id && !!currentOrganization?.id,
+    refetchInterval: (query) => {
+      const data = query.state.data as ImportFile | undefined;
       return data?.analysis_status === 'analyzing' || data?.processing_status === 'processing' 
         ? 2000 
         : false;
@@ -67,15 +68,15 @@ export function useImportFile(id: string) {
 
 export function useUploadImportFile() {
   const queryClient = useQueryClient();
-  const { organization } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   return useMutation({
     mutationFn: async ({ file, jobId }: { file: File; jobId?: string }) => {
-      if (!organization?.id) throw new Error('No organization');
+      if (!currentOrganization?.id) throw new Error('No organization');
 
       // Upload file to storage
       const filename = `${Date.now()}-${file.name}`;
-      const storagePath = `imports/${organization.id}/${filename}`;
+      const storagePath = `imports/${currentOrganization.id}/${filename}`;
 
       const { error: uploadError } = await supabase.storage
         .from('import-files')
@@ -87,7 +88,7 @@ export function useUploadImportFile() {
       const { data, error } = await supabase
         .from('import_files')
         .insert({
-          organization_id: organization.id,
+          organization_id: currentOrganization.id,
           job_id: jobId,
           filename,
           original_filename: file.name,
@@ -101,7 +102,7 @@ export function useUploadImportFile() {
         .single();
 
       if (error) throw error;
-      return data as ImportFile;
+      return data as unknown as ImportFile;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['import-files'] });
@@ -163,7 +164,7 @@ export function useUpdateFileMapping() {
         .single();
 
       if (error) throw error;
-      return data as ImportFile;
+      return data as unknown as ImportFile;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['import-files'] });

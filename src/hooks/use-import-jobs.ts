@@ -5,12 +5,12 @@ import { toast } from 'sonner';
 import type { ImportJob, JobType, JobConfig, JobStatus } from '@/types/universal-import';
 
 export function useImportJobs(options?: { sourceId?: string; status?: JobStatus | JobStatus[] }) {
-  const { organization } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   const { data: jobs = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['import-jobs', organization?.id, options?.sourceId, options?.status],
+    queryKey: ['import-jobs', currentOrganization?.id, options?.sourceId, options?.status],
     queryFn: async () => {
-      if (!organization?.id) return [];
+      if (!currentOrganization?.id) return [];
 
       let query = supabase
         .from('import_jobs')
@@ -18,7 +18,7 @@ export function useImportJobs(options?: { sourceId?: string; status?: JobStatus 
           *,
           source:import_sources(id, name, source_type, detected_system)
         `)
-        .eq('organization_id', organization.id)
+        .eq('organization_id', currentOrganization.id)
         .order('created_at', { ascending: false });
 
       if (options?.sourceId) {
@@ -36,19 +36,19 @@ export function useImportJobs(options?: { sourceId?: string; status?: JobStatus 
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as ImportJob[];
+      return data as unknown as ImportJob[];
     },
-    enabled: !!organization?.id,
-    refetchInterval: (data) => {
-      // Auto-refresh if there are running jobs
-      const hasRunningJobs = data?.some(j => ['running', 'queued'].includes(j.status));
+    enabled: !!currentOrganization?.id,
+    refetchInterval: (query) => {
+      const data = query.state.data as ImportJob[] | undefined;
+      const hasRunningJobs = data?.some((j: ImportJob) => ['running', 'queued'].includes(j.status));
       return hasRunningJobs ? 3000 : false;
     }
   });
 
-  const activeJobs = jobs.filter(j => ['running', 'queued', 'paused'].includes(j.status));
-  const completedJobs = jobs.filter(j => ['completed', 'completed_with_errors'].includes(j.status));
-  const failedJobs = jobs.filter(j => j.status === 'failed');
+  const activeJobs = jobs.filter((j: ImportJob) => ['running', 'queued', 'paused'].includes(j.status));
+  const completedJobs = jobs.filter((j: ImportJob) => ['completed', 'completed_with_errors'].includes(j.status));
+  const failedJobs = jobs.filter((j: ImportJob) => j.status === 'failed');
 
   return {
     jobs,
@@ -62,7 +62,7 @@ export function useImportJobs(options?: { sourceId?: string; status?: JobStatus 
 }
 
 export function useImportJob(id: string) {
-  const { organization } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['import-job', id],
@@ -77,10 +77,11 @@ export function useImportJob(id: string) {
         .single();
 
       if (error) throw error;
-      return data as ImportJob;
+      return data as unknown as ImportJob;
     },
-    enabled: !!id && !!organization?.id,
-    refetchInterval: (data) => {
+    enabled: !!id && !!currentOrganization?.id,
+    refetchInterval: (query) => {
+      const data = query.state.data as ImportJob | undefined;
       return data?.status === 'running' ? 2000 : false;
     }
   });
@@ -88,7 +89,7 @@ export function useImportJob(id: string) {
 
 export function useCreateImportJob() {
   const queryClient = useQueryClient();
-  const { organization } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   return useMutation({
     mutationFn: async (data: {
@@ -98,12 +99,12 @@ export function useCreateImportJob() {
       source_files?: any[];
       scheduled_at?: string;
     }) => {
-      if (!organization?.id) throw new Error('No organization');
+      if (!currentOrganization?.id) throw new Error('No organization');
 
       const { data: result, error } = await supabase
         .from('import_jobs')
         .insert({
-          organization_id: organization.id,
+          organization_id: currentOrganization.id,
           source_id: data.source_id,
           job_type: data.job_type,
           config: data.config as any,
@@ -123,7 +124,7 @@ export function useCreateImportJob() {
         .single();
 
       if (error) throw error;
-      return result as ImportJob;
+      return result as unknown as ImportJob;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['import-jobs'] });
