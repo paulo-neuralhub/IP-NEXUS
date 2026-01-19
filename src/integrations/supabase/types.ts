@@ -2301,6 +2301,473 @@ export type Database = {
           },
         ]
       }
+      import_files: {
+        Row: {
+          analysis_result: Json | null
+          analysis_status: string | null
+          analyzed_at: string | null
+          field_mapping: Json | null
+          file_size: number
+          filename: string
+          id: string
+          job_id: string | null
+          mapping_confirmed: boolean | null
+          mime_type: string
+          organization_id: string
+          original_filename: string
+          processed_at: string | null
+          processing_result: Json | null
+          processing_status: string | null
+          storage_path: string
+          uploaded_at: string | null
+          uploaded_by: string | null
+        }
+        Insert: {
+          analysis_result?: Json | null
+          analysis_status?: string | null
+          analyzed_at?: string | null
+          field_mapping?: Json | null
+          file_size: number
+          filename: string
+          id?: string
+          job_id?: string | null
+          mapping_confirmed?: boolean | null
+          mime_type: string
+          organization_id: string
+          original_filename: string
+          processed_at?: string | null
+          processing_result?: Json | null
+          processing_status?: string | null
+          storage_path: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Update: {
+          analysis_result?: Json | null
+          analysis_status?: string | null
+          analyzed_at?: string | null
+          field_mapping?: Json | null
+          file_size?: number
+          filename?: string
+          id?: string
+          job_id?: string | null
+          mapping_confirmed?: boolean | null
+          mime_type?: string
+          organization_id?: string
+          original_filename?: string
+          processed_at?: string | null
+          processing_result?: Json | null
+          processing_status?: string | null
+          storage_path?: string
+          uploaded_at?: string | null
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_files_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_files_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_jobs: {
+        Row: {
+          completed_at: string | null
+          config: Json
+          created_at: string | null
+          created_by: string | null
+          id: string
+          job_type: string
+          organization_id: string
+          parent_job_id: string | null
+          progress: Json | null
+          results: Json | null
+          rollback_snapshot_id: string | null
+          scheduled_at: string | null
+          shadow_comparison: Json | null
+          shadow_data: Json | null
+          source_files: Json | null
+          source_id: string | null
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          job_type: string
+          organization_id: string
+          parent_job_id?: string | null
+          progress?: Json | null
+          results?: Json | null
+          rollback_snapshot_id?: string | null
+          scheduled_at?: string | null
+          shadow_comparison?: Json | null
+          shadow_data?: Json | null
+          source_files?: Json | null
+          source_id?: string | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          job_type?: string
+          organization_id?: string
+          parent_job_id?: string | null
+          progress?: Json | null
+          results?: Json | null
+          rollback_snapshot_id?: string | null
+          scheduled_at?: string | null
+          shadow_comparison?: Json | null
+          shadow_data?: Json | null
+          source_files?: Json | null
+          source_id?: string | null
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_jobs_parent_job_id_fkey"
+            columns: ["parent_job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_jobs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "import_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_mapping_templates: {
+        Row: {
+          avg_accuracy: number | null
+          created_at: string | null
+          entity_type: string
+          field_mappings: Json
+          id: string
+          is_system_template: boolean | null
+          organization_id: string | null
+          source_system: string
+          source_type: string
+          times_confirmed: number | null
+          times_modified: number | null
+          times_used: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_accuracy?: number | null
+          created_at?: string | null
+          entity_type: string
+          field_mappings: Json
+          id?: string
+          is_system_template?: boolean | null
+          organization_id?: string | null
+          source_system: string
+          source_type: string
+          times_confirmed?: number | null
+          times_modified?: number | null
+          times_used?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_accuracy?: number | null
+          created_at?: string | null
+          entity_type?: string
+          field_mappings?: Json
+          id?: string
+          is_system_template?: boolean | null
+          organization_id?: string | null
+          source_system?: string
+          source_type?: string
+          times_confirmed?: number | null
+          times_modified?: number | null
+          times_used?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_mapping_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_scraping_rules: {
+        Row: {
+          created_at: string | null
+          extraction_rules: Json
+          id: string
+          is_working: boolean | null
+          last_test_result: Json | null
+          last_tested_at: string | null
+          login_steps: Json
+          rate_limit_config: Json | null
+          source_id: string
+          system_version: string | null
+          target_system: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          extraction_rules: Json
+          id?: string
+          is_working?: boolean | null
+          last_test_result?: Json | null
+          last_tested_at?: string | null
+          login_steps: Json
+          rate_limit_config?: Json | null
+          source_id: string
+          system_version?: string | null
+          target_system: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          extraction_rules?: Json
+          id?: string
+          is_working?: boolean | null
+          last_test_result?: Json | null
+          last_tested_at?: string | null
+          login_steps?: Json
+          rate_limit_config?: Json | null
+          source_id?: string
+          system_version?: string | null
+          target_system?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_scraping_rules_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "import_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_snapshots: {
+        Row: {
+          affected_records: Json
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          job_id: string
+          organization_id: string
+          snapshot_data: Json
+          snapshot_size: number | null
+        }
+        Insert: {
+          affected_records: Json
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          job_id: string
+          organization_id: string
+          snapshot_data: Json
+          snapshot_size?: number | null
+        }
+        Update: {
+          affected_records?: Json
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          job_id?: string
+          organization_id?: string
+          snapshot_data?: Json
+          snapshot_size?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_snapshots_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_snapshots_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_sources: {
+        Row: {
+          config: Json
+          created_at: string | null
+          created_by: string | null
+          credentials_vault_id: string | null
+          description: string | null
+          detected_system: string | null
+          id: string
+          last_test_at: string | null
+          last_test_result: Json | null
+          name: string
+          organization_id: string
+          source_metadata: Json | null
+          source_type: string
+          status: string | null
+          system_confidence: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          credentials_vault_id?: string | null
+          description?: string | null
+          detected_system?: string | null
+          id?: string
+          last_test_at?: string | null
+          last_test_result?: Json | null
+          name: string
+          organization_id: string
+          source_metadata?: Json | null
+          source_type: string
+          status?: string | null
+          system_confidence?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          config?: Json
+          created_at?: string | null
+          created_by?: string | null
+          credentials_vault_id?: string | null
+          description?: string | null
+          detected_system?: string | null
+          id?: string
+          last_test_at?: string | null
+          last_test_result?: Json | null
+          name?: string
+          organization_id?: string
+          source_metadata?: Json | null
+          source_type?: string
+          status?: string | null
+          system_confidence?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_sources_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      import_sync_configs: {
+        Row: {
+          created_at: string | null
+          enabled: boolean | null
+          entities_config: Json
+          id: string
+          last_sync_at: string | null
+          last_sync_job_id: string | null
+          last_sync_status: string | null
+          name: string
+          next_sync_at: string | null
+          organization_id: string
+          schedule_cron: string | null
+          schedule_timezone: string | null
+          source_id: string
+          status: string | null
+          sync_cursors: Json | null
+          sync_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          enabled?: boolean | null
+          entities_config: Json
+          id?: string
+          last_sync_at?: string | null
+          last_sync_job_id?: string | null
+          last_sync_status?: string | null
+          name: string
+          next_sync_at?: string | null
+          organization_id: string
+          schedule_cron?: string | null
+          schedule_timezone?: string | null
+          source_id: string
+          status?: string | null
+          sync_cursors?: Json | null
+          sync_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          enabled?: boolean | null
+          entities_config?: Json
+          id?: string
+          last_sync_at?: string | null
+          last_sync_job_id?: string | null
+          last_sync_status?: string | null
+          name?: string
+          next_sync_at?: string | null
+          organization_id?: string
+          schedule_cron?: string | null
+          schedule_timezone?: string | null
+          source_id?: string
+          status?: string | null
+          sync_cursors?: Json | null
+          sync_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_sync_configs_last_sync_job_id_fkey"
+            columns: ["last_sync_job_id"]
+            isOneToOne: false
+            referencedRelation: "import_jobs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_sync_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_sync_configs_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "import_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       import_templates: {
         Row: {
           created_at: string | null
