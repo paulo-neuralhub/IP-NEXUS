@@ -8,6 +8,7 @@
  */
 
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 
 // Types
 export type PermissionScope = 'all' | 'team' | 'own' | 'assigned';
@@ -334,7 +335,7 @@ export async function logAccessAudit(params: {
   permissionCode?: string;
   granted: boolean;
   denialReason?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: Json | null;
 }): Promise<void> {
   try {
     await supabase.from('access_audit_log').insert([{
@@ -346,7 +347,7 @@ export async function logAccessAudit(params: {
       permission_code: params.permissionCode,
       granted: params.granted,
       denial_reason: params.denialReason,
-      metadata: params.metadata,
+      metadata: params.metadata ?? null,
     }]);
   } catch (err) {
     console.error('Error logging access audit:', err);
