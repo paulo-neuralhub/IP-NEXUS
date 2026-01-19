@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { GeniusChat, ConversationSidebar, AgentSelector } from '@/components/features/genius';
 import type { AgentType, AIConversation } from '@/types/genius';
 import { usePageTitle } from '@/contexts/page-context';
 
 export default function GeniusPage() {
   const { setTitle } = usePageTitle();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
   const [agentType, setAgentType] = useState<AgentType>(
@@ -20,6 +21,10 @@ export default function GeniusPage() {
   }, [setTitle]);
   
   const handleAgentChange = (agent: AgentType) => {
+    if (agent === 'translator') {
+      navigate('/app/genius/translator');
+      return;
+    }
     setAgentType(agent);
     setConversationId(undefined);
     setSearchParams({ agent });

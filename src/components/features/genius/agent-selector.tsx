@@ -7,6 +7,7 @@ import {
   Scale, 
   Eye, 
   FileSearch,
+  Languages,
   Bot
 } from 'lucide-react';
 
@@ -16,6 +17,7 @@ const ICON_MAP = {
   Scale,
   Eye,
   FileSearch,
+  Languages,
 };
 
 interface Props {
