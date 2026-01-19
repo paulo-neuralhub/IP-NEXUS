@@ -90,6 +90,8 @@ import NewWorkflowPage from "./pages/app/workflow/new";
 import WorkflowTemplatesPage from "./pages/app/workflow/templates";
 import WorkflowDetailPage from "./pages/app/workflow/[id]";
 import EditWorkflowPage from "./pages/app/workflow/[id]/edit";
+import AnalyticsPage from "./pages/app/analytics";
+import AnalyticsChartsPage from "./pages/app/analytics/charts";
 
 // Admin Pages
 import AdminLayout from "./layouts/admin-layout";
@@ -234,6 +236,8 @@ const App = () => (
                 <Route path="workflow/templates" element={<WorkflowTemplatesPage />} />
                 <Route path="workflow/:id" element={<WorkflowDetailPage />} />
                 <Route path="workflow/:id/edit" element={<EditWorkflowPage />} />
+                <Route path="analytics" element={<AnalyticsPage />} />
+                <Route path="analytics/charts" element={<AnalyticsChartsPage />} />
               </Route>
               
               {/* ADMIN PANEL - Protected */}

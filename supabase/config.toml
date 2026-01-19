@@ -137,3 +137,6 @@ verify_jwt = true
 
 [functions.workflow-process-queue]
 verify_jwt = true
+
+[functions.analytics-run-report]
+verify_jwt = true

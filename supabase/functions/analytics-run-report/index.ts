@@ -14,7 +14,8 @@ interface ReportParams {
   [key: string]: unknown;
 }
 
-type SupabaseClientType = ReturnType<typeof createClient>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SupabaseClientType = any;
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {

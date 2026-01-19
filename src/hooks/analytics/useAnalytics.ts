@@ -3,6 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
+import type { Json } from '@/integrations/supabase/types';
 
 // =============================================
 // REPORT DEFINITIONS
@@ -252,10 +253,10 @@ export function useCreateScheduledExport() {
     mutationFn: async (data: {
       report_id: string;
       schedule_type: string;
-      schedule_config: Record<string, unknown>;
+      schedule_config: Json;
       export_format: string;
-      recipients: unknown[];
-      fixed_parameters?: Record<string, unknown>;
+      recipients: Json;
+      fixed_parameters?: Json;
     }) => {
       if (!currentOrganization?.id) throw new Error('No organization');
       
@@ -274,10 +275,6 @@ export function useCreateScheduledExport() {
         }])
         .select()
         .single();
-      
-      if (error) throw error;
-      return result;
-    },
       
       if (error) throw error;
       return result;
