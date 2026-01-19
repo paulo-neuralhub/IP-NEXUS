@@ -60,60 +60,69 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const { data: membershipData, error: membershipError } = await supabase
-      .from("memberships")
-      .select("*")
-      .eq("user_id", effectiveUser.id);
+    try {
+      const { data: membershipData, error: membershipError } = await supabase
+        .from("memberships")
+        .select("*")
+        .eq("user_id", effectiveUser.id);
 
-    if (membershipError) {
-      console.error("Error fetching memberships:", membershipError);
+      if (membershipError) {
+        console.error("Error fetching memberships:", membershipError);
+        // Don't set needsOnboarding on error - might be transient
+        setIsLoading(false);
+        return;
+      }
+
+      if (!membershipData || membershipData.length === 0) {
+        console.log("No memberships found for user:", effectiveUser.id);
+        setMemberships([]);
+        setCurrentOrganizationState(null);
+        setNeedsOnboarding(true);
+        setIsLoading(false);
+        return;
+      }
+
+      console.log("Found memberships:", membershipData.length);
+
+      // Fetch organizations for memberships
+      const orgIds = membershipData.map((m) => m.organization_id);
+      const { data: orgData, error: orgError } = await supabase
+        .from("organizations")
+        .select("*")
+        .in("id", orgIds);
+
+      if (orgError) {
+        console.error("Error fetching organizations:", orgError);
+        setIsLoading(false);
+        return;
+      }
+
+      // Combine memberships with organizations
+      const membershipsWithOrgs = membershipData.map((m) => ({
+        ...m,
+        organization: orgData?.find((o) => o.id === m.organization_id) as Organization | undefined,
+      }));
+
+      setMemberships(membershipsWithOrgs);
+      setNeedsOnboarding(false);
+
+      // Auto-select organization
+      const savedOrgId = localStorage.getItem(ORG_STORAGE_KEY);
+      const savedOrg = orgData?.find((o) => o.id === savedOrgId);
+
+      if (savedOrg) {
+        setCurrentOrganizationState(savedOrg as Organization);
+      } else if (orgData && orgData.length >= 1) {
+        // Pick first (or only) org
+        setCurrentOrganizationState(orgData[0] as Organization);
+        localStorage.setItem(ORG_STORAGE_KEY, orgData[0].id);
+      }
+
       setIsLoading(false);
-      return;
-    }
-
-    if (!membershipData || membershipData.length === 0) {
-      setMemberships([]);
-      setCurrentOrganizationState(null);
-      setNeedsOnboarding(true);
+    } catch (error) {
+      console.error("Error in fetchMemberships:", error);
       setIsLoading(false);
-      return;
     }
-
-    // Fetch organizations for memberships
-    const orgIds = membershipData.map((m) => m.organization_id);
-    const { data: orgData, error: orgError } = await supabase
-      .from("organizations")
-      .select("*")
-      .in("id", orgIds);
-
-    if (orgError) {
-      console.error("Error fetching organizations:", orgError);
-      setIsLoading(false);
-      return;
-    }
-
-    // Combine memberships with organizations
-    const membershipsWithOrgs = membershipData.map((m) => ({
-      ...m,
-      organization: orgData?.find((o) => o.id === m.organization_id) as Organization | undefined,
-    }));
-
-    setMemberships(membershipsWithOrgs);
-    setNeedsOnboarding(false);
-
-    // Auto-select organization
-    const savedOrgId = localStorage.getItem(ORG_STORAGE_KEY);
-    const savedOrg = orgData?.find((o) => o.id === savedOrgId);
-
-    if (savedOrg) {
-      setCurrentOrganizationState(savedOrg as Organization);
-    } else if (orgData && orgData.length >= 1) {
-      // Pick first (or only) org
-      setCurrentOrganizationState(orgData[0] as Organization);
-      localStorage.setItem(ORG_STORAGE_KEY, orgData[0].id);
-    }
-
-    setIsLoading(false);
   };
 
   useEffect(() => {
