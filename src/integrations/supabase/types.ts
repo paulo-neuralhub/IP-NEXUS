@@ -77,6 +77,65 @@ export type Database = {
           },
         ]
       }
+      active_sessions: {
+        Row: {
+          created_at: string | null
+          device_info: Json | null
+          expires_at: string
+          id: string
+          ip_address: string | null
+          is_active: boolean | null
+          is_current: boolean | null
+          last_activity_at: string | null
+          location: Json | null
+          organization_id: string | null
+          refresh_token_hash: string | null
+          revoked_at: string | null
+          session_token_hash: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: Json | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          is_current?: boolean | null
+          last_activity_at?: string | null
+          location?: Json | null
+          organization_id?: string | null
+          refresh_token_hash?: string | null
+          revoked_at?: string | null
+          session_token_hash: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: Json | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          is_current?: boolean | null
+          last_activity_at?: string | null
+          location?: Json | null
+          organization_id?: string | null
+          refresh_token_hash?: string | null
+          revoked_at?: string | null
+          session_token_hash?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "active_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       activities: {
         Row: {
           call_duration: number | null
@@ -9625,6 +9684,80 @@ export type Database = {
           },
         ]
       }
+      oauth_applications: {
+        Row: {
+          active_tokens: number | null
+          allowed_scopes: Json | null
+          client_id: string
+          client_secret_hash: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          homepage_url: string | null
+          id: string
+          is_active: boolean | null
+          is_public: boolean | null
+          logo_url: string | null
+          name: string
+          organization_id: string
+          privacy_policy_url: string | null
+          redirect_uris: Json
+          terms_of_service_url: string | null
+          total_authorizations: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_tokens?: number | null
+          allowed_scopes?: Json | null
+          client_id: string
+          client_secret_hash: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          homepage_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          logo_url?: string | null
+          name: string
+          organization_id: string
+          privacy_policy_url?: string | null
+          redirect_uris?: Json
+          terms_of_service_url?: string | null
+          total_authorizations?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_tokens?: number | null
+          allowed_scopes?: Json | null
+          client_id?: string
+          client_secret_hash?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          homepage_url?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          logo_url?: string | null
+          name?: string
+          organization_id?: string
+          privacy_policy_url?: string | null
+          redirect_uris?: Json
+          terms_of_service_url?: string | null
+          total_authorizations?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "oauth_applications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ocr_results: {
         Row: {
           completed_at: string | null
@@ -9914,6 +10047,59 @@ export type Database = {
             foreignKeyName: "organization_offices_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organization_settings: {
+        Row: {
+          branding: Json | null
+          created_at: string | null
+          defaults: Json | null
+          email: Json | null
+          general: Json | null
+          id: string
+          integrations: Json | null
+          modules: Json | null
+          organization_id: string
+          regional: Json | null
+          security: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          branding?: Json | null
+          created_at?: string | null
+          defaults?: Json | null
+          email?: Json | null
+          general?: Json | null
+          id?: string
+          integrations?: Json | null
+          modules?: Json | null
+          organization_id: string
+          regional?: Json | null
+          security?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          branding?: Json | null
+          created_at?: string | null
+          defaults?: Json | null
+          email?: Json | null
+          general?: Json | null
+          id?: string
+          integrations?: Json | null
+          modules?: Json | null
+          organization_id?: string
+          regional?: Json | null
+          security?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
@@ -11830,6 +12016,56 @@ export type Database = {
           },
         ]
       }
+      settings_audit_log: {
+        Row: {
+          action: string
+          category: string
+          changes: Json | null
+          created_at: string | null
+          id: string
+          ip_address: string | null
+          organization_id: string | null
+          target_id: string | null
+          target_type: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          category: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          organization_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          category?: string
+          changes?: Json | null
+          created_at?: string | null
+          id?: string
+          ip_address?: string | null
+          organization_id?: string | null
+          target_id?: string | null
+          target_type?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "settings_audit_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       similarity_analyses: {
         Row: {
           ai_explanation: string | null
@@ -12767,6 +13003,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_settings: {
+        Row: {
+          created_at: string | null
+          dashboard: Json | null
+          display: Json | null
+          id: string
+          profile: Json | null
+          security: Json | null
+          shortcuts: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          dashboard?: Json | null
+          display?: Json | null
+          id?: string
+          profile?: Json | null
+          security?: Json | null
+          shortcuts?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          dashboard?: Json | null
+          display?: Json | null
+          id?: string
+          profile?: Json | null
+          security?: Json | null
+          shortcuts?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       user_tip_progress: {
         Row: {
