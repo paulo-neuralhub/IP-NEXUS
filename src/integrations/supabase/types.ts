@@ -3221,6 +3221,916 @@ export type Database = {
           },
         ]
       }
+      market_alerts: {
+        Row: {
+          asset_types: Database["public"]["Enums"]["market_asset_type"][] | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          jurisdictions: string[] | null
+          keywords: string[] | null
+          last_triggered_at: string | null
+          max_price: number | null
+          min_price: number | null
+          name: string | null
+          nice_classes: number[] | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          asset_types?:
+            | Database["public"]["Enums"]["market_asset_type"][]
+            | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          keywords?: string[] | null
+          last_triggered_at?: string | null
+          max_price?: number | null
+          min_price?: number | null
+          name?: string | null
+          nice_classes?: number[] | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          asset_types?:
+            | Database["public"]["Enums"]["market_asset_type"][]
+            | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          keywords?: string[] | null
+          last_triggered_at?: string | null
+          max_price?: number | null
+          min_price?: number | null
+          name?: string | null
+          nice_classes?: number[] | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      market_assets: {
+        Row: {
+          abstract: string | null
+          asset_category: Database["public"]["Enums"]["market_asset_category"]
+          asset_type: Database["public"]["Enums"]["market_asset_type"]
+          author: string | null
+          claims: string[] | null
+          created_at: string | null
+          creation_date: string | null
+          description: string | null
+          documents: Json | null
+          domain_name: string | null
+          expiration_date: string | null
+          filing_date: string | null
+          id: string
+          images: string[] | null
+          inventors: string[] | null
+          jurisdiction: string | null
+          logo_url: string | null
+          metadata: Json | null
+          nice_classes: number[] | null
+          owner_id: string
+          pct_number: string | null
+          registrar: string | null
+          registration_date: string | null
+          registration_number: string | null
+          title: string
+          updated_at: string | null
+          verification_data: Json | null
+          verification_expires_at: string | null
+          verification_status:
+            | Database["public"]["Enums"]["market_verification_status"]
+            | null
+          verified_at: string | null
+          word_mark: string | null
+        }
+        Insert: {
+          abstract?: string | null
+          asset_category: Database["public"]["Enums"]["market_asset_category"]
+          asset_type: Database["public"]["Enums"]["market_asset_type"]
+          author?: string | null
+          claims?: string[] | null
+          created_at?: string | null
+          creation_date?: string | null
+          description?: string | null
+          documents?: Json | null
+          domain_name?: string | null
+          expiration_date?: string | null
+          filing_date?: string | null
+          id?: string
+          images?: string[] | null
+          inventors?: string[] | null
+          jurisdiction?: string | null
+          logo_url?: string | null
+          metadata?: Json | null
+          nice_classes?: number[] | null
+          owner_id: string
+          pct_number?: string | null
+          registrar?: string | null
+          registration_date?: string | null
+          registration_number?: string | null
+          title: string
+          updated_at?: string | null
+          verification_data?: Json | null
+          verification_expires_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["market_verification_status"]
+            | null
+          verified_at?: string | null
+          word_mark?: string | null
+        }
+        Update: {
+          abstract?: string | null
+          asset_category?: Database["public"]["Enums"]["market_asset_category"]
+          asset_type?: Database["public"]["Enums"]["market_asset_type"]
+          author?: string | null
+          claims?: string[] | null
+          created_at?: string | null
+          creation_date?: string | null
+          description?: string | null
+          documents?: Json | null
+          domain_name?: string | null
+          expiration_date?: string | null
+          filing_date?: string | null
+          id?: string
+          images?: string[] | null
+          inventors?: string[] | null
+          jurisdiction?: string | null
+          logo_url?: string | null
+          metadata?: Json | null
+          nice_classes?: number[] | null
+          owner_id?: string
+          pct_number?: string | null
+          registrar?: string | null
+          registration_date?: string | null
+          registration_number?: string | null
+          title?: string
+          updated_at?: string | null
+          verification_data?: Json | null
+          verification_expires_at?: string | null
+          verification_status?:
+            | Database["public"]["Enums"]["market_verification_status"]
+            | null
+          verified_at?: string | null
+          word_mark?: string | null
+        }
+        Relationships: []
+      }
+      market_audit_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          ip_address: unknown
+          new_data: Json | null
+          old_data: Json | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          ip_address?: unknown
+          new_data?: Json | null
+          old_data?: Json | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          ip_address?: unknown
+          new_data?: Json | null
+          old_data?: Json | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      market_certifications: {
+        Row: {
+          blockchain_network: string | null
+          blockchain_tx_hash: string | null
+          certificate_data: Json | null
+          certificate_url: string | null
+          certification_level: Database["public"]["Enums"]["market_certification_level"]
+          created_at: string | null
+          document_hash: string
+          id: string
+          metadata_hash: string | null
+          method: string
+          provider: string | null
+          provider_reference: string | null
+          smart_contract_address: string | null
+          token_id: string | null
+          transaction_id: string
+          verification_url: string | null
+          verified: boolean | null
+        }
+        Insert: {
+          blockchain_network?: string | null
+          blockchain_tx_hash?: string | null
+          certificate_data?: Json | null
+          certificate_url?: string | null
+          certification_level: Database["public"]["Enums"]["market_certification_level"]
+          created_at?: string | null
+          document_hash: string
+          id?: string
+          metadata_hash?: string | null
+          method: string
+          provider?: string | null
+          provider_reference?: string | null
+          smart_contract_address?: string | null
+          token_id?: string | null
+          transaction_id: string
+          verification_url?: string | null
+          verified?: boolean | null
+        }
+        Update: {
+          blockchain_network?: string | null
+          blockchain_tx_hash?: string | null
+          certificate_data?: Json | null
+          certificate_url?: string | null
+          certification_level?: Database["public"]["Enums"]["market_certification_level"]
+          created_at?: string | null
+          document_hash?: string
+          id?: string
+          metadata_hash?: string | null
+          method?: string
+          provider?: string | null
+          provider_reference?: string | null
+          smart_contract_address?: string | null
+          token_id?: string | null
+          transaction_id?: string
+          verification_url?: string | null
+          verified?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_certifications_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_favorites: {
+        Row: {
+          created_at: string | null
+          id: string
+          listing_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          listing_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          listing_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_favorites_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "market_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_kyc_verifications: {
+        Row: {
+          created_at: string | null
+          documents: Json | null
+          expires_at: string | null
+          external_reference: string | null
+          id: string
+          provider: string | null
+          rejection_reason: string | null
+          status:
+            | Database["public"]["Enums"]["market_verification_status"]
+            | null
+          submitted_at: string | null
+          updated_at: string | null
+          user_id: string
+          verification_result: Json | null
+          verification_type: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          documents?: Json | null
+          expires_at?: string | null
+          external_reference?: string | null
+          id?: string
+          provider?: string | null
+          rejection_reason?: string | null
+          status?:
+            | Database["public"]["Enums"]["market_verification_status"]
+            | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id: string
+          verification_result?: Json | null
+          verification_type: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          documents?: Json | null
+          expires_at?: string | null
+          external_reference?: string | null
+          id?: string
+          provider?: string | null
+          rejection_reason?: string | null
+          status?:
+            | Database["public"]["Enums"]["market_verification_status"]
+            | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+          verification_result?: Json | null
+          verification_type?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
+      market_listings: {
+        Row: {
+          asking_price: number | null
+          asset_id: string
+          available_classes: number[] | null
+          available_territories: string[] | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          expires_at: string | null
+          favorite_count: number | null
+          featured_until: string | null
+          highlights: string[] | null
+          id: string
+          industries: string[] | null
+          inquiry_count: number | null
+          is_featured: boolean | null
+          is_urgent: boolean | null
+          keywords: string[] | null
+          license_terms: Json | null
+          listing_number: string
+          minimum_offer: number | null
+          offer_count: number | null
+          price_negotiable: boolean | null
+          published_at: string | null
+          seller_id: string
+          status: Database["public"]["Enums"]["market_listing_status"] | null
+          title: string
+          transaction_types: Database["public"]["Enums"]["market_transaction_type"][]
+          updated_at: string | null
+          view_count: number | null
+        }
+        Insert: {
+          asking_price?: number | null
+          asset_id: string
+          available_classes?: number[] | null
+          available_territories?: string[] | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          expires_at?: string | null
+          favorite_count?: number | null
+          featured_until?: string | null
+          highlights?: string[] | null
+          id?: string
+          industries?: string[] | null
+          inquiry_count?: number | null
+          is_featured?: boolean | null
+          is_urgent?: boolean | null
+          keywords?: string[] | null
+          license_terms?: Json | null
+          listing_number: string
+          minimum_offer?: number | null
+          offer_count?: number | null
+          price_negotiable?: boolean | null
+          published_at?: string | null
+          seller_id: string
+          status?: Database["public"]["Enums"]["market_listing_status"] | null
+          title: string
+          transaction_types: Database["public"]["Enums"]["market_transaction_type"][]
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Update: {
+          asking_price?: number | null
+          asset_id?: string
+          available_classes?: number[] | null
+          available_territories?: string[] | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          expires_at?: string | null
+          favorite_count?: number | null
+          featured_until?: string | null
+          highlights?: string[] | null
+          id?: string
+          industries?: string[] | null
+          inquiry_count?: number | null
+          is_featured?: boolean | null
+          is_urgent?: boolean | null
+          keywords?: string[] | null
+          license_terms?: Json | null
+          listing_number?: string
+          minimum_offer?: number | null
+          offer_count?: number | null
+          price_negotiable?: boolean | null
+          published_at?: string | null
+          seller_id?: string
+          status?: Database["public"]["Enums"]["market_listing_status"] | null
+          title?: string
+          transaction_types?: Database["public"]["Enums"]["market_transaction_type"][]
+          updated_at?: string | null
+          view_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_listings_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "market_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_messages: {
+        Row: {
+          attachments: Json | null
+          created_at: string | null
+          id: string
+          listing_id: string | null
+          message: string
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+          thread_id: string
+          transaction_id: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          created_at?: string | null
+          id?: string
+          listing_id?: string | null
+          message: string
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+          thread_id: string
+          transaction_id?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          created_at?: string | null
+          id?: string
+          listing_id?: string | null
+          message?: string
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+          thread_id?: string
+          transaction_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_messages_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "market_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_messages_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_offers: {
+        Row: {
+          amount: number
+          buyer_id: string
+          created_at: string | null
+          currency: string | null
+          expires_at: string | null
+          id: string
+          listing_id: string
+          message: string | null
+          offer_type: string
+          parent_offer_id: string | null
+          proposed_terms: Json | null
+          responded_at: string | null
+          response_message: string | null
+          status: string | null
+          transaction_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          amount: number
+          buyer_id: string
+          created_at?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          listing_id: string
+          message?: string | null
+          offer_type: string
+          parent_offer_id?: string | null
+          proposed_terms?: Json | null
+          responded_at?: string | null
+          response_message?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          amount?: number
+          buyer_id?: string
+          created_at?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          listing_id?: string
+          message?: string | null
+          offer_type?: string
+          parent_offer_id?: string | null
+          proposed_terms?: Json | null
+          responded_at?: string | null
+          response_message?: string | null
+          status?: string | null
+          transaction_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "market_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "market_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_offers_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_reviews: {
+        Row: {
+          accuracy_rating: number | null
+          communication_rating: number | null
+          created_at: string | null
+          flagged: boolean | null
+          id: string
+          overall_rating: number
+          professionalism_rating: number | null
+          responded_at: string | null
+          response: string | null
+          review: string | null
+          reviewed_id: string
+          reviewer_id: string
+          title: string | null
+          transaction_id: string
+          updated_at: string | null
+          visible: boolean | null
+        }
+        Insert: {
+          accuracy_rating?: number | null
+          communication_rating?: number | null
+          created_at?: string | null
+          flagged?: boolean | null
+          id?: string
+          overall_rating: number
+          professionalism_rating?: number | null
+          responded_at?: string | null
+          response?: string | null
+          review?: string | null
+          reviewed_id: string
+          reviewer_id: string
+          title?: string | null
+          transaction_id: string
+          updated_at?: string | null
+          visible?: boolean | null
+        }
+        Update: {
+          accuracy_rating?: number | null
+          communication_rating?: number | null
+          created_at?: string | null
+          flagged?: boolean | null
+          id?: string
+          overall_rating?: number
+          professionalism_rating?: number | null
+          responded_at?: string | null
+          response?: string | null
+          review?: string | null
+          reviewed_id?: string
+          reviewer_id?: string
+          title?: string | null
+          transaction_id?: string
+          updated_at?: string | null
+          visible?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_reviews_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_transactions: {
+        Row: {
+          agreed_price: number | null
+          asset_id: string
+          blockchain_tx_hash: string | null
+          buyer_id: string
+          certificate_url: string | null
+          certification_hash: string | null
+          certification_level:
+            | Database["public"]["Enums"]["market_certification_level"]
+            | null
+          certification_timestamp: string | null
+          commission_amount: number | null
+          commission_rate: number | null
+          completed_at: string | null
+          contract_signed_at: string | null
+          contract_url: string | null
+          created_at: string | null
+          currency: string | null
+          dispute_id: string | null
+          dispute_reason: string | null
+          due_diligence_completed: boolean | null
+          due_diligence_report: Json | null
+          escrow_provider: string | null
+          escrow_reference: string | null
+          escrow_status: string | null
+          id: string
+          license_terms: Json | null
+          listing_id: string
+          metadata: Json | null
+          nda_signed_at: string | null
+          nda_url: string | null
+          notes: string | null
+          offered_price: number | null
+          paid_at: string | null
+          payment_intent_id: string | null
+          payment_method: string | null
+          seller_id: string
+          status:
+            | Database["public"]["Enums"]["market_transaction_status"]
+            | null
+          transaction_number: string
+          transaction_type: Database["public"]["Enums"]["market_transaction_type"]
+          transfer_completed: boolean | null
+          transfer_proof_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          agreed_price?: number | null
+          asset_id: string
+          blockchain_tx_hash?: string | null
+          buyer_id: string
+          certificate_url?: string | null
+          certification_hash?: string | null
+          certification_level?:
+            | Database["public"]["Enums"]["market_certification_level"]
+            | null
+          certification_timestamp?: string | null
+          commission_amount?: number | null
+          commission_rate?: number | null
+          completed_at?: string | null
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          dispute_id?: string | null
+          dispute_reason?: string | null
+          due_diligence_completed?: boolean | null
+          due_diligence_report?: Json | null
+          escrow_provider?: string | null
+          escrow_reference?: string | null
+          escrow_status?: string | null
+          id?: string
+          license_terms?: Json | null
+          listing_id: string
+          metadata?: Json | null
+          nda_signed_at?: string | null
+          nda_url?: string | null
+          notes?: string | null
+          offered_price?: number | null
+          paid_at?: string | null
+          payment_intent_id?: string | null
+          payment_method?: string | null
+          seller_id: string
+          status?:
+            | Database["public"]["Enums"]["market_transaction_status"]
+            | null
+          transaction_number: string
+          transaction_type: Database["public"]["Enums"]["market_transaction_type"]
+          transfer_completed?: boolean | null
+          transfer_proof_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          agreed_price?: number | null
+          asset_id?: string
+          blockchain_tx_hash?: string | null
+          buyer_id?: string
+          certificate_url?: string | null
+          certification_hash?: string | null
+          certification_level?:
+            | Database["public"]["Enums"]["market_certification_level"]
+            | null
+          certification_timestamp?: string | null
+          commission_amount?: number | null
+          commission_rate?: number | null
+          completed_at?: string | null
+          contract_signed_at?: string | null
+          contract_url?: string | null
+          created_at?: string | null
+          currency?: string | null
+          dispute_id?: string | null
+          dispute_reason?: string | null
+          due_diligence_completed?: boolean | null
+          due_diligence_report?: Json | null
+          escrow_provider?: string | null
+          escrow_reference?: string | null
+          escrow_status?: string | null
+          id?: string
+          license_terms?: Json | null
+          listing_id?: string
+          metadata?: Json | null
+          nda_signed_at?: string | null
+          nda_url?: string | null
+          notes?: string | null
+          offered_price?: number | null
+          paid_at?: string | null
+          payment_intent_id?: string | null
+          payment_method?: string | null
+          seller_id?: string
+          status?:
+            | Database["public"]["Enums"]["market_transaction_status"]
+            | null
+          transaction_number?: string
+          transaction_type?: Database["public"]["Enums"]["market_transaction_type"]
+          transfer_completed?: boolean | null
+          transfer_proof_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_transactions_asset_id_fkey"
+            columns: ["asset_id"]
+            isOneToOne: false
+            referencedRelation: "market_assets"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_transactions_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "market_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_user_profiles: {
+        Row: {
+          address: Json | null
+          agent_license_number: string | null
+          avatar_url: string | null
+          average_rating: number | null
+          bar_association: string | null
+          bio: string | null
+          company_name: string | null
+          company_registration_number: string | null
+          company_vat_number: string | null
+          country_code: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          is_agent: boolean | null
+          is_company: boolean | null
+          kyc_expires_at: string | null
+          kyc_level: Database["public"]["Enums"]["market_kyc_level"] | null
+          kyc_verified_at: string | null
+          legal_representative_name: string | null
+          notification_preferences: Json | null
+          phone: string | null
+          phone_verified: boolean | null
+          preferred_currency: string | null
+          preferred_language: string | null
+          professional_insurance: Json | null
+          total_listings: number | null
+          total_transactions: number | null
+          total_volume: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          address?: Json | null
+          agent_license_number?: string | null
+          avatar_url?: string | null
+          average_rating?: number | null
+          bar_association?: string | null
+          bio?: string | null
+          company_name?: string | null
+          company_registration_number?: string | null
+          company_vat_number?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          is_agent?: boolean | null
+          is_company?: boolean | null
+          kyc_expires_at?: string | null
+          kyc_level?: Database["public"]["Enums"]["market_kyc_level"] | null
+          kyc_verified_at?: string | null
+          legal_representative_name?: string | null
+          notification_preferences?: Json | null
+          phone?: string | null
+          phone_verified?: boolean | null
+          preferred_currency?: string | null
+          preferred_language?: string | null
+          professional_insurance?: Json | null
+          total_listings?: number | null
+          total_transactions?: number | null
+          total_volume?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          address?: Json | null
+          agent_license_number?: string | null
+          avatar_url?: string | null
+          average_rating?: number | null
+          bar_association?: string | null
+          bio?: string | null
+          company_name?: string | null
+          company_registration_number?: string | null
+          company_vat_number?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          is_agent?: boolean | null
+          is_company?: boolean | null
+          kyc_expires_at?: string | null
+          kyc_level?: Database["public"]["Enums"]["market_kyc_level"] | null
+          kyc_verified_at?: string | null
+          legal_representative_name?: string | null
+          notification_preferences?: Json | null
+          phone?: string | null
+          phone_verified?: boolean | null
+          preferred_currency?: string | null
+          preferred_language?: string | null
+          professional_insurance?: Json | null
+          total_listings?: number | null
+          total_transactions?: number | null
+          total_volume?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       matter_costs: {
         Row: {
           amount: number
@@ -7017,7 +7927,76 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      market_asset_category:
+        | "industrial_property"
+        | "intellectual_property"
+        | "intangible_assets"
+      market_asset_type:
+        | "patent_invention"
+        | "patent_utility"
+        | "patent_design"
+        | "trademark_word"
+        | "trademark_figurative"
+        | "trademark_mixed"
+        | "trademark_3d"
+        | "trademark_sound"
+        | "industrial_design"
+        | "copyright_software"
+        | "copyright_literary"
+        | "copyright_musical"
+        | "copyright_artistic"
+        | "domain_gtld"
+        | "domain_cctld"
+        | "know_how"
+        | "trade_secret"
+        | "trade_name"
+        | "portfolio"
+      market_certification_level: "basic" | "standard" | "premium"
+      market_kyc_level: "0" | "1" | "2" | "3" | "4"
+      market_listing_status:
+        | "draft"
+        | "pending_verification"
+        | "active"
+        | "under_offer"
+        | "reserved"
+        | "sold"
+        | "licensed"
+        | "expired"
+        | "withdrawn"
+        | "suspended"
+      market_transaction_status:
+        | "inquiry"
+        | "negotiation"
+        | "offer_made"
+        | "offer_accepted"
+        | "due_diligence"
+        | "contract_draft"
+        | "contract_review"
+        | "pending_payment"
+        | "payment_in_escrow"
+        | "pending_transfer"
+        | "completed"
+        | "cancelled"
+        | "disputed"
+      market_transaction_type:
+        | "full_sale"
+        | "partial_assignment"
+        | "swap"
+        | "exclusive_license"
+        | "non_exclusive_license"
+        | "cross_license"
+        | "franchise"
+        | "option_to_buy"
+        | "auction"
+        | "rfp"
+        | "coexistence"
+        | "settlement"
+      market_verification_status:
+        | "pending"
+        | "verified"
+        | "failed"
+        | "expired"
+        | "not_required"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -7144,6 +8123,83 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      market_asset_category: [
+        "industrial_property",
+        "intellectual_property",
+        "intangible_assets",
+      ],
+      market_asset_type: [
+        "patent_invention",
+        "patent_utility",
+        "patent_design",
+        "trademark_word",
+        "trademark_figurative",
+        "trademark_mixed",
+        "trademark_3d",
+        "trademark_sound",
+        "industrial_design",
+        "copyright_software",
+        "copyright_literary",
+        "copyright_musical",
+        "copyright_artistic",
+        "domain_gtld",
+        "domain_cctld",
+        "know_how",
+        "trade_secret",
+        "trade_name",
+        "portfolio",
+      ],
+      market_certification_level: ["basic", "standard", "premium"],
+      market_kyc_level: ["0", "1", "2", "3", "4"],
+      market_listing_status: [
+        "draft",
+        "pending_verification",
+        "active",
+        "under_offer",
+        "reserved",
+        "sold",
+        "licensed",
+        "expired",
+        "withdrawn",
+        "suspended",
+      ],
+      market_transaction_status: [
+        "inquiry",
+        "negotiation",
+        "offer_made",
+        "offer_accepted",
+        "due_diligence",
+        "contract_draft",
+        "contract_review",
+        "pending_payment",
+        "payment_in_escrow",
+        "pending_transfer",
+        "completed",
+        "cancelled",
+        "disputed",
+      ],
+      market_transaction_type: [
+        "full_sale",
+        "partial_assignment",
+        "swap",
+        "exclusive_license",
+        "non_exclusive_license",
+        "cross_license",
+        "franchise",
+        "option_to_buy",
+        "auction",
+        "rfp",
+        "coexistence",
+        "settlement",
+      ],
+      market_verification_status: [
+        "pending",
+        "verified",
+        "failed",
+        "expired",
+        "not_required",
+      ],
+    },
   },
 } as const

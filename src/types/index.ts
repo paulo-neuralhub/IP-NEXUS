@@ -114,3 +114,6 @@ export interface AIModel {
   output_cost_per_1m: number;
   status: 'active' | 'deprecated';
 }
+
+// IP-MARKET Types
+export * from './market.types';
