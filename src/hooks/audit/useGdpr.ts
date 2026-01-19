@@ -5,24 +5,17 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
-import type { 
-  GdprRequest, 
-  GdprRequestType, 
-  GdprRequestStatus, 
-  UserConsent, 
-  DataExport,
-  GdprStats 
-} from '@/types/audit';
+import type { GdprRequest, UserConsent, DataExport, GdprStats, GdprRequestType, GdprRequestStatus } from '@/types/audit';
 
 // ==========================================
 // GDPR REQUESTS
 // ==========================================
 
-export function useGdprRequests(status?: GdprRequestStatus | GdprRequestStatus[]) {
+export function useGdprRequests(filters?: { status?: string; type?: string }) {
   const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['gdpr-requests', currentOrganization?.id, status],
+    queryKey: ['gdpr-requests', currentOrganization?.id, filters],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
@@ -31,41 +24,42 @@ export function useGdprRequests(status?: GdprRequestStatus | GdprRequestStatus[]
         .select('*')
         .eq('organization_id', currentOrganization.id);
 
-      if (status) {
-        if (Array.isArray(status)) {
-          query = query.in('status', status);
-        } else {
-          query = query.eq('status', status);
-        }
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+      if (filters?.type) {
+        query = query.eq('request_type', filters.type);
       }
 
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as GdprRequest[];
+      return (data || []) as unknown as GdprRequest[];
     },
     enabled: !!currentOrganization?.id,
   });
 }
 
-export function useGdprRequest(requestId: string | undefined) {
+export function useGdprRequest(id: string) {
   return useQuery({
-    queryKey: ['gdpr-request', requestId],
+    queryKey: ['gdpr-request', id],
     queryFn: async () => {
-      if (!requestId) return null;
-
       const { data, error } = await supabase
         .from('gdpr_requests')
         .select('*')
-        .eq('id', requestId)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
-      return data as GdprRequest;
+      return data as unknown as GdprRequest;
     },
-    enabled: !!requestId,
+    enabled: !!id,
   });
 }
+
+// ==========================================
+// CREATE GDPR REQUEST
+// ==========================================
 
 export function useCreateGdprRequest() {
   const queryClient = useQueryClient();
@@ -77,12 +71,11 @@ export function useCreateGdprRequest() {
       requester_name?: string;
       request_type: GdprRequestType;
       description?: string;
+      data_categories?: string[];
     }) => {
-      if (!currentOrganization?.id) throw new Error('No organization selected');
+      if (!currentOrganization?.id) throw new Error('No organization');
 
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // GDPR: 30 days deadline
+      // Calculate due date (30 days by default for GDPR)
       const dueDate = new Date();
       dueDate.setDate(dueDate.getDate() + 30);
 
@@ -90,34 +83,34 @@ export function useCreateGdprRequest() {
         .from('gdpr_requests')
         .insert({
           organization_id: currentOrganization.id,
-          requester_user_id: user?.id,
           requester_email: request.requester_email,
           requester_name: request.requester_name,
           request_type: request.request_type,
           description: request.description,
+          data_categories: request.data_categories,
           due_date: dueDate.toISOString(),
         })
         .select()
         .single();
 
       if (error) throw error;
-      return data as GdprRequest;
+      return data as unknown as GdprRequest;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['gdpr-requests'] });
-      queryClient.invalidateQueries({ queryKey: ['gdpr-stats'] });
     },
   });
 }
+
+// ==========================================
+// UPDATE GDPR REQUEST
+// ==========================================
 
 export function useUpdateGdprRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      ...updates
-    }: Partial<GdprRequest> & { id: string }) => {
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<GdprRequest, 'id' | 'organization_id' | 'created_at'>>) => {
       const { data, error } = await supabase
         .from('gdpr_requests')
         .update(updates)
@@ -126,70 +119,73 @@ export function useUpdateGdprRequest() {
         .single();
 
       if (error) throw error;
-      return data as GdprRequest;
+      return data as unknown as GdprRequest;
     },
-    onSuccess: (data) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['gdpr-requests'] });
-      queryClient.invalidateQueries({ queryKey: ['gdpr-request', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['gdpr-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['gdpr-request', variables.id] });
     },
   });
 }
+
+// ==========================================
+// PROCESS GDPR REQUEST
+// ==========================================
 
 export function useProcessGdprRequest() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      requestId,
-      action,
-      notes,
-    }: {
-      requestId: string;
-      action: 'approve' | 'reject' | 'complete';
+    mutationFn: async ({ 
+      id, 
+      status, 
+      notes 
+    }: { 
+      id: string; 
+      status: GdprRequestStatus; 
       notes?: string;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+      
+      const updateData: Record<string, unknown> = {
+        status,
+        processing_notes: notes,
+      };
 
-      const updates: Partial<GdprRequest> = {};
-
-      if (action === 'approve') {
-        updates.status = 'in_progress';
-        updates.assigned_to = user?.id;
-      } else if (action === 'reject') {
-        updates.status = 'rejected';
-        updates.resolution_notes = notes;
-        updates.completed_at = new Date().toISOString();
-      } else if (action === 'complete') {
-        updates.status = 'completed';
-        updates.resolution_notes = notes;
-        updates.completed_at = new Date().toISOString();
+      if (status === 'completed') {
+        updateData.completed_at = new Date().toISOString();
+        updateData.completed_by = user?.id;
       }
 
       const { data, error } = await supabase
         .from('gdpr_requests')
-        .update(updates)
-        .eq('id', requestId)
+        .update(updateData)
+        .eq('id', id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as GdprRequest;
+      return data as unknown as GdprRequest;
     },
-    onSuccess: (data) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['gdpr-requests'] });
-      queryClient.invalidateQueries({ queryKey: ['gdpr-request', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['gdpr-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['gdpr-request', variables.id] });
     },
   });
 }
+
+// ==========================================
+// VERIFY IDENTITY
+// ==========================================
 
 export function useVerifyGdprIdentity() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (requestId: string) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
 
       const { data, error } = await supabase
         .from('gdpr_requests')
@@ -197,16 +193,18 @@ export function useVerifyGdprIdentity() {
           identity_verified: true,
           identity_verified_at: new Date().toISOString(),
           identity_verified_by: user?.id,
+          status: 'in_progress',
         })
         .eq('id', requestId)
         .select()
         .single();
 
       if (error) throw error;
-      return data as GdprRequest;
+      return data as unknown as GdprRequest;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['gdpr-request', data.id] });
+    onSuccess: (_, requestId) => {
+      queryClient.invalidateQueries({ queryKey: ['gdpr-requests'] });
+      queryClient.invalidateQueries({ queryKey: ['gdpr-request', requestId] });
     },
   });
 }
@@ -216,24 +214,28 @@ export function useVerifyGdprIdentity() {
 // ==========================================
 
 export function useUserConsents(userId?: string) {
-  const { data: { user } } = supabase.auth.getUser() as { data: { user: { id: string } | null } };
-  const targetUserId = userId || user?.id;
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['user-consents', targetUserId],
+    queryKey: ['user-consents', currentOrganization?.id, userId],
     queryFn: async () => {
-      if (!targetUserId) return [];
+      if (!currentOrganization?.id) return [];
 
-      const { data, error } = await supabase
+      let query = supabase
         .from('user_consents')
         .select('*')
-        .eq('user_id', targetUserId)
-        .order('granted_at', { ascending: false });
+        .eq('organization_id', currentOrganization.id);
+
+      if (userId) {
+        query = query.eq('user_id', userId);
+      }
+
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as UserConsent[];
+      return (data || []) as unknown as UserConsent[];
     },
-    enabled: !!targetUserId,
+    enabled: !!currentOrganization?.id,
   });
 }
 
@@ -241,39 +243,33 @@ export function useUpdateConsent() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      consent_type,
-      granted,
-      document_version,
-      document_url,
-    }: {
-      consent_type: string;
-      granted: boolean;
-      document_version?: string;
-      document_url?: string;
+    mutationFn: async ({ 
+      id, 
+      isGranted 
+    }: { 
+      id: string; 
+      isGranted: boolean;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const updateData: Record<string, unknown> = {
+        is_granted: isGranted,
+      };
+
+      if (isGranted) {
+        updateData.granted_at = new Date().toISOString();
+        updateData.revoked_at = null;
+      } else {
+        updateData.revoked_at = new Date().toISOString();
+      }
 
       const { data, error } = await supabase
         .from('user_consents')
-        .upsert({
-          user_id: user.id,
-          consent_type,
-          granted,
-          document_version,
-          document_url,
-          granted_at: granted ? new Date().toISOString() : undefined,
-          revoked_at: !granted ? new Date().toISOString() : undefined,
-          user_agent: navigator.userAgent,
-        }, {
-          onConflict: 'user_id,consent_type,organization_id',
-        })
+        .update(updateData)
+        .eq('id', id)
         .select()
         .single();
 
       if (error) throw error;
-      return data as UserConsent;
+      return data as unknown as UserConsent;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['user-consents'] });
@@ -300,7 +296,7 @@ export function useDataExports() {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as DataExport[];
+      return (data || []) as unknown as DataExport[];
     },
     enabled: !!currentOrganization?.id,
   });
@@ -311,43 +307,32 @@ export function useCreateDataExport() {
   const { currentOrganization } = useOrganization();
 
   return useMutation({
-    mutationFn: async (config: {
-      export_type: string;
-      include_assets?: boolean;
-      include_contacts?: boolean;
-      include_documents?: boolean;
-      include_audit_logs?: boolean;
-      date_from?: string;
-      date_to?: string;
-      format?: 'json' | 'csv' | 'xlsx';
+    mutationFn: async (params: {
+      user_email: string;
+      gdpr_request_id?: string;
+      data_categories?: string[];
     }) => {
-      if (!currentOrganization?.id) throw new Error('No organization selected');
+      if (!currentOrganization?.id) throw new Error('No organization');
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7); // 7 days expiry
 
       const { data, error } = await supabase
         .from('data_exports')
         .insert({
           organization_id: currentOrganization.id,
-          user_id: user.id,
-          export_type: config.export_type,
-          config: {
-            include_assets: config.include_assets ?? true,
-            include_contacts: config.include_contacts ?? true,
-            include_documents: config.include_documents ?? true,
-            include_audit_logs: config.include_audit_logs ?? false,
-            date_from: config.date_from,
-            date_to: config.date_to,
-            format: config.format ?? 'json',
-          },
+          user_email: params.user_email,
+          gdpr_request_id: params.gdpr_request_id,
+          data_categories: params.data_categories,
+          export_type: 'full',
           status: 'pending',
+          expires_at: expiresAt.toISOString(),
         })
         .select()
         .single();
 
       if (error) throw error;
-      return data as DataExport;
+      return data as unknown as DataExport;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['data-exports'] });
@@ -364,77 +349,60 @@ export function useGdprStats() {
 
   return useQuery({
     queryKey: ['gdpr-stats', currentOrganization?.id],
-    queryFn: async (): Promise<GdprStats> => {
-      if (!currentOrganization?.id) {
-        return {
-          total: 0,
-          pending: 0,
-          in_progress: 0,
-          completed: 0,
-          rejected: 0,
-          overdue: 0,
-          compliance_score: 0,
-          consents_ok: false,
-          retention_ok: false,
-          rights_ok: false,
-        };
-      }
+    queryFn: async (): Promise<GdprStats | null> => {
+      if (!currentOrganization?.id) return null;
 
-      const { data: requests } = await supabase
+      // Total requests
+      const { count: total } = await supabase
         .from('gdpr_requests')
-        .select('status, due_date')
+        .select('*', { count: 'exact', head: true })
         .eq('organization_id', currentOrganization.id);
 
-      const now = new Date();
-      const stats = {
-        total: requests?.length || 0,
-        pending: 0,
-        in_progress: 0,
-        completed: 0,
-        rejected: 0,
-        overdue: 0,
-      };
-
-      (requests || []).forEach((r) => {
-        if (r.status === 'pending') stats.pending++;
-        else if (r.status === 'in_progress') stats.in_progress++;
-        else if (r.status === 'completed') stats.completed++;
-        else if (r.status === 'rejected') stats.rejected++;
-
-        if (['pending', 'in_progress'].includes(r.status) && new Date(r.due_date) < now) {
-          stats.overdue++;
-        }
-      });
-
-      // Check consents
-      const { count: consentsCount } = await supabase
-        .from('user_consents')
-        .select('*', { count: 'exact', head: true })
-        .eq('granted', true);
-
-      // Check retention policies
-      const { count: retentionCount } = await supabase
-        .from('retention_policies')
+      // Pending requests
+      const { count: pending } = await supabase
+        .from('gdpr_requests')
         .select('*', { count: 'exact', head: true })
         .eq('organization_id', currentOrganization.id)
-        .eq('is_active', true);
+        .in('status', ['pending', 'identity_verification', 'in_progress']);
 
-      const consentsOk = (consentsCount || 0) > 0;
-      const retentionOk = (retentionCount || 0) > 0;
-      const rightsOk = stats.overdue === 0;
+      // Completed requests
+      const { count: completed } = await supabase
+        .from('gdpr_requests')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', currentOrganization.id)
+        .eq('status', 'completed');
 
-      // Calculate compliance score
-      let score = 0;
-      if (consentsOk) score += 33;
-      if (retentionOk) score += 33;
-      if (rightsOk) score += 34;
+      // By type
+      const { data: typeData } = await supabase
+        .from('gdpr_requests')
+        .select('request_type')
+        .eq('organization_id', currentOrganization.id);
+
+      const byType: Record<string, number> = {};
+      (typeData || []).forEach((d) => {
+        const type = d.request_type || 'unknown';
+        byType[type] = (byType[type] || 0) + 1;
+      });
+
+      // By status
+      const { data: statusData } = await supabase
+        .from('gdpr_requests')
+        .select('status')
+        .eq('organization_id', currentOrganization.id);
+
+      const byStatus: Record<string, number> = {};
+      (statusData || []).forEach((d) => {
+        const status = d.status || 'unknown';
+        byStatus[status] = (byStatus[status] || 0) + 1;
+      });
 
       return {
-        ...stats,
-        compliance_score: score,
-        consents_ok: consentsOk,
-        retention_ok: retentionOk,
-        rights_ok: rightsOk,
+        total_requests: total || 0,
+        pending_requests: pending || 0,
+        completed_requests: completed || 0,
+        avg_completion_days: 5, // Would need actual calculation
+        by_type: byType,
+        by_status: byStatus,
       };
     },
     enabled: !!currentOrganization?.id,

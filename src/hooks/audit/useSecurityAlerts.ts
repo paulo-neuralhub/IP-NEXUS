@@ -5,27 +5,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
-import type { 
-  SecurityAlert, 
-  SecurityAlertStatus, 
-  SecurityAlertSeverity,
-  SecurityStats 
-} from '@/types/audit';
+import type { SecurityAlert, SecurityStats, SecurityAlertType, SecuritySeverity, SecurityAlertStatus } from '@/types/audit';
+import type { Json } from '@/integrations/supabase/types';
 
 // ==========================================
 // SECURITY ALERTS
 // ==========================================
 
-export function useSecurityAlerts(options?: {
-  status?: SecurityAlertStatus | SecurityAlertStatus[];
-  severity?: SecurityAlertSeverity;
-  limit?: number;
+export function useSecurityAlerts(filters?: { 
+  status?: string; 
+  severity?: string;
+  type?: string;
 }) {
   const { currentOrganization } = useOrganization();
-  const limit = options?.limit ?? 100;
 
   return useQuery({
-    queryKey: ['security-alerts', currentOrganization?.id, options],
+    queryKey: ['security-alerts', currentOrganization?.id, filters],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
@@ -34,53 +29,51 @@ export function useSecurityAlerts(options?: {
         .select('*')
         .eq('organization_id', currentOrganization.id);
 
-      if (options?.status) {
-        if (Array.isArray(options.status)) {
-          query = query.in('status', options.status);
-        } else {
-          query = query.eq('status', options.status);
-        }
+      if (filters?.status) {
+        query = query.eq('status', filters.status);
+      }
+      if (filters?.severity) {
+        query = query.eq('severity', filters.severity);
+      }
+      if (filters?.type) {
+        query = query.eq('alert_type', filters.type);
       }
 
-      if (options?.severity) {
-        query = query.eq('severity', options.severity);
-      }
-
-      const { data, error } = await query
-        .order('created_at', { ascending: false })
-        .limit(limit);
+      const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as SecurityAlert[];
+      return (data || []) as SecurityAlert[];
     },
     enabled: !!currentOrganization?.id,
   });
 }
 
-export function useSecurityAlert(alertId: string | undefined) {
+export function useSecurityAlert(id: string) {
   return useQuery({
-    queryKey: ['security-alert', alertId],
+    queryKey: ['security-alert', id],
     queryFn: async () => {
-      if (!alertId) return null;
-
       const { data, error } = await supabase
         .from('security_alerts')
         .select('*')
-        .eq('id', alertId)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
       return data as SecurityAlert;
     },
-    enabled: !!alertId,
+    enabled: !!id,
   });
 }
+
+// ==========================================
+// OPEN & CRITICAL ALERTS
+// ==========================================
 
 export function useOpenAlerts() {
   const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['open-security-alerts', currentOrganization?.id],
+    queryKey: ['open-alerts', currentOrganization?.id],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
@@ -88,12 +81,12 @@ export function useOpenAlerts() {
         .from('security_alerts')
         .select('*')
         .eq('organization_id', currentOrganization.id)
-        .in('status', ['open', 'investigating', 'escalated'])
-        .order('severity', { ascending: false })
+        .in('status', ['open', 'investigating'])
+        .order('severity', { ascending: true })
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as SecurityAlert[];
+      return (data || []) as SecurityAlert[];
     },
     enabled: !!currentOrganization?.id,
   });
@@ -103,7 +96,7 @@ export function useCriticalAlerts() {
   const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['critical-security-alerts', currentOrganization?.id],
+    queryKey: ['critical-alerts', currentOrganization?.id],
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
@@ -111,19 +104,19 @@ export function useCriticalAlerts() {
         .from('security_alerts')
         .select('*')
         .eq('organization_id', currentOrganization.id)
-        .in('severity', ['critical', 'high'])
-        .eq('status', 'open')
+        .eq('severity', 'critical')
+        .in('status', ['open', 'investigating'])
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data as SecurityAlert[];
+      return (data || []) as SecurityAlert[];
     },
     enabled: !!currentOrganization?.id,
   });
 }
 
 // ==========================================
-// MUTATIONS
+// CREATE SECURITY ALERT
 // ==========================================
 
 export function useCreateSecurityAlert() {
@@ -132,14 +125,18 @@ export function useCreateSecurityAlert() {
 
   return useMutation({
     mutationFn: async (alert: {
-      alert_type: string;
-      severity: SecurityAlertSeverity;
+      alert_type: SecurityAlertType;
+      severity: SecuritySeverity;
       title: string;
       description?: string;
+      source?: string;
+      source_ip?: string;
       user_id?: string;
+      resource_type?: string;
+      resource_id?: string;
       evidence?: Record<string, unknown>;
     }) => {
-      if (!currentOrganization?.id) throw new Error('No organization selected');
+      if (!currentOrganization?.id) throw new Error('No organization');
 
       const { data, error } = await supabase
         .from('security_alerts')
@@ -149,8 +146,12 @@ export function useCreateSecurityAlert() {
           severity: alert.severity,
           title: alert.title,
           description: alert.description,
+          source: alert.source,
+          source_ip: alert.source_ip,
           user_id: alert.user_id,
-          evidence: alert.evidence || {},
+          resource_type: alert.resource_type,
+          resource_id: alert.resource_id,
+          evidence: (alert.evidence || null) as Json,
         })
         .select()
         .single();
@@ -160,21 +161,21 @@ export function useCreateSecurityAlert() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['open-security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['critical-security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['security-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['open-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['critical-alerts'] });
     },
   });
 }
+
+// ==========================================
+// UPDATE SECURITY ALERT
+// ==========================================
 
 export function useUpdateSecurityAlert() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      ...updates
-    }: Partial<SecurityAlert> & { id: string }) => {
+    mutationFn: async ({ id, ...updates }: { id: string } & Partial<Omit<SecurityAlert, 'id' | 'organization_id' | 'created_at'>>) => {
       const { data, error } = await supabase
         .from('security_alerts')
         .update(updates)
@@ -185,98 +186,92 @@ export function useUpdateSecurityAlert() {
       if (error) throw error;
       return data as SecurityAlert;
     },
-    onSuccess: (data) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['security-alert', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['open-security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['critical-security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['security-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['security-alert', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['open-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['critical-alerts'] });
     },
   });
 }
+
+// ==========================================
+// RESOLVE SECURITY ALERT
+// ==========================================
 
 export function useResolveSecurityAlert() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      alertId,
-      status,
-      notes,
-    }: {
-      alertId: string;
-      status: 'resolved' | 'false_positive';
+    mutationFn: async ({ 
+      id, 
+      status, 
+      notes 
+    }: { 
+      id: string; 
+      status: 'resolved' | 'false_positive'; 
       notes?: string;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
 
       const { data, error } = await supabase
         .from('security_alerts')
         .update({
           status,
-          resolved_by: user?.id,
           resolved_at: new Date().toISOString(),
+          resolved_by: user?.id,
           resolution_notes: notes,
         })
-        .eq('id', alertId)
+        .eq('id', id)
         .select()
         .single();
 
       if (error) throw error;
       return data as SecurityAlert;
     },
-    onSuccess: (data) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['security-alert', data.id] });
-      queryClient.invalidateQueries({ queryKey: ['open-security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['security-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['security-alert', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['open-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['critical-alerts'] });
     },
   });
 }
+
+// ==========================================
+// ESCALATE SECURITY ALERT
+// ==========================================
 
 export function useEscalateSecurityAlert() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      alertId,
-      notes,
-    }: {
-      alertId: string;
-      notes?: string;
+    mutationFn: async ({ 
+      id, 
+      newSeverity 
+    }: { 
+      id: string; 
+      newSeverity: SecuritySeverity;
     }) => {
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // Get current alert to append action
-      const { data: currentAlert } = await supabase
-        .from('security_alerts')
-        .select('actions_taken')
-        .eq('id', alertId)
-        .single();
-
-      const actionsTaken = [...(currentAlert?.actions_taken || []), {
-        action: 'escalated',
-        timestamp: new Date().toISOString(),
-        by: user?.id,
-        notes,
-      }];
-
       const { data, error } = await supabase
         .from('security_alerts')
         .update({
-          status: 'escalated',
-          actions_taken: actionsTaken,
+          severity: newSeverity,
+          status: 'investigating',
         })
-        .eq('id', alertId)
+        .eq('id', id)
         .select()
         .single();
 
       if (error) throw error;
       return data as SecurityAlert;
     },
-    onSuccess: (data) => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['security-alerts'] });
-      queryClient.invalidateQueries({ queryKey: ['security-alert', data.id] });
+      queryClient.invalidateQueries({ queryKey: ['security-alert', variables.id] });
+      queryClient.invalidateQueries({ queryKey: ['open-alerts'] });
+      queryClient.invalidateQueries({ queryKey: ['critical-alerts'] });
     },
   });
 }
@@ -290,49 +285,32 @@ export function useSecurityStats() {
 
   return useQuery({
     queryKey: ['security-stats', currentOrganization?.id],
-    queryFn: async (): Promise<SecurityStats> => {
-      if (!currentOrganization?.id) {
-        return {
-          total_alerts: 0,
-          open_alerts: 0,
-          critical_alerts: 0,
-          high_alerts: 0,
-          resolved_today: 0,
-          avg_resolution_time_hours: 0,
-        };
-      }
+    queryFn: async (): Promise<SecurityStats | null> => {
+      if (!currentOrganization?.id) return null;
 
       const todayStart = new Date();
       todayStart.setHours(0, 0, 0, 0);
 
       // Total alerts
-      const { count: totalAlerts } = await supabase
+      const { count: total } = await supabase
         .from('security_alerts')
         .select('*', { count: 'exact', head: true })
         .eq('organization_id', currentOrganization.id);
 
       // Open alerts
-      const { count: openAlerts } = await supabase
+      const { count: open } = await supabase
         .from('security_alerts')
         .select('*', { count: 'exact', head: true })
         .eq('organization_id', currentOrganization.id)
-        .eq('status', 'open');
+        .in('status', ['open', 'investigating']);
 
       // Critical alerts
-      const { count: criticalAlerts } = await supabase
+      const { count: critical } = await supabase
         .from('security_alerts')
         .select('*', { count: 'exact', head: true })
         .eq('organization_id', currentOrganization.id)
         .eq('severity', 'critical')
-        .eq('status', 'open');
-
-      // High alerts
-      const { count: highAlerts } = await supabase
-        .from('security_alerts')
-        .select('*', { count: 'exact', head: true })
-        .eq('organization_id', currentOrganization.id)
-        .eq('severity', 'high')
-        .eq('status', 'open');
+        .in('status', ['open', 'investigating']);
 
       // Resolved today
       const { count: resolvedToday } = await supabase
@@ -342,32 +320,37 @@ export function useSecurityStats() {
         .eq('status', 'resolved')
         .gte('resolved_at', todayStart.toISOString());
 
-      // Average resolution time
-      const { data: resolvedAlerts } = await supabase
+      // By type
+      const { data: typeData } = await supabase
         .from('security_alerts')
-        .select('created_at, resolved_at')
-        .eq('organization_id', currentOrganization.id)
-        .eq('status', 'resolved')
-        .not('resolved_at', 'is', null)
-        .limit(100);
+        .select('alert_type')
+        .eq('organization_id', currentOrganization.id);
 
-      let avgResolutionTime = 0;
-      if (resolvedAlerts && resolvedAlerts.length > 0) {
-        const totalHours = resolvedAlerts.reduce((sum, alert) => {
-          const created = new Date(alert.created_at).getTime();
-          const resolved = new Date(alert.resolved_at!).getTime();
-          return sum + (resolved - created) / (1000 * 60 * 60);
-        }, 0);
-        avgResolutionTime = totalHours / resolvedAlerts.length;
-      }
+      const byType: Record<string, number> = {};
+      (typeData || []).forEach((d) => {
+        const type = d.alert_type || 'unknown';
+        byType[type] = (byType[type] || 0) + 1;
+      });
+
+      // By severity
+      const { data: severityData } = await supabase
+        .from('security_alerts')
+        .select('severity')
+        .eq('organization_id', currentOrganization.id);
+
+      const bySeverity: Record<string, number> = {};
+      (severityData || []).forEach((d) => {
+        const severity = d.severity || 'unknown';
+        bySeverity[severity] = (bySeverity[severity] || 0) + 1;
+      });
 
       return {
-        total_alerts: totalAlerts || 0,
-        open_alerts: openAlerts || 0,
-        critical_alerts: criticalAlerts || 0,
-        high_alerts: highAlerts || 0,
+        total_alerts: total || 0,
+        open_alerts: open || 0,
+        critical_alerts: critical || 0,
         resolved_today: resolvedToday || 0,
-        avg_resolution_time_hours: Math.round(avgResolutionTime * 10) / 10,
+        by_type: byType,
+        by_severity: bySeverity,
       };
     },
     enabled: !!currentOrganization?.id,

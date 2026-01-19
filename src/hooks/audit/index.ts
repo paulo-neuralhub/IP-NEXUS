@@ -74,3 +74,33 @@ export {
   useRunComplianceCheck,
   useComplianceStats,
 } from './useComplianceChecks';
+
+// Types re-export
+export type {
+  AuditLog,
+  AuditLogFilters,
+  AuditStats,
+  ChangeHistoryRecord,
+  AccessLog,
+  AccessLogFilters,
+  AccessEventType,
+  AccessStats,
+  RetentionPolicy,
+  RetentionExecution,
+  RetentionAction,
+  GdprRequest,
+  GdprRequestType,
+  GdprRequestStatus,
+  UserConsent,
+  DataExport,
+  GdprStats,
+  SecurityAlert,
+  SecurityAlertType,
+  SecuritySeverity,
+  SecurityAlertStatus,
+  SecurityStats,
+  ComplianceCheck,
+  ComplianceFramework,
+  ComplianceStatus,
+  ComplianceStats,
+} from '@/types/audit';

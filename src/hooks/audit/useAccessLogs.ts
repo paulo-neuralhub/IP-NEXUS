@@ -45,7 +45,7 @@ export function useAccessLogs(filters: AccessLogFilters = {}, limit = 100) {
         .limit(limit);
 
       if (error) throw error;
-      return data as AccessLog[];
+      return (data || []) as AccessLog[];
     },
     enabled: !!currentOrganization?.id,
   });
@@ -63,7 +63,7 @@ export function useUserAccessLogs(userId: string, limit = 50) {
         .limit(limit);
 
       if (error) throw error;
-      return data as AccessLog[];
+      return (data || []) as AccessLog[];
     },
     enabled: !!userId,
   });
@@ -97,7 +97,7 @@ export function useFailedLogins(options?: { limit?: number; since?: string }) {
         .limit(limit);
 
       if (error) throw error;
-      return data as AccessLog[];
+      return (data || []) as AccessLog[];
     },
     enabled: !!currentOrganization?.id,
   });
