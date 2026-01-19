@@ -97,6 +97,7 @@ import AnalyticsPage from "./pages/app/analytics";
 import AnalyticsChartsPage from "./pages/app/analytics/charts";
 import CollabIndexPage from "./pages/app/collab";
 import CollabDetailPage from "./pages/app/collab/[id]";
+import SearchPage from "./pages/app/SearchPage";
 
 // Admin Pages
 import AdminLayout from "./layouts/admin-layout";
@@ -248,6 +249,7 @@ const App = () => (
                 <Route path="analytics/charts" element={<AnalyticsChartsPage />} />
                 <Route path="collab" element={<CollabIndexPage />} />
                 <Route path="collab/:id" element={<CollabDetailPage />} />
+                <Route path="search" element={<SearchPage />} />
               </Route>
               
               {/* ADMIN PANEL - Protected */}

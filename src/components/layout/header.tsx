@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/utils";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
+import { GlobalSearchTrigger } from "@/components/search";
 
 export function Header() {
   const { profile } = useAuth();
@@ -24,6 +25,11 @@ export function Header() {
           <ChevronRight className="h-4 w-4 mx-1" />
           <span className="text-foreground">{title}</span>
         </nav>
+      </div>
+
+      {/* Center - Global Search */}
+      <div className="flex-1 max-w-xl mx-8">
+        <GlobalSearchTrigger />
       </div>
 
       {/* Right Side */}
