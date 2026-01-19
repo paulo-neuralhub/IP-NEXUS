@@ -1,80 +1,12 @@
-export const INTEGRATION_PROVIDERS = {
-  // Pagos
-  stripe: {
-    name: 'Stripe',
-    category: 'billing',
-    description: 'Pagos y suscripciones',
-    website: 'https://stripe.com',
-    docsUrl: 'https://stripe.com/docs',
-  },
-  
-  // Email
-  resend: {
-    name: 'Resend',
-    category: 'email',
-    description: 'Emails transaccionales',
-    website: 'https://resend.com',
-    docsUrl: 'https://resend.com/docs',
-  },
-  sendgrid: {
-    name: 'SendGrid',
-    category: 'email',
-    description: 'Email marketing y transaccional',
-    website: 'https://sendgrid.com',
-    docsUrl: 'https://docs.sendgrid.com',
-  },
-  
-  // Oficinas PI
-  euipo: {
-    name: 'EUIPO',
-    category: 'ip_office',
-    description: 'Oficina de PI de la UE',
-    website: 'https://euipo.europa.eu',
-    docsUrl: 'https://euipo.europa.eu/ohimportal/en/web-services',
-  },
-  tmview: {
-    name: 'TMView',
-    category: 'ip_office',
-    description: 'Base de datos mundial de marcas',
-    website: 'https://www.tmdn.org/tmview',
-  },
-  wipo: {
-    name: 'WIPO',
-    category: 'ip_office',
-    description: 'Sistema Madrid y PCT',
-    website: 'https://www.wipo.int',
-    docsUrl: 'https://www.wipo.int/webservices/',
-  },
-  oepm: {
-    name: 'OEPM',
-    category: 'ip_office',
-    description: 'Oficina Española de Patentes y Marcas',
-    website: 'https://www.oepm.es',
-  },
-  uspto: {
-    name: 'USPTO',
-    category: 'ip_office',
-    description: 'Oficina de Patentes de EE.UU.',
-    website: 'https://www.uspto.gov',
-    docsUrl: 'https://developer.uspto.gov/',
-  },
-  
-  // IA
-  openai: {
-    name: 'OpenAI',
-    category: 'ai',
-    description: 'GPT y procesamiento de lenguaje',
-    website: 'https://openai.com',
-    docsUrl: 'https://platform.openai.com/docs',
-  },
-  anthropic: {
-    name: 'Anthropic',
-    category: 'ai',
-    description: 'Claude AI',
-    website: 'https://anthropic.com',
-    docsUrl: 'https://docs.anthropic.com',
-  },
-} as const;
+// Re-export from types for backward compatibility
+export { 
+  INTEGRATION_PROVIDERS, 
+  INTEGRATION_CATEGORIES,
+  type IntegrationProvider,
+  type IntegrationConnection,
+  type IntegrationCategory,
+  type IntegrationField
+} from '@/types/integrations';
 
 export const WEBHOOK_SOURCES = {
   stripe: { name: 'Stripe', events: [

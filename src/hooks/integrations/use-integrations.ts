@@ -2,12 +2,26 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
-import { INTEGRATION_PROVIDERS, type IntegrationConnection } from '@/types/integrations';
+import { 
+  INTEGRATION_PROVIDERS, 
+  INTEGRATION_CATEGORIES,
+  type IntegrationConnection,
+  type IntegrationProvider,
+  type IntegrationCategory 
+} from '@/types/integrations';
 
 export function useIntegrationProviders() {
   return useQuery({
     queryKey: ['integration-providers'],
     queryFn: async () => INTEGRATION_PROVIDERS,
+    staleTime: Infinity
+  });
+}
+
+export function useIntegrationCategories() {
+  return useQuery({
+    queryKey: ['integration-categories'],
+    queryFn: async () => INTEGRATION_CATEGORIES,
     staleTime: Infinity
   });
 }
