@@ -28,7 +28,14 @@ import {
 } from '@/components/backoffice/ai-brain';
 
 // Types
-import { AIProvider, AITaskAssignment, AIRAGCollection } from '@/types/ai-brain.types';
+import { 
+  AIProvider, 
+  AIProviderFormData,
+  AITaskAssignment, 
+  AITaskAssignmentFormData,
+  AIRAGCollection,
+  AIRAGCollectionFormData
+} from '@/types/ai-brain.types';
 
 export default function AIBrainPage() {
   const [activeTab, setActiveTab] = useState('providers');
@@ -46,11 +53,43 @@ export default function AIBrainPage() {
   const [refreshingRagId, setRefreshingRagId] = useState<string | null>(null);
 
   // Data hooks
-  const { providers, isLoading: providersLoading, createProvider, updateProvider, deleteProvider, testProvider } = useAIProviders();
+  const { 
+    providers, 
+    isLoading: providersLoading, 
+    createProvider, 
+    updateProvider, 
+    deleteProvider, 
+    testProvider 
+  } = useAIProviders();
+  
   const { models, isLoading: modelsLoading } = useAIModels();
-  const { tasks, isLoading: tasksLoading, createTask, updateTask, deleteTask, toggleTaskActive } = useAITaskAssignments();
-  const { circuitStates, isLoading: circuitLoading, resetCircuit, forceOpenCircuit } = useAICircuitBreaker();
-  const { ragCollections, isLoading: ragLoading, createRAG, updateRAG, deleteRAG, toggleRAGActive, refreshRAG } = useAIRAGCollections();
+  
+  const { 
+    tasks, 
+    isLoading: tasksLoading, 
+    createTask, 
+    updateTask, 
+    deleteTask, 
+    toggleTaskActive 
+  } = useAITaskAssignments();
+  
+  const { 
+    circuitStates, 
+    isLoading: circuitLoading, 
+    resetCircuit, 
+    forceOpenCircuit 
+  } = useAICircuitBreaker();
+  
+  const { 
+    ragCollections, 
+    isLoading: ragLoading, 
+    createRAG, 
+    updateRAG, 
+    deleteRAG, 
+    toggleRAGActive, 
+    refreshRAG 
+  } = useAIRAGCollections();
+  
   const { summary, isLoading: analyticsLoading } = useAIAnalytics();
 
   // Provider handlers
@@ -59,27 +98,24 @@ export default function AIBrainPage() {
     setProviderDialogOpen(true);
   };
 
-  const handleSaveProvider = async (data: any) => {
+  const handleSaveProvider = async (data: AIProviderFormData) => {
     try {
       if (editingProvider) {
-        await updateProvider.mutateAsync({ id: editingProvider.id, ...data });
-        toast.success('Provider actualizado');
+        await updateProvider.mutateAsync({ id: editingProvider.id, formData: data });
       } else {
         await createProvider.mutateAsync(data);
-        toast.success('Provider creado');
       }
       setProviderDialogOpen(false);
     } catch (error) {
-      toast.error('Error al guardar provider');
+      // Error toast handled in hook
     }
   };
 
   const handleDeleteProvider = async (id: string) => {
     try {
       await deleteProvider.mutateAsync(id);
-      toast.success('Provider eliminado');
     } catch (error) {
-      toast.error('Error al eliminar provider');
+      // Error toast handled in hook
     }
   };
 
@@ -87,9 +123,8 @@ export default function AIBrainPage() {
     setTestingProviderId(provider.id);
     try {
       await testProvider.mutateAsync(provider.id);
-      toast.success(`Conexión exitosa con ${provider.name}`);
     } catch (error) {
-      toast.error(`Error de conexión con ${provider.name}`);
+      // Error toast handled in hook
     } finally {
       setTestingProviderId(null);
     }
@@ -101,35 +136,32 @@ export default function AIBrainPage() {
     setTaskDialogOpen(true);
   };
 
-  const handleSaveTask = async (data: any) => {
+  const handleSaveTask = async (data: AITaskAssignmentFormData) => {
     try {
       if (editingTask) {
-        await updateTask.mutateAsync({ id: editingTask.id, ...data });
-        toast.success('Task actualizado');
+        await updateTask.mutateAsync({ id: editingTask.id, formData: data });
       } else {
         await createTask.mutateAsync(data);
-        toast.success('Task creado');
       }
       setTaskDialogOpen(false);
     } catch (error) {
-      toast.error('Error al guardar task');
+      // Error toast handled in hook
     }
   };
 
   const handleDeleteTask = async (id: string) => {
     try {
       await deleteTask.mutateAsync(id);
-      toast.success('Task eliminado');
     } catch (error) {
-      toast.error('Error al eliminar task');
+      // Error toast handled in hook
     }
   };
 
   const handleToggleTaskActive = async (id: string, isActive: boolean) => {
     try {
-      await toggleTaskActive.mutateAsync({ id, isActive });
+      await toggleTaskActive.mutateAsync({ id, is_active: isActive });
     } catch (error) {
-      toast.error('Error al cambiar estado');
+      // Error toast handled in hook
     }
   };
 
@@ -139,35 +171,32 @@ export default function AIBrainPage() {
     setRagDialogOpen(true);
   };
 
-  const handleSaveRag = async (data: any) => {
+  const handleSaveRag = async (data: AIRAGCollectionFormData) => {
     try {
       if (editingRag) {
-        await updateRAG.mutateAsync({ id: editingRag.id, ...data });
-        toast.success('RAG actualizado');
+        await updateRAG.mutateAsync({ id: editingRag.id, formData: data });
       } else {
         await createRAG.mutateAsync(data);
-        toast.success('RAG creado');
       }
       setRagDialogOpen(false);
     } catch (error) {
-      toast.error('Error al guardar RAG');
+      // Error toast handled in hook
     }
   };
 
   const handleDeleteRag = async (id: string) => {
     try {
       await deleteRAG.mutateAsync(id);
-      toast.success('RAG eliminado');
     } catch (error) {
-      toast.error('Error al eliminar RAG');
+      // Error toast handled in hook
     }
   };
 
   const handleToggleRagActive = async (id: string, isActive: boolean) => {
     try {
-      await toggleRAGActive.mutateAsync({ id, isActive });
+      await toggleRAGActive.mutateAsync({ id, is_active: isActive });
     } catch (error) {
-      toast.error('Error al cambiar estado');
+      // Error toast handled in hook
     }
   };
 
@@ -175,9 +204,8 @@ export default function AIBrainPage() {
     setRefreshingRagId(id);
     try {
       await refreshRAG.mutateAsync(id);
-      toast.success('RAG actualizado');
     } catch (error) {
-      toast.error('Error al actualizar RAG');
+      // Error toast handled in hook
     } finally {
       setRefreshingRagId(null);
     }
@@ -187,18 +215,16 @@ export default function AIBrainPage() {
   const handleResetCircuit = async (providerId: string) => {
     try {
       await resetCircuit.mutateAsync(providerId);
-      toast.success('Circuit reseteado');
     } catch (error) {
-      toast.error('Error al resetear circuit');
+      // Error toast handled in hook
     }
   };
 
   const handleForceOpenCircuit = async (providerId: string) => {
     try {
       await forceOpenCircuit.mutateAsync(providerId);
-      toast.success('Circuit abierto');
     } catch (error) {
-      toast.error('Error al abrir circuit');
+      // Error toast handled in hook
     }
   };
 
