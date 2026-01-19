@@ -11,6 +11,7 @@ import type { MarketOffer } from '@/types/market.types';
 
 interface OfferCardProps {
   offer: MarketOffer;
+  buyer?: any;
   isOwner?: boolean;
   onAccept?: (offerId: string) => void;
   onReject?: (offerId: string) => void;
@@ -32,12 +33,14 @@ export function OfferCard({
   isOwner = false,
   onAccept,
   onReject,
+  buyer,
   onCounter,
-  onMessage 
+  onMessage,
+  buyer: buyerProp
 }: OfferCardProps) {
   const statusInfo = STATUS_STYLES[offer.status] || STATUS_STYLES.pending;
   const isPending = offer.status === 'pending';
-  const buyer = offer.buyer as any;
+  const buyerData = buyerProp || {};
 
   return (
     <Card>
@@ -45,13 +48,13 @@ export function OfferCard({
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <Avatar className="h-10 w-10">
-              <AvatarImage src={buyer?.avatar_url} />
+              <AvatarImage src={buyerData?.avatar_url} />
               <AvatarFallback>
-                {buyer?.display_name?.charAt(0) || 'U'}
+                {buyerData?.display_name?.charAt(0) || 'U'}
               </AvatarFallback>
             </Avatar>
             <div>
-              <p className="font-medium">{buyer?.display_name || 'Usuario'}</p>
+              <p className="font-medium">{buyerData?.display_name || 'Usuario'}</p>
               <p className="text-xs text-muted-foreground">
                 {format(new Date(offer.created_at), "dd MMM yyyy, HH:mm", { locale: es })}
               </p>

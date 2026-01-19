@@ -14,10 +14,10 @@ import {
   ExternalLink,
   Shield
 } from 'lucide-react';
-import { useTransaction, useTransactionMessages } from '@/hooks/market';
+import { useTransaction, useThreadMessages, useSendMessage } from '@/hooks/market';
 import { 
   TransactionTimeline, 
-  TransactionStatus, 
+  TransactionStatusBadge, 
   TransactionActions,
   TransactionSummary
 } from '@/components/market/transactions';
@@ -27,17 +27,21 @@ import { PriceDisplay } from '@/components/market/shared';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useAuth } from '@/contexts/auth-context';
 
+type EscrowStatusType = 'pending' | 'funded' | 'in_progress' | 'released' | 'refunded' | 'disputed';
+
 export default function TransactionDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('overview');
+  const [showMessages, setShowMessages] = useState(false);
+  const [showContract, setShowContract] = useState(false);
 
   const { data: transaction, isLoading } = useTransaction(id);
-  const { 
-    messages, 
-    isLoading: messagesLoading,
-    sendMessage 
-  } = useTransactionMessages(id);
+  
+  // Get thread ID for messages
+  const threadId = transaction ? `tx_${transaction.id}` : undefined;
+  const { messages, isLoading: messagesLoading } = useThreadMessages(threadId);
+  const sendMessage = useSendMessage();
 
   if (isLoading) {
     return (
@@ -67,15 +71,33 @@ export default function TransactionDetailPage() {
     );
   }
 
-  const listing = transaction.listing as any;
+  const listing = (transaction as any).listing;
   const asset = listing?.asset;
-  const buyer = transaction.buyer as any;
-  const seller = listing?.seller as any;
+  const buyer = (transaction as any).buyer;
+  const seller = listing?.seller || (transaction as any).seller;
   const isBuyer = user?.id === transaction.buyer_id;
+  const role: 'buyer' | 'seller' = isBuyer ? 'buyer' : 'seller';
   const counterparty = isBuyer ? seller : buyer;
 
   const handleSendMessage = async (content: string) => {
-    await sendMessage({ content });
+    const recipientId = isBuyer ? transaction.seller_id : transaction.buyer_id;
+    await sendMessage.mutateAsync({
+      threadId: `tx_${transaction.id}`,
+      recipientId,
+      transactionId: transaction.id,
+      content,
+    });
+  };
+
+  const handleOpenMessages = () => setShowMessages(true);
+  const handleOpenContract = () => setShowContract(true);
+
+  // Map escrow status
+  const getEscrowStatus = (): EscrowStatusType => {
+    const status = transaction.escrow_status;
+    if (!status) return 'pending';
+    const validStatuses: EscrowStatusType[] = ['pending', 'funded', 'in_progress', 'released', 'refunded', 'disputed'];
+    return validStatuses.includes(status as EscrowStatusType) ? status as EscrowStatusType : 'pending';
   };
 
   return (
@@ -90,7 +112,7 @@ export default function TransactionDetailPage() {
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h1 className="text-2xl font-bold">{listing?.title || 'Transacción'}</h1>
-            <TransactionStatus status={transaction.status} />
+            <TransactionStatusBadge status={transaction.status} />
           </div>
           <p className="text-muted-foreground">
             ID: {transaction.id.slice(0, 8)}...
@@ -119,12 +141,14 @@ export default function TransactionDetailPage() {
 
             <TabsContent value="overview" className="space-y-6 mt-6">
               {/* Transaction Summary */}
-              <TransactionSummary transaction={transaction} />
+              <TransactionSummary transaction={transaction} role={role} />
 
               {/* Actions */}
               <TransactionActions 
                 transaction={transaction}
-                isBuyer={isBuyer}
+                role={role}
+                onOpenMessages={handleOpenMessages}
+                onOpenContract={handleOpenContract}
               />
             </TabsContent>
 
@@ -159,7 +183,7 @@ export default function TransactionDetailPage() {
                 <CardContent>
                   <TransactionTimeline 
                     currentStatus={transaction.status}
-                    events={transaction.status_history || []}
+                    events={[]}
                   />
                 </CardContent>
               </Card>
@@ -175,7 +199,7 @@ export default function TransactionDetailPage() {
               <div className="text-center space-y-2">
                 <p className="text-sm text-muted-foreground">Precio acordado</p>
                 <PriceDisplay 
-                  amount={transaction.agreed_price || listing?.price || 0}
+                  amount={transaction.agreed_price || 0}
                   currency={transaction.currency || 'EUR'}
                   className="text-3xl font-bold"
                 />
@@ -185,11 +209,11 @@ export default function TransactionDetailPage() {
 
           {/* Escrow Status */}
           <EscrowStatus
-            status={transaction.escrow_status || 'pending'}
-            amount={transaction.escrow_amount || transaction.agreed_price || 0}
+            status={getEscrowStatus()}
+            amount={transaction.agreed_price || 0}
             currency={transaction.currency || 'EUR'}
-            fundedAt={transaction.escrow_funded_at}
-            releasedAt={transaction.escrow_released_at}
+            fundedAt={transaction.paid_at || undefined}
+            releasedAt={transaction.completed_at || undefined}
           />
 
           {/* Counterparty */}
