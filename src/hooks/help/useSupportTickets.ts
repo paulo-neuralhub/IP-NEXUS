@@ -112,37 +112,44 @@ export function useCreateSupportTicket() {
       }
 
       // Create ticket
+      const ticketInsert: Record<string, unknown> = {
+        organization_id: currentOrganization.id,
+        user_id: user.id,
+        subject: data.subject,
+        description: data.description,
+        category: data.category,
+        priority: data.priority,
+        affected_module: data.affected_module,
+        page_url: window.location.href,
+      };
+
+      if (attachments.length > 0) {
+        ticketInsert.attachments = JSON.parse(JSON.stringify(attachments));
+      }
+      ticketInsert.browser_info = JSON.parse(JSON.stringify({
+        userAgent: navigator.userAgent,
+        language: navigator.language,
+        screenSize: `${window.screen.width}x${window.screen.height}`,
+      }));
+
       const { data: ticket, error } = await supabase
         .from('support_tickets')
-        .insert({
-          organization_id: currentOrganization.id,
-          user_id: user.id,
-          subject: data.subject,
-          description: data.description,
-          category: data.category,
-          priority: data.priority,
-          affected_module: data.affected_module,
-          attachments,
-          browser_info: {
-            userAgent: navigator.userAgent,
-            language: navigator.language,
-            screenSize: `${window.screen.width}x${window.screen.height}`,
-          },
-          page_url: window.location.href,
-        })
+        .insert(ticketInsert as never)
         .select()
         .single();
 
       if (error) throw error;
 
       // Create initial message
-      await supabase.from('ticket_messages').insert({
+      const messageInsert = {
         ticket_id: ticket.id,
-        author_type: 'customer',
+        author_type: 'customer' as const,
         author_id: user.id,
         message: data.description,
-        attachments,
-      });
+        attachments: attachments.length > 0 ? JSON.parse(JSON.stringify(attachments)) : undefined,
+      };
+
+      await supabase.from('ticket_messages').insert(messageInsert);
 
       return ticket;
     },
@@ -173,13 +180,15 @@ export function useAddTicketMessage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const { error } = await supabase.from('ticket_messages').insert({
+      const messageInsert = {
         ticket_id: ticketId,
-        author_type: 'customer',
+        author_type: 'customer' as const,
         author_id: user.id,
         message,
-        attachments,
-      });
+        attachments: attachments.length > 0 ? JSON.parse(JSON.stringify(attachments)) : undefined,
+      };
+
+      const { error } = await supabase.from('ticket_messages').insert(messageInsert);
 
       if (error) throw error;
 
@@ -287,12 +296,22 @@ export function useUpdateSupportTicket() {
       id,
       ...updates
     }: Partial<SupportTicket> & { id: string }) => {
+      const updateData: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (updates.status !== undefined) updateData.status = updates.status;
+      if (updates.priority !== undefined) updateData.priority = updates.priority;
+      if (updates.category !== undefined) updateData.category = updates.category;
+      if (updates.assigned_to !== undefined) updateData.assigned_to = updates.assigned_to;
+      if (updates.subject !== undefined) updateData.subject = updates.subject;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.resolution_notes !== undefined) updateData.resolution_notes = updates.resolution_notes;
+      if (updates.attachments !== undefined) updateData.attachments = JSON.parse(JSON.stringify(updates.attachments));
+
       const { data, error } = await supabase
         .from('support_tickets')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();

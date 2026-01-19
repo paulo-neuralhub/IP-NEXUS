@@ -90,12 +90,27 @@ export function useCreateAnnouncement() {
     mutationFn: async (data: Partial<HelpAnnouncement>) => {
       const { data: { user } } = await supabase.auth.getUser();
 
+      const insertData = {
+        title: data.title || '',
+        content: data.content || '',
+        announcement_type: data.announcement_type || 'feature',
+        is_published: data.is_published ?? false,
+        publish_at: data.publish_at,
+        expire_at: data.expire_at,
+        audience: data.audience,
+        affected_modules: data.affected_modules,
+        is_breaking_change: data.is_breaking_change,
+        version: data.version,
+        image_url: data.image_url,
+        video_url: data.video_url,
+        learn_more_url: data.learn_more_url,
+        summary: data.summary,
+        is_featured: data.is_featured,
+      };
+
       const { data: result, error } = await supabase
         .from('help_announcements')
-        .insert({
-          ...data,
-          created_by: user?.id,
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -176,7 +191,7 @@ export function useSystemStatus() {
         .order('started_at', { ascending: false });
 
       if (error) throw error;
-      return data as HelpSystemStatus[];
+      return (data || []) as unknown as HelpSystemStatus[];
     },
   });
 }
@@ -193,7 +208,7 @@ export function useActiveIncidents() {
         .order('started_at', { ascending: false });
 
       if (error) throw error;
-      return data as HelpSystemStatus[];
+      return (data || []) as unknown as HelpSystemStatus[];
     },
     refetchInterval: 60000, // Refresh every minute
   });
@@ -204,9 +219,20 @@ export function useCreateSystemStatus() {
 
   return useMutation({
     mutationFn: async (data: Partial<HelpSystemStatus>) => {
+      const insertData = {
+        component: data.component || '',
+        status: data.status || 'operational',
+        title: data.title,
+        description: data.description,
+        impact: data.impact,
+        started_at: data.started_at,
+        expected_resolution_at: data.expected_resolution_at,
+        updates: data.updates ? JSON.parse(JSON.stringify(data.updates)) : undefined,
+      };
+
       const { data: result, error } = await supabase
         .from('help_system_status')
-        .insert(data)
+        .insert(insertData)
         .select()
         .single();
 
@@ -229,12 +255,23 @@ export function useUpdateSystemStatus() {
 
   return useMutation({
     mutationFn: async ({ id, ...updates }: Partial<HelpSystemStatus> & { id: string }) => {
+      const updateData: Record<string, unknown> = {
+        updated_at: new Date().toISOString(),
+      };
+
+      if (updates.component !== undefined) updateData.component = updates.component;
+      if (updates.status !== undefined) updateData.status = updates.status;
+      if (updates.title !== undefined) updateData.title = updates.title;
+      if (updates.description !== undefined) updateData.description = updates.description;
+      if (updates.impact !== undefined) updateData.impact = updates.impact;
+      if (updates.started_at !== undefined) updateData.started_at = updates.started_at;
+      if (updates.resolved_at !== undefined) updateData.resolved_at = updates.resolved_at;
+      if (updates.expected_resolution_at !== undefined) updateData.expected_resolution_at = updates.expected_resolution_at;
+      if (updates.updates !== undefined) updateData.updates = JSON.parse(JSON.stringify(updates.updates));
+
       const { data, error } = await supabase
         .from('help_system_status')
-        .update({
-          ...updates,
-          updated_at: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();
