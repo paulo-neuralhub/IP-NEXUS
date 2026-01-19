@@ -215,14 +215,14 @@ export function IPODashboard() {
             </div>
             
             <Select 
-              value={filters.tier} 
-              onValueChange={(v) => setFilters({ ...filters, tier: v })}
+              value={filters.tier || '__all__'} 
+              onValueChange={(v) => setFilters({ ...filters, tier: v === '__all__' ? '' : v })}
             >
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Todos los Tiers" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos los Tiers</SelectItem>
+                <SelectItem value="__all__">Todos los Tiers</SelectItem>
                 <SelectItem value="1">Tier 1 (Críticas)</SelectItem>
                 <SelectItem value="2">Tier 2 (Importantes)</SelectItem>
                 <SelectItem value="3">Tier 3 (Secundarias)</SelectItem>
@@ -230,14 +230,14 @@ export function IPODashboard() {
             </Select>
 
             <Select 
-              value={filters.healthStatus} 
-              onValueChange={(v) => setFilters({ ...filters, healthStatus: v })}
+              value={filters.healthStatus || '__all__'} 
+              onValueChange={(v) => setFilters({ ...filters, healthStatus: v === '__all__' ? '' : v })}
             >
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Todos los estados" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos los estados</SelectItem>
+                <SelectItem value="__all__">Todos los estados</SelectItem>
                 <SelectItem value="healthy">🟢 Online</SelectItem>
                 <SelectItem value="degraded">🟡 Degradadas</SelectItem>
                 <SelectItem value="unhealthy">🔴 Caídas</SelectItem>
@@ -245,14 +245,14 @@ export function IPODashboard() {
             </Select>
 
             <Select 
-              value={filters.region} 
-              onValueChange={(v) => setFilters({ ...filters, region: v })}
+              value={filters.region || '__all__'} 
+              onValueChange={(v) => setFilters({ ...filters, region: v === '__all__' ? '' : v })}
             >
               <SelectTrigger className="w-[150px]">
                 <SelectValue placeholder="Todas las regiones" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas las regiones</SelectItem>
+                <SelectItem value="__all__">Todas las regiones</SelectItem>
                 {REGIONS.map(r => (
                   <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>
                 ))}
