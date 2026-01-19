@@ -81,6 +81,10 @@ import NewReportPage from "./pages/app/reports/NewReport";
 import MigratorPage from "./pages/app/migrator";
 import NewMigrationPage from "./pages/app/migrator/new";
 import MigrationDetailPage from "./pages/app/migrator/MigrationDetail";
+import FilingIndexPage from "./pages/app/filing";
+import NewFilingPage from "./pages/app/filing/new";
+import FilingDetailPage from "./pages/app/filing/[id]";
+import EditFilingPage from "./pages/app/filing/[id]/edit";
 
 // Admin Pages
 import AdminLayout from "./layouts/admin-layout";
@@ -216,6 +220,10 @@ const App = () => (
                 <Route path="migrator" element={<MigratorPage />} />
                 <Route path="migrator/new" element={<NewMigrationPage />} />
                 <Route path="migrator/:id" element={<MigrationDetailPage />} />
+                <Route path="filing" element={<FilingIndexPage />} />
+                <Route path="filing/new" element={<NewFilingPage />} />
+                <Route path="filing/:id" element={<FilingDetailPage />} />
+                <Route path="filing/:id/edit" element={<EditFilingPage />} />
               </Route>
               
               {/* ADMIN PANEL - Protected */}

@@ -122,3 +122,12 @@ verify_jwt = true
 
 [functions.legal-upload-document]
 verify_jwt = true
+
+[functions.filing-validate]
+verify_jwt = true
+
+[functions.filing-submit]
+verify_jwt = true
+
+[functions.filing-calculate-fees]
+verify_jwt = true

@@ -56,9 +56,9 @@ export function Step2ApplicantData({ formData, updateFormData, errors }: Step2Pr
       <div className="flex gap-4">
         <Card 
           className={`flex-1 cursor-pointer transition-all ${
-            formData.applicant_type === 'company' ? 'ring-2 ring-primary' : ''
+            formData.applicant_type === 'legal_entity' ? 'ring-2 ring-primary' : ''
           }`}
-          onClick={() => updateFormData({ applicant_type: 'company' })}
+          onClick={() => updateFormData({ applicant_type: 'legal_entity' })}
         >
           <CardContent className="p-4 flex items-center gap-3">
             <Building2 className="h-8 w-8 text-primary" />
@@ -71,9 +71,9 @@ export function Step2ApplicantData({ formData, updateFormData, errors }: Step2Pr
         
         <Card 
           className={`flex-1 cursor-pointer transition-all ${
-            formData.applicant_type === 'individual' ? 'ring-2 ring-primary' : ''
+            formData.applicant_type === 'natural_person' ? 'ring-2 ring-primary' : ''
           }`}
-          onClick={() => updateFormData({ applicant_type: 'individual' })}
+          onClick={() => updateFormData({ applicant_type: 'natural_person' })}
         >
           <CardContent className="p-4 flex items-center gap-3">
             <User className="h-8 w-8 text-primary" />
@@ -97,13 +97,13 @@ export function Step2ApplicantData({ formData, updateFormData, errors }: Step2Pr
           <div className="grid gap-4 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="applicant_name">
-                {formData.applicant_type === 'company' ? 'Razón Social' : 'Nombre Completo'} *
+                {formData.applicant_type === 'legal_entity' ? 'Razón Social' : 'Nombre Completo'} *
               </Label>
               <Input
                 id="applicant_name"
                 value={formData.applicant_name}
                 onChange={(e) => updateFormData({ applicant_name: e.target.value })}
-                placeholder={formData.applicant_type === 'company' ? 'Mi Empresa S.L.' : 'Juan García López'}
+                placeholder={formData.applicant_type === 'legal_entity' ? 'Mi Empresa S.L.' : 'Juan García López'}
                 className={errors.applicant_name ? 'border-destructive' : ''}
               />
               {renderError('applicant_name')}
@@ -111,7 +111,7 @@ export function Step2ApplicantData({ formData, updateFormData, errors }: Step2Pr
 
             <div className="space-y-2">
               <Label htmlFor="applicant_tax_id">
-                {formData.applicant_type === 'company' ? 'CIF/NIF' : 'NIF/NIE'} *
+                {formData.applicant_type === 'legal_entity' ? 'CIF/NIF' : 'NIF/NIE'} *
               </Label>
               <Input
                 id="applicant_tax_id"

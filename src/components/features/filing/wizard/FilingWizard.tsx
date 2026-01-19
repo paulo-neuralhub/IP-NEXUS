@@ -64,7 +64,7 @@ export interface WizardFormData {
   
   // Step 4 - Mark/IP Details
   mark_name?: string;
-  mark_type?: 'word' | 'figurative' | 'combined' | 'sound' | 'shape_3d' | 'position' | 'pattern' | 'color' | 'motion' | 'hologram' | 'other';
+  mark_type?: 'word' | 'figurative' | 'combined' | 'sound' | 'shape_3d' | 'position' | 'pattern' | 'color' | 'motion' | 'hologram' | 'multimedia' | 'other';
   mark_description?: string;
   mark_image_url?: string;
   mark_colors?: string[];

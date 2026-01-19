@@ -73,15 +73,15 @@ export function Step5Classification({ formData, updateFormData, errors }: Step5P
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedClass, setExpandedClass] = useState<number | null>(null);
 
-  // Filter to show only trademark classification
-  if (formData.filing_type !== 'trademark') {
+  // Filter to show only trademark classification (use ip_type not filing_type)
+  if (formData.ip_type !== 'trademark') {
     return (
       <Card className="bg-muted/50">
         <CardContent className="p-8 text-center">
           <AlertCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">
-            Clasificación para {formData.filing_type === 'patent' ? 'Patentes (IPC)' : 
-                               formData.filing_type === 'design' ? 'Diseños (Locarno)' : 'Modelos de Utilidad'}
+            Clasificación para {formData.ip_type === 'patent' ? 'Patentes (IPC)' : 
+                               formData.ip_type === 'design' ? 'Diseños (Locarno)' : 'Otro'}
           </h3>
           <p className="text-muted-foreground">
             La clasificación específica para este tipo de PI está en desarrollo.
