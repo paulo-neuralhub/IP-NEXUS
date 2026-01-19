@@ -20,6 +20,7 @@ import {
 import MarketLayout from "./pages/app/market/MarketLayout";
 import MarketDashboard from "./pages/app/market";
 import MarketListings from "./pages/app/market/listings";
+import CreateListingPage from "./pages/app/market/listings/new";
 import MarketAssets from "./pages/app/market/assets";
 import MarketTransactions from "./pages/app/market/transactions";
 import MarketFavorites from "./pages/app/market/favorites";
