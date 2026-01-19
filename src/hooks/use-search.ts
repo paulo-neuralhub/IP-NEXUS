@@ -23,13 +23,11 @@ import { toast } from 'sonner';
 // GLOBAL SEARCH
 // ==========================================
 
-export function useSearch(options: SearchOptions) {
-  const { currentOrganization } = useOrganization();
-
+export function useSearch(organizationId: string, options: SearchOptions) {
   return useQuery({
-    queryKey: ['search', currentOrganization?.id, options.query, options.entityTypes, options.filters],
-    queryFn: () => searchAll(currentOrganization!.id, options),
-    enabled: !!currentOrganization?.id && !!options.query && options.query.length >= 2,
+    queryKey: ['search', organizationId, options.query, options.entityTypes, options.filters],
+    queryFn: () => searchAll(organizationId, options),
+    enabled: !!organizationId && !!options.query && options.query.length >= 2,
     staleTime: 30 * 1000, // 30 seconds
   });
 }
@@ -38,14 +36,11 @@ export function useSearch(options: SearchOptions) {
 // QUICK SEARCH (Command Palette)
 // ==========================================
 
-export function useQuickSearch(query: string) {
-  const { user } = useAuth();
-  const { currentOrganization } = useOrganization();
-
+export function useQuickSearch(organizationId: string, query: string, userId: string) {
   return useQuery({
-    queryKey: ['quick-search', currentOrganization?.id, query],
-    queryFn: () => quickSearch(currentOrganization!.id, query, user!.id),
-    enabled: !!currentOrganization?.id && !!user?.id,
+    queryKey: ['quick-search', organizationId, query],
+    queryFn: () => quickSearch(organizationId, query, userId),
+    enabled: !!organizationId && !!userId,
     staleTime: 10 * 1000,
   });
 }
@@ -54,36 +49,32 @@ export function useQuickSearch(query: string) {
 // SAVED SEARCHES
 // ==========================================
 
-export function useSavedSearches() {
-  const { user } = useAuth();
-  const { currentOrganization } = useOrganization();
-
+export function useSavedSearches(organizationId: string, userId: string) {
   return useQuery({
-    queryKey: ['saved-searches', currentOrganization?.id, user?.id],
-    queryFn: () => getSavedSearches(currentOrganization!.id, user!.id),
-    enabled: !!currentOrganization?.id && !!user?.id,
+    queryKey: ['saved-searches', organizationId, userId],
+    queryFn: () => getSavedSearches(organizationId, userId),
+    enabled: !!organizationId && !!userId,
   });
 }
 
 export function useSaveSearch() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
-  const { currentOrganization } = useOrganization();
 
   return useMutation({
-    mutationFn: async (data: {
-      name: string;
-      description?: string;
-      query: string;
-      filters: Record<string, any>;
-      entityTypes: string[];
-      alertEnabled?: boolean;
-      alertFrequency?: string;
+    mutationFn: async (params: {
+      organizationId: string;
+      userId: string;
+      data: {
+        name: string;
+        description?: string;
+        query: string;
+        filters: Record<string, any>;
+        entityTypes: string[];
+        alertEnabled?: boolean;
+        alertFrequency?: string;
+      };
     }) => {
-      if (!currentOrganization?.id || !user?.id) {
-        throw new Error('No organization or user');
-      }
-      return saveSearch(currentOrganization.id, user.id, data);
+      return saveSearch(params.organizationId, params.userId, params.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['saved-searches'] });
@@ -97,12 +88,10 @@ export function useSaveSearch() {
 
 export function useDeleteSavedSearch() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
 
   return useMutation({
-    mutationFn: async (savedSearchId: string) => {
-      if (!user?.id) throw new Error('No user');
-      return deleteSavedSearch(savedSearchId, user.id);
+    mutationFn: async (params: { savedSearchId: string; userId: string }) => {
+      return deleteSavedSearch(params.savedSearchId, params.userId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['saved-searches'] });
@@ -118,33 +107,30 @@ export function useDeleteSavedSearch() {
 // SEARCH HISTORY
 // ==========================================
 
-export function useRecentSearches(limit: number = 10) {
-  const { user } = useAuth();
-  const { currentOrganization } = useOrganization();
+export function useRecentSearches(userId: string, organizationId: string, limit: number = 10) {
 
   return useQuery({
-    queryKey: ['recent-searches', currentOrganization?.id, user?.id, limit],
-    queryFn: () => getRecentSearches(user!.id, currentOrganization!.id, limit),
-    enabled: !!currentOrganization?.id && !!user?.id,
+    queryKey: ['recent-searches', organizationId, userId, limit],
+    queryFn: () => getRecentSearches(userId, organizationId, limit),
+    enabled: !!organizationId && !!userId,
   });
 }
 
 export function useLogSearch() {
-  const { user } = useAuth();
-  const { currentOrganization } = useOrganization();
-
   return useMutation({
     mutationFn: async (data: {
+      organizationId: string;
+      userId: string;
       query: string;
       filters: Record<string, any>;
       entityTypes: string[];
       totalResults: number;
       source: string;
     }) => {
-      if (!currentOrganization?.id || !user?.id) return;
+      if (!data.organizationId || !data.userId) return;
       return logSearch(
-        currentOrganization.id,
-        user.id,
+        data.organizationId,
+        data.userId,
         data.query,
         data.filters,
         data.entityTypes,
@@ -157,15 +143,10 @@ export function useLogSearch() {
 
 export function useClearSearchHistory() {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
-  const { currentOrganization } = useOrganization();
 
   return useMutation({
-    mutationFn: async () => {
-      if (!currentOrganization?.id || !user?.id) {
-        throw new Error('No organization or user');
-      }
-      return clearSearchHistory(user.id, currentOrganization.id);
+    mutationFn: async (params: { userId: string; organizationId: string }) => {
+      return clearSearchHistory(params.userId, params.organizationId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['recent-searches'] });

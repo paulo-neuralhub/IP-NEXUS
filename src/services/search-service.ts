@@ -108,10 +108,6 @@ export async function searchAll(
     total,
     query,
   };
-    facets,
-    total,
-    query,
-  };
 }
 
 // ==========================================
