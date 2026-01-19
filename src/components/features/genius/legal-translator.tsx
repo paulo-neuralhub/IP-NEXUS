@@ -33,7 +33,7 @@ export function LegalTranslator() {
   const [sourceLang, setSourceLang] = useState('es');
   const [targetLang, setTargetLang] = useState('en');
   const [documentType, setDocumentType] = useState('contract');
-  const [selectedGlossary, setSelectedGlossary] = useState<string>('');
+  const [selectedGlossary, setSelectedGlossary] = useState<string>('__auto__');
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [result, setResult] = useState<string>('');
   const [termsUsed, setTermsUsed] = useState<Array<{ source: string; target: string }>>([]);
@@ -61,7 +61,7 @@ export function LegalTranslator() {
         sourceLanguage: sourceLang,
         targetLanguage: targetLang,
         documentType,
-        glossaryId: selectedGlossary || undefined,
+        glossaryId: selectedGlossary === '__auto__' ? undefined : selectedGlossary,
         disclaimerAccepted,
       });
 
@@ -241,7 +241,7 @@ export function LegalTranslator() {
                   <SelectValue placeholder="Automático" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">Automático (recomendado)</SelectItem>
+                  <SelectItem value="__auto__">Automático (recomendado)</SelectItem>
                   {glossaries?.map(g => (
                     <SelectItem key={g.id} value={g.id}>
                       {g.is_official && '⭐ '}{g.name}
