@@ -1705,6 +1705,71 @@ export type Database = {
           },
         ]
       }
+      data_imports: {
+        Row: {
+          column_mapping: Json | null
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          data_type: string
+          id: string
+          import_results: Json | null
+          options: Json | null
+          organization_id: string
+          source_file_id: string | null
+          source_file_name: string | null
+          source_type: string
+          started_at: string | null
+          status: string | null
+          validated_at: string | null
+          validation_results: Json | null
+        }
+        Insert: {
+          column_mapping?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data_type: string
+          id?: string
+          import_results?: Json | null
+          options?: Json | null
+          organization_id: string
+          source_file_id?: string | null
+          source_file_name?: string | null
+          source_type: string
+          started_at?: string | null
+          status?: string | null
+          validated_at?: string | null
+          validation_results?: Json | null
+        }
+        Update: {
+          column_mapping?: Json | null
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data_type?: string
+          id?: string
+          import_results?: Json | null
+          options?: Json | null
+          organization_id?: string
+          source_file_id?: string | null
+          source_file_name?: string | null
+          source_type?: string
+          started_at?: string | null
+          status?: string | null
+          validated_at?: string | null
+          validation_results?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deals: {
         Row: {
           actual_close_date: string | null
@@ -9580,6 +9645,165 @@ export type Database = {
         }
         Relationships: []
       }
+      onboarding_progress: {
+        Row: {
+          collected_data: Json | null
+          completed_at: string | null
+          current_step: number | null
+          id: string
+          last_activity_at: string | null
+          organization_id: string
+          started_at: string | null
+          started_by: string | null
+          status: string | null
+          steps_completed: Json | null
+          total_steps: number | null
+          tour_completed: boolean | null
+          tour_progress: Json | null
+        }
+        Insert: {
+          collected_data?: Json | null
+          completed_at?: string | null
+          current_step?: number | null
+          id?: string
+          last_activity_at?: string | null
+          organization_id: string
+          started_at?: string | null
+          started_by?: string | null
+          status?: string | null
+          steps_completed?: Json | null
+          total_steps?: number | null
+          tour_completed?: boolean | null
+          tour_progress?: Json | null
+        }
+        Update: {
+          collected_data?: Json | null
+          completed_at?: string | null
+          current_step?: number | null
+          id?: string
+          last_activity_at?: string | null
+          organization_id?: string
+          started_at?: string | null
+          started_by?: string | null
+          status?: string | null
+          steps_completed?: Json | null
+          total_steps?: number | null
+          tour_completed?: boolean | null
+          tour_progress?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "onboarding_progress_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      onboarding_tips: {
+        Row: {
+          content: string
+          created_at: string | null
+          dismissible: boolean | null
+          highlight_selector: string | null
+          id: string
+          is_active: boolean | null
+          is_tour_step: boolean | null
+          module: string | null
+          position: string | null
+          show_once: boolean | null
+          tip_key: string
+          title: string
+          tour_order: number | null
+          trigger_condition: Json | null
+          trigger_type: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          dismissible?: boolean | null
+          highlight_selector?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_tour_step?: boolean | null
+          module?: string | null
+          position?: string | null
+          show_once?: boolean | null
+          tip_key: string
+          title: string
+          tour_order?: number | null
+          trigger_condition?: Json | null
+          trigger_type?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          dismissible?: boolean | null
+          highlight_selector?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_tour_step?: boolean | null
+          module?: string | null
+          position?: string | null
+          show_once?: boolean | null
+          tip_key?: string
+          title?: string
+          tour_order?: number | null
+          trigger_condition?: Json | null
+          trigger_type?: string | null
+        }
+        Relationships: []
+      }
+      organization_offices: {
+        Row: {
+          created_at: string | null
+          credentials_configured: boolean | null
+          id: string
+          is_favorite: boolean | null
+          office_id: string
+          organization_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          credentials_configured?: boolean | null
+          id?: string
+          is_favorite?: boolean | null
+          office_id: string
+          organization_id: string
+        }
+        Update: {
+          created_at?: string | null
+          credentials_configured?: boolean | null
+          id?: string
+          is_favorite?: boolean | null
+          office_id?: string
+          organization_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_offices_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_offices_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_offices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           addons: string[] | null
@@ -12069,6 +12293,41 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_tip_progress: {
+        Row: {
+          dismissed_at: string | null
+          id: string
+          seen_at: string | null
+          status: string | null
+          tip_id: string
+          user_id: string
+        }
+        Insert: {
+          dismissed_at?: string | null
+          id?: string
+          seen_at?: string | null
+          status?: string | null
+          tip_id: string
+          user_id: string
+        }
+        Update: {
+          dismissed_at?: string | null
+          id?: string
+          seen_at?: string | null
+          status?: string | null
+          tip_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_tip_progress_tip_id_fkey"
+            columns: ["tip_id"]
+            isOneToOne: false
+            referencedRelation: "onboarding_tips"
             referencedColumns: ["id"]
           },
         ]
