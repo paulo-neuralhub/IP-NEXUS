@@ -3953,6 +3953,1089 @@ export type Database = {
           },
         ]
       }
+      ipo_alert_configs: {
+        Row: {
+          alert_type: string
+          cooldown_minutes: number | null
+          created_at: string | null
+          id: string
+          is_enabled: boolean | null
+          notify_emails: string[] | null
+          notify_slack_channel: string | null
+          notify_webhook_url: string | null
+          office_id: string | null
+          threshold_unit: string | null
+          threshold_value: number | null
+        }
+        Insert: {
+          alert_type: string
+          cooldown_minutes?: number | null
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          notify_emails?: string[] | null
+          notify_slack_channel?: string | null
+          notify_webhook_url?: string | null
+          office_id?: string | null
+          threshold_unit?: string | null
+          threshold_value?: number | null
+        }
+        Update: {
+          alert_type?: string
+          cooldown_minutes?: number | null
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          notify_emails?: string[] | null
+          notify_slack_channel?: string | null
+          notify_webhook_url?: string | null
+          office_id?: string | null
+          threshold_unit?: string | null
+          threshold_value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_alert_configs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_alert_configs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string | null
+          data: Json | null
+          id: string
+          office_id: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          office_id?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string | null
+          data?: Json | null
+          id?: string
+          office_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_alerts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_alerts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_api_configs: {
+        Row: {
+          api_version: string | null
+          auth_config: Json | null
+          auth_type: string
+          base_url: string
+          connection_method_id: string
+          created_at: string | null
+          docs_format: string | null
+          docs_url: string | null
+          endpoints: Json | null
+          id: string
+          renewal_alert_days: number | null
+          required_headers: Json | null
+          subscription_cost: number | null
+          subscription_currency: string | null
+          subscription_end: string | null
+          subscription_plan: string | null
+          subscription_responsible: string | null
+          subscription_start: string | null
+        }
+        Insert: {
+          api_version?: string | null
+          auth_config?: Json | null
+          auth_type: string
+          base_url: string
+          connection_method_id: string
+          created_at?: string | null
+          docs_format?: string | null
+          docs_url?: string | null
+          endpoints?: Json | null
+          id?: string
+          renewal_alert_days?: number | null
+          required_headers?: Json | null
+          subscription_cost?: number | null
+          subscription_currency?: string | null
+          subscription_end?: string | null
+          subscription_plan?: string | null
+          subscription_responsible?: string | null
+          subscription_start?: string | null
+        }
+        Update: {
+          api_version?: string | null
+          auth_config?: Json | null
+          auth_type?: string
+          base_url?: string
+          connection_method_id?: string
+          created_at?: string | null
+          docs_format?: string | null
+          docs_url?: string | null
+          endpoints?: Json | null
+          id?: string
+          renewal_alert_days?: number | null
+          required_headers?: Json | null
+          subscription_cost?: number | null
+          subscription_currency?: string | null
+          subscription_end?: string | null
+          subscription_plan?: string | null
+          subscription_responsible?: string | null
+          subscription_start?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_api_configs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_api_configs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+        ]
+      }
+      ipo_bulk_configs: {
+        Row: {
+          chunk_size: number | null
+          connection_method_id: string
+          created_at: string | null
+          decompress_strategy: string | null
+          file_encoding: string | null
+          file_format: string
+          host: string
+          id: string
+          path_pattern: string | null
+          port: number | null
+          protocol: string
+          schedule_cron: string | null
+          schedule_timezone: string | null
+          xml_standard: string | null
+        }
+        Insert: {
+          chunk_size?: number | null
+          connection_method_id: string
+          created_at?: string | null
+          decompress_strategy?: string | null
+          file_encoding?: string | null
+          file_format: string
+          host: string
+          id?: string
+          path_pattern?: string | null
+          port?: number | null
+          protocol: string
+          schedule_cron?: string | null
+          schedule_timezone?: string | null
+          xml_standard?: string | null
+        }
+        Update: {
+          chunk_size?: number | null
+          connection_method_id?: string
+          created_at?: string | null
+          decompress_strategy?: string | null
+          file_encoding?: string | null
+          file_format?: string
+          host?: string
+          id?: string
+          path_pattern?: string | null
+          port?: number | null
+          protocol?: string
+          schedule_cron?: string | null
+          schedule_timezone?: string | null
+          xml_standard?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_bulk_configs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_bulk_configs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+        ]
+      }
+      ipo_connection_methods: {
+        Row: {
+          avg_response_time_ms: number | null
+          config: Json
+          consecutive_failures: number | null
+          created_at: string | null
+          health_status: string | null
+          id: string
+          is_enabled: boolean | null
+          last_health_check: string | null
+          last_successful_sync: string | null
+          maintenance_schedule: Json | null
+          method_type: string
+          office_id: string
+          preferred_hours: Json | null
+          priority: number | null
+          rate_limit_burst: number | null
+          rate_limit_period: number | null
+          rate_limit_requests: number | null
+          status: string | null
+          success_rate_7d: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_response_time_ms?: number | null
+          config?: Json
+          consecutive_failures?: number | null
+          created_at?: string | null
+          health_status?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          last_health_check?: string | null
+          last_successful_sync?: string | null
+          maintenance_schedule?: Json | null
+          method_type: string
+          office_id: string
+          preferred_hours?: Json | null
+          priority?: number | null
+          rate_limit_burst?: number | null
+          rate_limit_period?: number | null
+          rate_limit_requests?: number | null
+          status?: string | null
+          success_rate_7d?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_response_time_ms?: number | null
+          config?: Json
+          consecutive_failures?: number | null
+          created_at?: string | null
+          health_status?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          last_health_check?: string | null
+          last_successful_sync?: string | null
+          maintenance_schedule?: Json | null
+          method_type?: string
+          office_id?: string
+          preferred_hours?: Json | null
+          priority?: number | null
+          rate_limit_burst?: number | null
+          rate_limit_period?: number | null
+          rate_limit_requests?: number | null
+          status?: string | null
+          success_rate_7d?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_connection_methods_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_connection_methods_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_credentials: {
+        Row: {
+          connection_method_id: string
+          created_at: string | null
+          created_by: string | null
+          credential_data: string
+          credential_type: string
+          description: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+          last_rotated_at: string | null
+          rotation_count: number | null
+          rotation_reminder_days: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          connection_method_id: string
+          created_at?: string | null
+          created_by?: string | null
+          credential_data: string
+          credential_type: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_rotated_at?: string | null
+          rotation_count?: number | null
+          rotation_reminder_days?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          connection_method_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          credential_data?: string
+          credential_type?: string
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_rotated_at?: string | null
+          rotation_count?: number | null
+          rotation_reminder_days?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_credentials_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_credentials_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+        ]
+      }
+      ipo_deadline_rules: {
+        Row: {
+          consequence_if_missed: string | null
+          created_at: string | null
+          days: number | null
+          deadline_type: string
+          exclude_holidays: boolean | null
+          extension_available: boolean | null
+          extension_days: number | null
+          extension_fee_id: string | null
+          id: string
+          ip_type: string
+          is_calendar_days: boolean | null
+          max_extensions: number | null
+          months: number | null
+          notes: string | null
+          office_id: string
+          trigger_event: string
+          years: number | null
+        }
+        Insert: {
+          consequence_if_missed?: string | null
+          created_at?: string | null
+          days?: number | null
+          deadline_type: string
+          exclude_holidays?: boolean | null
+          extension_available?: boolean | null
+          extension_days?: number | null
+          extension_fee_id?: string | null
+          id?: string
+          ip_type: string
+          is_calendar_days?: boolean | null
+          max_extensions?: number | null
+          months?: number | null
+          notes?: string | null
+          office_id: string
+          trigger_event: string
+          years?: number | null
+        }
+        Update: {
+          consequence_if_missed?: string | null
+          created_at?: string | null
+          days?: number | null
+          deadline_type?: string
+          exclude_holidays?: boolean | null
+          extension_available?: boolean | null
+          extension_days?: number | null
+          extension_fee_id?: string | null
+          id?: string
+          ip_type?: string
+          is_calendar_days?: boolean | null
+          max_extensions?: number | null
+          months?: number | null
+          notes?: string | null
+          office_id?: string
+          trigger_event?: string
+          years?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_deadline_rules_extension_fee_id_fkey"
+            columns: ["extension_fee_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_official_fees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_deadline_rules_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_deadline_rules_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_field_mappings: {
+        Row: {
+          created_at: string | null
+          data_type: string
+          id: string
+          is_active: boolean | null
+          mappings: Json
+          office_id: string
+          source_format: string | null
+          updated_at: string | null
+          validations: Json | null
+          version: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          data_type: string
+          id?: string
+          is_active?: boolean | null
+          mappings: Json
+          office_id: string
+          source_format?: string | null
+          updated_at?: string | null
+          validations?: Json | null
+          version?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          data_type?: string
+          id?: string
+          is_active?: boolean | null
+          mappings?: Json
+          office_id?: string
+          source_format?: string | null
+          updated_at?: string | null
+          validations?: Json | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_field_mappings_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_field_mappings_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_health_checks: {
+        Row: {
+          check_type: string
+          checked_at: string | null
+          connection_method_id: string
+          error_code: string | null
+          error_details: Json | null
+          error_message: string | null
+          id: string
+          records_fetched: number | null
+          response_time_ms: number | null
+          status: string
+        }
+        Insert: {
+          check_type: string
+          checked_at?: string | null
+          connection_method_id: string
+          error_code?: string | null
+          error_details?: Json | null
+          error_message?: string | null
+          id?: string
+          records_fetched?: number | null
+          response_time_ms?: number | null
+          status: string
+        }
+        Update: {
+          check_type?: string
+          checked_at?: string | null
+          connection_method_id?: string
+          error_code?: string | null
+          error_details?: Json | null
+          error_message?: string | null
+          id?: string
+          records_fetched?: number | null
+          response_time_ms?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_health_checks_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_health_checks_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+        ]
+      }
+      ipo_holidays: {
+        Row: {
+          created_at: string | null
+          holiday_date: string
+          id: string
+          is_recurring: boolean | null
+          name: string | null
+          office_id: string
+          recurring_day: number | null
+          recurring_month: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          holiday_date: string
+          id?: string
+          is_recurring?: boolean | null
+          name?: string | null
+          office_id: string
+          recurring_day?: number | null
+          recurring_month?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          holiday_date?: string
+          id?: string
+          is_recurring?: boolean | null
+          name?: string | null
+          office_id?: string
+          recurring_day?: number | null
+          recurring_month?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_holidays_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_holidays_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_knowledge_base: {
+        Row: {
+          auto_update: boolean | null
+          content: string | null
+          content_language: string | null
+          content_url: string | null
+          created_at: string | null
+          effective_date: string | null
+          expiry_date: string | null
+          id: string
+          knowledge_type: string
+          last_crawled_at: string | null
+          last_verified_at: string | null
+          office_id: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          auto_update?: boolean | null
+          content?: string | null
+          content_language?: string | null
+          content_url?: string | null
+          created_at?: string | null
+          effective_date?: string | null
+          expiry_date?: string | null
+          id?: string
+          knowledge_type: string
+          last_crawled_at?: string | null
+          last_verified_at?: string | null
+          office_id: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          auto_update?: boolean | null
+          content?: string | null
+          content_language?: string | null
+          content_url?: string | null
+          created_at?: string | null
+          effective_date?: string | null
+          expiry_date?: string | null
+          id?: string
+          knowledge_type?: string
+          last_crawled_at?: string | null
+          last_verified_at?: string | null
+          office_id?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_knowledge_base_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_knowledge_base_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_office_contacts: {
+        Row: {
+          contact_type: string
+          created_at: string | null
+          email: string | null
+          hours: string | null
+          id: string
+          is_primary: boolean | null
+          name: string | null
+          notes: string | null
+          office_id: string
+          phone: string | null
+          role: string | null
+        }
+        Insert: {
+          contact_type: string
+          created_at?: string | null
+          email?: string | null
+          hours?: string | null
+          id?: string
+          is_primary?: boolean | null
+          name?: string | null
+          notes?: string | null
+          office_id: string
+          phone?: string | null
+          role?: string | null
+        }
+        Update: {
+          contact_type?: string
+          created_at?: string | null
+          email?: string | null
+          hours?: string | null
+          id?: string
+          is_primary?: boolean | null
+          name?: string | null
+          notes?: string | null
+          office_id?: string
+          phone?: string | null
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_office_contacts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_office_contacts_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_offices: {
+        Row: {
+          address: string | null
+          code: string
+          code_alt: string | null
+          country_code: string | null
+          created_at: string | null
+          currency: string | null
+          email_general: string | null
+          id: string
+          ip_types: string[] | null
+          languages: string[] | null
+          name_official: string
+          name_short: string | null
+          notes: string | null
+          office_type: string
+          phone_general: string | null
+          priority_score: number | null
+          region: string | null
+          status: string | null
+          tier: number | null
+          timezone: string
+          updated_at: string | null
+          website_official: string | null
+          website_search: string | null
+        }
+        Insert: {
+          address?: string | null
+          code: string
+          code_alt?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          currency?: string | null
+          email_general?: string | null
+          id?: string
+          ip_types?: string[] | null
+          languages?: string[] | null
+          name_official: string
+          name_short?: string | null
+          notes?: string | null
+          office_type: string
+          phone_general?: string | null
+          priority_score?: number | null
+          region?: string | null
+          status?: string | null
+          tier?: number | null
+          timezone: string
+          updated_at?: string | null
+          website_official?: string | null
+          website_search?: string | null
+        }
+        Update: {
+          address?: string | null
+          code?: string
+          code_alt?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          currency?: string | null
+          email_general?: string | null
+          id?: string
+          ip_types?: string[] | null
+          languages?: string[] | null
+          name_official?: string
+          name_short?: string | null
+          notes?: string | null
+          office_type?: string
+          phone_general?: string | null
+          priority_score?: number | null
+          region?: string | null
+          status?: string | null
+          tier?: number | null
+          timezone?: string
+          updated_at?: string | null
+          website_official?: string | null
+          website_search?: string | null
+        }
+        Relationships: []
+      }
+      ipo_official_fees: {
+        Row: {
+          additional_class_fee: number | null
+          amount: number
+          base_classes: number | null
+          created_at: string | null
+          currency: string
+          description: string | null
+          effective_from: string
+          effective_until: string | null
+          fee_type: string
+          id: string
+          ip_type: string
+          last_verified_at: string | null
+          office_id: string
+          online_discount: number | null
+          per_class: boolean | null
+          small_entity_discount: number | null
+          source_url: string | null
+        }
+        Insert: {
+          additional_class_fee?: number | null
+          amount: number
+          base_classes?: number | null
+          created_at?: string | null
+          currency: string
+          description?: string | null
+          effective_from: string
+          effective_until?: string | null
+          fee_type: string
+          id?: string
+          ip_type: string
+          last_verified_at?: string | null
+          office_id: string
+          online_discount?: number | null
+          per_class?: boolean | null
+          small_entity_discount?: number | null
+          source_url?: string | null
+        }
+        Update: {
+          additional_class_fee?: number | null
+          amount?: number
+          base_classes?: number | null
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          effective_from?: string
+          effective_until?: string | null
+          fee_type?: string
+          id?: string
+          ip_type?: string
+          last_verified_at?: string | null
+          office_id?: string
+          online_discount?: number | null
+          per_class?: boolean | null
+          small_entity_discount?: number | null
+          source_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_official_fees_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_official_fees_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipo_scraper_configs: {
+        Row: {
+          browser_headless: boolean | null
+          browser_type: string | null
+          captcha_strategy: string | null
+          connection_method_id: string
+          created_at: string | null
+          detail_url_pattern: string | null
+          id: string
+          previous_versions: Json | null
+          proxy_country: string | null
+          proxy_strategy: string | null
+          script_content: string | null
+          script_generated_at: string | null
+          script_generated_by: string | null
+          script_version: string | null
+          search_url: string | null
+          selectors: Json
+          target_url: string
+          updated_at: string | null
+          user_agent: string | null
+          viewport_height: number | null
+          viewport_width: number | null
+          wait_strategy: Json | null
+        }
+        Insert: {
+          browser_headless?: boolean | null
+          browser_type?: string | null
+          captcha_strategy?: string | null
+          connection_method_id: string
+          created_at?: string | null
+          detail_url_pattern?: string | null
+          id?: string
+          previous_versions?: Json | null
+          proxy_country?: string | null
+          proxy_strategy?: string | null
+          script_content?: string | null
+          script_generated_at?: string | null
+          script_generated_by?: string | null
+          script_version?: string | null
+          search_url?: string | null
+          selectors?: Json
+          target_url: string
+          updated_at?: string | null
+          user_agent?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+          wait_strategy?: Json | null
+        }
+        Update: {
+          browser_headless?: boolean | null
+          browser_type?: string | null
+          captcha_strategy?: string | null
+          connection_method_id?: string
+          created_at?: string | null
+          detail_url_pattern?: string | null
+          id?: string
+          previous_versions?: Json | null
+          proxy_country?: string | null
+          proxy_strategy?: string | null
+          script_content?: string | null
+          script_generated_at?: string | null
+          script_generated_by?: string | null
+          script_version?: string | null
+          search_url?: string | null
+          selectors?: Json
+          target_url?: string
+          updated_at?: string | null
+          user_agent?: string | null
+          viewport_height?: number | null
+          viewport_width?: number | null
+          wait_strategy?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_scraper_configs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_scraper_configs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+        ]
+      }
+      ipo_sync_logs: {
+        Row: {
+          completed_at: string | null
+          connection_method_id: string | null
+          duration_ms: number | null
+          errors: Json | null
+          id: string
+          office_id: string
+          records_created: number | null
+          records_failed: number | null
+          records_fetched: number | null
+          records_updated: number | null
+          source_file: string | null
+          started_at: string
+          status: string
+          sync_type: string
+          triggered_by: string | null
+          triggered_by_user: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          connection_method_id?: string | null
+          duration_ms?: number | null
+          errors?: Json | null
+          id?: string
+          office_id: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_fetched?: number | null
+          records_updated?: number | null
+          source_file?: string | null
+          started_at: string
+          status: string
+          sync_type: string
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          connection_method_id?: string | null
+          duration_ms?: number | null
+          errors?: Json | null
+          id?: string
+          office_id?: string
+          records_created?: number | null
+          records_failed?: number | null
+          records_fetched?: number | null
+          records_updated?: number | null
+          source_file?: string | null
+          started_at?: string
+          status?: string
+          sync_type?: string
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipo_sync_logs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_connection_methods"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_sync_logs_connection_method_id_fkey"
+            columns: ["connection_method_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["connection_method_id"]
+          },
+          {
+            foreignKeyName: "ipo_sync_logs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipo_sync_logs_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_base: {
         Row: {
           category: string
@@ -9044,7 +10127,36 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      ipo_expiring_credentials: {
+        Row: {
+          code: string | null
+          credential_type: string | null
+          days_until_expiry: unknown
+          expires_at: string | null
+          name_short: string | null
+        }
+        Relationships: []
+      }
+      ipo_health_overview: {
+        Row: {
+          avg_response_time_ms: number | null
+          code: string | null
+          connection_method_id: string | null
+          consecutive_failures: number | null
+          health_status: string | null
+          id: string | null
+          last_successful_sync: string | null
+          method_type: string | null
+          name_official: string | null
+          name_short: string | null
+          office_status: string | null
+          region: string | null
+          success_rate_7d: number | null
+          tier: number | null
+          traffic_light: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
