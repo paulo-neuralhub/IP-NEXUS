@@ -177,3 +177,190 @@ export const API_PROVIDERS = [
   { code: 'tmview', name: 'TMView', description: 'Base de datos de marcas global' },
   { code: 'uspto', name: 'USPTO', description: 'Oficina de Patentes de EE.UU.' },
 ] as const;
+
+// ===== INTEGRATION PROVIDERS (para Hub de Integraciones) =====
+export type IntegrationCategory = 
+  | 'billing' | 'email' | 'ip_office' | 'ai' 
+  | 'calendar' | 'storage' | 'communication';
+
+export interface IntegrationProvider {
+  id: string;
+  name: string;
+  description: string;
+  category: IntegrationCategory;
+  website?: string;
+  docsUrl?: string;
+  icon?: string;
+  fields: IntegrationField[];
+  isOAuth?: boolean;
+  isSystem?: boolean;
+}
+
+export interface IntegrationField {
+  key: string;
+  label: string;
+  type: 'text' | 'password' | 'url';
+  required?: boolean;
+  placeholder?: string;
+}
+
+export interface IntegrationConnection {
+  id: string;
+  organization_id: string;
+  provider: string;
+  credentials: Record<string, any>;
+  config: Record<string, any>;
+  is_active: boolean;
+  last_sync_at?: string;
+  last_error?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export const INTEGRATION_PROVIDERS: Record<string, IntegrationProvider> = {
+  // Pagos
+  stripe: {
+    id: 'stripe',
+    name: 'Stripe',
+    category: 'billing',
+    description: 'Pagos y suscripciones',
+    website: 'https://stripe.com',
+    docsUrl: 'https://stripe.com/docs',
+    fields: [],
+    isSystem: true,
+  },
+  
+  // Email
+  resend: {
+    id: 'resend',
+    name: 'Resend',
+    category: 'email',
+    description: 'Emails transaccionales',
+    website: 'https://resend.com',
+    docsUrl: 'https://resend.com/docs',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  sendgrid: {
+    id: 'sendgrid',
+    name: 'SendGrid',
+    category: 'email',
+    description: 'Email marketing y transaccional',
+    website: 'https://sendgrid.com',
+    docsUrl: 'https://docs.sendgrid.com',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  
+  // Oficinas PI
+  euipo: {
+    id: 'euipo',
+    name: 'EUIPO',
+    category: 'ip_office',
+    description: 'Oficina de PI de la UE',
+    website: 'https://euipo.europa.eu',
+    docsUrl: 'https://euipo.europa.eu/ohimportal/en/web-services',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  tmview: {
+    id: 'tmview',
+    name: 'TMView',
+    category: 'ip_office',
+    description: 'Base de datos mundial de marcas',
+    website: 'https://www.tmdn.org/tmview',
+    fields: [
+      { key: 'username', label: 'Usuario', type: 'text', required: true },
+      { key: 'password', label: 'Contraseña', type: 'password', required: true },
+    ],
+  },
+  wipo: {
+    id: 'wipo',
+    name: 'WIPO',
+    category: 'ip_office',
+    description: 'Sistema Madrid y PCT',
+    website: 'https://www.wipo.int',
+    docsUrl: 'https://www.wipo.int/webservices/',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  oepm: {
+    id: 'oepm',
+    name: 'OEPM',
+    category: 'ip_office',
+    description: 'Oficina Española de Patentes y Marcas',
+    website: 'https://www.oepm.es',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  uspto: {
+    id: 'uspto',
+    name: 'USPTO',
+    category: 'ip_office',
+    description: 'Oficina de Patentes de EE.UU.',
+    website: 'https://www.uspto.gov',
+    docsUrl: 'https://developer.uspto.gov/',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  
+  // IA
+  openai: {
+    id: 'openai',
+    name: 'OpenAI',
+    category: 'ai',
+    description: 'GPT y procesamiento de lenguaje',
+    website: 'https://openai.com',
+    docsUrl: 'https://platform.openai.com/docs',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  anthropic: {
+    id: 'anthropic',
+    name: 'Anthropic',
+    category: 'ai',
+    description: 'Claude AI',
+    website: 'https://anthropic.com',
+    docsUrl: 'https://docs.anthropic.com',
+    fields: [
+      { key: 'api_key', label: 'API Key', type: 'password', required: true },
+    ],
+  },
+  
+  // Calendario
+  google_calendar: {
+    id: 'google_calendar',
+    name: 'Google Calendar',
+    category: 'calendar',
+    description: 'Sincronización de calendario',
+    website: 'https://calendar.google.com',
+    fields: [],
+    isOAuth: true,
+  },
+  microsoft_outlook: {
+    id: 'microsoft_outlook',
+    name: 'Microsoft Outlook',
+    category: 'calendar',
+    description: 'Calendario y email de Microsoft',
+    website: 'https://outlook.com',
+    fields: [],
+    isOAuth: true,
+  },
+};
+
+export const INTEGRATION_CATEGORIES: Record<IntegrationCategory, { name: string; description: string }> = {
+  billing: { name: 'Pagos', description: 'Procesamiento de pagos y suscripciones' },
+  email: { name: 'Email', description: 'Envío de correos transaccionales y marketing' },
+  ip_office: { name: 'Oficinas de PI', description: 'Conexiones con oficinas de propiedad intelectual' },
+  ai: { name: 'Inteligencia Artificial', description: 'Proveedores de IA y procesamiento de lenguaje' },
+  calendar: { name: 'Calendario', description: 'Sincronización de calendarios' },
+  storage: { name: 'Almacenamiento', description: 'Servicios de almacenamiento en la nube' },
+  communication: { name: 'Comunicación', description: 'WhatsApp, Slack, etc.' },
+};
