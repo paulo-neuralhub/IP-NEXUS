@@ -1240,6 +1240,75 @@ export type Database = {
           },
         ]
       }
+      client_portals: {
+        Row: {
+          activated_at: string | null
+          branding_config: Json | null
+          client_id: string
+          created_at: string | null
+          created_by: string | null
+          deactivated_at: string | null
+          id: string
+          is_active: boolean | null
+          last_accessed_at: string | null
+          organization_id: string
+          portal_name: string | null
+          portal_slug: string | null
+          settings: Json | null
+          total_logins: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          branding_config?: Json | null
+          client_id: string
+          created_at?: string | null
+          created_by?: string | null
+          deactivated_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_accessed_at?: string | null
+          organization_id: string
+          portal_name?: string | null
+          portal_slug?: string | null
+          settings?: Json | null
+          total_logins?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          branding_config?: Json | null
+          client_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          deactivated_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_accessed_at?: string | null
+          organization_id?: string
+          portal_name?: string | null
+          portal_slug?: string | null
+          settings?: Json | null
+          total_logins?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_portals_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_list_members: {
         Row: {
           added_at: string | null
@@ -9722,6 +9791,602 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_activity_log: {
+        Row: {
+          action: string
+          actor_external_id: string | null
+          actor_internal_id: string | null
+          actor_name: string | null
+          actor_type: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: string | null
+          portal_id: string
+          resource_id: string | null
+          resource_name: string | null
+          resource_type: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          actor_external_id?: string | null
+          actor_internal_id?: string | null
+          actor_name?: string | null
+          actor_type: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          portal_id: string
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          actor_external_id?: string | null
+          actor_internal_id?: string | null
+          actor_name?: string | null
+          actor_type?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+          portal_id?: string
+          resource_id?: string | null
+          resource_name?: string | null
+          resource_type?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_activity_log_actor_external_id_fkey"
+            columns: ["actor_external_id"]
+            isOneToOne: false
+            referencedRelation: "portal_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_activity_log_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_approvals: {
+        Row: {
+          approval_type: string
+          attachments: Json | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          details: Json | null
+          due_date: string | null
+          expires_at: string | null
+          id: string
+          organization_id: string
+          portal_id: string
+          priority: string | null
+          reference_id: string | null
+          reference_type: string | null
+          reminder_count: number | null
+          reminder_sent_at: string | null
+          responded_at: string | null
+          responded_by: string | null
+          response: string | null
+          response_comment: string | null
+          response_options: Json | null
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          approval_type: string
+          attachments?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          details?: Json | null
+          due_date?: string | null
+          expires_at?: string | null
+          id?: string
+          organization_id: string
+          portal_id: string
+          priority?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          reminder_count?: number | null
+          reminder_sent_at?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          response?: string | null
+          response_comment?: string | null
+          response_options?: Json | null
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          approval_type?: string
+          attachments?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          details?: Json | null
+          due_date?: string | null
+          expires_at?: string | null
+          id?: string
+          organization_id?: string
+          portal_id?: string
+          priority?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          reminder_count?: number | null
+          reminder_sent_at?: string | null
+          responded_at?: string | null
+          responded_by?: string | null
+          response?: string | null
+          response_comment?: string | null
+          response_options?: Json | null
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_approvals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_approvals_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_approvals_responded_by_fkey"
+            columns: ["responded_by"]
+            isOneToOne: false
+            referencedRelation: "portal_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_comments: {
+        Row: {
+          attachments: Json | null
+          author_external_id: string | null
+          author_internal_id: string | null
+          author_name: string
+          author_type: string
+          content: string
+          context_id: string | null
+          context_type: string
+          created_at: string | null
+          edited_at: string | null
+          id: string
+          is_edited: boolean | null
+          is_internal: boolean | null
+          is_pinned: boolean | null
+          is_resolved: boolean | null
+          mentions: string[] | null
+          parent_id: string | null
+          portal_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+          thread_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          author_external_id?: string | null
+          author_internal_id?: string | null
+          author_name: string
+          author_type: string
+          content: string
+          context_id?: string | null
+          context_type: string
+          created_at?: string | null
+          edited_at?: string | null
+          id?: string
+          is_edited?: boolean | null
+          is_internal?: boolean | null
+          is_pinned?: boolean | null
+          is_resolved?: boolean | null
+          mentions?: string[] | null
+          parent_id?: string | null
+          portal_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          thread_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          author_external_id?: string | null
+          author_internal_id?: string | null
+          author_name?: string
+          author_type?: string
+          content?: string
+          context_id?: string | null
+          context_type?: string
+          created_at?: string | null
+          edited_at?: string | null
+          id?: string
+          is_edited?: boolean | null
+          is_internal?: boolean | null
+          is_pinned?: boolean | null
+          is_resolved?: boolean | null
+          mentions?: string[] | null
+          parent_id?: string | null
+          portal_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          thread_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_comments_author_external_id_fkey"
+            columns: ["author_external_id"]
+            isOneToOne: false
+            referencedRelation: "portal_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "portal_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_comments_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_notifications: {
+        Row: {
+          created_at: string | null
+          email_sent: boolean | null
+          email_sent_at: string | null
+          id: string
+          is_read: boolean | null
+          link: string | null
+          message: string | null
+          notification_type: string
+          portal_id: string
+          read_at: string | null
+          reference_id: string | null
+          reference_type: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          message?: string | null
+          notification_type: string
+          portal_id: string
+          read_at?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          link?: string | null
+          message?: string | null
+          notification_type?: string
+          portal_id?: string
+          read_at?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_notifications_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "portal_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_sessions: {
+        Row: {
+          created_at: string | null
+          device_info: Json | null
+          expires_at: string
+          id: string
+          ip_address: string | null
+          is_active: boolean | null
+          last_activity_at: string | null
+          refresh_token: string | null
+          session_token: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_info?: Json | null
+          expires_at: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_activity_at?: string | null
+          refresh_token?: string | null
+          session_token: string
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_info?: Json | null
+          expires_at?: string
+          id?: string
+          ip_address?: string | null
+          is_active?: boolean | null
+          last_activity_at?: string | null
+          refresh_token?: string | null
+          session_token?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "portal_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_shared_content: {
+        Row: {
+          content_id: string
+          content_type: string
+          expires_at: string | null
+          filters: Json | null
+          id: string
+          is_active: boolean | null
+          permissions: Json | null
+          portal_id: string
+          shared_at: string | null
+          shared_by: string | null
+        }
+        Insert: {
+          content_id: string
+          content_type: string
+          expires_at?: string | null
+          filters?: Json | null
+          id?: string
+          is_active?: boolean | null
+          permissions?: Json | null
+          portal_id: string
+          shared_at?: string | null
+          shared_by?: string | null
+        }
+        Update: {
+          content_id?: string
+          content_type?: string
+          expires_at?: string | null
+          filters?: Json | null
+          id?: string
+          is_active?: boolean | null
+          permissions?: Json | null
+          portal_id?: string
+          shared_at?: string | null
+          shared_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_shared_content_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_signatures: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          document_file_id: string | null
+          document_hash: string | null
+          document_type: string
+          document_url: string | null
+          expires_at: string | null
+          id: string
+          organization_id: string
+          portal_id: string
+          sent_at: string | null
+          signature_config: Json | null
+          signed_document_file_id: string | null
+          signed_document_url: string | null
+          signers: Json
+          status: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_file_id?: string | null
+          document_hash?: string | null
+          document_type: string
+          document_url?: string | null
+          expires_at?: string | null
+          id?: string
+          organization_id: string
+          portal_id: string
+          sent_at?: string | null
+          signature_config?: Json | null
+          signed_document_file_id?: string | null
+          signed_document_url?: string | null
+          signers?: Json
+          status?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_file_id?: string | null
+          document_hash?: string | null
+          document_type?: string
+          document_url?: string | null
+          expires_at?: string | null
+          id?: string
+          organization_id?: string
+          portal_id?: string
+          sent_at?: string | null
+          signature_config?: Json | null
+          signed_document_file_id?: string | null
+          signed_document_url?: string | null
+          signers?: Json
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_signatures_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_signatures_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_users: {
+        Row: {
+          activated_at: string | null
+          created_at: string | null
+          email: string
+          id: string
+          invited_at: string | null
+          invited_by: string | null
+          job_title: string | null
+          last_login_at: string | null
+          login_count: number | null
+          magic_link_expires_at: string | null
+          magic_link_token: string | null
+          name: string
+          notification_preferences: Json | null
+          password_hash: string | null
+          permissions: Json | null
+          phone: string | null
+          portal_id: string
+          role: string | null
+          status: string | null
+          two_factor_enabled: boolean | null
+          two_factor_secret: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          activated_at?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          job_title?: string | null
+          last_login_at?: string | null
+          login_count?: number | null
+          magic_link_expires_at?: string | null
+          magic_link_token?: string | null
+          name: string
+          notification_preferences?: Json | null
+          password_hash?: string | null
+          permissions?: Json | null
+          phone?: string | null
+          portal_id: string
+          role?: string | null
+          status?: string | null
+          two_factor_enabled?: boolean | null
+          two_factor_secret?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          activated_at?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          job_title?: string | null
+          last_login_at?: string | null
+          login_count?: number | null
+          magic_link_expires_at?: string | null
+          magic_link_token?: string | null
+          name?: string
+          notification_preferences?: Json | null
+          password_hash?: string | null
+          permissions?: Json | null
+          phone?: string | null
+          portal_id?: string
+          role?: string | null
+          status?: string | null
+          two_factor_enabled?: boolean | null
+          two_factor_secret?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_users_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
             referencedColumns: ["id"]
           },
         ]
