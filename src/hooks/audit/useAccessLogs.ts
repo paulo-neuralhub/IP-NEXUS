@@ -4,8 +4,8 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useOrganization } from '@/hooks/useOrganization';
-import type { AccessLog, AccessLogFilters, AccessEventType } from '@/types/audit';
+import { useOrganization } from '@/contexts/organization-context';
+import type { AccessLog, AccessLogFilters, AccessEventType, AccessStats } from '@/types/audit';
 
 // ==========================================
 // ACCESS LOGS
@@ -112,7 +112,7 @@ export function useAccessStats() {
 
   return useQuery({
     queryKey: ['access-stats', currentOrganization?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<AccessStats | null> => {
       if (!currentOrganization?.id) return null;
 
       const now = new Date();
