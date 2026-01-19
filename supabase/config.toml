@@ -131,3 +131,9 @@ verify_jwt = true
 
 [functions.filing-calculate-fees]
 verify_jwt = true
+
+[functions.workflow-execute]
+verify_jwt = true
+
+[functions.workflow-process-queue]
+verify_jwt = true

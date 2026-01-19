@@ -1,7 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useOrganization } from '@/hooks/useOrganization';
+import { useOrganization } from '@/contexts/organization-context';
+import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
+import type { Json } from '@/integrations/supabase/types';
 
 // =============================================
 // WORKFLOW TEMPLATES
@@ -59,7 +61,8 @@ export function useWorkflowTemplate(id: string | undefined) {
 
 export function useCreateWorkflowTemplate() {
   const queryClient = useQueryClient();
-  const { currentOrganization, user } = useOrganization();
+  const { currentOrganization } = useOrganization();
+  const { user } = useAuth();
   
   return useMutation({
     mutationFn: async (template: any) => {
@@ -291,7 +294,7 @@ export function useTriggerWorkflowManually() {
     mutationFn: async ({ workflowId, triggerData }: { workflowId: string; triggerData?: Record<string, unknown> }) => {
       const { data, error } = await supabase.rpc('trigger_workflow_manually', {
         p_workflow_id: workflowId,
-        p_trigger_data: triggerData || {}
+        p_trigger_data: (triggerData || {}) as Json
       });
       
       if (error) throw error;

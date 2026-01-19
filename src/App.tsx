@@ -85,6 +85,11 @@ import FilingIndexPage from "./pages/app/filing";
 import NewFilingPage from "./pages/app/filing/new";
 import FilingDetailPage from "./pages/app/filing/[id]";
 import EditFilingPage from "./pages/app/filing/[id]/edit";
+import WorkflowIndexPage from "./pages/app/workflow";
+import NewWorkflowPage from "./pages/app/workflow/new";
+import WorkflowTemplatesPage from "./pages/app/workflow/templates";
+import WorkflowDetailPage from "./pages/app/workflow/[id]";
+import EditWorkflowPage from "./pages/app/workflow/[id]/edit";
 
 // Admin Pages
 import AdminLayout from "./layouts/admin-layout";
@@ -224,6 +229,11 @@ const App = () => (
                 <Route path="filing/new" element={<NewFilingPage />} />
                 <Route path="filing/:id" element={<FilingDetailPage />} />
                 <Route path="filing/:id/edit" element={<EditFilingPage />} />
+                <Route path="workflow" element={<WorkflowIndexPage />} />
+                <Route path="workflow/new" element={<NewWorkflowPage />} />
+                <Route path="workflow/templates" element={<WorkflowTemplatesPage />} />
+                <Route path="workflow/:id" element={<WorkflowDetailPage />} />
+                <Route path="workflow/:id/edit" element={<EditWorkflowPage />} />
               </Route>
               
               {/* ADMIN PANEL - Protected */}
