@@ -1,7 +1,5 @@
 // src/lib/constants/genius-pro.ts
 
-import type { DocumentType, DocumentTone } from '@/types/genius-pro.types';
-
 export const GENIUS_PRO_DISCLAIMERS = {
   general: {
     es: `⚠️ AVISO LEGAL IMPORTANTE
@@ -67,73 +65,24 @@ Before sending:
   },
 };
 
-export const DOCUMENT_TYPES: Record<DocumentType, { label: string; description: string; icon: string }> = {
-  opposition: {
-    label: 'Oposición de marca',
-    description: 'Genera un borrador de oposición contra una solicitud de marca',
-    icon: 'Scale',
-  },
-  cease_desist: {
-    label: 'Carta de cese y desistimiento',
-    description: 'Genera una carta exigiendo el cese de uso de una marca',
-    icon: 'FileWarning',
-  },
-  response_office_action: {
-    label: 'Respuesta a Office Action',
-    description: 'Genera una respuesta a una acción oficial de la oficina',
-    icon: 'Reply',
-  },
-  appeal: {
-    label: 'Recurso',
-    description: 'Genera un borrador de recurso contra una decisión',
-    icon: 'Gavel',
-  },
-  license_draft: {
-    label: 'Borrador de licencia',
-    description: 'Genera un borrador de contrato de licencia',
-    icon: 'FileSignature',
-  },
-  assignment_draft: {
-    label: 'Borrador de cesión',
-    description: 'Genera un borrador de contrato de cesión de marca',
-    icon: 'ArrowRightLeft',
-  },
-  infringement_notice: {
-    label: 'Notificación de infracción',
-    description: 'Genera una notificación formal de infracción',
-    icon: 'AlertTriangle',
-  },
-  coexistence_agreement: {
-    label: 'Acuerdo de coexistencia',
-    description: 'Genera un borrador de acuerdo de coexistencia',
-    icon: 'Handshake',
-  },
-  observations: {
-    label: 'Observaciones de tercero',
-    description: 'Genera observaciones contra una solicitud publicada',
-    icon: 'Eye',
-  },
-  cancellation: {
-    label: 'Solicitud de cancelación',
-    description: 'Genera una solicitud de cancelación de marca',
-    icon: 'XCircle',
-  },
-};
+export const DOCUMENT_TYPES = [
+  { id: 'opposition', label: 'Oposición de marca', description: 'Genera un borrador de oposición contra una solicitud de marca', icon: 'Scale' },
+  { id: 'cease_desist', label: 'Carta de cese y desistimiento', description: 'Genera una carta exigiendo el cese de uso de una marca', icon: 'FileWarning' },
+  { id: 'response_office_action', label: 'Respuesta a Office Action', description: 'Genera una respuesta a una acción oficial de la oficina', icon: 'Reply' },
+  { id: 'appeal', label: 'Recurso', description: 'Genera un borrador de recurso contra una decisión', icon: 'Gavel' },
+  { id: 'license_draft', label: 'Borrador de licencia', description: 'Genera un borrador de contrato de licencia', icon: 'FileSignature' },
+  { id: 'assignment_draft', label: 'Borrador de cesión', description: 'Genera un borrador de contrato de cesión de marca', icon: 'ArrowRightLeft' },
+  { id: 'infringement_notice', label: 'Notificación de infracción', description: 'Genera una notificación formal de infracción', icon: 'AlertTriangle' },
+  { id: 'coexistence_agreement', label: 'Acuerdo de coexistencia', description: 'Genera un borrador de acuerdo de coexistencia', icon: 'Handshake' },
+  { id: 'observations', label: 'Observaciones de tercero', description: 'Genera observaciones contra una solicitud publicada', icon: 'Eye' },
+  { id: 'cancellation', label: 'Solicitud de cancelación', description: 'Genera una solicitud de cancelación de marca', icon: 'XCircle' },
+] as const;
 
-export const DOCUMENT_TONES: Record<DocumentTone, { label: string; description: string }> = {
-  diplomatic: {
-    label: 'Diplomático',
-    description: 'Tono conciliador, ideal para posible coexistencia',
-  },
-  professional: {
-    label: 'Profesional',
-    description: 'Tono neutro y técnico (recomendado)',
-  },
-  aggressive: {
-    label: 'Contundente',
-    description: 'Tono firme y directo para litigios',
-  },
-};
+export const DOCUMENT_TONES = [
+  { id: 'diplomatic', label: 'Diplomático', description: 'Tono conciliador, ideal para posible coexistencia' },
+  { id: 'professional', label: 'Profesional', description: 'Tono neutro y técnico (recomendado)' },
+  { id: 'aggressive', label: 'Contundente', description: 'Tono firme y directo para litigios' },
+] as const;
 
 export const IP_OFFICES = [
   { code: 'EUIPO', name: 'EUIPO (UE)', jurisdiction: 'EU' },
@@ -146,15 +95,15 @@ export const IP_OFFICES = [
 ] as const;
 
 export const OPPOSITION_GROUNDS = [
-  { id: 'likelihood_confusion', label: 'Riesgo de confusión (Art. 8.1.b RMUE)', article: 'Art. 8.1.b' },
-  { id: 'reputation', label: 'Marca renombrada (Art. 8.5 RMUE)', article: 'Art. 8.5' },
-  { id: 'bad_faith', label: 'Mala fe del solicitante', article: 'Art. 59.1.b' },
-  { id: 'descriptive', label: 'Carácter descriptivo', article: 'Art. 7.1.c' },
+  { id: 'likelihood_confusion', label: 'Riesgo de confusión (Art. 8.1.b RMUE)', article: 'Art. 8.1.b', description: 'Similitud de signos y productos/servicios que pueda causar confusión en el público' },
+  { id: 'reputation', label: 'Marca renombrada (Art. 8.5 RMUE)', article: 'Art. 8.5', description: 'Aprovechamiento indebido o perjuicio al renombre de una marca notoria' },
+  { id: 'bad_faith', label: 'Mala fe del solicitante', article: 'Art. 59.1.b', description: 'El solicitante conocía la marca anterior y actúa de mala fe' },
+  { id: 'descriptive', label: 'Carácter descriptivo', article: 'Art. 7.1.c', description: 'La marca es descriptiva de los productos o servicios' },
 ] as const;
 
 export const RISK_LEVEL_CONFIG: Record<string, { color: string; bgColor: string; label: string }> = {
-  critical: { color: 'text-red-700', bgColor: 'bg-red-100', label: 'CRÍTICO' },
-  high: { color: 'text-orange-700', bgColor: 'bg-orange-100', label: 'ALTO' },
-  medium: { color: 'text-yellow-700', bgColor: 'bg-yellow-100', label: 'MODERADO' },
-  low: { color: 'text-green-700', bgColor: 'bg-green-100', label: 'BAJO' },
+  critical: { color: '#dc2626', bgColor: 'bg-red-100', label: 'CRÍTICO' },
+  high: { color: '#ea580c', bgColor: 'bg-orange-100', label: 'ALTO' },
+  medium: { color: '#ca8a04', bgColor: 'bg-yellow-100', label: 'MODERADO' },
+  low: { color: '#16a34a', bgColor: 'bg-green-100', label: 'BAJO' },
 };

@@ -12,7 +12,7 @@ export type DocumentType =
   | 'observations'         // Observaciones de tercero
   | 'cancellation';        // Solicitud de cancelación
 
-export type DocumentTone = 'diplomatic' | 'professional' | 'aggressive';
+export type DocumentTone = 'diplomatic' | 'professional' | 'aggressive' | 'formal';
 
 export type VerificationStatus = 'pending' | 'verified' | 'has_warnings' | 'failed';
 
@@ -21,8 +21,17 @@ export type RiskLevel = 'low' | 'medium' | 'high' | 'critical';
 export interface TrademarkMark {
   text: string;
   imageUrl?: string;
-  classes: number[];
-  goods: string;
+  classes?: number[];
+  goods?: string[];
+  registrationNumber?: string;
+  registrationDate?: string;
+  registrationOffice?: string;
+  applicationNumber?: string;
+  filingDate?: string;
+  applicant?: string;
+  publicationDate?: string;
+  reputation?: boolean;
+  proofOfUse?: string[];
 }
 
 export interface PhoneticDetails {
@@ -30,6 +39,7 @@ export interface PhoneticDetails {
   soundex: { a: string; b: string; match: boolean };
   metaphone: { a: string[]; b: string[]; match: boolean };
   syllables: { a: string[]; b: string[]; common: string[] };
+  syllableMatch?: number;
 }
 
 export interface TrademarkAnalysis {
@@ -140,46 +150,26 @@ export interface OppositionInput {
   // Opponent (you)
   opponent: {
     name: string;
-    address: string;
-    email: string;
-    representative?: {
-      name: string;
-      id: string; // Agent number
-    };
+    address?: string;
+    email?: string;
+    taxId?: string;
+    representative?: string;
   };
   
   // Your earlier mark
-  earlierMark: {
-    text: string;
-    imageUrl?: string;
-    registrationNumber: string;
-    registrationOffice: string;
-    registrationDate: string;
-    classes: number[];
-    goods: string;
-    reputation?: boolean; // Is it a well-known mark?
-    proofOfUse?: string[]; // URLs to proof documents
-  };
+  earlierMark: TrademarkMark;
   
   // Contested mark
-  contestedMark: {
-    applicationNumber: string;
-    text: string;
-    imageUrl?: string;
-    applicant: string;
-    filingDate: string;
-    classes: number[];
-    goods: string;
-    publicationDate?: string;
-  };
+  contestedMark: TrademarkMark;
+  
+  // Grounds
+  grounds?: string[];
+  additionalArguments?: string;
   
   // Options
-  options: {
-    grounds: Array<'likelihood_confusion' | 'reputation' | 'bad_faith' | 'descriptive'>;
-    tone: DocumentTone;
-    language: 'es' | 'en' | 'fr' | 'de';
-    includeTranslation?: boolean;
-  };
+  office?: string;
+  tone?: DocumentTone;
+  language?: string;
 }
 
 export interface CeaseDesistInput {
@@ -257,6 +247,8 @@ export interface GeniusGeneratedDocument {
   user_approved: boolean;
   user_notes: string | null;
   tone: DocumentTone;
+  jurisdiction?: string;
+  status?: string;
   disclaimer_accepted: boolean;
   disclaimer_accepted_at: string | null;
   estimated_fees: EstimatedFees | null;
@@ -268,7 +260,9 @@ export interface GeniusOfficialFee {
   id: string;
   office: string;
   procedure_type: string;
+  fee_name: string;
   base_fee: number;
+  amount: number;
   currency: string;
   per_class_fee: number | null;
   extension_fee: number | null;
