@@ -129,7 +129,7 @@ export default function ValuationDashboardPage() {
         </div>
       ) : portfolios?.length === 0 ? (
         <EmptyState
-          icon={Briefcase}
+          icon={<Briefcase className="h-12 w-12" />}
           title="Sin portfolios"
           description="Crea tu primer portfolio para comenzar a valorar tus activos IP"
           action={
