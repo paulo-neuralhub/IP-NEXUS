@@ -3488,6 +3488,108 @@ export type Database = {
           },
         ]
       }
+      market_compliance_checks: {
+        Row: {
+          check_type: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          notes: string | null
+          provider: string
+          provider_reference: string | null
+          request_data: Json | null
+          results: Json | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_level: string | null
+          risk_score: number | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          check_type: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          provider: string
+          provider_reference?: string | null
+          request_data?: Json | null
+          results?: Json | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_level?: string | null
+          risk_score?: number | null
+          status?: string
+          user_id: string
+        }
+        Update: {
+          check_type?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          notes?: string | null
+          provider?: string
+          provider_reference?: string | null
+          request_data?: Json | null
+          results?: Json | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_level?: string | null
+          risk_score?: number | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      market_content_reports: {
+        Row: {
+          action_taken: string | null
+          assigned_to: string | null
+          created_at: string | null
+          description: string
+          evidence_urls: string[] | null
+          id: string
+          report_type: string
+          reported_entity_id: string
+          reported_entity_type: string
+          reporter_id: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          status: string
+        }
+        Insert: {
+          action_taken?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          description: string
+          evidence_urls?: string[] | null
+          id?: string
+          report_type: string
+          reported_entity_id: string
+          reported_entity_type: string
+          reporter_id: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string
+        }
+        Update: {
+          action_taken?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          description?: string
+          evidence_urls?: string[] | null
+          id?: string
+          report_type?: string
+          reported_entity_id?: string
+          reported_entity_type?: string
+          reporter_id?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       market_favorites: {
         Row: {
           created_at: string | null
@@ -3516,6 +3618,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      market_kyc_audit_log: {
+        Row: {
+          action: string
+          created_at: string | null
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          ip_address: unknown
+          new_value: Json | null
+          old_value: Json | null
+          performed_by: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: unknown
+          new_value?: Json | null
+          old_value?: Json | null
+          performed_by?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          ip_address?: unknown
+          new_value?: Json | null
+          old_value?: Json | null
+          performed_by?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       market_kyc_verifications: {
         Row: {
@@ -3732,6 +3876,50 @@ export type Database = {
           },
         ]
       }
+      market_moderation_actions: {
+        Row: {
+          action: string
+          created_at: string | null
+          id: string
+          metadata: Json | null
+          moderator_id: string
+          reason: string
+          report_id: string | null
+          target_id: string
+          target_type: string
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          moderator_id: string
+          reason: string
+          report_id?: string | null
+          target_id: string
+          target_type: string
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          id?: string
+          metadata?: Json | null
+          moderator_id?: string
+          reason?: string
+          report_id?: string | null
+          target_id?: string
+          target_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_moderation_actions_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "market_content_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_offers: {
         Row: {
           amount: number
@@ -3875,6 +4063,45 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      market_risk_assessments: {
+        Row: {
+          calculated_at: string | null
+          created_at: string | null
+          factors: Json
+          flags: string[] | null
+          id: string
+          overall_level: string
+          overall_score: number
+          recommendations: string[] | null
+          user_id: string
+          valid_until: string | null
+        }
+        Insert: {
+          calculated_at?: string | null
+          created_at?: string | null
+          factors?: Json
+          flags?: string[] | null
+          id?: string
+          overall_level?: string
+          overall_score?: number
+          recommendations?: string[] | null
+          user_id: string
+          valid_until?: string | null
+        }
+        Update: {
+          calculated_at?: string | null
+          created_at?: string | null
+          factors?: Json
+          flags?: string[] | null
+          id?: string
+          overall_level?: string
+          overall_score?: number
+          recommendations?: string[] | null
+          user_id?: string
+          valid_until?: string | null
+        }
+        Relationships: []
       }
       market_transactions: {
         Row: {
@@ -4126,6 +4353,119 @@ export type Database = {
           total_listings?: number | null
           total_transactions?: number | null
           total_volume?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      market_verification_documents: {
+        Row: {
+          document_type: string
+          extracted_data: Json | null
+          file_name: string
+          file_size: number
+          file_url: string
+          id: string
+          mime_type: string
+          ocr_text: string | null
+          rejection_reason: string | null
+          status: string
+          uploaded_at: string | null
+          user_id: string
+          verification_id: string
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          document_type: string
+          extracted_data?: Json | null
+          file_name: string
+          file_size: number
+          file_url: string
+          id?: string
+          mime_type: string
+          ocr_text?: string | null
+          rejection_reason?: string | null
+          status?: string
+          uploaded_at?: string | null
+          user_id: string
+          verification_id: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          document_type?: string
+          extracted_data?: Json | null
+          file_name?: string
+          file_size?: number
+          file_url?: string
+          id?: string
+          mime_type?: string
+          ocr_text?: string | null
+          rejection_reason?: string | null
+          status?: string
+          uploaded_at?: string | null
+          user_id?: string
+          verification_id?: string
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_verification_documents_verification_id_fkey"
+            columns: ["verification_id"]
+            isOneToOne: false
+            referencedRelation: "market_verifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_verifications: {
+        Row: {
+          attempt_count: number | null
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          last_attempt_at: string | null
+          metadata: Json | null
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          submitted_at: string | null
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt_count?: number | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          metadata?: Json | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt_count?: number | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          last_attempt_at?: string | null
+          metadata?: Json | null
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          submitted_at?: string | null
+          type?: string
           updated_at?: string | null
           user_id?: string
         }
@@ -7907,6 +8247,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       get_user_org_ids: { Args: never; Returns: string[] }
       get_user_role_in_org: { Args: { org_id: string }; Returns: string }

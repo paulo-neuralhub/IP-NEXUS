@@ -4,3 +4,6 @@ export * from './useOffers';
 export { useConversations, useThreadMessages, useSendMessage, useMarkAsRead } from './useMessages';
 export * from './useEscrow';
 export * from './useStripeConnect';
+export * from './useKyc';
+export * from './useCompliance';
+export * from './useModeration';
