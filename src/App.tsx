@@ -67,6 +67,8 @@ import CostsPage from "./pages/app/finance/costs";
 import ValuationDashboardPage from "./pages/app/finance/valuation";
 import PortfolioDetailPage from "./pages/app/finance/valuation/[id]";
 import TeamSettingsPage from "./pages/app/settings/team";
+import RolesSettingsPage from "./pages/app/settings/roles";
+import TeamsSettingsPage from "./pages/app/settings/teams";
 import BillingSettingsPage from "./pages/app/settings/billing";
 import IntegrationsPage from "./pages/app/settings/integrations";
 import EmailHistoryPage from "./pages/app/settings/email-history";
@@ -219,6 +221,8 @@ const App = () => (
                 <Route path="reports/new" element={<NewReportPage />} />
                 <Route path="help/*" element={<HelpPlaceholder />} />
                 <Route path="settings/team" element={<TeamSettingsPage />} />
+                <Route path="settings/roles" element={<RolesSettingsPage />} />
+                <Route path="settings/teams" element={<TeamsSettingsPage />} />
                 <Route path="settings/billing" element={<BillingSettingsPage />} />
                 <Route path="settings/integrations" element={<IntegrationsPage />} />
                 <Route path="settings/emails" element={<EmailHistoryPage />} />

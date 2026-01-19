@@ -698,11 +698,7 @@ function TeamMembersModal({ open, onOpenChange, team }: {
                         {member.user?.email}
                       </p>
                     </div>
-                    {member.role === 'leader' && (
-                      <Badge variant="secondary" className="text-xs">
-                        Líder
-                      </Badge>
-                    )}
+                    {/* Team member badge - all members shown equally */}
                   </div>
                   
                   <Button
