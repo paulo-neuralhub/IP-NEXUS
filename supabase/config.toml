@@ -140,3 +140,18 @@ verify_jwt = true
 
 [functions.analytics-run-report]
 verify_jwt = true
+
+[functions.classify-communication]
+verify_jwt = true
+
+[functions.process-document-ner]
+verify_jwt = true
+
+[functions.assistant-internal]
+verify_jwt = true
+
+[functions.assistant-portal]
+verify_jwt = true
+
+[functions.rag-search]
+verify_jwt = true

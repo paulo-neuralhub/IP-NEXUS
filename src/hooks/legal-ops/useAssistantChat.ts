@@ -140,10 +140,11 @@ export function useAssistantChat({ context, assistantType }: UseAssistantChatOpt
       const { error } = await supabase.from('legalops_ai_interactions').insert([{
         organization_id: currentOrganization.id,
         user_id: user?.id || null,
-        interaction_type: 'feedback',
-        input_text: `Feedback for message ${messageId}`,
-        output_text: correction || feedback,
+        interaction_type: 'assistant_query' as const,
+        input_text: `Feedback: ${feedback} for message ${messageId}`,
+        output_text: correction || null,
         output_metadata: {
+          is_feedback: true,
           message_id: messageId,
           feedback_type: feedback,
           correction
