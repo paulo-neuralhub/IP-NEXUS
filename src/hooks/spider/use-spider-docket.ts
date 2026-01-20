@@ -97,13 +97,6 @@ export function useLinkResultToMatter() {
           status: 'reviewing',
         } as any)
         .eq('id', watchResultId);
-      const { error } = await supabase
-        .from('watch_results')
-        .update({
-          related_matter_id: matterId,
-          status: 'reviewing',
-        })
-        .eq('id', watchResultId);
 
       if (error) throw error;
 
