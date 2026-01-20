@@ -46,6 +46,7 @@ import PricingPage from "./pages/pricing";
 import MatterList from "./pages/app/docket";
 import MatterDetail from "./pages/app/docket/MatterDetail";
 import MatterForm from "./pages/app/docket/MatterForm";
+import DeadlinesPage from "./pages/app/docket/DeadlinesPage";
 import CRMLayout from "./pages/app/crm/CRMLayout";
 import CRMDashboard from "./pages/app/crm/CRMDashboard";
 import ContactList from "./pages/app/crm/contacts";
@@ -173,6 +174,7 @@ const App = () => (
                 <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
                 <Route path="docket" element={<MatterList />} />
+                <Route path="docket/deadlines" element={<DeadlinesPage />} />
                 <Route path="docket/new" element={<MatterForm />} />
                 <Route path="docket/:id" element={<MatterDetail />} />
                 <Route path="docket/:id/edit" element={<MatterForm />} />
