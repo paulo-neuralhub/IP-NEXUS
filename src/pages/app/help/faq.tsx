@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/accordion';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { FAQ_ITEMS, HELP_CATEGORIES } from '@/lib/constants/help-content';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useDebounce } from '@/hooks/use-debounce';
 import ReactMarkdown from 'react-markdown';
 
 export default function FAQPage() {

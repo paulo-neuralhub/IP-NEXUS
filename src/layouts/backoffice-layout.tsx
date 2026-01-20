@@ -65,7 +65,7 @@ const sidebarSections = [
   {
     label: 'System',
     items: [
-      { label: 'Audit Logs', path: '/backoffice/audit-logs', icon: FileText },
+      { label: 'Audit Logs', path: '/backoffice/audit', icon: FileText },
       { label: 'Feedback', path: '/backoffice/feedback', icon: MessageSquare },
       { label: 'Settings', path: '/backoffice/settings', icon: Settings },
       { label: 'Kill Switch', path: '/backoffice/kill-switch', icon: Power, danger: true },

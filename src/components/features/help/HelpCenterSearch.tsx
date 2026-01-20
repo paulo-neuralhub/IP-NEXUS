@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useSearchHelpArticles } from '@/hooks/help';
 import { HelpArticle } from '@/types/help';
 import { cn } from '@/lib/utils';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useDebounce } from '@/hooks/use-debounce';
 import { Link } from 'react-router-dom';
 
 interface HelpCenterSearchProps {

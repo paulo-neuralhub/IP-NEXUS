@@ -18,7 +18,7 @@ import {
   useHelpArticles,
   useSearchHelpArticles,
 } from '@/hooks/help';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useDebounce } from '@/hooks/use-debounce';
 import { EmptyState } from '@/components/ui/empty-state';
 
 export default function HelpCenterIndex() {
