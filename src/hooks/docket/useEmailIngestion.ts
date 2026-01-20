@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
 import type { EmailIngestionItem } from '@/types/docket-god-mode';
 
@@ -8,7 +8,7 @@ export function useEmailIngestionQueue(filters?: {
   status?: string;
   limit?: number;
 }) {
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['email-ingestion', currentOrganization?.id, filters],
@@ -32,7 +32,7 @@ export function useEmailIngestionQueue(filters?: {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as EmailIngestionItem[];
+      return data as unknown as EmailIngestionItem[];
     },
     enabled: !!currentOrganization?.id,
   });
@@ -52,7 +52,7 @@ export function useEmailIngestionItem(id: string) {
         .single();
 
       if (error) throw error;
-      return data as EmailIngestionItem;
+      return data as unknown as EmailIngestionItem;
     },
     enabled: !!id,
   });
@@ -95,12 +95,21 @@ export function useRetryEmail() {
 
   return useMutation({
     mutationFn: async (id: string) => {
+      // First get current retry count
+      const { data: current, error: fetchError } = await supabase
+        .from('email_ingestion_queue')
+        .select('retry_count')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) throw fetchError;
+
       const { error } = await supabase
         .from('email_ingestion_queue')
         .update({
           status: 'pending',
           error_message: null,
-          retry_count: supabase.rpc('increment_retry_count'),
+          retry_count: (current?.retry_count || 0) + 1,
         })
         .eq('id', id);
 
@@ -168,7 +177,7 @@ export function useDismissEmail() {
 }
 
 export function useEmailIngestionStats() {
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['email-ingestion-stats', currentOrganization?.id],

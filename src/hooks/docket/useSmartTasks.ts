@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useOrganization } from '@/hooks/useOrganization';
+import { useOrganization } from '@/contexts/organization-context';
+import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 import type { 
   SmartTask, 
@@ -11,7 +12,7 @@ import type {
 import type { Json } from '@/integrations/supabase/types';
 
 export function useSmartTasks(filters?: SmartTaskFilters) {
-  const { currentOrganization, user } = useOrganization();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['smart-tasks', currentOrganization?.id, filters],
@@ -105,7 +106,8 @@ export function useSmartTask(id: string) {
 
 export function useCreateSmartTask() {
   const queryClient = useQueryClient();
-  const { currentOrganization, user } = useOrganization();
+  const { currentOrganization } = useOrganization();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (dto: CreateSmartTaskDTO) => {
@@ -150,7 +152,7 @@ export function useCreateSmartTask() {
 
 export function useUpdateSmartTask() {
   const queryClient = useQueryClient();
-  const { user } = useOrganization();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ id, ...dto }: UpdateSmartTaskDTO & { id: string }) => {
@@ -160,7 +162,7 @@ export function useUpdateSmartTask() {
       if (dto.status === 'completed') {
         updateData.completed_at = new Date().toISOString();
         updateData.completed_by = user?.id;
-      } else if (dto.status === 'in_progress' && !dto.status) {
+      } else if (dto.status === 'in_progress') {
         updateData.started_at = new Date().toISOString();
       } else if (dto.status === 'cancelled') {
         updateData.cancelled_at = new Date().toISOString();
@@ -241,7 +243,7 @@ export function useTaskComments(taskId: string) {
 
 export function useAddTaskComment() {
   const queryClient = useQueryClient();
-  const { user } = useOrganization();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({ taskId, content, isInternal = true }: {
