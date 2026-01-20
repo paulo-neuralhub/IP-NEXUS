@@ -218,7 +218,7 @@ export function useClientOnboarding(existingClientId?: string) {
       const ip = await getClientIP();
 
       // Log in consent audit
-      await supabase.from('consent_audit_log').insert({
+      const { error } = await supabase.from('consent_audit_log').insert([{
         organization_id: currentOrganization.id,
         user_id: user?.id || null,
         event_type: 'disclosure_viewed',
@@ -231,7 +231,11 @@ export function useClientOnboarding(existingClientId?: string) {
         },
         ip_address: ip,
         user_agent: navigator.userAgent
-      } as any);
+      }]);
+
+      if (error) {
+        console.error('Consent audit log error:', error);
+      }
 
       updateFormData({ ai_disclosure_accepted_at: timestamp });
     }
@@ -249,7 +253,7 @@ export function useClientOnboarding(existingClientId?: string) {
       const ip = await getClientIP();
 
       // Log consents in audit
-      await supabase.from('consent_audit_log').insert([{
+      const { error: consentError } = await supabase.from('consent_audit_log').insert([{
         organization_id: currentOrganization.id,
         user_id: user?.id || null,
         event_type: 'consent_accepted',
@@ -269,6 +273,10 @@ export function useClientOnboarding(existingClientId?: string) {
         ip_address: ip,
         user_agent: navigator.userAgent
       }]);
+
+      if (consentError) {
+        console.error('Consent audit log error:', consentError);
+      }
 
       // Update client with consent preferences
       await supabase
@@ -300,7 +308,7 @@ export function useClientOnboarding(existingClientId?: string) {
       const ip = await getClientIP();
 
       // Log signature event
-      await supabase.from('consent_audit_log').insert([{
+      const { error: sigError } = await supabase.from('consent_audit_log').insert([{
         organization_id: currentOrganization.id,
         user_id: user?.id || null,
         event_type: 'signature_captured',
@@ -314,6 +322,10 @@ export function useClientOnboarding(existingClientId?: string) {
         ip_address: ip,
         user_agent: navigator.userAgent
       }]);
+
+      if (sigError) {
+        console.error('Signature audit log error:', sigError);
+      }
 
       updateFormData({ signature_data: signatureData });
 
@@ -348,7 +360,7 @@ export function useClientOnboarding(existingClientId?: string) {
         .eq('organization_id', currentOrganization.id);
 
       // Log completion
-      await supabase.from('consent_audit_log').insert([{
+      const { error: completeError } = await supabase.from('consent_audit_log').insert([{
         organization_id: currentOrganization.id,
         user_id: user?.id || null,
         event_type: 'onboarding_completed',
@@ -359,6 +371,10 @@ export function useClientOnboarding(existingClientId?: string) {
           timestamp
         }
       }]);
+
+      if (completeError) {
+        console.error('Onboarding completion audit error:', completeError);
+      }
     }
   });
 

@@ -8,7 +8,6 @@ import { useAssistantChat, type AssistantMessage, type AssistantSource } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import {
@@ -97,7 +96,7 @@ export function AssistantChat({
 
       <CardContent className="flex-1 flex flex-col p-0 overflow-hidden">
         {/* Messages */}
-        <ScrollArea className="flex-1 px-4" ref={scrollRef}>
+        <div className="flex-1 px-4 overflow-y-auto" ref={scrollRef}>
           <div className="space-y-4 py-4">
             {messages.length === 0 ? (
               <div className="text-center text-muted-foreground py-8">
@@ -148,7 +147,7 @@ export function AssistantChat({
               </div>
             )}
           </div>
-        </ScrollArea>
+        </div>
 
         {/* Input */}
         <form onSubmit={handleSubmit} className="p-4 border-t">
