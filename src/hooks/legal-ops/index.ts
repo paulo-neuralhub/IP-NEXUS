@@ -1,7 +1,9 @@
-// Legal Ops Hooks - Communications Hub
+// Legal Ops Hooks
 export * from './useCommunications';
 export * from './useWhatsAppSession';
 export * from './useAIClassification';
 export * from './useClientDetail';
 export * from './useClientTimeline';
 export * from './useDocumentNER';
+export * from './useAssistantChat';
+export * from './useRAGSearch';
