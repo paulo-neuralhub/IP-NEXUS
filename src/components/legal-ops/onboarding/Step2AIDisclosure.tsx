@@ -5,7 +5,6 @@
 import { useState, useRef } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { AlertTriangle, Bot, Shield, Eye, FileText, Info } from 'lucide-react';
 import type { OnboardingFormData } from '@/hooks/legal-ops/useClientOnboarding';
 
@@ -55,9 +54,9 @@ export function Step2AIDisclosure({ formData, onChange }: Step2Props) {
           </h2>
         </div>
         
-        <ScrollArea 
-          className="h-[350px] p-4" 
-          onScrollCapture={handleScroll}
+        <div 
+          className="h-[350px] p-4 overflow-y-auto" 
+          onScroll={handleScroll}
           ref={scrollRef}
         >
           <div className="prose prose-sm dark:prose-invert max-w-none space-y-6">
@@ -192,7 +191,7 @@ export function Step2AIDisclosure({ formData, onChange }: Step2Props) {
               }
             </div>
           </div>
-        </ScrollArea>
+        </div>
       </div>
 
       {/* Checkboxes - Only enabled after scroll */}

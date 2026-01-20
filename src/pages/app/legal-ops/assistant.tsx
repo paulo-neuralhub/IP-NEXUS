@@ -3,19 +3,17 @@
 // AI Assistant Page
 // ============================================
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePageTitle } from '@/contexts/page-context';
 import { AssistantChat } from '@/components/legal-ops';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Bot, Search, FileText } from 'lucide-react';
+import { Bot, Search, FileText, Loader2 } from 'lucide-react';
 import { useRAGSearch } from '@/hooks/legal-ops';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
-import { Loader2 } from 'lucide-react';
 
 export default function AssistantPage() {
   const { setTitle } = usePageTitle();

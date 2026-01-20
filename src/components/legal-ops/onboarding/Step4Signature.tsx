@@ -5,6 +5,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { AlertTriangle, Pen, RotateCcw, Check } from 'lucide-react';
 import type { OnboardingFormData } from '@/hooks/legal-ops/useClientOnboarding';
 
@@ -212,13 +213,5 @@ export function Step4Signature({ formData, onChange }: Step4Props) {
         </p>
       </div>
     </div>
-  );
-}
-
-function Label({ className, children, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  return (
-    <label className={className} {...props}>
-      {children}
-    </label>
   );
 }
