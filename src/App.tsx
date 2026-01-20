@@ -14,9 +14,9 @@ import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import Onboarding from "./pages/app/Onboarding";
 import Dashboard from "./pages/app/Dashboard";
-import {
-  HelpPlaceholder
-} from "./pages/app/placeholders";
+import HelpLayout from "./pages/app/help/HelpLayout";
+import HelpCenterIndex from "./pages/app/help/index";
+import VideoTutorialsPage from "./pages/app/help/videos";
 import MarketLayout from "./pages/app/market/MarketLayout";
 import MarketDashboard from "./pages/app/market";
 import MarketListings from "./pages/app/market/listings";
@@ -223,7 +223,10 @@ const App = () => (
                 </Route>
                 <Route path="reports" element={<ReportsPage />} />
                 <Route path="reports/new" element={<NewReportPage />} />
-                <Route path="help/*" element={<HelpPlaceholder />} />
+                <Route path="help" element={<HelpLayout />}>
+                  <Route index element={<HelpCenterIndex />} />
+                  <Route path="videos" element={<VideoTutorialsPage />} />
+                </Route>
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="settings/team" element={<TeamSettingsPage />} />
                 <Route path="settings/roles" element={<RolesSettingsPage />} />
