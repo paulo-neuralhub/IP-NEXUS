@@ -161,19 +161,13 @@ export function CommandCenter() {
             </TabsTrigger>
           </TabsList>
           
-          {/* Contextual Help based on active tab */}
-          {activeTab === 'tasks' && (
-            <FeatureHelp {...FEATURE_HELP_CONTENT.smartTasks} />
-          )}
-          {activeTab === 'portfolios' && (
-            <FeatureHelp {...FEATURE_HELP_CONTENT.portfolios} />
-          )}
-          {activeTab === 'ingestion' && (
-            <FeatureHelp {...FEATURE_HELP_CONTENT.emailIngestion} />
-          )}
-          {activeTab === 'rules' && (
-            <FeatureHelp {...FEATURE_HELP_CONTENT.jurisdictionRules} />
-          )}
+          {/* Contextual Help - updates based on active tab */}
+          <FeatureHelp 
+            {...(activeTab === 'tasks' ? FEATURE_HELP_CONTENT.smartTasks :
+                 activeTab === 'portfolios' ? FEATURE_HELP_CONTENT.portfolios :
+                 activeTab === 'ingestion' ? FEATURE_HELP_CONTENT.emailIngestion :
+                 FEATURE_HELP_CONTENT.jurisdictionRules)}
+          />
         </div>
 
         <TabsContent value="tasks" className="space-y-4">
