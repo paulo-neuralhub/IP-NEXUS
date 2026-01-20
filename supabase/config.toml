@@ -167,3 +167,6 @@ verify_jwt = false
 
 [functions.stripe-setup]
 verify_jwt = true
+
+[functions.nexus-guide-chat]
+verify_jwt = false
