@@ -10,9 +10,20 @@ Alcance: verificación rápida de módulos (LEGAL‑OPS, COLLAB, ONBOARDING, NOT
 ### 1.1 79 funciones sin `search_path` definido (WARN)
 - **¿Causa problemas ahora?** Normalmente **no rompe** el funcionamiento diario.
 - **Riesgo real:** es una **recomendación de seguridad/higiene** para evitar que una función ejecute objetos de un esquema inesperado si el `search_path` cambia.
-- **Cuándo sí puede doler:** si existen funciones **SECURITY DEFINER** o si hay esquemas/objetos con nombres “sombrados” (shadowing) que puedan ser explotados.
+- **Cuándo sí puede doler:** si existen funciones **SECURITY DEFINER** o si hay esquemas/objetos con nombres "sombrados" (shadowing) que puedan ser explotados.
 
 **Recomendación:** ir corrigiéndolo progresivamente (especialmente en funciones `SECURITY DEFINER`) añadiendo `SET search_path = public` (o el/los esquemas estrictos que correspondan).
+
+### 1.2 2 tablas con RLS habilitado pero sin políticas - **RESUELTO**
+
+| Tabla | Tiene org_id | Uso |
+|-------|--------------|-----|
+| `webhook_events` | ❌ No | Eventos de webhooks entrantes (source/event_type) |
+| `api_rate_limits` | ❌ No (via api_key_id) | Rate limiting por API key |
+
+**Análisis:** Ambas tablas son de **uso interno** (Edge Functions con `service_role`). No tienen `organization_id` directo.
+
+**Decisión:** Mantener RLS habilitado **sin policies** = deny all desde cliente (comportamiento correcto). Solo accesibles via Edge Functions.
 
 ### 1.2 2 tablas con RLS habilitado pero sin políticas (INFO)
 - **¿Causa problemas ahora?** **Puede causar problemas** si se acceden desde el cliente (App) porque con RLS activo y **sin policies**, el resultado típico es **denegar todo** (SELECT/INSERT/UPDATE/DELETE).
