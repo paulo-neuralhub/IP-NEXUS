@@ -56,6 +56,7 @@ import MarketingLayout from "./pages/app/marketing/MarketingLayout";
 import MarketingDashboard from "./pages/app/marketing/MarketingDashboard";
 import TemplateList from "./pages/app/marketing/templates";
 import TemplateEditor from "./pages/app/marketing/templates/TemplateEditor";
+import NewTemplatePage from "./pages/app/marketing/templates/new";
 import CampaignList from "./pages/app/marketing/campaigns";
 import CampaignWizard from "./pages/app/marketing/campaigns/CampaignWizard";
 import CampaignAnalytics from "./pages/app/marketing/campaigns/CampaignAnalytics";
@@ -189,6 +190,8 @@ const App = () => (
                 <Route path="marketing" element={<MarketingLayout />}>
                   <Route index element={<MarketingDashboard />} />
                   <Route path="templates" element={<TemplateList />} />
+                  <Route path="templates/new" element={<NewTemplatePage />} />
+                  <Route path="templates/:id/edit" element={<TemplateEditor />} />
                   <Route path="templates/:id" element={<TemplateEditor />} />
                   <Route path="campaigns" element={<CampaignList />} />
                   <Route path="campaigns/new" element={<CampaignWizard />} />

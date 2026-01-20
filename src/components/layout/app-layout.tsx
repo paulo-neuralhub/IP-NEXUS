@@ -8,6 +8,7 @@ import { useIsMobile, useNetworkStatus, useViewportHeight } from "@/hooks/use-mo
 import { BottomNavigation, MobileHeader, OfflineBanner, PWAInstallPrompt } from "@/components/mobile";
 import { ContextualHelpProvider } from "@/components/help/ContextualHelpProvider";
 import { TrialBanner } from "@/components/upgrade/TrialBanner";
+import { NexusGuideButton } from "@/components/nexus-guide";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
@@ -46,6 +47,7 @@ export function AppLayout() {
                     <Outlet />
                   </main>
                 </div>
+                <NexusGuideButton />
               </div>
             )}
           </ContextualHelpProvider>
