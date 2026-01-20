@@ -170,7 +170,7 @@ export function DeadlineList({ matterId, limit, showFilters = true, compact = fa
                     </div>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="truncate">
-                        {deadline.matter?.reference_number}
+                        {deadline.matter?.reference}
                       </span>
                       <span>•</span>
                       <span>

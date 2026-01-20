@@ -5,8 +5,12 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/hooks/useAuth';
+import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
+import type { Database } from '@/integrations/supabase/types';
+
+type MatterDeadline = Database['public']['Tables']['matter_deadlines']['Row'];
+type MatterDeadlineInsert = Database['public']['Tables']['matter_deadlines']['Insert'];
 
 interface UseDeadlinesOptions {
   matterId?: string;
@@ -17,38 +21,12 @@ interface UseDeadlinesOptions {
   limit?: number;
 }
 
-export interface Deadline {
-  id: string;
-  organization_id: string;
-  matter_id: string;
-  rule_id: string | null;
-  rule_code: string | null;
-  deadline_type: string;
-  title: string;
-  description: string | null;
-  trigger_date: string;
-  deadline_date: string;
-  original_deadline: string | null;
-  status: string;
-  priority: string;
-  completed_at: string | null;
-  completed_by: string | null;
-  completion_notes: string | null;
-  extension_count: number;
-  extension_reason: string | null;
-  alerts_sent: Record<string, string>;
-  next_alert_date: string | null;
-  google_event_id: string | null;
-  outlook_event_id: string | null;
-  metadata: Record<string, unknown>;
-  created_at: string;
-  updated_at: string;
+export interface Deadline extends MatterDeadline {
   matter?: {
     id: string;
-    reference_number: string;
+    reference: string;
     title: string;
-    client?: { name: string } | null;
-  };
+  } | null;
 }
 
 export function useDeadlines(options: UseDeadlinesOptions = {}) {
@@ -64,7 +42,7 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
           *,
           matter:matters(
             id,
-            reference_number,
+            reference,
             title
           )
         `)
@@ -108,7 +86,8 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
         .from('matter_deadlines')
         .update({
           status: 'completed',
-          completed_at: new Date().toISOString()
+          completed_at: new Date().toISOString(),
+          completed_by: session?.user?.id
         })
         .eq('id', deadlineId);
 
@@ -129,13 +108,21 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
       newDate: string;
       reason?: string;
     }) => {
+      // First get current extension count
+      const { data: current } = await supabase
+        .from('matter_deadlines')
+        .select('extension_count')
+        .eq('id', deadlineId)
+        .single();
+
       const { error } = await supabase
         .from('matter_deadlines')
         .update({
           status: 'extended',
           deadline_date: newDate,
           extension_reason: reason,
-          extension_count: supabase.rpc('increment_extension_count', { row_id: deadlineId })
+          extension_count: (current?.extension_count || 0) + 1,
+          extended_by: session?.user?.id
         })
         .eq('id', deadlineId);
 
@@ -151,7 +138,7 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
   });
 
   const createDeadlineMutation = useMutation({
-    mutationFn: async (deadline: Partial<Deadline>) => {
+    mutationFn: async (deadline: MatterDeadlineInsert) => {
       const { data, error } = await supabase
         .from('matter_deadlines')
         .insert(deadline)
