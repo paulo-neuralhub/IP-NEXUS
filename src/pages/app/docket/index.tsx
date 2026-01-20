@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Search, X, MoreHorizontal, Eye, Pencil, Copy, Trash2, Briefcase } from 'lucide-react';
+import { Plus, Search, X, MoreHorizontal, Eye, Pencil, Copy, Trash2, Briefcase, Zap, List } from 'lucide-react';
 import { useMatters, useDeleteMatter } from '@/hooks/use-matters';
 import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator } from '@/components/features/docket';
 import { MATTER_TYPES, MATTER_STATUSES, JURISDICTIONS } from '@/lib/constants/matters';
@@ -8,6 +8,7 @@ import type { MatterFilters, MatterType, MatterStatus } from '@/types/matters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Select,
   SelectContent,
@@ -43,10 +44,42 @@ import {
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useToast } from '@/hooks/use-toast';
+import { CommandCenter } from '@/components/docket/god-mode';
 
 const ITEMS_PER_PAGE = 20;
 
-export default function MatterList() {
+export default function DocketPage() {
+  const [activeView, setActiveView] = useState<'command' | 'matters'>('command');
+
+  return (
+    <div className="p-6 space-y-6">
+      {/* View Toggle */}
+      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'command' | 'matters')}>
+        <TabsList className="grid w-[400px] grid-cols-2">
+          <TabsTrigger value="command" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            Command Center
+          </TabsTrigger>
+          <TabsTrigger value="matters" className="flex items-center gap-2">
+            <List className="h-4 w-4" />
+            Expedientes
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="command" className="mt-6">
+          <CommandCenter />
+        </TabsContent>
+
+        <TabsContent value="matters" className="mt-6">
+          <MatterListView />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
+// Extracted Matter List as a separate component
+function MatterListView() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const deleteMatter = useDeleteMatter();
@@ -123,21 +156,19 @@ export default function MatterList() {
   
   if (error) {
     return (
-      <div className="p-6">
-        <Card className="border-destructive">
-          <CardContent className="pt-6">
-            <p className="text-destructive">Error al cargar expedientes: {error.message}</p>
-          </CardContent>
-        </Card>
-      </div>
+      <Card className="border-destructive">
+        <CardContent className="pt-6">
+          <p className="text-destructive">Error al cargar expedientes: {error.message}</p>
+        </CardContent>
+      </Card>
     );
   }
   
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-foreground">Expedientes</h1>
+        <h2 className="text-xl font-semibold text-foreground">Lista de Expedientes</h2>
         <Button onClick={() => navigate('/app/docket/new')}>
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Expediente
