@@ -163,7 +163,7 @@ const UTILITY_NAV: NavItem[] = [
     requiresLicense: false,
   },
   {
-    path: "/app/onboarding",
+    path: "/app/onboarding?force=true",
     label: "Onboarding",
     icon: Rocket,
     moduleCode: "core",

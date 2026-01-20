@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,9 @@ import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { useOnboardingProgress, useInitializeOnboarding } from "@/hooks/useOnboarding";
 
 const Onboarding = () => {
+  const [searchParams] = useSearchParams();
+  const forceShow = searchParams.get('force') === 'true';
+  
   const [step, setStep] = useState<"choice" | "create" | "invite" | "wizard">("choice");
   const [orgName, setOrgName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +34,13 @@ const Onboarding = () => {
   useEffect(() => {
     if (orgLoading || progressLoading) return;
     
+    // If force=true in URL, always show the wizard
+    if (forceShow && currentOrganization) {
+      setCreatedOrgId(currentOrganization.id);
+      setStep("wizard");
+      return;
+    }
+    
     // If has org and onboarding is complete, go to dashboard
     if (currentOrganization && !needsOnboarding) {
       // If no onboarding progress exists OR status is 'completed', go to dashboard
@@ -43,7 +53,7 @@ const Onboarding = () => {
         setStep("wizard");
       }
     }
-  }, [orgLoading, progressLoading, currentOrganization?.id, needsOnboarding, onboardingProgress, navigate]);
+  }, [orgLoading, progressLoading, currentOrganization?.id, needsOnboarding, onboardingProgress, navigate, forceShow]);
 
   const handleSignOut = async () => {
     await signOut();
