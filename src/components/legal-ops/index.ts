@@ -10,3 +10,4 @@ export * from './ClientAlerts';
 export * from './DocumentValidityBadge';
 export * from './AssistantChat';
 export * from './PortalAssistant';
+export * from './ClientOnboardingWizard';
