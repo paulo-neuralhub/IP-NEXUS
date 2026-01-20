@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
 import type { Portfolio, PortfolioFilters, CreatePortfolioDTO } from '@/types/docket-god-mode';
+import type { Json } from '@/integrations/supabase/types';
 
 export function usePortfolios(filters?: PortfolioFilters) {
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['portfolios', currentOrganization?.id, filters],
@@ -94,18 +95,26 @@ export function usePortfolioWithMatters(id: string) {
 
 export function useCreatePortfolio() {
   const queryClient = useQueryClient();
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useMutation({
     mutationFn: async (dto: CreatePortfolioDTO) => {
       if (!currentOrganization?.id) throw new Error('No organization');
 
+      const insertData = {
+        name: dto.name,
+        description: dto.description,
+        color: dto.color,
+        icon: dto.icon,
+        parent_portfolio_id: dto.parent_portfolio_id,
+        owner_id: dto.owner_id,
+        settings: dto.settings as Json,
+        organization_id: currentOrganization.id,
+      };
+
       const { data, error } = await supabase
         .from('portfolios')
-        .insert({
-          ...dto,
-          organization_id: currentOrganization.id,
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -127,9 +136,19 @@ export function useUpdatePortfolio() {
 
   return useMutation({
     mutationFn: async ({ id, ...dto }: Partial<CreatePortfolioDTO> & { id: string }) => {
+      const updateData: Record<string, unknown> = {};
+      
+      if (dto.name !== undefined) updateData.name = dto.name;
+      if (dto.description !== undefined) updateData.description = dto.description;
+      if (dto.color !== undefined) updateData.color = dto.color;
+      if (dto.icon !== undefined) updateData.icon = dto.icon;
+      if (dto.parent_portfolio_id !== undefined) updateData.parent_portfolio_id = dto.parent_portfolio_id;
+      if (dto.owner_id !== undefined) updateData.owner_id = dto.owner_id;
+      if (dto.settings !== undefined) updateData.settings = dto.settings as Json;
+
       const { data, error } = await supabase
         .from('portfolios')
-        .update(dto)
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();

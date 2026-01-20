@@ -1,8 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
 import type { JurisdictionRule, CreateJurisdictionRuleDTO } from '@/types/docket-god-mode';
+import type { Json } from '@/integrations/supabase/types';
 
 export function useJurisdictionRules(filters?: {
   jurisdiction?: string;
@@ -10,7 +11,7 @@ export function useJurisdictionRules(filters?: {
   ruleType?: string;
   includeSystem?: boolean;
 }) {
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['jurisdiction-rules', currentOrganization?.id, filters],
@@ -70,19 +71,31 @@ export function useJurisdictionRule(id: string) {
 
 export function useCreateJurisdictionRule() {
   const queryClient = useQueryClient();
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useMutation({
     mutationFn: async (dto: CreateJurisdictionRuleDTO) => {
       if (!currentOrganization?.id) throw new Error('No organization');
 
+      const insertData = {
+        jurisdiction_code: dto.jurisdiction_code,
+        ip_type: dto.ip_type,
+        rule_type: dto.rule_type,
+        rule_name: dto.rule_name,
+        description: dto.description,
+        base_days: dto.base_days,
+        business_days_only: dto.business_days_only ?? false,
+        exclude_holidays: dto.exclude_holidays ?? true,
+        holiday_calendar: dto.holiday_calendar,
+        conditions: dto.conditions as Json,
+        actions: dto.actions as Json,
+        organization_id: currentOrganization.id,
+        is_system: false,
+      };
+
       const { data, error } = await supabase
         .from('jurisdiction_rules')
-        .insert({
-          ...dto,
-          organization_id: currentOrganization.id,
-          is_system: false,
-        })
+        .insert(insertData)
         .select()
         .single();
 
@@ -104,9 +117,23 @@ export function useUpdateJurisdictionRule() {
 
   return useMutation({
     mutationFn: async ({ id, ...dto }: Partial<CreateJurisdictionRuleDTO> & { id: string }) => {
+      const updateData: Record<string, unknown> = {};
+      
+      if (dto.jurisdiction_code !== undefined) updateData.jurisdiction_code = dto.jurisdiction_code;
+      if (dto.ip_type !== undefined) updateData.ip_type = dto.ip_type;
+      if (dto.rule_type !== undefined) updateData.rule_type = dto.rule_type;
+      if (dto.rule_name !== undefined) updateData.rule_name = dto.rule_name;
+      if (dto.description !== undefined) updateData.description = dto.description;
+      if (dto.base_days !== undefined) updateData.base_days = dto.base_days;
+      if (dto.business_days_only !== undefined) updateData.business_days_only = dto.business_days_only;
+      if (dto.exclude_holidays !== undefined) updateData.exclude_holidays = dto.exclude_holidays;
+      if (dto.holiday_calendar !== undefined) updateData.holiday_calendar = dto.holiday_calendar;
+      if (dto.conditions !== undefined) updateData.conditions = dto.conditions as Json;
+      if (dto.actions !== undefined) updateData.actions = dto.actions as Json;
+
       const { data, error } = await supabase
         .from('jurisdiction_rules')
-        .update(dto)
+        .update(updateData)
         .eq('id', id)
         .select()
         .single();

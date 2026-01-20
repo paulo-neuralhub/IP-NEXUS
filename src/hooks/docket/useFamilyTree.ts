@@ -1,8 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
-import type { MatterFamilyRelation, FamilyTreeNode, CreateFamilyRelationDTO } from '@/types/docket-god-mode';
+import type { FamilyTreeNode, CreateFamilyRelationDTO } from '@/types/docket-god-mode';
 
 export function useFamilyTree(matterId: string) {
   return useQuery({
@@ -19,7 +19,7 @@ export function useFamilyTree(matterId: string) {
 }
 
 export function useFamilyRelations(matterId: string) {
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
     queryKey: ['family-relations', matterId],
@@ -47,7 +47,7 @@ export function useFamilyRelations(matterId: string) {
 
 export function useCreateFamilyRelation() {
   const queryClient = useQueryClient();
-  const { currentOrganization } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useMutation({
     mutationFn: async (dto: CreateFamilyRelationDTO) => {
@@ -56,7 +56,11 @@ export function useCreateFamilyRelation() {
       const { data, error } = await supabase
         .from('matter_family_relations')
         .insert({
-          ...dto,
+          parent_matter_id: dto.parent_matter_id,
+          child_matter_id: dto.child_matter_id,
+          relation_type: dto.relation_type,
+          priority_date: dto.priority_date,
+          notes: dto.notes,
           organization_id: currentOrganization.id,
         })
         .select()
