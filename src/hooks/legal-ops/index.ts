@@ -7,3 +7,4 @@ export * from './useClientTimeline';
 export * from './useDocumentNER';
 export * from './useAssistantChat';
 export * from './useRAGSearch';
+export * from './useClientOnboarding';
