@@ -7,6 +7,23 @@ import type {
   PlanLimits 
 } from '@/types/backoffice';
 
+// ===== HELPER: Storage Usage =====
+async function getStorageUsage(organizationId: string): Promise<number> {
+  try {
+    const { data, error } = await supabase
+      .from('matter_documents')
+      .select('file_size')
+      .eq('organization_id', organizationId);
+    
+    if (error) return 0;
+    
+    const totalBytes = (data || []).reduce((sum, doc) => sum + (doc.file_size || 0), 0);
+    return Math.round(totalBytes / (1024 * 1024) * 100) / 100; // MB with 2 decimals
+  } catch {
+    return 0;
+  }
+}
+
 // ===== PLANES =====
 export function useSubscriptionPlans() {
   return useQuery({
@@ -109,7 +126,7 @@ export function useCurrentUsage() {
         watchlists: watchlistsCount || 0,
         ai_messages_today: aiUsage?.chat_messages || 0,
         ai_docs_month: aiUsage?.document_generations || 0,
-        storage_mb: 0, // TODO: calcular storage real
+        storage_mb: await getStorageUsage(orgId),
       };
     },
     enabled: !!currentOrganization?.id,
@@ -164,18 +181,31 @@ export function useCheckLimit() {
   return { checkLimit, limits, usage };
 }
 
-// ===== CAMBIAR PLAN (requiere Stripe) =====
+// ===== CAMBIAR PLAN =====
 export function useChangePlan() {
   const queryClient = useQueryClient();
+  const { currentOrganization } = useOrganization();
   
   return useMutation({
     mutationFn: async ({ planId, billingCycle }: { 
       planId: string; 
       billingCycle: 'monthly' | 'yearly';
     }) => {
-      // TODO: Llamar a edge function que maneja Stripe
-      console.log('Change plan:', planId, billingCycle);
-      throw new Error('Stripe integration pending');
+      if (!currentOrganization?.id) {
+        throw new Error('No organization selected');
+      }
+      
+      // Call Stripe edge function for plan change
+      const { data, error } = await supabase.functions.invoke('stripe-change-plan', {
+        body: { 
+          planId,
+          billingCycle,
+          organizationId: currentOrganization.id 
+        }
+      });
+      
+      if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['subscription'] });

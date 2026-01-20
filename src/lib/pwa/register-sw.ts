@@ -1,6 +1,8 @@
+import { logger } from '@/lib/logger';
+
 export async function registerServiceWorker() {
   if (!('serviceWorker' in navigator)) {
-    console.log('Service Worker not supported');
+    logger.debug('Service Worker not supported');
     return null;
   }
   
@@ -9,7 +11,7 @@ export async function registerServiceWorker() {
       scope: '/',
     });
     
-    console.log('Service Worker registered:', registration.scope);
+    logger.debug('Service Worker registered:', registration.scope);
     
     // Verificar actualizaciones
     registration.addEventListener('updatefound', () => {

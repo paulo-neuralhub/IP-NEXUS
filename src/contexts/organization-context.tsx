@@ -74,15 +74,12 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
       }
 
       if (!membershipData || membershipData.length === 0) {
-        console.log("No memberships found for user:", effectiveUser.id);
         setMemberships([]);
         setCurrentOrganizationState(null);
         setNeedsOnboarding(true);
         setIsLoading(false);
         return;
       }
-
-      console.log("Found memberships:", membershipData.length);
 
       // Fetch organizations for memberships
       const orgIds = membershipData.map((m) => m.organization_id);

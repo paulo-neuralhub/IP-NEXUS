@@ -94,9 +94,20 @@ export function useInviteTeamMember() {
       
       if (error) throw error;
       
-      // TODO: Send email with invitation link
-      // For now, just log the token
-      console.log('Invitation created with token:', token);
+      // Send invitation email via edge function
+      await supabase.functions.invoke('send-email', {
+        body: {
+          to: email.toLowerCase().trim(),
+          template: 'team-invitation',
+          data: {
+            organizationName: currentOrganization.name,
+            role,
+            inviteLink: `${window.location.origin}/accept-invite?token=${token}`
+          }
+        }
+      }).catch(() => {
+        // Email sending is not critical - invitation still created
+      });
       
       return data;
     },
@@ -104,8 +115,7 @@ export function useInviteTeamMember() {
       queryClient.invalidateQueries({ queryKey: ['pending-invitations', currentOrganization?.id] });
     },
     onError: (error: Error) => {
-      console.error('Error inviting team member:', error);
-      toast.error('Error al enviar la invitación');
+      toast.error(`Error al enviar la invitación: ${error.message}`);
     },
   });
 }
@@ -129,8 +139,7 @@ export function useRevokeInvitation() {
       toast.success('Invitación cancelada');
     },
     onError: (error: Error) => {
-      console.error('Error revoking invitation:', error);
-      toast.error('Error al cancelar la invitación');
+      toast.error(`Error al cancelar la invitación: ${error.message}`);
     },
   });
 }
@@ -154,8 +163,7 @@ export function useRemoveTeamMember() {
       toast.success('Miembro eliminado del equipo');
     },
     onError: (error: Error) => {
-      console.error('Error removing team member:', error);
-      toast.error('Error al eliminar miembro');
+      toast.error(`Error al eliminar miembro: ${error.message}`);
     },
   });
 }
@@ -179,8 +187,7 @@ export function useUpdateTeamMemberRole() {
       toast.success('Rol actualizado');
     },
     onError: (error: Error) => {
-      console.error('Error updating role:', error);
-      toast.error('Error al actualizar rol');
+      toast.error(`Error al actualizar rol: ${error.message}`);
     },
   });
 }

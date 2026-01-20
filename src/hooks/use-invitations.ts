@@ -81,7 +81,14 @@ export function useCreateInvitation() {
         .single();
       if (error) throw error;
       
-      // TODO: Enviar email de invitación
+      // Send invitation email (fire and forget)
+      supabase.functions.invoke('send-email', {
+        body: {
+          to: email,
+          template: 'team-invitation',
+          data: { organizationId: currentOrganization!.id, role }
+        }
+      }).catch(() => {});
       
       return { type: 'invitation', data };
     },
@@ -107,7 +114,14 @@ export function useResendInvitation() {
         .single();
       if (error) throw error;
       
-      // TODO: Reenviar email
+      // Resend invitation email (fire and forget)
+      supabase.functions.invoke('send-email', {
+        body: {
+          to: data.email,
+          template: 'team-invitation-resend',
+          data: { invitationId }
+        }
+      }).catch(() => {});
       
       return data;
     },

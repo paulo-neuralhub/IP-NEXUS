@@ -39,9 +39,8 @@ export default function IPChainPage() {
   const handleDownloadCertificate = async (id: string) => {
     try {
       const result = await downloadMutation.mutateAsync(id);
-      // Mostrar datos del certificado o descargar
-      console.log('Certificate data:', result);
       toast.success('Certificado generado');
+      // Could trigger download here based on result
     } catch (error) {
       toast.error('Error al generar certificado');
     }
