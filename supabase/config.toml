@@ -164,3 +164,6 @@ verify_jwt = false
 
 [functions.stripe-webhook]
 verify_jwt = false
+
+[functions.stripe-setup]
+verify_jwt = true

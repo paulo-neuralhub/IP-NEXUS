@@ -1156,6 +1156,42 @@ export type Database = {
           },
         ]
       }
+      ai_tier_quotas: {
+        Row: {
+          allowed_models: string[] | null
+          created_at: string | null
+          features: Json | null
+          id: string
+          max_context_tokens: number
+          monthly_requests: number
+          monthly_tokens: number
+          tier: string
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_models?: string[] | null
+          created_at?: string | null
+          features?: Json | null
+          id?: string
+          max_context_tokens?: number
+          monthly_requests?: number
+          monthly_tokens?: number
+          tier: string
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_models?: string[] | null
+          created_at?: string | null
+          features?: Json | null
+          id?: string
+          max_context_tokens?: number
+          monthly_requests?: number
+          monthly_tokens?: number
+          tier?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       ai_translation_glossaries: {
         Row: {
           created_at: string | null
@@ -1988,6 +2024,65 @@ export type Database = {
           },
           {
             foreignKeyName: "billing_clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      billing_events: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          currency: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          organization_id: string | null
+          payload: Json
+          processed_at: string | null
+          status: string | null
+          stripe_event_id: string | null
+          stripe_invoice_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_subscription_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          organization_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          status?: string | null
+          stripe_event_id?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_subscription_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          currency?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          organization_id?: string | null
+          payload?: Json
+          processed_at?: string | null
+          status?: string | null
+          stripe_event_id?: string | null
+          stripe_invoice_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_subscription_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -16074,6 +16169,51 @@ export type Database = {
           },
         ]
       }
+      spider_connector_health: {
+        Row: {
+          connector_code: string
+          created_at: string | null
+          error_count: number | null
+          id: string
+          last_check_at: string | null
+          last_error: string | null
+          last_success_at: string | null
+          latency_ms: number | null
+          metadata: Json | null
+          status: string | null
+          success_count: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          connector_code: string
+          created_at?: string | null
+          error_count?: number | null
+          id?: string
+          last_check_at?: string | null
+          last_error?: string | null
+          last_success_at?: string | null
+          latency_ms?: number | null
+          metadata?: Json | null
+          status?: string | null
+          success_count?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          connector_code?: string
+          created_at?: string | null
+          error_count?: number | null
+          id?: string
+          last_check_at?: string | null
+          last_error?: string | null
+          last_success_at?: string | null
+          latency_ms?: number | null
+          metadata?: Json | null
+          status?: string | null
+          success_count?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       spider_connector_runs: {
         Row: {
           checkpoint: Json | null
@@ -16338,6 +16478,39 @@ export type Database = {
           },
         ]
       }
+      spider_search_cache: {
+        Row: {
+          cached_at: string | null
+          connector_code: string
+          expires_at: string | null
+          id: string
+          results: Json
+          results_count: number | null
+          search_hash: string
+          search_params: Json
+        }
+        Insert: {
+          cached_at?: string | null
+          connector_code: string
+          expires_at?: string | null
+          id?: string
+          results?: Json
+          results_count?: number | null
+          search_hash: string
+          search_params: Json
+        }
+        Update: {
+          cached_at?: string | null
+          connector_code?: string
+          expires_at?: string | null
+          id?: string
+          results?: Json
+          results_count?: number | null
+          search_hash?: string
+          search_params?: Json
+        }
+        Relationships: []
+      }
       spider_source_cache: {
         Row: {
           cached_data: Json
@@ -16371,6 +16544,161 @@ export type Database = {
           is_stale?: boolean | null
           source_id?: string
           source_type?: string | null
+        }
+        Relationships: []
+      }
+      stripe_customers: {
+        Row: {
+          balance: number | null
+          created_at: string | null
+          default_payment_method_id: string | null
+          email: string | null
+          id: string
+          invoice_settings: Json | null
+          metadata: Json | null
+          name: string | null
+          organization_id: string
+          stripe_customer_id: string
+          tax_exempt: string | null
+          tax_ids: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          balance?: number | null
+          created_at?: string | null
+          default_payment_method_id?: string | null
+          email?: string | null
+          id?: string
+          invoice_settings?: Json | null
+          metadata?: Json | null
+          name?: string | null
+          organization_id: string
+          stripe_customer_id: string
+          tax_exempt?: string | null
+          tax_ids?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          balance?: number | null
+          created_at?: string | null
+          default_payment_method_id?: string | null
+          email?: string | null
+          id?: string
+          invoice_settings?: Json | null
+          metadata?: Json | null
+          name?: string | null
+          organization_id?: string
+          stripe_customer_id?: string
+          tax_exempt?: string | null
+          tax_ids?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stripe_customers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stripe_prices: {
+        Row: {
+          active: boolean | null
+          billing_scheme: string | null
+          created_at: string | null
+          currency: string | null
+          id: string
+          metadata: Json | null
+          meter_id: string | null
+          nickname: string | null
+          recurring_interval: string | null
+          recurring_interval_count: number | null
+          stripe_price_id: string
+          stripe_product_id: string
+          tiers: Json | null
+          tiers_mode: string | null
+          transform_quantity: Json | null
+          unit_amount: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          billing_scheme?: string | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          meter_id?: string | null
+          nickname?: string | null
+          recurring_interval?: string | null
+          recurring_interval_count?: number | null
+          stripe_price_id: string
+          stripe_product_id: string
+          tiers?: Json | null
+          tiers_mode?: string | null
+          transform_quantity?: Json | null
+          unit_amount?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          billing_scheme?: string | null
+          created_at?: string | null
+          currency?: string | null
+          id?: string
+          metadata?: Json | null
+          meter_id?: string | null
+          nickname?: string | null
+          recurring_interval?: string | null
+          recurring_interval_count?: number | null
+          stripe_price_id?: string
+          stripe_product_id?: string
+          tiers?: Json | null
+          tiers_mode?: string | null
+          transform_quantity?: Json | null
+          unit_amount?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      stripe_products: {
+        Row: {
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          features: Json | null
+          id: string
+          metadata: Json | null
+          module_code: string | null
+          name: string
+          stripe_product_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          metadata?: Json | null
+          module_code?: string | null
+          name: string
+          stripe_product_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          features?: Json | null
+          id?: string
+          metadata?: Json | null
+          module_code?: string | null
+          name?: string
+          stripe_product_id?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -17436,6 +17764,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "usage_metrics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_records: {
+        Row: {
+          billing_period_end: string | null
+          billing_period_start: string | null
+          created_at: string | null
+          feature_code: string
+          id: string
+          metadata: Json | null
+          module_code: string
+          organization_id: string
+          quantity: number
+          stripe_meter_event_id: string | null
+          stripe_meter_id: string | null
+          timestamp: string
+          user_id: string | null
+        }
+        Insert: {
+          billing_period_end?: string | null
+          billing_period_start?: string | null
+          created_at?: string | null
+          feature_code: string
+          id?: string
+          metadata?: Json | null
+          module_code: string
+          organization_id: string
+          quantity?: number
+          stripe_meter_event_id?: string | null
+          stripe_meter_id?: string | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Update: {
+          billing_period_end?: string | null
+          billing_period_start?: string | null
+          created_at?: string | null
+          feature_code?: string
+          id?: string
+          metadata?: Json | null
+          module_code?: string
+          organization_id?: string
+          quantity?: number
+          stripe_meter_event_id?: string | null
+          stripe_meter_id?: string | null
+          timestamp?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_records_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
