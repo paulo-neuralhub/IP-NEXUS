@@ -3,3 +3,8 @@ export * from './AIClassificationBadge';
 export * from './AIDisclaimer';
 export * from './CommunicationsInbox';
 export * from './CommunicationDetail';
+export * from './Client360Page';
+export * from './ClientTimeline';
+export * from './ClientDocuments';
+export * from './ClientAlerts';
+export * from './DocumentValidityBadge';
