@@ -47,6 +47,7 @@ export const MODULE_COLORS = {
   finance: '#14B8A6',
   crm: '#EC4899',
   marketing: '#F97316',
+  collab: '#06B6D4',
   help: '#6B7280',
 } as const;
 
