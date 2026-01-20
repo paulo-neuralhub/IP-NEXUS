@@ -1644,6 +1644,81 @@ export type Database = {
           },
         ]
       }
+      audio_transcriptions: {
+        Row: {
+          ai_confidence: number | null
+          ai_model: string | null
+          audio_duration_seconds: number | null
+          audio_format: string | null
+          audio_url: string
+          communication_id: string | null
+          created_at: string | null
+          diarization_enabled: boolean | null
+          id: string
+          language_detected: string | null
+          organization_id: string
+          segments: Json | null
+          source_type: string
+          speakers_identified: Json | null
+          transcribed_at: string | null
+          transcription_status: string | null
+          transcription_text: string | null
+        }
+        Insert: {
+          ai_confidence?: number | null
+          ai_model?: string | null
+          audio_duration_seconds?: number | null
+          audio_format?: string | null
+          audio_url: string
+          communication_id?: string | null
+          created_at?: string | null
+          diarization_enabled?: boolean | null
+          id?: string
+          language_detected?: string | null
+          organization_id: string
+          segments?: Json | null
+          source_type: string
+          speakers_identified?: Json | null
+          transcribed_at?: string | null
+          transcription_status?: string | null
+          transcription_text?: string | null
+        }
+        Update: {
+          ai_confidence?: number | null
+          ai_model?: string | null
+          audio_duration_seconds?: number | null
+          audio_format?: string | null
+          audio_url?: string
+          communication_id?: string | null
+          created_at?: string | null
+          diarization_enabled?: boolean | null
+          id?: string
+          language_detected?: string | null
+          organization_id?: string
+          segments?: Json | null
+          source_type?: string
+          speakers_identified?: Json | null
+          transcribed_at?: string | null
+          transcription_status?: string | null
+          transcription_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audio_transcriptions_communication_id_fkey"
+            columns: ["communication_id"]
+            isOneToOne: false
+            referencedRelation: "communications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audio_transcriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
@@ -2054,6 +2129,158 @@ export type Database = {
           },
         ]
       }
+      client_documents: {
+        Row: {
+          client_id: string
+          created_at: string | null
+          deleted_at: string | null
+          description: string | null
+          doc_type: Database["public"]["Enums"]["client_doc_type"] | null
+          doc_type_confidence: number | null
+          doc_type_verified: boolean | null
+          embedding_status: string | null
+          file_hash: string | null
+          file_name: string
+          file_path: string
+          file_size: number | null
+          id: string
+          matter_id: string | null
+          mime_type: string | null
+          ner_completed_at: string | null
+          ner_model: string | null
+          ner_status: string | null
+          notes: string | null
+          ocr_completed_at: string | null
+          ocr_confidence: number | null
+          ocr_text: string | null
+          organization_id: string
+          parent_document_id: string | null
+          tags: string[] | null
+          title: string | null
+          updated_at: string | null
+          uploaded_by: string | null
+          valid_from: string | null
+          valid_until: string | null
+          validity_status:
+            | Database["public"]["Enums"]["doc_validity_status"]
+            | null
+          validity_verified: boolean | null
+          validity_verified_at: string | null
+          validity_verified_by: string | null
+          version: number | null
+          visible_in_portal: boolean | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          doc_type?: Database["public"]["Enums"]["client_doc_type"] | null
+          doc_type_confidence?: number | null
+          doc_type_verified?: boolean | null
+          embedding_status?: string | null
+          file_hash?: string | null
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          id?: string
+          matter_id?: string | null
+          mime_type?: string | null
+          ner_completed_at?: string | null
+          ner_model?: string | null
+          ner_status?: string | null
+          notes?: string | null
+          ocr_completed_at?: string | null
+          ocr_confidence?: number | null
+          ocr_text?: string | null
+          organization_id: string
+          parent_document_id?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string | null
+          uploaded_by?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+          validity_status?:
+            | Database["public"]["Enums"]["doc_validity_status"]
+            | null
+          validity_verified?: boolean | null
+          validity_verified_at?: string | null
+          validity_verified_by?: string | null
+          version?: number | null
+          visible_in_portal?: boolean | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string | null
+          deleted_at?: string | null
+          description?: string | null
+          doc_type?: Database["public"]["Enums"]["client_doc_type"] | null
+          doc_type_confidence?: number | null
+          doc_type_verified?: boolean | null
+          embedding_status?: string | null
+          file_hash?: string | null
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          id?: string
+          matter_id?: string | null
+          mime_type?: string | null
+          ner_completed_at?: string | null
+          ner_model?: string | null
+          ner_status?: string | null
+          notes?: string | null
+          ocr_completed_at?: string | null
+          ocr_confidence?: number | null
+          ocr_text?: string | null
+          organization_id?: string
+          parent_document_id?: string | null
+          tags?: string[] | null
+          title?: string | null
+          updated_at?: string | null
+          uploaded_by?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+          validity_status?:
+            | Database["public"]["Enums"]["doc_validity_status"]
+            | null
+          validity_verified?: boolean | null
+          validity_verified_at?: string | null
+          validity_verified_by?: string | null
+          version?: number | null
+          visible_in_portal?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_parent_document_id_fkey"
+            columns: ["parent_document_id"]
+            isOneToOne: false
+            referencedRelation: "client_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       client_portals: {
         Row: {
           activated_at: string | null
@@ -2123,6 +2350,270 @@ export type Database = {
           },
         ]
       }
+      communication_channels: {
+        Row: {
+          channel: Database["public"]["Enums"]["comm_channel"]
+          config: Json | null
+          created_at: string | null
+          created_by: string | null
+          credentials_encrypted: string | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          organization_id: string
+          sync_status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          channel: Database["public"]["Enums"]["comm_channel"]
+          config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          credentials_encrypted?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          organization_id: string
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          channel?: Database["public"]["Enums"]["comm_channel"]
+          config?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          credentials_encrypted?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          organization_id?: string
+          sync_status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communication_channels_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      communications: {
+        Row: {
+          ai_category: Database["public"]["Enums"]["comm_category"] | null
+          ai_classified_at: string | null
+          ai_confidence: number | null
+          ai_model: string | null
+          ai_priority: number | null
+          ai_subcategory: string | null
+          archived_at: string | null
+          assigned_at: string | null
+          assigned_to: string | null
+          attachments: Json | null
+          body: string | null
+          body_html: string | null
+          body_preview: string | null
+          channel: Database["public"]["Enums"]["comm_channel"]
+          channel_config_id: string | null
+          classified_at: string | null
+          classified_by: string | null
+          client_id: string | null
+          contact_id: string | null
+          created_at: string | null
+          direction: Database["public"]["Enums"]["comm_direction"]
+          email_bcc: string[] | null
+          email_cc: string[] | null
+          email_from: string | null
+          email_in_reply_to: string | null
+          email_message_id: string | null
+          email_thread_id: string | null
+          email_to: string[] | null
+          external_id: string | null
+          external_metadata: Json | null
+          id: string
+          is_archived: boolean | null
+          is_read: boolean | null
+          is_replied: boolean | null
+          is_starred: boolean | null
+          manual_category: Database["public"]["Enums"]["comm_category"] | null
+          manual_priority: number | null
+          matter_id: string | null
+          organization_id: string
+          phone_duration_seconds: number | null
+          phone_from: string | null
+          phone_recording_url: string | null
+          phone_to: string | null
+          read_at: string | null
+          read_by: string | null
+          received_at: string
+          replied_at: string | null
+          reply_comm_id: string | null
+          subject: string | null
+          updated_at: string | null
+          whatsapp_from: string | null
+          whatsapp_media_url: string | null
+          whatsapp_to: string | null
+          whatsapp_type: string | null
+        }
+        Insert: {
+          ai_category?: Database["public"]["Enums"]["comm_category"] | null
+          ai_classified_at?: string | null
+          ai_confidence?: number | null
+          ai_model?: string | null
+          ai_priority?: number | null
+          ai_subcategory?: string | null
+          archived_at?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          attachments?: Json | null
+          body?: string | null
+          body_html?: string | null
+          body_preview?: string | null
+          channel: Database["public"]["Enums"]["comm_channel"]
+          channel_config_id?: string | null
+          classified_at?: string | null
+          classified_by?: string | null
+          client_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          direction: Database["public"]["Enums"]["comm_direction"]
+          email_bcc?: string[] | null
+          email_cc?: string[] | null
+          email_from?: string | null
+          email_in_reply_to?: string | null
+          email_message_id?: string | null
+          email_thread_id?: string | null
+          email_to?: string[] | null
+          external_id?: string | null
+          external_metadata?: Json | null
+          id?: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          is_replied?: boolean | null
+          is_starred?: boolean | null
+          manual_category?: Database["public"]["Enums"]["comm_category"] | null
+          manual_priority?: number | null
+          matter_id?: string | null
+          organization_id: string
+          phone_duration_seconds?: number | null
+          phone_from?: string | null
+          phone_recording_url?: string | null
+          phone_to?: string | null
+          read_at?: string | null
+          read_by?: string | null
+          received_at?: string
+          replied_at?: string | null
+          reply_comm_id?: string | null
+          subject?: string | null
+          updated_at?: string | null
+          whatsapp_from?: string | null
+          whatsapp_media_url?: string | null
+          whatsapp_to?: string | null
+          whatsapp_type?: string | null
+        }
+        Update: {
+          ai_category?: Database["public"]["Enums"]["comm_category"] | null
+          ai_classified_at?: string | null
+          ai_confidence?: number | null
+          ai_model?: string | null
+          ai_priority?: number | null
+          ai_subcategory?: string | null
+          archived_at?: string | null
+          assigned_at?: string | null
+          assigned_to?: string | null
+          attachments?: Json | null
+          body?: string | null
+          body_html?: string | null
+          body_preview?: string | null
+          channel?: Database["public"]["Enums"]["comm_channel"]
+          channel_config_id?: string | null
+          classified_at?: string | null
+          classified_by?: string | null
+          client_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          direction?: Database["public"]["Enums"]["comm_direction"]
+          email_bcc?: string[] | null
+          email_cc?: string[] | null
+          email_from?: string | null
+          email_in_reply_to?: string | null
+          email_message_id?: string | null
+          email_thread_id?: string | null
+          email_to?: string[] | null
+          external_id?: string | null
+          external_metadata?: Json | null
+          id?: string
+          is_archived?: boolean | null
+          is_read?: boolean | null
+          is_replied?: boolean | null
+          is_starred?: boolean | null
+          manual_category?: Database["public"]["Enums"]["comm_category"] | null
+          manual_priority?: number | null
+          matter_id?: string | null
+          organization_id?: string
+          phone_duration_seconds?: number | null
+          phone_from?: string | null
+          phone_recording_url?: string | null
+          phone_to?: string | null
+          read_at?: string | null
+          read_by?: string | null
+          received_at?: string
+          replied_at?: string | null
+          reply_comm_id?: string | null
+          subject?: string | null
+          updated_at?: string | null
+          whatsapp_from?: string | null
+          whatsapp_media_url?: string | null
+          whatsapp_to?: string | null
+          whatsapp_type?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "communications_channel_config_id_fkey"
+            columns: ["channel_config_id"]
+            isOneToOne: false
+            referencedRelation: "communication_channels"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_reply_comm_id_fkey"
+            columns: ["reply_comm_id"]
+            isOneToOne: false
+            referencedRelation: "communications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       compliance_checks: {
         Row: {
           category: string | null
@@ -2184,6 +2675,56 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "compliance_checks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consent_audit_log: {
+        Row: {
+          consent_type: string
+          created_at: string | null
+          document_version: string | null
+          event_type: string
+          id: string
+          ip_address: unknown
+          new_value: Json | null
+          old_value: Json | null
+          organization_id: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          consent_type: string
+          created_at?: string | null
+          document_version?: string | null
+          event_type: string
+          id?: string
+          ip_address?: unknown
+          new_value?: Json | null
+          old_value?: Json | null
+          organization_id: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          consent_type?: string
+          created_at?: string | null
+          document_version?: string | null
+          event_type?: string
+          id?: string
+          ip_address?: unknown
+          new_value?: Json | null
+          old_value?: Json | null
+          organization_id?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consent_audit_log_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -2717,6 +3258,56 @@ export type Database = {
           },
         ]
       }
+      data_retention_policies: {
+        Row: {
+          archive_after_days: number | null
+          created_at: string | null
+          data_type: string
+          delete_after_days: number | null
+          exceptions: Json | null
+          id: string
+          is_active: boolean | null
+          last_execution_at: string | null
+          organization_id: string
+          retention_days: number
+          updated_at: string | null
+        }
+        Insert: {
+          archive_after_days?: number | null
+          created_at?: string | null
+          data_type: string
+          delete_after_days?: number | null
+          exceptions?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_execution_at?: string | null
+          organization_id: string
+          retention_days: number
+          updated_at?: string | null
+        }
+        Update: {
+          archive_after_days?: number | null
+          created_at?: string | null
+          data_type?: string
+          delete_after_days?: number | null
+          exceptions?: Json | null
+          id?: string
+          is_active?: boolean | null
+          last_execution_at?: string | null
+          organization_id?: string
+          retention_days?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "data_retention_policies_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deals: {
         Row: {
           actual_close_date: string | null
@@ -2898,6 +3489,223 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "document_chunks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_embeddings: {
+        Row: {
+          chunk_index: number | null
+          chunk_text: string
+          chunk_tokens: number | null
+          client_id: string | null
+          created_at: string | null
+          doc_type: string | null
+          embedding: string | null
+          id: string
+          matter_id: string | null
+          organization_id: string
+          source_id: string
+          source_type: string
+        }
+        Insert: {
+          chunk_index?: number | null
+          chunk_text: string
+          chunk_tokens?: number | null
+          client_id?: string | null
+          created_at?: string | null
+          doc_type?: string | null
+          embedding?: string | null
+          id?: string
+          matter_id?: string | null
+          organization_id: string
+          source_id: string
+          source_type: string
+        }
+        Update: {
+          chunk_index?: number | null
+          chunk_text?: string
+          chunk_tokens?: number | null
+          client_id?: string | null
+          created_at?: string | null
+          doc_type?: string | null
+          embedding?: string | null
+          id?: string
+          matter_id?: string | null
+          organization_id?: string
+          source_id?: string
+          source_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_embeddings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_entities: {
+        Row: {
+          bounding_box: Json | null
+          confidence: number | null
+          confidence_level:
+            | Database["public"]["Enums"]["ai_confidence_level"]
+            | null
+          created_at: string | null
+          document_id: string
+          entity_normalized: string | null
+          entity_type: Database["public"]["Enums"]["ner_entity_type"]
+          entity_value: string
+          id: string
+          is_verified: boolean | null
+          linked_contact_id: string | null
+          linked_matter_id: string | null
+          organization_id: string
+          page_number: number | null
+          surrounding_text: string | null
+          text_offset_end: number | null
+          text_offset_start: number | null
+          verified_at: string | null
+          verified_by: string | null
+          verified_value: string | null
+        }
+        Insert: {
+          bounding_box?: Json | null
+          confidence?: number | null
+          confidence_level?:
+            | Database["public"]["Enums"]["ai_confidence_level"]
+            | null
+          created_at?: string | null
+          document_id: string
+          entity_normalized?: string | null
+          entity_type: Database["public"]["Enums"]["ner_entity_type"]
+          entity_value: string
+          id?: string
+          is_verified?: boolean | null
+          linked_contact_id?: string | null
+          linked_matter_id?: string | null
+          organization_id: string
+          page_number?: number | null
+          surrounding_text?: string | null
+          text_offset_end?: number | null
+          text_offset_start?: number | null
+          verified_at?: string | null
+          verified_by?: string | null
+          verified_value?: string | null
+        }
+        Update: {
+          bounding_box?: Json | null
+          confidence?: number | null
+          confidence_level?:
+            | Database["public"]["Enums"]["ai_confidence_level"]
+            | null
+          created_at?: string | null
+          document_id?: string
+          entity_normalized?: string | null
+          entity_type?: Database["public"]["Enums"]["ner_entity_type"]
+          entity_value?: string
+          id?: string
+          is_verified?: boolean | null
+          linked_contact_id?: string | null
+          linked_matter_id?: string | null
+          organization_id?: string
+          page_number?: number | null
+          surrounding_text?: string | null
+          text_offset_end?: number | null
+          text_offset_start?: number | null
+          verified_at?: string | null
+          verified_by?: string | null
+          verified_value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_entities_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "client_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_entities_linked_contact_id_fkey"
+            columns: ["linked_contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_entities_linked_matter_id_fkey"
+            columns: ["linked_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_entities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_validity_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          created_at: string | null
+          days_until_expiry: number | null
+          document_id: string
+          expiry_date: string
+          id: string
+          notifications_sent: Json | null
+          organization_id: string
+          resolved_at: string | null
+          status: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          created_at?: string | null
+          days_until_expiry?: number | null
+          document_id: string
+          expiry_date: string
+          id?: string
+          notifications_sent?: Json | null
+          organization_id: string
+          resolved_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          created_at?: string | null
+          days_until_expiry?: number | null
+          document_id?: string
+          expiry_date?: string
+          id?: string
+          notifications_sent?: Json | null
+          organization_id?: string
+          resolved_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_validity_alerts_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "client_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_validity_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -8400,6 +9208,223 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_documents: {
+        Row: {
+          changelog: string | null
+          content: string
+          content_hash: string
+          created_at: string | null
+          created_by: string | null
+          doc_type: Database["public"]["Enums"]["legal_doc_type"]
+          effective_from: string
+          effective_until: string | null
+          id: string
+          is_current: boolean | null
+          language: string | null
+          requires_re_consent: boolean | null
+          title: string
+          version: string
+        }
+        Insert: {
+          changelog?: string | null
+          content: string
+          content_hash: string
+          created_at?: string | null
+          created_by?: string | null
+          doc_type: Database["public"]["Enums"]["legal_doc_type"]
+          effective_from?: string
+          effective_until?: string | null
+          id?: string
+          is_current?: boolean | null
+          language?: string | null
+          requires_re_consent?: boolean | null
+          title: string
+          version: string
+        }
+        Update: {
+          changelog?: string | null
+          content?: string
+          content_hash?: string
+          created_at?: string | null
+          created_by?: string | null
+          doc_type?: Database["public"]["Enums"]["legal_doc_type"]
+          effective_from?: string
+          effective_until?: string | null
+          id?: string
+          is_current?: boolean | null
+          language?: string | null
+          requires_re_consent?: boolean | null
+          title?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      legalops_ai_feedback: {
+        Row: {
+          approved_for_training: boolean | null
+          corrected_output: string | null
+          created_at: string | null
+          feedback_comment: string | null
+          feedback_type: string
+          id: string
+          interaction_id: string
+          organization_id: string
+          original_output: string | null
+          training_exported_at: string | null
+          user_id: string
+        }
+        Insert: {
+          approved_for_training?: boolean | null
+          corrected_output?: string | null
+          created_at?: string | null
+          feedback_comment?: string | null
+          feedback_type: string
+          id?: string
+          interaction_id: string
+          organization_id: string
+          original_output?: string | null
+          training_exported_at?: string | null
+          user_id: string
+        }
+        Update: {
+          approved_for_training?: boolean | null
+          corrected_output?: string | null
+          created_at?: string | null
+          feedback_comment?: string | null
+          feedback_type?: string
+          id?: string
+          interaction_id?: string
+          organization_id?: string
+          original_output?: string | null
+          training_exported_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legalops_ai_feedback_interaction_id_fkey"
+            columns: ["interaction_id"]
+            isOneToOne: false
+            referencedRelation: "legalops_ai_interactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legalops_ai_feedback_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legalops_ai_interactions: {
+        Row: {
+          client_id: string | null
+          confidence: number | null
+          confidence_level:
+            | Database["public"]["Enums"]["ai_confidence_level"]
+            | null
+          cost_usd: number | null
+          created_at: string | null
+          feedback_at: string | null
+          id: string
+          input_metadata: Json | null
+          input_text: string | null
+          input_tokens: number | null
+          interaction_type: Database["public"]["Enums"]["legalops_ai_interaction_type"]
+          latency_ms: number | null
+          matter_id: string | null
+          model_name: string | null
+          model_provider: string | null
+          model_version: string | null
+          organization_id: string
+          output_metadata: Json | null
+          output_text: string | null
+          output_tokens: number | null
+          sources: Json | null
+          user_correction: string | null
+          user_feedback: string | null
+          user_id: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          confidence?: number | null
+          confidence_level?:
+            | Database["public"]["Enums"]["ai_confidence_level"]
+            | null
+          cost_usd?: number | null
+          created_at?: string | null
+          feedback_at?: string | null
+          id?: string
+          input_metadata?: Json | null
+          input_text?: string | null
+          input_tokens?: number | null
+          interaction_type: Database["public"]["Enums"]["legalops_ai_interaction_type"]
+          latency_ms?: number | null
+          matter_id?: string | null
+          model_name?: string | null
+          model_provider?: string | null
+          model_version?: string | null
+          organization_id: string
+          output_metadata?: Json | null
+          output_text?: string | null
+          output_tokens?: number | null
+          sources?: Json | null
+          user_correction?: string | null
+          user_feedback?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          confidence?: number | null
+          confidence_level?:
+            | Database["public"]["Enums"]["ai_confidence_level"]
+            | null
+          cost_usd?: number | null
+          created_at?: string | null
+          feedback_at?: string | null
+          id?: string
+          input_metadata?: Json | null
+          input_text?: string | null
+          input_tokens?: number | null
+          interaction_type?: Database["public"]["Enums"]["legalops_ai_interaction_type"]
+          latency_ms?: number | null
+          matter_id?: string | null
+          model_name?: string | null
+          model_provider?: string | null
+          model_version?: string | null
+          organization_id?: string
+          output_metadata?: Json | null
+          output_text?: string | null
+          output_tokens?: number | null
+          sources?: Json | null
+          user_correction?: string | null
+          user_feedback?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legalops_ai_interactions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legalops_ai_interactions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legalops_ai_interactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -14677,6 +15702,164 @@ export type Database = {
           },
         ]
       }
+      tenant_ai_config: {
+        Row: {
+          ai_assistant_accepted_at: string | null
+          ai_assistant_enabled: boolean | null
+          ai_classification_accepted_at: string | null
+          ai_classification_enabled: boolean | null
+          ai_extraction_accepted_at: string | null
+          ai_extraction_enabled: boolean | null
+          audio_transcription_accepted_at: string | null
+          audio_transcription_enabled: boolean | null
+          biometric_addendum_signed: boolean | null
+          biometric_diarization_accepted_at: string | null
+          biometric_diarization_enabled: boolean | null
+          client_assistant_enabled: boolean | null
+          client_portal_enabled: boolean | null
+          id: string
+          organization_id: string
+          updated_at: string | null
+          updated_by: string | null
+          whatsapp_accepted_at: string | null
+          whatsapp_addendum_signed: boolean | null
+          whatsapp_tier: Database["public"]["Enums"]["whatsapp_tier"] | null
+        }
+        Insert: {
+          ai_assistant_accepted_at?: string | null
+          ai_assistant_enabled?: boolean | null
+          ai_classification_accepted_at?: string | null
+          ai_classification_enabled?: boolean | null
+          ai_extraction_accepted_at?: string | null
+          ai_extraction_enabled?: boolean | null
+          audio_transcription_accepted_at?: string | null
+          audio_transcription_enabled?: boolean | null
+          biometric_addendum_signed?: boolean | null
+          biometric_diarization_accepted_at?: string | null
+          biometric_diarization_enabled?: boolean | null
+          client_assistant_enabled?: boolean | null
+          client_portal_enabled?: boolean | null
+          id?: string
+          organization_id: string
+          updated_at?: string | null
+          updated_by?: string | null
+          whatsapp_accepted_at?: string | null
+          whatsapp_addendum_signed?: boolean | null
+          whatsapp_tier?: Database["public"]["Enums"]["whatsapp_tier"] | null
+        }
+        Update: {
+          ai_assistant_accepted_at?: string | null
+          ai_assistant_enabled?: boolean | null
+          ai_classification_accepted_at?: string | null
+          ai_classification_enabled?: boolean | null
+          ai_extraction_accepted_at?: string | null
+          ai_extraction_enabled?: boolean | null
+          audio_transcription_accepted_at?: string | null
+          audio_transcription_enabled?: boolean | null
+          biometric_addendum_signed?: boolean | null
+          biometric_diarization_accepted_at?: string | null
+          biometric_diarization_enabled?: boolean | null
+          client_assistant_enabled?: boolean | null
+          client_portal_enabled?: boolean | null
+          id?: string
+          organization_id?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          whatsapp_accepted_at?: string | null
+          whatsapp_addendum_signed?: boolean | null
+          whatsapp_tier?: Database["public"]["Enums"]["whatsapp_tier"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_ai_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_consents: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string
+          created_at: string | null
+          doc_hash: string
+          doc_type: Database["public"]["Enums"]["legal_doc_type"]
+          doc_version: string
+          id: string
+          ip_address: unknown
+          legal_document_id: string
+          organization_id: string
+          revocation_reason: string | null
+          revoked_at: string | null
+          revoked_by: string | null
+          signature_method: string | null
+          signature_provider: string | null
+          signed_pdf_url: string | null
+          status: Database["public"]["Enums"]["consent_status"] | null
+          updated_at: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by: string
+          created_at?: string | null
+          doc_hash: string
+          doc_type: Database["public"]["Enums"]["legal_doc_type"]
+          doc_version: string
+          id?: string
+          ip_address?: unknown
+          legal_document_id: string
+          organization_id: string
+          revocation_reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          signature_method?: string | null
+          signature_provider?: string | null
+          signed_pdf_url?: string | null
+          status?: Database["public"]["Enums"]["consent_status"] | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string
+          created_at?: string | null
+          doc_hash?: string
+          doc_type?: Database["public"]["Enums"]["legal_doc_type"]
+          doc_version?: string
+          id?: string
+          ip_address?: unknown
+          legal_document_id?: string
+          organization_id?: string
+          revocation_reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          signature_method?: string | null
+          signature_provider?: string | null
+          signed_pdf_url?: string | null
+          status?: Database["public"]["Enums"]["consent_status"] | null
+          updated_at?: string | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_consents_legal_document_id_fkey"
+            columns: ["legal_document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_consents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ticket_messages: {
         Row: {
           attachments: Json | null
@@ -15604,6 +16787,65 @@ export type Database = {
           },
         ]
       }
+      whatsapp_sessions: {
+        Row: {
+          created_at: string | null
+          device_name: string | null
+          error_at: string | null
+          error_message: string | null
+          id: string
+          last_seen_at: string | null
+          last_sync_at: string | null
+          messages_synced: number | null
+          organization_id: string
+          phone_number: string | null
+          session_data_encrypted: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          device_name?: string | null
+          error_at?: string | null
+          error_message?: string | null
+          id?: string
+          last_seen_at?: string | null
+          last_sync_at?: string | null
+          messages_synced?: number | null
+          organization_id: string
+          phone_number?: string | null
+          session_data_encrypted?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          device_name?: string | null
+          error_at?: string | null
+          error_message?: string | null
+          id?: string
+          last_seen_at?: string | null
+          last_sync_at?: string | null
+          messages_synced?: number | null
+          organization_id?: string
+          phone_number?: string | null
+          session_data_encrypted?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_action_logs: {
         Row: {
           action_config: Json | null
@@ -16037,6 +17279,10 @@ export type Database = {
     }
     Functions: {
       calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
+      calculate_validity_status: {
+        Args: { valid_until: string }
+        Returns: Database["public"]["Enums"]["doc_validity_status"]
+      }
       check_user_permission: {
         Args: {
           _organization_id: string
@@ -16046,6 +17292,7 @@ export type Database = {
         Returns: boolean
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      days_until_expiry: { Args: { expiry_date: string }; Returns: number }
       get_analytics_stats: {
         Args: { p_days?: number; p_organization_id: string }
         Returns: Json
@@ -16139,6 +17386,60 @@ export type Database = {
       }
     }
     Enums: {
+      ai_confidence_level: "high" | "medium" | "low" | "manual"
+      client_doc_type:
+        | "poder_general"
+        | "poder_especial"
+        | "escritura_constitucion"
+        | "certificado_registro"
+        | "contrato"
+        | "factura"
+        | "notificacion_oficial"
+        | "correspondencia"
+        | "sentencia_resolucion"
+        | "informe_pericial"
+        | "otro"
+      comm_category:
+        | "legal"
+        | "administrative"
+        | "commercial"
+        | "urgent"
+        | "general"
+      comm_channel:
+        | "email"
+        | "whatsapp"
+        | "portal"
+        | "phone"
+        | "sms"
+        | "in_person"
+        | "other"
+      comm_direction: "inbound" | "outbound" | "internal"
+      consent_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "revoked"
+        | "expired"
+      doc_validity_status:
+        | "valid"
+        | "expiring_soon"
+        | "expired"
+        | "pending_verification"
+        | "revoked"
+      legal_doc_type:
+        | "tos"
+        | "dpa"
+        | "ai_disclosure"
+        | "whatsapp_addendum"
+        | "biometric_addendum"
+        | "privacy_policy"
+      legalops_ai_interaction_type:
+        | "classification"
+        | "ner_extraction"
+        | "transcription"
+        | "assistant_query"
+        | "document_summary"
+        | "rag_search"
       market_asset_category:
         | "industrial_property"
         | "intellectual_property"
@@ -16209,6 +17510,20 @@ export type Database = {
         | "failed"
         | "expired"
         | "not_required"
+      ner_entity_type:
+        | "date_grant"
+        | "date_expiry"
+        | "date_signature"
+        | "party_grantor"
+        | "party_grantee"
+        | "party_notary"
+        | "id_document"
+        | "reference_protocol"
+        | "reference_registry"
+        | "reference_case"
+        | "power_type"
+        | "amount"
+        | "other"
       permission_action:
         | "view"
         | "create"
@@ -16219,6 +17534,7 @@ export type Database = {
         | "manage"
         | "approve"
       permission_scope: "all" | "team" | "own" | "assigned"
+      whatsapp_tier: "tier1_api" | "tier2_sync" | "tier3_basic"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -16346,6 +17662,61 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      ai_confidence_level: ["high", "medium", "low", "manual"],
+      client_doc_type: [
+        "poder_general",
+        "poder_especial",
+        "escritura_constitucion",
+        "certificado_registro",
+        "contrato",
+        "factura",
+        "notificacion_oficial",
+        "correspondencia",
+        "sentencia_resolucion",
+        "informe_pericial",
+        "otro",
+      ],
+      comm_category: [
+        "legal",
+        "administrative",
+        "commercial",
+        "urgent",
+        "general",
+      ],
+      comm_channel: [
+        "email",
+        "whatsapp",
+        "portal",
+        "phone",
+        "sms",
+        "in_person",
+        "other",
+      ],
+      comm_direction: ["inbound", "outbound", "internal"],
+      consent_status: ["pending", "accepted", "rejected", "revoked", "expired"],
+      doc_validity_status: [
+        "valid",
+        "expiring_soon",
+        "expired",
+        "pending_verification",
+        "revoked",
+      ],
+      legal_doc_type: [
+        "tos",
+        "dpa",
+        "ai_disclosure",
+        "whatsapp_addendum",
+        "biometric_addendum",
+        "privacy_policy",
+      ],
+      legalops_ai_interaction_type: [
+        "classification",
+        "ner_extraction",
+        "transcription",
+        "assistant_query",
+        "document_summary",
+        "rag_search",
+      ],
       market_asset_category: [
         "industrial_property",
         "intellectual_property",
@@ -16422,6 +17793,21 @@ export const Constants = {
         "expired",
         "not_required",
       ],
+      ner_entity_type: [
+        "date_grant",
+        "date_expiry",
+        "date_signature",
+        "party_grantor",
+        "party_grantee",
+        "party_notary",
+        "id_document",
+        "reference_protocol",
+        "reference_registry",
+        "reference_case",
+        "power_type",
+        "amount",
+        "other",
+      ],
       permission_action: [
         "view",
         "create",
@@ -16433,6 +17819,7 @@ export const Constants = {
         "approve",
       ],
       permission_scope: ["all", "team", "own", "assigned"],
+      whatsapp_tier: ["tier1_api", "tier2_sync", "tier3_basic"],
     },
   },
 } as const
