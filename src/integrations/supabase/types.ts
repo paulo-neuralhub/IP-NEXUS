@@ -18750,6 +18750,7 @@ export type Database = {
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
       dmetaphone: { Args: { "": string }; Returns: string }
       dmetaphone_alt: { Args: { "": string }; Returns: string }
+      expire_trials: { Args: never; Returns: number }
       get_analytics_stats: {
         Args: { p_days?: number; p_organization_id: string }
         Returns: Json
@@ -18881,6 +18882,10 @@ export type Database = {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       soundex: { Args: { "": string }; Returns: string }
+      start_module_trial: {
+        Args: { p_pack_code: string; p_trial_days?: number }
+        Returns: undefined
+      }
       text_soundex: { Args: { "": string }; Returns: string }
       trigger_workflow_manually: {
         Args: { p_trigger_data?: Json; p_workflow_id: string }

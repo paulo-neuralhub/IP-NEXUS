@@ -24,6 +24,7 @@ export interface SubscriptionPack {
   features_highlight: string[] | null;
   stripe_price_id_monthly: string | null;
   stripe_price_id_yearly: string | null;
+  trial_days: number;
 }
 
 /**
@@ -46,6 +47,7 @@ export function useSubscriptionPacks() {
         included_modules: pack.included_modules || [],
         price_yearly: pack.price_yearly ?? null,
         features_highlight: pack.features_highlight ?? null,
+        trial_days: (pack as any).trial_days ?? 14,
       })) as SubscriptionPack[];
     },
   });
@@ -72,6 +74,7 @@ export function useMainPacks() {
         included_modules: pack.included_modules || [],
         price_yearly: pack.price_yearly ?? null,
         features_highlight: pack.features_highlight ?? null,
+        trial_days: (pack as any).trial_days ?? 14,
       })) as SubscriptionPack[];
     },
   });
@@ -98,6 +101,7 @@ export function useStandalonePacks() {
         included_modules: pack.included_modules || [],
         price_yearly: pack.price_yearly ?? null,
         features_highlight: pack.features_highlight ?? null,
+        trial_days: (pack as any).trial_days ?? 14,
       })) as SubscriptionPack[];
     },
   });
@@ -126,6 +130,7 @@ export function usePack(code: string) {
         included_modules: data.included_modules || [],
         price_yearly: data.price_yearly ?? null,
         features_highlight: data.features_highlight ?? null,
+        trial_days: (data as any).trial_days ?? 14,
       } as SubscriptionPack;
     },
     enabled: !!code,
