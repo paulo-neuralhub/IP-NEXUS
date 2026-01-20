@@ -41,6 +41,7 @@ import SpiderDashboard from "./pages/app/spider";
 import WatchResultList from "./pages/app/spider/results";
 import NewWatchlistPage from "./pages/app/spider/watchlists/new";
 import AnalyzePage from "./pages/app/spider/analyze";
+import SpiderLandingPage from "./pages/spider-landing";
 import MatterList from "./pages/app/docket";
 import MatterDetail from "./pages/app/docket/MatterDetail";
 import MatterForm from "./pages/app/docket/MatterForm";
@@ -145,6 +146,7 @@ const App = () => (
             <Routes>
               {/* Landing */}
               <Route path="/" element={<Landing />} />
+              <Route path="/spider-pro" element={<SpiderLandingPage />} />
               
               {/* Auth - Public */}
               <Route path="/login" element={<Login />} />
