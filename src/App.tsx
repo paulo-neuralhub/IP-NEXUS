@@ -104,6 +104,10 @@ import CollabIndexPage from "./pages/app/collab";
 import CollabDetailPage from "./pages/app/collab/[id]";
 import SearchPage from "./pages/app/SearchPage";
 
+// Legal Ops Pages
+import LegalOpsAssistantPage from "./pages/app/legal-ops/assistant";
+import LegalOpsClient360Page from "./pages/app/legal-ops/client-360";
+import LegalOpsCommunicationsPage from "./pages/app/legal-ops/communications";
 // Backoffice Pages
 import BackofficeLayout from "./layouts/backoffice-layout";
 import BackofficeDashboard from "./pages/backoffice";
@@ -261,6 +265,12 @@ const App = () => (
                 <Route path="collab" element={<CollabIndexPage />} />
                 <Route path="collab/:id" element={<CollabDetailPage />} />
                 <Route path="search" element={<SearchPage />} />
+                <Route path="onboarding" element={<Onboarding />} />
+                {/* Legal Ops */}
+                <Route path="legal-ops" element={<Navigate to="/app/legal-ops/assistant" replace />} />
+                <Route path="legal-ops/assistant" element={<LegalOpsAssistantPage />} />
+                <Route path="legal-ops/client-360" element={<LegalOpsClient360Page />} />
+                <Route path="legal-ops/communications" element={<LegalOpsCommunicationsPage />} />
               </Route>
               
               {/* BACKOFFICE - Panel de administración consolidado */}
