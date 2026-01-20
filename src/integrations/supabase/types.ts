@@ -6054,6 +6054,231 @@ export type Database = {
           },
         ]
       }
+      help_rule_execution_log: {
+        Row: {
+          action_taken: string | null
+          created_at: string | null
+          id: string
+          organization_id: string | null
+          rule_id: string | null
+          trigger_context: Json | null
+          trigger_type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          created_at?: string | null
+          id?: string
+          organization_id?: string | null
+          rule_id?: string | null
+          trigger_context?: Json | null
+          trigger_type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          created_at?: string | null
+          id?: string
+          organization_id?: string | null
+          rule_id?: string | null
+          trigger_context?: Json | null
+          trigger_type?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_rule_execution_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_rule_execution_log_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "help_rules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_rule_execution_log_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_rule_triggers: {
+        Row: {
+          created_at: string | null
+          id: string
+          rule_id: string | null
+          trigger_config: Json | null
+          trigger_target: string | null
+          trigger_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          rule_id?: string | null
+          trigger_config?: Json | null
+          trigger_target?: string | null
+          trigger_type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          rule_id?: string | null
+          trigger_config?: Json | null
+          trigger_target?: string | null
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_rule_triggers_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "help_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_rules: {
+        Row: {
+          code: string
+          conditions: Json | null
+          cooldown_hours: number | null
+          created_at: string | null
+          custom_content: string | null
+          custom_title: string | null
+          description: string | null
+          display_delay_ms: number | null
+          display_duration_ms: number | null
+          display_type: string | null
+          id: string
+          is_active: boolean | null
+          max_displays_per_session: number | null
+          max_displays_per_user: number | null
+          name: string
+          priority: number | null
+          rule_type: string | null
+          target_article_id: string | null
+          target_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          conditions?: Json | null
+          cooldown_hours?: number | null
+          created_at?: string | null
+          custom_content?: string | null
+          custom_title?: string | null
+          description?: string | null
+          display_delay_ms?: number | null
+          display_duration_ms?: number | null
+          display_type?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_displays_per_session?: number | null
+          max_displays_per_user?: number | null
+          name: string
+          priority?: number | null
+          rule_type?: string | null
+          target_article_id?: string | null
+          target_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          conditions?: Json | null
+          cooldown_hours?: number | null
+          created_at?: string | null
+          custom_content?: string | null
+          custom_title?: string | null
+          description?: string | null
+          display_delay_ms?: number | null
+          display_duration_ms?: number | null
+          display_type?: string | null
+          id?: string
+          is_active?: boolean | null
+          max_displays_per_session?: number | null
+          max_displays_per_user?: number | null
+          name?: string
+          priority?: number | null
+          rule_type?: string | null
+          target_article_id?: string | null
+          target_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_rules_target_article_id_fkey"
+            columns: ["target_article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      help_search_logs: {
+        Row: {
+          clicked_article_id: string | null
+          context_module: string | null
+          context_page: string | null
+          created_at: string | null
+          id: string
+          organization_id: string | null
+          query: string
+          results_count: number | null
+          user_id: string | null
+        }
+        Insert: {
+          clicked_article_id?: string | null
+          context_module?: string | null
+          context_page?: string | null
+          created_at?: string | null
+          id?: string
+          organization_id?: string | null
+          query: string
+          results_count?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          clicked_article_id?: string | null
+          context_module?: string | null
+          context_page?: string | null
+          created_at?: string | null
+          id?: string
+          organization_id?: string | null
+          query?: string
+          results_count?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "help_search_logs_clicked_article_id_fkey"
+            columns: ["clicked_article_id"]
+            isOneToOne: false
+            referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_search_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_search_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       help_system_status: {
         Row: {
           component: string

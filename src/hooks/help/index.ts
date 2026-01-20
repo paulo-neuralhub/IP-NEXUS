@@ -50,3 +50,15 @@ export {
   useTourProgress,
   useUpdateTourProgress,
 } from './useHelpAnnouncements';
+
+// Rules Engine (Prompt 48)
+export {
+  useHelpRules,
+  useHelpRule,
+  useLogRuleExecution,
+  useContextualHelp,
+  useCreateHelpRule,
+  useUpdateHelpRule,
+  useDeleteHelpRule,
+} from './useHelpRules';
+export type { HelpRule, HelpRuleTrigger, HelpRuleExecution } from './useHelpRules';
