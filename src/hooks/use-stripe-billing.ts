@@ -111,18 +111,47 @@ export function useOpenPortal() {
   });
 }
 
-// Get available plans/prices - using organization settings
+// Get available plans/prices from stripe_prices table
 export function useAvailablePlans() {
   return useQuery({
     queryKey: ['available-plans'],
     queryFn: async () => {
-      // Return static plans since stripe_prices table may not exist
-      return [
-        { id: 'starter', name: 'Starter', price: 99, interval: 'month' },
-        { id: 'professional', name: 'Professional', price: 249, interval: 'month' },
-        { id: 'business', name: 'Business', price: 499, interval: 'month' },
-        { id: 'enterprise', name: 'Enterprise', price: 0, interval: 'month', custom: true },
-      ];
+      const { data: prices, error: pricesError } = await supabase
+        .from('stripe_prices')
+        .select('*')
+        .eq('active', true)
+        .order('unit_amount', { ascending: true });
+
+      if (pricesError || !prices?.length) {
+        // Fallback to static plans if table not populated
+        return [
+          { id: 'starter', name: 'Starter', price: 0, interval: 'month' as const },
+          { id: 'professional', name: 'Professional', price: 299, interval: 'month' as const },
+          { id: 'business', name: 'Business', price: 499, interval: 'month' as const },
+          { id: 'enterprise', name: 'Enterprise', price: 999, interval: 'month' as const },
+        ];
+      }
+
+      // Get products separately
+      const productIds = [...new Set(prices.map(p => p.stripe_product_id))];
+      const { data: products } = await supabase
+        .from('stripe_products')
+        .select('*')
+        .in('stripe_product_id', productIds);
+
+      const productMap = new Map(products?.map(p => [p.stripe_product_id, p]) || []);
+
+      return prices.map(p => {
+        const product = productMap.get(p.stripe_product_id);
+        return {
+          id: p.stripe_price_id,
+          name: product?.name || p.nickname || 'Plan',
+          price: (p.unit_amount || 0) / 100,
+          interval: (p.recurring_interval || 'month') as 'month' | 'year',
+          features: product?.features || [],
+          productId: p.stripe_product_id,
+        };
+      });
     },
   });
 }
