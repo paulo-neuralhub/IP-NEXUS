@@ -33,9 +33,11 @@ const Onboarding = () => {
     
     // If has org and onboarding is complete, go to dashboard
     if (currentOrganization && !needsOnboarding) {
-      if (onboardingProgress?.status === 'completed') {
+      // If no onboarding progress exists OR status is 'completed', go to dashboard
+      // (no onboarding record = legacy org that was created before wizard existed)
+      if (!onboardingProgress || onboardingProgress.status === 'completed') {
         navigate("/app/dashboard", { replace: true });
-      } else if (onboardingProgress && onboardingProgress.status !== 'completed') {
+      } else {
         // Has incomplete onboarding, show wizard
         setCreatedOrgId(currentOrganization.id);
         setStep("wizard");
