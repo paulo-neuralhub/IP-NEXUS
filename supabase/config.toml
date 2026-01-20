@@ -148,10 +148,10 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.assistant-internal]
-verify_jwt = true
+verify_jwt = false
 
 [functions.assistant-portal]
-verify_jwt = true
+verify_jwt = false
 
 [functions.rag-search]
-verify_jwt = true
+verify_jwt = false

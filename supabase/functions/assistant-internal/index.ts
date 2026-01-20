@@ -40,18 +40,45 @@ serve(async (req) => {
   }
 
   try {
+    // Validate JWT manually
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader?.startsWith('Bearer ')) {
+      return new Response(
+        JSON.stringify({ code: 401, message: 'Missing or invalid authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL')!,
+      Deno.env.get('SUPABASE_ANON_KEY')!,
+      { global: { headers: { Authorization: authHeader } } }
+    );
+
+    const token = authHeader.replace('Bearer ', '');
+    const { data: claims, error: claimsError } = await supabaseClient.auth.getClaims(token);
+    
+    if (claimsError || !claims?.claims) {
+      return new Response(
+        JSON.stringify({ code: 401, message: 'Invalid JWT' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const userId = claims.claims.sub;
+
     const { 
       message, 
       conversation_history, 
       context, 
-      organization_id,
-      user_id 
+      organization_id
     } = await req.json();
 
     if (!LOVABLE_API_KEY) {
       throw new Error('LOVABLE_API_KEY is not configured');
     }
 
+    // Use service role for DB operations
     const supabase = createClient(
       Deno.env.get('SUPABASE_URL')!,
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -216,7 +243,7 @@ Recuerda: cita las fuentes, indica tu confianza, y nunca inventes información.`
     // Log interaction
     await supabase.from('legalops_ai_interactions').insert({
       organization_id,
-      user_id,
+      user_id: userId,
       client_id: context?.client_id || null,
       matter_id: context?.matter_id || null,
       interaction_type: 'assistant_query',
