@@ -12410,6 +12410,50 @@ export type Database = {
         }
         Relationships: []
       }
+      module_usage_log: {
+        Row: {
+          details: Json | null
+          id: string
+          metric_code: string
+          metric_value: number
+          module_code: string
+          organization_id: string
+          period_end: string
+          period_start: string
+          recorded_at: string | null
+        }
+        Insert: {
+          details?: Json | null
+          id?: string
+          metric_code: string
+          metric_value?: number
+          module_code: string
+          organization_id: string
+          period_end: string
+          period_start: string
+          recorded_at?: string | null
+        }
+        Update: {
+          details?: Json | null
+          id?: string
+          metric_code?: string
+          metric_value?: number
+          module_code?: string
+          organization_id?: string
+          period_end?: string
+          period_start?: string
+          recorded_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_usage_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       monitored_deadlines: {
         Row: {
           assigned_to: string | null
@@ -13010,6 +13054,91 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_module_licenses: {
+        Row: {
+          billing_cycle: string | null
+          cancellation_reason: string | null
+          cancelled_at: string | null
+          created_at: string | null
+          created_by: string | null
+          expires_at: string | null
+          id: string
+          license_type: string
+          limits_override: Json | null
+          module_id: string
+          organization_id: string
+          price_override: number | null
+          starts_at: string
+          status: string | null
+          stripe_subscription_item_id: string | null
+          tier_code: string
+          trial_ends_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          billing_cycle?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          license_type: string
+          limits_override?: Json | null
+          module_id: string
+          organization_id: string
+          price_override?: number | null
+          starts_at?: string
+          status?: string | null
+          stripe_subscription_item_id?: string | null
+          tier_code: string
+          trial_ends_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          billing_cycle?: string | null
+          cancellation_reason?: string | null
+          cancelled_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          expires_at?: string | null
+          id?: string
+          license_type?: string
+          limits_override?: Json | null
+          module_id?: string
+          organization_id?: string
+          price_override?: number | null
+          starts_at?: string
+          status?: string | null
+          stripe_subscription_item_id?: string | null
+          tier_code?: string
+          trial_ends_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_module_licenses_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_module_licenses_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "platform_modules"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_module_licenses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_offices: {
         Row: {
           created_at: string | null
@@ -13359,6 +13488,84 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      platform_modules: {
+        Row: {
+          base_price_monthly: number | null
+          base_price_yearly: number | null
+          category: string
+          code: string
+          color: string | null
+          created_at: string | null
+          description: string | null
+          docs_url: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_addon_available: boolean | null
+          is_beta: boolean | null
+          is_standalone_available: boolean | null
+          landing_url: string | null
+          launch_date: string | null
+          name: string
+          pricing_model: string | null
+          recommended_modules: string[] | null
+          required_modules: string[] | null
+          tagline: string | null
+          tiers: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          base_price_monthly?: number | null
+          base_price_yearly?: number | null
+          category: string
+          code: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          docs_url?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_addon_available?: boolean | null
+          is_beta?: boolean | null
+          is_standalone_available?: boolean | null
+          landing_url?: string | null
+          launch_date?: string | null
+          name: string
+          pricing_model?: string | null
+          recommended_modules?: string[] | null
+          required_modules?: string[] | null
+          tagline?: string | null
+          tiers?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          base_price_monthly?: number | null
+          base_price_yearly?: number | null
+          category?: string
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          docs_url?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_addon_available?: boolean | null
+          is_beta?: boolean | null
+          is_standalone_available?: boolean | null
+          landing_url?: string | null
+          launch_date?: string | null
+          name?: string
+          pricing_model?: string | null
+          recommended_modules?: string[] | null
+          required_modules?: string[] | null
+          tagline?: string | null
+          tiers?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       portal_activity_log: {
         Row: {
@@ -15801,6 +16008,372 @@ export type Database = {
           },
         ]
       }
+      spider_connector_credentials: {
+        Row: {
+          access_token: string | null
+          connector_id: string
+          created_at: string | null
+          credentials: Json
+          id: string
+          is_valid: boolean | null
+          last_used_at: string | null
+          last_validated_at: string | null
+          organization_id: string
+          refresh_token: string | null
+          token_expires_at: string | null
+          total_requests: number | null
+          updated_at: string | null
+          validation_error: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          connector_id: string
+          created_at?: string | null
+          credentials: Json
+          id?: string
+          is_valid?: boolean | null
+          last_used_at?: string | null
+          last_validated_at?: string | null
+          organization_id: string
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          total_requests?: number | null
+          updated_at?: string | null
+          validation_error?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          connector_id?: string
+          created_at?: string | null
+          credentials?: Json
+          id?: string
+          is_valid?: boolean | null
+          last_used_at?: string | null
+          last_validated_at?: string | null
+          organization_id?: string
+          refresh_token?: string | null
+          token_expires_at?: string | null
+          total_requests?: number | null
+          updated_at?: string | null
+          validation_error?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spider_connector_credentials_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "spider_connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_connector_credentials_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spider_connector_runs: {
+        Row: {
+          checkpoint: Json | null
+          completed_at: string | null
+          connector_id: string
+          created_at: string | null
+          duration_ms: number | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          job_id: string
+          rate_limit_remaining: number | null
+          rate_limit_reset_at: string | null
+          raw_response_sample: Json | null
+          records_fetched: number | null
+          records_matched: number | null
+          records_new: number | null
+          search_params: Json
+          started_at: string | null
+          status: string | null
+        }
+        Insert: {
+          checkpoint?: Json | null
+          completed_at?: string | null
+          connector_id: string
+          created_at?: string | null
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          job_id: string
+          rate_limit_remaining?: number | null
+          rate_limit_reset_at?: string | null
+          raw_response_sample?: Json | null
+          records_fetched?: number | null
+          records_matched?: number | null
+          records_new?: number | null
+          search_params: Json
+          started_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          checkpoint?: Json | null
+          completed_at?: string | null
+          connector_id?: string
+          created_at?: string | null
+          duration_ms?: number | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          job_id?: string
+          rate_limit_remaining?: number | null
+          rate_limit_reset_at?: string | null
+          raw_response_sample?: Json | null
+          records_fetched?: number | null
+          records_matched?: number | null
+          records_new?: number | null
+          search_params?: Json
+          started_at?: string | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spider_connector_runs_connector_id_fkey"
+            columns: ["connector_id"]
+            isOneToOne: false
+            referencedRelation: "spider_connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_connector_runs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "spider_jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spider_connectors: {
+        Row: {
+          auth_type: string | null
+          base_url: string | null
+          code: string
+          connector_type: string
+          created_at: string | null
+          default_config: Json | null
+          description: string | null
+          documentation_url: string | null
+          health_check_config: Json | null
+          health_status: string | null
+          id: string
+          is_active: boolean | null
+          jurisdictions: string[] | null
+          last_health_check: string | null
+          logo_url: string | null
+          maintenance_message: string | null
+          maintenance_mode: boolean | null
+          max_concurrent_requests: number | null
+          name: string
+          rate_limit_period_seconds: number | null
+          rate_limit_requests: number | null
+          required_tier: string | null
+          source_category: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auth_type?: string | null
+          base_url?: string | null
+          code: string
+          connector_type: string
+          created_at?: string | null
+          default_config?: Json | null
+          description?: string | null
+          documentation_url?: string | null
+          health_check_config?: Json | null
+          health_status?: string | null
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          last_health_check?: string | null
+          logo_url?: string | null
+          maintenance_message?: string | null
+          maintenance_mode?: boolean | null
+          max_concurrent_requests?: number | null
+          name: string
+          rate_limit_period_seconds?: number | null
+          rate_limit_requests?: number | null
+          required_tier?: string | null
+          source_category?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auth_type?: string | null
+          base_url?: string | null
+          code?: string
+          connector_type?: string
+          created_at?: string | null
+          default_config?: Json | null
+          description?: string | null
+          documentation_url?: string | null
+          health_check_config?: Json | null
+          health_status?: string | null
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          last_health_check?: string | null
+          logo_url?: string | null
+          maintenance_message?: string | null
+          maintenance_mode?: boolean | null
+          max_concurrent_requests?: number | null
+          name?: string
+          rate_limit_period_seconds?: number | null
+          rate_limit_requests?: number | null
+          required_tier?: string | null
+          source_category?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      spider_jobs: {
+        Row: {
+          alerts_created: number | null
+          completed_at: string | null
+          connectors_completed: string[] | null
+          connectors_failed: string[] | null
+          connectors_to_run: string[] | null
+          created_at: string | null
+          error_code: string | null
+          error_details: Json | null
+          error_message: string | null
+          execution_metadata: Json | null
+          id: string
+          job_type: string | null
+          max_retries: number | null
+          organization_id: string
+          progress_message: string | null
+          progress_percent: number | null
+          queued_at: string | null
+          results_found: number | null
+          results_new: number | null
+          results_updated: number | null
+          retry_after: string | null
+          retry_count: number | null
+          scheduled_at: string
+          started_at: string | null
+          status: string | null
+          timeout_at: string | null
+          watchlist_id: string
+        }
+        Insert: {
+          alerts_created?: number | null
+          completed_at?: string | null
+          connectors_completed?: string[] | null
+          connectors_failed?: string[] | null
+          connectors_to_run?: string[] | null
+          created_at?: string | null
+          error_code?: string | null
+          error_details?: Json | null
+          error_message?: string | null
+          execution_metadata?: Json | null
+          id?: string
+          job_type?: string | null
+          max_retries?: number | null
+          organization_id: string
+          progress_message?: string | null
+          progress_percent?: number | null
+          queued_at?: string | null
+          results_found?: number | null
+          results_new?: number | null
+          results_updated?: number | null
+          retry_after?: string | null
+          retry_count?: number | null
+          scheduled_at: string
+          started_at?: string | null
+          status?: string | null
+          timeout_at?: string | null
+          watchlist_id: string
+        }
+        Update: {
+          alerts_created?: number | null
+          completed_at?: string | null
+          connectors_completed?: string[] | null
+          connectors_failed?: string[] | null
+          connectors_to_run?: string[] | null
+          created_at?: string | null
+          error_code?: string | null
+          error_details?: Json | null
+          error_message?: string | null
+          execution_metadata?: Json | null
+          id?: string
+          job_type?: string | null
+          max_retries?: number | null
+          organization_id?: string
+          progress_message?: string | null
+          progress_percent?: number | null
+          queued_at?: string | null
+          results_found?: number | null
+          results_new?: number | null
+          results_updated?: number | null
+          retry_after?: string | null
+          retry_count?: number | null
+          scheduled_at?: string
+          started_at?: string | null
+          status?: string | null
+          timeout_at?: string | null
+          watchlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spider_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_jobs_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "watchlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spider_source_cache: {
+        Row: {
+          cached_data: Json
+          connector_code: string
+          content_hash: string | null
+          expires_at: string | null
+          fetched_at: string | null
+          id: string
+          is_stale: boolean | null
+          source_id: string
+          source_type: string | null
+        }
+        Insert: {
+          cached_data: Json
+          connector_code: string
+          content_hash?: string | null
+          expires_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          is_stale?: boolean | null
+          source_id: string
+          source_type?: string | null
+        }
+        Update: {
+          cached_data?: Json
+          connector_code?: string
+          content_hash?: string | null
+          expires_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          is_stale?: boolean | null
+          source_id?: string
+          source_type?: string | null
+        }
+        Relationships: []
+      }
       subscription_history: {
         Row: {
           amount: number | null
@@ -18070,9 +18643,21 @@ export type Database = {
         Returns: string
       }
       calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
+      calculate_trademark_similarity: {
+        Args: { term_a: string; term_b: string }
+        Returns: Record<string, unknown>
+      }
       calculate_validity_status: {
         Args: { valid_until: string }
         Returns: Database["public"]["Enums"]["doc_validity_status"]
+      }
+      check_module_access: {
+        Args: {
+          p_module_code: string
+          p_organization_id: string
+          p_required_tier?: string
+        }
+        Returns: boolean
       }
       check_user_permission: {
         Args: {
@@ -18083,7 +18668,10 @@ export type Database = {
         Returns: boolean
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
+      dmetaphone: { Args: { "": string }; Returns: string }
+      dmetaphone_alt: { Args: { "": string }; Returns: string }
       get_analytics_stats: {
         Args: { p_days?: number; p_organization_id: string }
         Returns: Json
@@ -18109,6 +18697,14 @@ export type Database = {
           status: string
           title: string
         }[]
+      }
+      get_module_limit: {
+        Args: {
+          p_limit_key: string
+          p_module_code: string
+          p_organization_id: string
+        }
+        Returns: number
       }
       get_user_org_ids: { Args: never; Returns: string[] }
       get_user_permissions: {
@@ -18180,6 +18776,10 @@ export type Database = {
           entity_type: string
         }[]
       }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
+      soundex: { Args: { "": string }; Returns: string }
+      text_soundex: { Args: { "": string }; Returns: string }
       trigger_workflow_manually: {
         Args: { p_trigger_data?: Json; p_workflow_id: string }
         Returns: string
