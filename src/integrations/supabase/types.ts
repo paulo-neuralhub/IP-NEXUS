@@ -3910,6 +3910,87 @@ export type Database = {
           },
         ]
       }
+      email_ingestion_queue: {
+        Row: {
+          attachments: Json | null
+          body_html: string | null
+          body_text: string | null
+          created_at: string | null
+          created_tasks: string[] | null
+          error_message: string | null
+          extracted_data: Json | null
+          from_address: string | null
+          id: string
+          matched_matter_id: string | null
+          message_id: string | null
+          organization_id: string
+          processing_completed_at: string | null
+          processing_started_at: string | null
+          retry_count: number | null
+          source: string
+          status: string | null
+          subject: string | null
+          to_addresses: string[] | null
+        }
+        Insert: {
+          attachments?: Json | null
+          body_html?: string | null
+          body_text?: string | null
+          created_at?: string | null
+          created_tasks?: string[] | null
+          error_message?: string | null
+          extracted_data?: Json | null
+          from_address?: string | null
+          id?: string
+          matched_matter_id?: string | null
+          message_id?: string | null
+          organization_id: string
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          retry_count?: number | null
+          source: string
+          status?: string | null
+          subject?: string | null
+          to_addresses?: string[] | null
+        }
+        Update: {
+          attachments?: Json | null
+          body_html?: string | null
+          body_text?: string | null
+          created_at?: string | null
+          created_tasks?: string[] | null
+          error_message?: string | null
+          extracted_data?: Json | null
+          from_address?: string | null
+          id?: string
+          matched_matter_id?: string | null
+          message_id?: string | null
+          organization_id?: string
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          retry_count?: number | null
+          source?: string
+          status?: string | null
+          subject?: string | null
+          to_addresses?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_ingestion_queue_matched_matter_id_fkey"
+            columns: ["matched_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_ingestion_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       email_sends: {
         Row: {
           ab_variant: string | null
@@ -6161,6 +6242,45 @@ export type Database = {
           tour_key?: string
           trigger_conditions?: Json | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      holidays: {
+        Row: {
+          country_code: string
+          created_at: string | null
+          date: string
+          id: string
+          is_recurring: boolean | null
+          name: string
+          recurring_day: number | null
+          recurring_month: number | null
+          region_code: string | null
+          type: string | null
+        }
+        Insert: {
+          country_code: string
+          created_at?: string | null
+          date: string
+          id?: string
+          is_recurring?: boolean | null
+          name: string
+          recurring_day?: number | null
+          recurring_month?: number | null
+          region_code?: string | null
+          type?: string | null
+        }
+        Update: {
+          country_code?: string
+          created_at?: string | null
+          date?: string
+          id?: string
+          is_recurring?: boolean | null
+          name?: string
+          recurring_day?: number | null
+          recurring_month?: number | null
+          region_code?: string | null
+          type?: string | null
         }
         Relationships: []
       }
@@ -9144,6 +9264,80 @@ export type Database = {
           },
         ]
       }
+      jurisdiction_rules: {
+        Row: {
+          actions: Json | null
+          base_days: number | null
+          business_days_only: boolean | null
+          conditions: Json | null
+          created_at: string | null
+          description: string | null
+          exclude_holidays: boolean | null
+          holiday_calendar: string | null
+          id: string
+          ip_type: string
+          is_active: boolean | null
+          is_system: boolean | null
+          jurisdiction_code: string
+          organization_id: string | null
+          priority: number | null
+          rule_name: string
+          rule_type: string
+          trigger_event: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          actions?: Json | null
+          base_days?: number | null
+          business_days_only?: boolean | null
+          conditions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          exclude_holidays?: boolean | null
+          holiday_calendar?: string | null
+          id?: string
+          ip_type: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          jurisdiction_code: string
+          organization_id?: string | null
+          priority?: number | null
+          rule_name: string
+          rule_type: string
+          trigger_event?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          actions?: Json | null
+          base_days?: number | null
+          business_days_only?: boolean | null
+          conditions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          exclude_holidays?: boolean | null
+          holiday_calendar?: string | null
+          id?: string
+          ip_type?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          jurisdiction_code?: string
+          organization_id?: string | null
+          priority?: number | null
+          rule_name?: string
+          rule_type?: string
+          trigger_event?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jurisdiction_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       knowledge_base: {
         Row: {
           category: string
@@ -10931,6 +11125,64 @@ export type Database = {
           },
         ]
       }
+      matter_family_relations: {
+        Row: {
+          child_matter_id: string
+          claim_numbers: string[] | null
+          created_at: string | null
+          id: string
+          notes: string | null
+          organization_id: string
+          parent_matter_id: string
+          priority_date: string | null
+          relation_type: string
+        }
+        Insert: {
+          child_matter_id: string
+          claim_numbers?: string[] | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          organization_id: string
+          parent_matter_id: string
+          priority_date?: string | null
+          relation_type: string
+        }
+        Update: {
+          child_matter_id?: string
+          claim_numbers?: string[] | null
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          organization_id?: string
+          parent_matter_id?: string
+          priority_date?: string | null
+          relation_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_family_relations_child_matter_id_fkey"
+            columns: ["child_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_family_relations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_family_relations_parent_matter_id_fkey"
+            columns: ["parent_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matter_valuations: {
         Row: {
           calculation_notes: string | null
@@ -10986,29 +11238,37 @@ export type Database = {
         Row: {
           application_number: string | null
           assigned_to: string | null
+          auto_renewal: boolean | null
           created_at: string | null
           created_by: string | null
           currency: string | null
           expiry_date: string | null
+          family_position: Json | null
+          family_root_id: string | null
           filing_date: string | null
           goods_services: string | null
           id: string
           images: string[] | null
           jurisdiction: string | null
           jurisdiction_code: string | null
+          last_rule_check_at: string | null
           mark_image_url: string | null
           mark_name: string | null
           mark_type: string | null
+          next_deadline: string | null
           next_renewal_date: string | null
           nice_classes: number[] | null
           notes: string | null
           official_fees: number | null
           organization_id: string
           owner_name: string | null
+          portfolio_id: string | null
           professional_fees: number | null
           reference: string
           registration_date: string | null
           registration_number: string | null
+          renewal_instructions: string | null
+          risk_score: number | null
           search_vector: unknown
           status: string
           tags: string[] | null
@@ -11020,29 +11280,37 @@ export type Database = {
         Insert: {
           application_number?: string | null
           assigned_to?: string | null
+          auto_renewal?: boolean | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
           expiry_date?: string | null
+          family_position?: Json | null
+          family_root_id?: string | null
           filing_date?: string | null
           goods_services?: string | null
           id?: string
           images?: string[] | null
           jurisdiction?: string | null
           jurisdiction_code?: string | null
+          last_rule_check_at?: string | null
           mark_image_url?: string | null
           mark_name?: string | null
           mark_type?: string | null
+          next_deadline?: string | null
           next_renewal_date?: string | null
           nice_classes?: number[] | null
           notes?: string | null
           official_fees?: number | null
           organization_id: string
           owner_name?: string | null
+          portfolio_id?: string | null
           professional_fees?: number | null
           reference: string
           registration_date?: string | null
           registration_number?: string | null
+          renewal_instructions?: string | null
+          risk_score?: number | null
           search_vector?: unknown
           status?: string
           tags?: string[] | null
@@ -11054,29 +11322,37 @@ export type Database = {
         Update: {
           application_number?: string | null
           assigned_to?: string | null
+          auto_renewal?: boolean | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
           expiry_date?: string | null
+          family_position?: Json | null
+          family_root_id?: string | null
           filing_date?: string | null
           goods_services?: string | null
           id?: string
           images?: string[] | null
           jurisdiction?: string | null
           jurisdiction_code?: string | null
+          last_rule_check_at?: string | null
           mark_image_url?: string | null
           mark_name?: string | null
           mark_type?: string | null
+          next_deadline?: string | null
           next_renewal_date?: string | null
           nice_classes?: number[] | null
           notes?: string | null
           official_fees?: number | null
           organization_id?: string
           owner_name?: string | null
+          portfolio_id?: string | null
           professional_fees?: number | null
           reference?: string
           registration_date?: string | null
           registration_number?: string | null
+          renewal_instructions?: string | null
+          risk_score?: number | null
           search_vector?: unknown
           status?: string
           tags?: string[] | null
@@ -11101,10 +11377,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matters_family_root_id_fkey"
+            columns: ["family_root_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "matters_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
             referencedColumns: ["id"]
           },
         ]
@@ -13510,6 +13800,73 @@ export type Database = {
           },
         ]
       }
+      portfolios: {
+        Row: {
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string
+          owner_id: string | null
+          parent_portfolio_id: string | null
+          settings: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id: string
+          owner_id?: string | null
+          parent_portfolio_id?: string | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string
+          owner_id?: string | null
+          parent_portfolio_id?: string | null
+          settings?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolios_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolios_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolios_parent_portfolio_id_fkey"
+            columns: ["parent_portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth_key: string
@@ -14960,6 +15317,156 @@ export type Database = {
           },
         ]
       }
+      smart_tasks: {
+        Row: {
+          assigned_by: string | null
+          assigned_to: string | null
+          auto_action: Json | null
+          blocking_task_ids: string[] | null
+          cancelled_at: string | null
+          cancelled_reason: string | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          description: string | null
+          due_date: string
+          grace_period_days: number | null
+          id: string
+          is_auto_generated: boolean | null
+          matter_id: string | null
+          metadata: Json | null
+          organization_id: string
+          parent_task_id: string | null
+          portfolio_id: string | null
+          priority: string | null
+          reminder_date: string | null
+          rule_id: string | null
+          started_at: string | null
+          status: string | null
+          task_type: string
+          title: string
+          trigger_date: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_by?: string | null
+          assigned_to?: string | null
+          auto_action?: Json | null
+          blocking_task_ids?: string[] | null
+          cancelled_at?: string | null
+          cancelled_reason?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date: string
+          grace_period_days?: number | null
+          id?: string
+          is_auto_generated?: boolean | null
+          matter_id?: string | null
+          metadata?: Json | null
+          organization_id: string
+          parent_task_id?: string | null
+          portfolio_id?: string | null
+          priority?: string | null
+          reminder_date?: string | null
+          rule_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          task_type: string
+          title: string
+          trigger_date?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_by?: string | null
+          assigned_to?: string | null
+          auto_action?: Json | null
+          blocking_task_ids?: string[] | null
+          cancelled_at?: string | null
+          cancelled_reason?: string | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          description?: string | null
+          due_date?: string
+          grace_period_days?: number | null
+          id?: string
+          is_auto_generated?: boolean | null
+          matter_id?: string | null
+          metadata?: Json | null
+          organization_id?: string
+          parent_task_id?: string | null
+          portfolio_id?: string | null
+          priority?: string | null
+          reminder_date?: string | null
+          rule_id?: string | null
+          started_at?: string | null
+          status?: string | null
+          task_type?: string
+          title?: string
+          trigger_date?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "smart_tasks_assigned_by_fkey"
+            columns: ["assigned_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_parent_task_id_fkey"
+            columns: ["parent_task_id"]
+            isOneToOne: false
+            referencedRelation: "smart_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_rule_id_fkey"
+            columns: ["rule_id"]
+            isOneToOne: false
+            referencedRelation: "jurisdiction_rules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       spider_alerts: {
         Row: {
           action_url: string | null
@@ -15593,6 +16100,54 @@ export type Database = {
           {
             foreignKeyName: "system_settings_updated_by_fkey"
             columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      task_comments: {
+        Row: {
+          attachments: Json | null
+          content: string
+          created_at: string | null
+          id: string
+          is_internal: boolean | null
+          task_id: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attachments?: Json | null
+          content: string
+          created_at?: string | null
+          id?: string
+          is_internal?: boolean | null
+          task_id: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attachments?: Json | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          is_internal?: boolean | null
+          task_id?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_comments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "smart_tasks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "task_comments_user_id_fkey"
+            columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -17278,6 +17833,17 @@ export type Database = {
       }
     }
     Functions: {
+      apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
+      calculate_deadline: {
+        Args: {
+          business_days_only?: boolean
+          country?: string
+          days_to_add: number
+          exclude_holidays?: boolean
+          start_date: string
+        }
+        Returns: string
+      }
       calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
       calculate_validity_status: {
         Args: { valid_until: string }
@@ -17302,6 +17868,21 @@ export type Database = {
         Returns: {
           label: string
           value: number
+        }[]
+      }
+      get_matter_family_tree: {
+        Args: { matter_uuid: string }
+        Returns: {
+          depth: number
+          filing_date: string
+          id: string
+          ip_type: string
+          jurisdiction: string
+          parent_id: string
+          reference_number: string
+          relation_type: string
+          status: string
+          title: string
         }[]
       }
       get_user_org_ids: { Args: never; Returns: string[] }
@@ -17342,6 +17923,10 @@ export type Database = {
       increment_rate_limit: {
         Args: { p_api_key_id: string }
         Returns: undefined
+      }
+      is_holiday: {
+        Args: { check_date: string; country: string; region?: string }
+        Returns: boolean
       }
       is_member_of_org: { Args: { org_id: string }; Returns: boolean }
       search_all: {
