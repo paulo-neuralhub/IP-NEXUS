@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ import { SmartTasksPanel } from './SmartTasksPanel';
 import { PortfoliosPanel } from './PortfoliosPanel';
 import { EmailIngestionPanel } from './EmailIngestionPanel';
 import { RulesConfigPanel } from './RulesConfigPanel';
+import { FeatureHelp, FEATURE_HELP_CONTENT } from '@/components/ui/feature-help';
 
 interface DocketStats {
   totalTasks: number;
@@ -135,29 +136,45 @@ export function CommandCenter() {
 
       {/* Main Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-4 lg:w-[600px]">
-          <TabsTrigger value="tasks" className="flex items-center gap-2">
-            <ListTodo className="h-4 w-4" />
-            <span className="hidden sm:inline">Smart Tasks</span>
-            {stats.pendingTasks > 0 && (
-              <Badge variant="secondary" className="ml-1">
-                {stats.pendingTasks}
-              </Badge>
-            )}
-          </TabsTrigger>
-          <TabsTrigger value="portfolios" className="flex items-center gap-2">
-            <FolderTree className="h-4 w-4" />
-            <span className="hidden sm:inline">Portfolios</span>
-          </TabsTrigger>
-          <TabsTrigger value="ingestion" className="flex items-center gap-2">
-            <Mail className="h-4 w-4" />
-            <span className="hidden sm:inline">Ingesta</span>
-          </TabsTrigger>
-          <TabsTrigger value="rules" className="flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            <span className="hidden sm:inline">Reglas</span>
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex items-center gap-2">
+          <TabsList className="grid grid-cols-4 lg:w-[600px]">
+            <TabsTrigger value="tasks" className="flex items-center gap-2">
+              <ListTodo className="h-4 w-4" />
+              <span className="hidden sm:inline">Smart Tasks</span>
+              {stats.pendingTasks > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {stats.pendingTasks}
+                </Badge>
+              )}
+            </TabsTrigger>
+            <TabsTrigger value="portfolios" className="flex items-center gap-2">
+              <FolderTree className="h-4 w-4" />
+              <span className="hidden sm:inline">Portfolios</span>
+            </TabsTrigger>
+            <TabsTrigger value="ingestion" className="flex items-center gap-2">
+              <Mail className="h-4 w-4" />
+              <span className="hidden sm:inline">Ingesta</span>
+            </TabsTrigger>
+            <TabsTrigger value="rules" className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4" />
+              <span className="hidden sm:inline">Reglas</span>
+            </TabsTrigger>
+          </TabsList>
+          
+          {/* Contextual Help based on active tab */}
+          {activeTab === 'tasks' && (
+            <FeatureHelp {...FEATURE_HELP_CONTENT.smartTasks} />
+          )}
+          {activeTab === 'portfolios' && (
+            <FeatureHelp {...FEATURE_HELP_CONTENT.portfolios} />
+          )}
+          {activeTab === 'ingestion' && (
+            <FeatureHelp {...FEATURE_HELP_CONTENT.emailIngestion} />
+          )}
+          {activeTab === 'rules' && (
+            <FeatureHelp {...FEATURE_HELP_CONTENT.jurisdictionRules} />
+          )}
+        </div>
 
         <TabsContent value="tasks" className="space-y-4">
           <SmartTasksPanel />
