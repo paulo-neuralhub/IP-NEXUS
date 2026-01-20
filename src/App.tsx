@@ -63,6 +63,9 @@ import CampaignAnalytics from "./pages/app/marketing/campaigns/CampaignAnalytics
 import ContactListPage from "./pages/app/marketing/lists";
 import AutomationList from "./pages/app/marketing/automations";
 import AutomationEditor from "./pages/app/marketing/automations/AutomationEditor";
+import NewAutomationPage from "./pages/app/marketing/automations/new";
+import FAQPage from "./pages/app/help/faq";
+import GuidesPage from "./pages/app/help/guides";
 import FinanceLayout from "./pages/app/finance/FinanceLayout";
 import FinanceDashboard from "./pages/app/finance/FinanceDashboard";
 import InvoiceListPage from "./pages/app/finance/invoices";
@@ -199,7 +202,8 @@ const App = () => (
                   <Route path="campaigns/:id/analytics" element={<CampaignAnalytics />} />
                   <Route path="lists" element={<ContactListPage />} />
                   <Route path="automations" element={<AutomationList />} />
-                  <Route path="automations/new" element={<AutomationEditor />} />
+                  <Route path="automations/new" element={<NewAutomationPage />} />
+                  <Route path="automations/new/editor" element={<AutomationEditor />} />
                   <Route path="automations/:id" element={<AutomationEditor />} />
                 </Route>
                 <Route path="market" element={<MarketLayout />}>
@@ -237,6 +241,8 @@ const App = () => (
                 <Route path="help" element={<HelpLayout />}>
                   <Route index element={<HelpCenterIndex />} />
                   <Route path="videos" element={<VideoTutorialsPage />} />
+                  <Route path="faq" element={<FAQPage />} />
+                  <Route path="guides" element={<GuidesPage />} />
                 </Route>
                 <Route path="settings" element={<SettingsPage />} />
                 <Route path="settings/team" element={<TeamSettingsPage />} />
