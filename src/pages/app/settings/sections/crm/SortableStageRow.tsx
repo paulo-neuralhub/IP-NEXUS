@@ -40,7 +40,7 @@ export function SortableStageRow({
       ref={setNodeRef}
       style={style}
       className={cn(
-        'rounded-lg border bg-background px-3 py-2 flex items-center gap-3',
+        'rounded-lg border bg-background px-3 py-2 flex items-start md:items-center gap-3',
         isDragging && 'opacity-70',
       )}
     >
@@ -53,7 +53,7 @@ export function SortableStageRow({
         <GripVertical className="h-4 w-4" />
       </button>
 
-      <div className="min-w-0 flex-1 grid grid-cols-12 gap-3 items-center">
+      <div className="min-w-0 flex-1 grid grid-cols-12 gap-3 items-start md:items-center">
         <div className="col-span-12 md:col-span-5">
           <Input
             value={name}
@@ -78,13 +78,13 @@ export function SortableStageRow({
           />
         </div>
 
-        <div className="col-span-6 md:col-span-2 flex items-center gap-2">
-          <div className="h-3 w-3 rounded-sm border" style={{ backgroundColor: stage.color }} />
-          <span className="text-xs text-muted-foreground truncate">{stage.color}</span>
+        <div className="col-span-6 md:col-span-2 min-w-0 flex items-center gap-2">
+          <div className="h-3 w-3 shrink-0 rounded-sm border" style={{ backgroundColor: stage.color }} />
+          <span className="min-w-0 text-xs text-muted-foreground truncate">{stage.color}</span>
         </div>
 
-        <div className="col-span-12 md:col-span-3 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+        <div className="col-span-12 md:col-span-3 flex items-start md:items-center justify-between gap-3">
+          <div className="min-w-0 flex flex-wrap items-center gap-x-2 gap-y-2">
             {statusBadge}
             <div className="flex items-center gap-1">
               <Switch
