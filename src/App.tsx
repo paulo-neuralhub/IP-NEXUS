@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth-context";
 import { OrganizationProvider } from "@/contexts/organization-context";
 import { PortalAuthProvider } from "@/hooks/usePortalAuth";
+import { BrandingProvider } from "@/components/branding";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -96,6 +97,7 @@ import DocumentTemplatesPage from "./pages/app/genius/templates";
 import GenerateDocumentPage from "./pages/app/genius/templates/generate";
 import DocumentViewPage from "./pages/app/genius/templates/document-view";
 import ToolsPage from "./pages/app/tools";
+import BrandingSettingsPage from "./pages/app/settings/branding";
 import NotFound from "./pages/NotFound";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
@@ -174,10 +176,11 @@ const App = () => (
     <TooltipProvider>
       <AuthProvider>
         <OrganizationProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
+          <BrandingProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
               {/* Landing */}
               <Route path="/" element={<Landing />} />
               <Route path="/pricing" element={<PricingPage />} />
@@ -291,6 +294,7 @@ const App = () => (
                 <Route path="settings/api-keys" element={<ApiKeysPage />} />
                 <Route path="settings/audit" element={<AuditSettingsPage />} />
                 <Route path="settings/compliance" element={<ComplianceSettingsPage />} />
+                <Route path="settings/branding" element={<BrandingSettingsPage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
                 <Route path="tools" element={<ToolsPage />} />
                 {/* Migrator redirect to Data Hub */}
@@ -368,7 +372,8 @@ const App = () => (
               {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
-          </BrowserRouter>
+            </BrowserRouter>
+          </BrandingProvider>
         </OrganizationProvider>
       </AuthProvider>
     </TooltipProvider>
