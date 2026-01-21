@@ -92,34 +92,34 @@ export function CrmAiTipCallout({
 
   const containerClass =
     variant === 'inline'
-      ? 'bg-background-warm border-warning/30 py-1 px-2 pr-8 max-w-[420px] h-8 flex items-center'
+      ? 'bg-background-warm border-warning/30 py-1 px-2 pr-8 max-w-[560px] h-8 flex items-center'
       : 'bg-background-warm border-warning/30 py-2 px-3 pr-10 max-w-[520px]';
 
   return (
     <Alert className={[containerClass, className].filter(Boolean).join(' ')}>
       <Sparkles className="h-4 w-4 text-warning" />
       <div className="min-w-0">
-        <AlertDescription className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground">Tip:</span>{' '}
+        <AlertDescription className="text-xs text-muted-foreground flex items-center gap-2 min-w-0">
+          <span className="font-medium text-foreground shrink-0">Tip:</span>
           {aiTip.isLoading ? (
             <span className="inline-flex items-center gap-2">
-              <Skeleton className="h-3 w-32" />
+              <Skeleton className="h-3 w-40" />
             </span>
           ) : (
-            <span className="inline">
-              <span className="truncate">
+            <>
+              <span className="min-w-0 flex-1 truncate">
                 {aiTip.data?.tip || 'Puedes configurar etapas y pipelines en Configuración.'}
               </span>
               <Button
                 variant="link"
                 size="sm"
-                className="h-auto p-0 ml-2 text-xs"
+                className="h-auto p-0 text-xs shrink-0"
                 onClick={() => navigate('/app/settings')}
               >
                 Configurar
                 <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Button>
-            </span>
+            </>
           )}
         </AlertDescription>
       </div>
