@@ -155,7 +155,8 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "anthropic/claude-sonnet-4",
+        // Lovable AI Gateway allowed models (default recommendation: gemini-3-flash-preview)
+        model: "google/gemini-3-flash-preview",
         messages: [{ role: "system", content: system }, ...messages],
         max_tokens: 1024,
         temperature: 0.4,
@@ -165,6 +166,22 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
+      // Surface common gateway errors to the client (credits/rate limits)
+      if (response.status === 429) {
+        return new Response(JSON.stringify({ error: "Rate limit exceeded. Inténtalo de nuevo en unos segundos." }), {
+          status: 429,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "Lovable AI: créditos insuficientes. Añade saldo en Workspace > Usage." }),
+          {
+            status: 402,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
       return new Response(JSON.stringify({ error: "AI gateway error" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -195,11 +212,11 @@ serve(async (req) => {
         content: queryText,
       });
 
-      await supabaseAdmin.from("ai_messages").insert({
+        await supabaseAdmin.from("ai_messages").insert({
         conversation_id: conversationId,
         role: "assistant",
         content,
-        model_used: "anthropic/claude-sonnet-4",
+          model_used: "google/gemini-3-flash-preview",
         tokens_input: aiResponse.usage?.prompt_tokens,
         tokens_output: aiResponse.usage?.completion_tokens,
         response_time_ms: responseTimeMs,
