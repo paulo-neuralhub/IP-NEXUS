@@ -32,6 +32,7 @@ import MarketFavorites from "./pages/app/market/favorites";
 import MarketAlerts from "./pages/app/market/alerts";
 import MarketProfile from "./pages/app/market/profile";
 import AgentListPage from "./pages/market/AgentListPage";
+import MarketLandingPage from "./pages/market/MarketLandingPage";
 import RfqListPage from "./pages/app/market/rfq";
 import CreateRfqRequestPage from "./pages/app/market/rfq/new";
 import RfqRequestDetailPage from "./pages/app/market/rfq/[id]";
@@ -189,6 +190,7 @@ const App = () => (
               <Routes>
               {/* Landing */}
               <Route path="/" element={<Landing />} />
+              <Route path="/market" element={<MarketLandingPage />} />
               <Route path="/pricing" element={<PricingPage />} />
               <Route path="/spider-pro" element={<SpiderLandingPage />} />
               
