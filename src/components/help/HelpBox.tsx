@@ -82,7 +82,7 @@ export function HelpBox({
   const isInternal = learnMoreUrl?.startsWith("/");
 
   return (
-    <div className={cn(config.wrapper, className, "mx-auto w-full max-w-sm")}> 
+    <div className={cn(config.wrapper, className, "mx-auto w-[420px] max-w-[92vw]")}> 
       <div className="flex items-start gap-2">
         <config.Icon className={cn(config.iconClass, config.iconColor)} />
 
