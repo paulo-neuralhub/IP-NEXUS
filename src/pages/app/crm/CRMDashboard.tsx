@@ -151,10 +151,9 @@ export default function CRMDashboard() {
 
   return (
     <div className="space-y-6">
-      <CrmAiTipCallout />
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="min-w-0 flex items-center gap-3">
           <Select value={selectedPipelineId} onValueChange={setSelectedPipelineId}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Seleccionar pipeline" />
@@ -165,6 +164,10 @@ export default function CRMDashboard() {
               ))}
             </SelectContent>
           </Select>
+
+          <div className="hidden lg:block">
+            <CrmAiTipCallout />
+          </div>
         </div>
         <Button onClick={() => {
           setDefaultStageId('');
@@ -173,6 +176,11 @@ export default function CRMDashboard() {
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Deal
         </Button>
+      </div>
+
+      {/* Tip (mobile/tablet) */}
+      <div className="lg:hidden">
+        <CrmAiTipCallout />
       </div>
 
       {/* Stats */}

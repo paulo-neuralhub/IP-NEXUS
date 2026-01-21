@@ -6,9 +6,9 @@ import { X, Sparkles, ArrowRight } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/auth-context';
 import { useMarkTipSeen } from '@/hooks/useOnboarding';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const CRM_TIP_KEY = 'crm.dashboard.ai_tip';
 const COOLDOWN_HOURS = 24;
@@ -85,57 +85,48 @@ export function CrmAiTipCallout() {
   if (!tipRow.data?.id) return null;
 
   return (
-    <Card className="bg-background-warm border-warning/30 max-w-2xl">
-      <CardContent className="p-3 flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-warning" />
-            <p className="text-xs font-semibold text-foreground">Tip rápido</p>
-          </div>
-          <div className="mt-2">
-            {aiTip.isLoading ? (
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-[260px]" />
-                <Skeleton className="h-4 w-[220px]" />
-              </div>
-            ) : aiTip.data?.tip ? (
-              <p className="text-xs text-muted-foreground leading-relaxed">{aiTip.data.tip}</p>
-            ) : (
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Puedes configurar etapas y pipelines en Configuración.
-              </p>
-            )}
-          </div>
-          <div className="mt-2 flex items-center gap-2">
-            <Button
-              variant="secondary"
-              size="sm"
-              className="h-7 px-2 text-xs"
-              onClick={() => navigate('/app/settings')}
-            >
-              Ir a configuración CRM
-              <ArrowRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </div>
+    <Alert className="bg-background-warm border-warning/30 py-2 px-3 pr-10 max-w-[520px]">
+      <Sparkles className="h-4 w-4 text-warning" />
+      <div className="min-w-0">
+        <AlertDescription className="text-xs text-muted-foreground">
+          <span className="font-medium text-foreground">Tip:</span>{' '}
+          {aiTip.isLoading ? (
+            <span className="inline-flex items-center gap-2">
+              <Skeleton className="h-3 w-32" />
+            </span>
+          ) : (
+            <span className="inline">
+              <span className="truncate">{aiTip.data?.tip || 'Puedes configurar etapas y pipelines en Configuración.'}</span>
+              <Button
+                variant="link"
+                size="sm"
+                className="h-auto p-0 ml-2 text-xs"
+                onClick={() => navigate('/app/settings')}
+              >
+                Configurar
+                <ArrowRight className="h-3.5 w-3.5 ml-1" />
+              </Button>
+            </span>
+          )}
+        </AlertDescription>
+      </div>
 
-        <Button
-          variant="ghost"
-          size="icon"
-          className="shrink-0"
-          aria-label="Ocultar tip"
-          onClick={async () => {
-            try {
-              setDismissedLocally(true);
-              await markTip.mutateAsync({ tipId: tipRow.data!.id, status: 'dismissed' });
-            } catch {
-              // noop (no toast: non-blocking UI)
-            }
-          }}
-        >
-          <X className="h-4 w-4" />
-        </Button>
-      </CardContent>
-    </Card>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="absolute right-1 top-1 h-7 w-7"
+        aria-label="Ocultar tip"
+        onClick={async () => {
+          try {
+            setDismissedLocally(true);
+            await markTip.mutateAsync({ tipId: tipRow.data!.id, status: 'dismissed' });
+          } catch {
+            // noop
+          }
+        }}
+      >
+        <X className="h-4 w-4" />
+      </Button>
+    </Alert>
   );
 }
