@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Shield, Briefcase, Sparkles } from "lucide-react";
+import { Shield, Briefcase, Sparkles, Store } from "lucide-react";
 
 const Landing = () => {
   return (
@@ -43,6 +43,13 @@ const Landing = () => {
               <Sparkles className="h-4 w-4" />
               Potenciado por IA
             </div>
+            <Link 
+              to="/market" 
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-market/10 text-market text-sm font-medium hover:bg-market/20 transition-colors"
+            >
+              <Store className="h-4 w-4" />
+              IP Market
+            </Link>
           </div>
 
           {/* Action Buttons */}
