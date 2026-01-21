@@ -356,6 +356,109 @@ export type Database = {
           },
         ]
       }
+      agent_badges: {
+        Row: {
+          agent_id: string
+          badge_type: string
+          context: Json | null
+          created_at: string | null
+          earned_at: string | null
+          expires_at: string | null
+          id: string
+          is_active: boolean | null
+        }
+        Insert: {
+          agent_id: string
+          badge_type: string
+          context?: Json | null
+          created_at?: string | null
+          earned_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+        }
+        Update: {
+          agent_id?: string
+          badge_type?: string
+          context?: Json | null
+          created_at?: string | null
+          earned_at?: string | null
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_badges_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "market_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_rankings: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          id: string
+          jurisdiction: string | null
+          rank_change: number | null
+          rank_percentile: number | null
+          rank_position: number
+          rank_previous: number | null
+          ranking_category: string | null
+          ranking_date: string
+          rating_avg: number
+          reputation_score: number
+          response_time_avg: number
+          success_rate: number
+          total_transactions: number
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          id?: string
+          jurisdiction?: string | null
+          rank_change?: number | null
+          rank_percentile?: number | null
+          rank_position: number
+          rank_previous?: number | null
+          ranking_category?: string | null
+          ranking_date?: string
+          rating_avg: number
+          reputation_score: number
+          response_time_avg: number
+          success_rate: number
+          total_transactions: number
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          id?: string
+          jurisdiction?: string | null
+          rank_change?: number | null
+          rank_percentile?: number | null
+          rank_position?: number
+          rank_previous?: number | null
+          ranking_category?: string | null
+          ranking_date?: string
+          rating_avg?: number
+          reputation_score?: number
+          response_time_avg?: number
+          success_rate?: number
+          total_transactions?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_rankings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "market_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_circuit_breaker_states: {
         Row: {
           avg_latency_ms: number | null
@@ -23159,6 +23262,8 @@ export type Database = {
         Returns: Json
       }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
+      assign_automatic_badges: { Args: never; Returns: undefined }
+      calculate_daily_rankings: { Args: never; Returns: undefined }
       calculate_deadline: {
         Args: {
           business_days_only?: boolean
