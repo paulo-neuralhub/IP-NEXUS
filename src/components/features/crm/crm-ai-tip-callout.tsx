@@ -17,7 +17,13 @@ function hoursBetween(a: Date, b: Date) {
   return Math.abs(a.getTime() - b.getTime()) / (1000 * 60 * 60);
 }
 
-export function CrmAiTipCallout() {
+export function CrmAiTipCallout({
+  variant = 'block',
+  className,
+}: {
+  variant?: 'block' | 'inline';
+  className?: string;
+}) {
   const navigate = useNavigate();
   const { user } = useAuth();
   const markTip = useMarkTipSeen();
@@ -84,8 +90,13 @@ export function CrmAiTipCallout() {
   if (tipRow.isLoading || progress.isLoading) return null;
   if (!tipRow.data?.id) return null;
 
+  const containerClass =
+    variant === 'inline'
+      ? 'bg-background-warm border-warning/30 py-1 px-2 pr-8 max-w-[420px] h-8 flex items-center'
+      : 'bg-background-warm border-warning/30 py-2 px-3 pr-10 max-w-[520px]';
+
   return (
-    <Alert className="bg-background-warm border-warning/30 py-2 px-3 pr-10 max-w-[520px]">
+    <Alert className={[containerClass, className].filter(Boolean).join(' ')}>
       <Sparkles className="h-4 w-4 text-warning" />
       <div className="min-w-0">
         <AlertDescription className="text-xs text-muted-foreground">
@@ -96,7 +107,9 @@ export function CrmAiTipCallout() {
             </span>
           ) : (
             <span className="inline">
-              <span className="truncate">{aiTip.data?.tip || 'Puedes configurar etapas y pipelines en Configuración.'}</span>
+              <span className="truncate">
+                {aiTip.data?.tip || 'Puedes configurar etapas y pipelines en Configuración.'}
+              </span>
               <Button
                 variant="link"
                 size="sm"
@@ -114,7 +127,7 @@ export function CrmAiTipCallout() {
       <Button
         variant="ghost"
         size="icon"
-        className="absolute right-1 top-1 h-7 w-7"
+        className={variant === 'inline' ? 'absolute right-0.5 top-0.5 h-7 w-7' : 'absolute right-1 top-1 h-7 w-7'}
         aria-label="Ocultar tip"
         onClick={async () => {
           try {
