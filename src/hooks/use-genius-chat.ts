@@ -9,6 +9,11 @@ import type { AIConversation, AIMessage, AgentType, ConversationContextType } fr
 interface SendMessageParams {
   message: string;
   matterId?: string;
+  helpContext?: {
+    currentPage: string;
+    userLevel?: 'beginner' | 'intermediate' | 'advanced';
+    recentActions?: string[];
+  };
 }
 
 interface ChatState {
@@ -64,7 +69,7 @@ export function useGeniusChat(agentType: AgentType) {
   }, [user?.id, currentOrganization?.id, agentType]);
 
   // Send message
-  const sendMessage = useCallback(async ({ message, matterId }: SendMessageParams) => {
+  const sendMessage = useCallback(async ({ message, matterId, helpContext }: SendMessageParams) => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
 
     try {
@@ -98,14 +103,28 @@ export function useGeniusChat(agentType: AgentType) {
         content: m.content,
       }));
 
+      const functionName = agentType === 'guide' && helpContext ? 'genius-help' : 'genius-chat-v2';
+
       // Call Edge Function
-      const { data, error } = await supabase.functions.invoke('genius-chat-v2', {
-        body: {
-          conversationId,
-          message,
-          contextMatterId: matterId || contextMatterRef.current,
-          history,
-        },
+      const { data, error } = await supabase.functions.invoke(functionName, {
+        body:
+          functionName === 'genius-help'
+            ? {
+                conversationId,
+                message,
+                history,
+                context: {
+                  currentPage: helpContext.currentPage,
+                  userLevel: helpContext.userLevel || 'beginner',
+                  recentActions: helpContext.recentActions || [],
+                },
+              }
+            : {
+                conversationId,
+                message,
+                contextMatterId: matterId || contextMatterRef.current,
+                history,
+              },
       });
 
       if (error) throw error;

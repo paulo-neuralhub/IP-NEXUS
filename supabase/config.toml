@@ -189,6 +189,9 @@ verify_jwt = true
 [functions.genius-chat-v2]
 verify_jwt = false
 
+[functions.genius-help]
+verify_jwt = false
+
 [functions.track-event]
 verify_jwt = false
 
