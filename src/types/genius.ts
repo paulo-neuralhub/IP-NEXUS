@@ -36,6 +36,8 @@ export interface GeniusModeConfig {
 }
 
 // ===== CONVERSACIONES =====
+export type ConversationContextType = 'general' | 'matter' | 'contact' | 'document';
+
 export interface AIConversation {
   id: string;
   organization_id: string;
@@ -45,8 +47,11 @@ export interface AIConversation {
   matter_id?: string;
   contact_id?: string;
   document_id?: string;
+  context_type?: ConversationContextType;
+  context_id?: string;
   status: 'active' | 'archived';
   is_starred: boolean;
+  is_pinned?: boolean;
   message_count: number;
   token_count: number;
   created_at: string;
@@ -58,14 +63,25 @@ export interface AIConversation {
 }
 
 // ===== MENSAJES =====
+export interface AIActionTaken {
+  type: 'search_matters' | 'create_task' | 'get_deadlines' | 'search_contacts';
+  results?: number;
+  title?: string;
+  data?: Record<string, unknown>;
+}
+
 export interface AIMessage {
   id: string;
   conversation_id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
   tokens_used?: number;
+  tokens_input?: number;
+  tokens_output?: number;
   model_used?: string;
   sources?: AISource[];
+  actions_taken?: AIActionTaken[];
+  response_time_ms?: number;
   feedback?: 'positive' | 'negative';
   feedback_comment?: string;
   created_at: string;

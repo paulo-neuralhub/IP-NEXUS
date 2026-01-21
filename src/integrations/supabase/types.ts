@@ -428,9 +428,12 @@ export type Database = {
         Row: {
           agent_type: string
           contact_id: string | null
+          context_id: string | null
+          context_type: string | null
           created_at: string | null
           document_id: string | null
           id: string
+          is_pinned: boolean | null
           is_starred: boolean | null
           last_message_at: string | null
           matter_id: string | null
@@ -445,9 +448,12 @@ export type Database = {
         Insert: {
           agent_type?: string
           contact_id?: string | null
+          context_id?: string | null
+          context_type?: string | null
           created_at?: string | null
           document_id?: string | null
           id?: string
+          is_pinned?: boolean | null
           is_starred?: boolean | null
           last_message_at?: string | null
           matter_id?: string | null
@@ -462,9 +468,12 @@ export type Database = {
         Update: {
           agent_type?: string
           contact_id?: string | null
+          context_id?: string | null
+          context_type?: string | null
           created_at?: string | null
           document_id?: string | null
           id?: string
+          is_pinned?: boolean | null
           is_starred?: boolean | null
           last_message_at?: string | null
           matter_id?: string | null
@@ -679,6 +688,7 @@ export type Database = {
       }
       ai_messages: {
         Row: {
+          actions_taken: Json | null
           content: string
           conversation_id: string
           created_at: string | null
@@ -686,11 +696,15 @@ export type Database = {
           feedback_comment: string | null
           id: string
           model_used: string | null
+          response_time_ms: number | null
           role: string
           sources: Json | null
+          tokens_input: number | null
+          tokens_output: number | null
           tokens_used: number | null
         }
         Insert: {
+          actions_taken?: Json | null
           content: string
           conversation_id: string
           created_at?: string | null
@@ -698,11 +712,15 @@ export type Database = {
           feedback_comment?: string | null
           id?: string
           model_used?: string | null
+          response_time_ms?: number | null
           role: string
           sources?: Json | null
+          tokens_input?: number | null
+          tokens_output?: number | null
           tokens_used?: number | null
         }
         Update: {
+          actions_taken?: Json | null
           content?: string
           conversation_id?: string
           created_at?: string | null
@@ -710,8 +728,11 @@ export type Database = {
           feedback_comment?: string | null
           id?: string
           model_used?: string | null
+          response_time_ms?: number | null
           role?: string
           sources?: Json | null
+          tokens_input?: number | null
+          tokens_output?: number | null
           tokens_used?: number | null
         }
         Relationships: [

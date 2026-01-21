@@ -185,3 +185,6 @@ verify_jwt = false
 
 [functions.generate-document-ai]
 verify_jwt = true
+
+[functions.genius-chat-v2]
+verify_jwt = false
