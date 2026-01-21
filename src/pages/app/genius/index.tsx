@@ -15,9 +15,11 @@ export default function GeniusPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [helpMode, setHelpMode] = useState(searchParams.get('mode') === 'help');
   
   const [agentType, setAgentType] = useState<AgentType>(
-    (searchParams.get('agent') as AgentType) || 'legal'
+    ((searchParams.get('agent') as AgentType) || 'legal')
   );
   const [conversationId, setConversationId] = useState<string | undefined>(
     searchParams.get('conversation') || undefined
@@ -28,6 +30,7 @@ export default function GeniusPage() {
   }, [setTitle]);
   
   const handleAgentChange = (agent: AgentType) => {
+    if (helpMode) return;
     if (agent === 'translator') {
       navigate('/app/genius/translator');
       return;
@@ -55,6 +58,17 @@ export default function GeniusPage() {
     setSearchParams({ agent: agentType, conversation: id });
   };
   
+  const setMode = (next: 'ai' | 'help') => {
+    const isHelp = next === 'help';
+    setHelpMode(isHelp);
+    const nextAgent: AgentType = isHelp ? 'guide' : agentType;
+    setAgentType(nextAgent);
+    setConversationId(undefined);
+    const nextParams: Record<string, string> = { agent: nextAgent };
+    if (isHelp) nextParams.mode = 'help';
+    setSearchParams(nextParams);
+  };
+
   return (
     <div className="space-y-4">
       {currentGuide && shouldShowGuide(featureKey) ? (
@@ -110,11 +124,42 @@ export default function GeniusPage() {
       <div className="flex-1 flex flex-col min-w-0">
         {/* Agent selector */}
         <div className="p-4 border-b bg-gradient-to-r from-muted/50 to-transparent">
-          <AgentSelector
-            selected={agentType}
-            onChange={handleAgentChange}
-            variant="tabs"
-          />
+          <div className="flex items-center justify-between gap-3">
+            <div className={cn(helpMode ? 'opacity-60 pointer-events-none' : '')}>
+              <AgentSelector
+                selected={helpMode ? 'guide' : agentType}
+                onChange={handleAgentChange}
+                variant="tabs"
+              />
+            </div>
+
+            <div className="flex items-center gap-1 rounded-lg border bg-background p-1">
+              <Button
+                type="button"
+                variant={helpMode ? 'ghost' : 'secondary'}
+                size="sm"
+                className="h-8"
+                onClick={() => setMode('ai')}
+              >
+                IA
+              </Button>
+              <Button
+                type="button"
+                variant={helpMode ? 'secondary' : 'ghost'}
+                size="sm"
+                className="h-8"
+                onClick={() => setMode('help')}
+              >
+                Ayuda
+              </Button>
+            </div>
+          </div>
+
+          {helpMode ? (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Estás en <span className="font-medium">Modo Ayuda</span>: preguntas sobre cómo usar IP-NEXUS (con artículos del Help Center).
+            </p>
+          ) : null}
         </div>
         
         {/* Chat */}
@@ -124,6 +169,7 @@ export default function GeniusPage() {
             agentType={agentType}
             initialConversationId={conversationId}
             onConversationChange={handleConversationChange}
+            helpMode={helpMode}
           />
         </div>
       </div>

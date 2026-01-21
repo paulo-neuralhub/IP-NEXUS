@@ -15,6 +15,7 @@ import {
   Calendar,
   Pin,
   PinOff,
+  ChevronRight,
   X
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
@@ -39,12 +40,14 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
+import { useLocation } from 'react-router-dom';
 
 interface Props {
   agentType?: AgentType;
   initialMatterId?: string;
   initialConversationId?: string;
   onConversationChange?: (id: string) => void;
+  helpMode?: boolean;
 }
 
 // Quick action definitions
@@ -59,8 +62,10 @@ export function GeniusChatEnhanced({
   agentType = 'legal',
   initialMatterId,
   initialConversationId,
-  onConversationChange 
+  onConversationChange,
+  helpMode = false,
 }: Props) {
+  const location = useLocation();
   const agent = AGENTS[agentType];
   const { toast } = useToast();
   const { currentOrganization } = useOrganization();
@@ -130,7 +135,22 @@ export function GeniusChatEnhanced({
     setInput('');
     
     try {
-      await sendMessage({ message, matterId: selectedMatterId });
+      await sendMessage({
+        message,
+        matterId: selectedMatterId,
+        helpContext: helpMode
+          ? {
+              currentPage: location.pathname,
+              userLevel:
+                (localStorage.getItem('user_experience_level') as
+                  | 'beginner'
+                  | 'intermediate'
+                  | 'advanced'
+                  | null) || 'beginner',
+              recentActions: [],
+            }
+          : undefined,
+      });
     } catch (err) {
       toast({ 
         variant: 'destructive',
@@ -542,12 +562,14 @@ function ActionBadge({ action }: { action: AIActionTaken }) {
     search_matters: <Folder className="w-3 h-3" />,
     create_task: <CheckSquare className="w-3 h-3" />,
     get_deadlines: <Calendar className="w-3 h-3" />,
+    navigate: <ChevronRight className="w-3 h-3" />,
   };
 
   const labels: Record<string, string> = {
     search_matters: `Búsqueda: ${action.results || 0} resultados`,
     create_task: `Tarea creada: ${action.title || ''}`,
     get_deadlines: `${action.results || 0} plazos encontrados`,
+    navigate: action.title || 'Acción sugerida',
   };
 
   return (
