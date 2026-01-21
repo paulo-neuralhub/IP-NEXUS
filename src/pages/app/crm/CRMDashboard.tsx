@@ -12,6 +12,7 @@ import {
 import { 
   KanbanBoard, DealFormModal, DealDetailSheet 
 } from '@/components/features/crm';
+import { CrmAiTipCallout } from '@/components/features/crm/crm-ai-tip-callout';
 import { DEFAULT_PIPELINES } from '@/lib/constants/crm';
 import { toast } from 'sonner';
 import {
@@ -150,6 +151,7 @@ export default function CRMDashboard() {
 
   return (
     <div className="space-y-6">
+      <CrmAiTipCallout />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
