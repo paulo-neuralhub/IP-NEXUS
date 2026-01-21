@@ -9,7 +9,8 @@ import {
   User, 
   TrendingUp,
   Users,
-  FileQuestion
+  FileQuestion,
+  Trophy
 } from 'lucide-react';
 import { ModuleGate } from '@/components/common/ModuleGate';
 
@@ -18,6 +19,7 @@ const navItems = [
   { to: '/app/market/listings', label: 'Listings', icon: Store },
   { to: '/app/market/rfq', label: 'Presupuestos', icon: FileQuestion },
   { to: '/app/market/agents', label: 'Agentes', icon: Users },
+  { to: '/app/market/rankings', label: 'Rankings', icon: Trophy },
   { to: '/app/market/assets', label: 'Mis Activos', icon: Package },
   { to: '/app/market/transactions', label: 'Transacciones', icon: TrendingUp },
   { to: '/app/market/favorites', label: 'Favoritos', icon: Heart },

@@ -35,6 +35,7 @@ import AgentListPage from "./pages/market/AgentListPage";
 import RfqListPage from "./pages/app/market/rfq";
 import CreateRfqRequestPage from "./pages/app/market/rfq/new";
 import RfqRequestDetailPage from "./pages/app/market/rfq/[id]";
+import RankingsPage from "./pages/app/market/RankingsPage";
 import DataHubPage from "./pages/app/data-hub";
 import ImportExportPage from "./pages/app/data-hub/import-export";
 import GeniusLayout from "./pages/app/genius/GeniusLayout";
@@ -258,6 +259,7 @@ const App = () => (
                   <Route path="rfq" element={<RfqListPage />} />
                   <Route path="rfq/new" element={<CreateRfqRequestPage />} />
                   <Route path="rfq/:id" element={<RfqRequestDetailPage />} />
+                  <Route path="rankings" element={<RankingsPage />} />
                 </Route>
                 <Route path="genius" element={<GeniusLayout />}>
                   <Route index element={<GeniusChatPage />} />
