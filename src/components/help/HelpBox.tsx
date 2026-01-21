@@ -39,7 +39,7 @@ export function HelpBox({
   const config = useMemo(() => {
     const base = {
       // Compact, less intrusive style by default
-      wrapper: "rounded-lg border px-3 py-2.5",
+      wrapper: "w-full max-w-md rounded-lg border px-3 py-2.5",
       iconClass: "h-4 w-4 flex-shrink-0",
     };
 
@@ -79,7 +79,7 @@ export function HelpBox({
   const isInternal = learnMoreUrl?.startsWith("/");
 
   return (
-    <div className={cn(config.wrapper, className)}>
+    <div className={cn(config.wrapper, "mx-auto", className)}>
       <div className="flex items-start gap-2">
         <config.Icon className={cn(config.iconClass, config.iconColor)} />
 
