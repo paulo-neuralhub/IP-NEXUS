@@ -3,9 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Copy, 
   Calendar, DollarSign, User, Tag, FileText, History,
-  Upload, Download, File, X
+  Upload, Download, File, X, Clock
 } from 'lucide-react';
 import { useMatter, useMatterDocuments, useMatterEvents, useDeleteMatter } from '@/hooks/use-matters';
+import { MatterTimeWidget } from '@/components/timetracking';
 import { useOrganization } from '@/contexts/organization-context';
 import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator, DocumentList } from '@/components/features/docket';
 import { MATTER_TYPES, MATTER_STATUSES, MARK_TYPES, JURISDICTIONS } from '@/lib/constants/matters';
@@ -194,6 +195,10 @@ export default function MatterDetail() {
                 <History className="h-4 w-4 mr-2" />
                 Historial
               </TabsTrigger>
+              <TabsTrigger value="time">
+                <Clock className="h-4 w-4 mr-2" />
+                Tiempo
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="info" className="space-y-4 mt-4">
@@ -350,6 +355,14 @@ export default function MatterDetail() {
                   )}
                 </CardContent>
               </Card>
+            </TabsContent>
+            
+            <TabsContent value="time" className="mt-4">
+              <MatterTimeWidget 
+                matterId={id!}
+                matterReference={matter.reference}
+                matterTitle={matter.title}
+              />
             </TabsContent>
           </Tabs>
         </div>

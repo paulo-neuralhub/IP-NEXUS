@@ -54,6 +54,7 @@ export interface TimeEntryFilters {
   userId?: string;
   billingStatus?: string;
   isBillable?: boolean;
+  status?: 'draft' | 'submitted' | 'approved' | 'rejected' | 'billed';
 }
 
 // Get time entries with filters
@@ -103,6 +104,9 @@ export function useTimeEntries(filters: TimeEntryFilters = {}) {
       }
       if (filters.billingStatus) {
         query = query.eq('billing_status', filters.billingStatus);
+      }
+      if (filters.status) {
+        query = query.eq('billing_status', filters.status);
       }
       if (filters.isBillable !== undefined) {
         query = query.eq('is_billable', filters.isBillable);
