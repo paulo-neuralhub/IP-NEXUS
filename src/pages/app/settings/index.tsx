@@ -1,6 +1,5 @@
 // src/pages/app/settings/index.tsx
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { 
   Building2, 
   Palette, 
@@ -29,32 +28,34 @@ import ProfileSettings from './sections/ProfileSettings';
 import DisplaySettings from './sections/DisplaySettings';
 import UserSecuritySettings from './sections/UserSecuritySettings';
 import SessionsSettings from './sections/SessionsSettings';
+import IntegrationsSettings from './sections/IntegrationsSettings';
+import BillingSettings from './sections/BillingSettings';
+import TeamSettings from './sections/TeamSettings';
+import NotificationsSettings from './sections/NotificationsSettings';
 
 // Tabs for organization settings
-// Some tabs navigate to dedicated pages (have 'href'), others render inline
 const ORG_TABS = [
   { id: 'general', label: 'General', icon: Building2, permission: 'settings.view' },
   { id: 'branding', label: 'Marca', icon: Palette, permission: 'settings.view' },
   { id: 'regional', label: 'Regional', icon: Globe, permission: 'settings.view' },
   { id: 'security', label: 'Seguridad', icon: Shield, permission: 'settings.update' },
-  { id: 'integrations', label: 'Integraciones', icon: Link, permission: 'settings.view', href: '/app/settings/integrations' },
+  { id: 'integrations', label: 'Integraciones', icon: Link, permission: 'settings.view' },
   { id: 'email', label: 'Email', icon: Mail, permission: 'settings.update' },
-  { id: 'billing', label: 'Facturación', icon: CreditCard, permission: 'billing.view', href: '/app/settings/billing' },
+  { id: 'billing', label: 'Facturación', icon: CreditCard, permission: 'billing.view' },
   { id: 'modules', label: 'Módulos', icon: Boxes, permission: 'settings.update' },
-  { id: 'team', label: 'Equipo', icon: Users, permission: 'team.view', href: '/app/settings/team' },
+  { id: 'team', label: 'Equipo', icon: Users, permission: 'team.view' },
 ];
 
 // Tabs for user settings
 const USER_TABS = [
   { id: 'profile', label: 'Perfil', icon: User },
-  { id: 'notifications', label: 'Notificaciones', icon: Bell, href: '/app/settings/notifications' },
+  { id: 'notifications', label: 'Notificaciones', icon: Bell },
   { id: 'display', label: 'Pantalla', icon: Monitor },
   { id: 'security', label: 'Seguridad', icon: Key },
   { id: 'sessions', label: 'Sesiones', icon: Laptop },
 ];
 
 export default function SettingsPage() {
-  const navigate = useNavigate();
   const [settingsType, setSettingsType] = useState<'organization' | 'user'>('organization');
   const [activeTab, setActiveTab] = useState('general');
 
@@ -63,14 +64,6 @@ export default function SettingsPage() {
   const handleTypeChange = (type: 'organization' | 'user') => {
     setSettingsType(type);
     setActiveTab(type === 'organization' ? 'general' : 'profile');
-  };
-
-  const handleTabClick = (tab: typeof ORG_TABS[number] | typeof USER_TABS[number]) => {
-    if ('href' in tab && tab.href) {
-      navigate(tab.href);
-    } else {
-      setActiveTab(tab.id);
-    }
   };
 
   return (
@@ -118,10 +111,10 @@ export default function SettingsPage() {
             {tabs.map((tab) => (
               <button
                 key={tab.id}
-                onClick={() => handleTabClick(tab)}
+                onClick={() => setActiveTab(tab.id)}
                 className={cn(
                   "w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors",
-                  activeTab === tab.id && !('href' in tab && tab.href)
+                  activeTab === tab.id
                     ? "bg-primary text-primary-foreground"
                     : "hover:bg-muted text-foreground"
                 )}
@@ -170,11 +163,26 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
           <SecuritySettings />
         </RequirePermission>
       )}
+      {activeTab === 'integrations' && (
+        <RequirePermission permission="settings.view">
+          <IntegrationsSettings />
+        </RequirePermission>
+      )}
       {activeTab === 'email' && (
         <div className="text-muted-foreground">Configuración de Email - Próximamente</div>
       )}
+      {activeTab === 'billing' && (
+        <RequirePermission permission="billing.view">
+          <BillingSettings />
+        </RequirePermission>
+      )}
       {activeTab === 'modules' && (
         <div className="text-muted-foreground">Configuración de Módulos - Próximamente</div>
+      )}
+      {activeTab === 'team' && (
+        <RequirePermission permission="team.view">
+          <TeamSettings />
+        </RequirePermission>
       )}
     </>
   );
@@ -185,6 +193,7 @@ function UserSettingsContent({ activeTab }: { activeTab: string }) {
   return (
     <>
       {activeTab === 'profile' && <ProfileSettings />}
+      {activeTab === 'notifications' && <NotificationsSettings />}
       {activeTab === 'display' && <DisplaySettings />}
       {activeTab === 'security' && <UserSecuritySettings />}
       {activeTab === 'sessions' && <SessionsSettings />}
