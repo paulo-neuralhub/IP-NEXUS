@@ -1568,6 +1568,81 @@ export type Database = {
           },
         ]
       }
+      alert_configurations: {
+        Row: {
+          alert_type: string
+          analyze_frequency: string | null
+          auto_analyze_enabled: boolean | null
+          created_at: string | null
+          id: string
+          is_enabled: boolean | null
+          last_analyzed_at: string | null
+          min_confidence: number | null
+          min_severity: string | null
+          notify_email: boolean | null
+          notify_in_app: boolean | null
+          notify_matter_owner: boolean | null
+          notify_roles: string[] | null
+          notify_slack: boolean | null
+          organization_id: string
+          slack_webhook_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          alert_type: string
+          analyze_frequency?: string | null
+          auto_analyze_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          last_analyzed_at?: string | null
+          min_confidence?: number | null
+          min_severity?: string | null
+          notify_email?: boolean | null
+          notify_in_app?: boolean | null
+          notify_matter_owner?: boolean | null
+          notify_roles?: string[] | null
+          notify_slack?: boolean | null
+          organization_id: string
+          slack_webhook_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          alert_type?: string
+          analyze_frequency?: string | null
+          auto_analyze_enabled?: boolean | null
+          created_at?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          last_analyzed_at?: string | null
+          min_confidence?: number | null
+          min_severity?: string | null
+          notify_email?: boolean | null
+          notify_in_app?: boolean | null
+          notify_matter_owner?: boolean | null
+          notify_roles?: string[] | null
+          notify_slack?: boolean | null
+          organization_id?: string
+          slack_webhook_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "alert_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "alert_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_connections: {
         Row: {
           config: Json | null
@@ -16244,6 +16319,157 @@ export type Database = {
             columns: ["parent_portfolio_id"]
             isOneToOne: false
             referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      predictive_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_type: string
+          analysis_data: Json | null
+          confidence_score: number | null
+          contact_id: string | null
+          created_at: string | null
+          description: string
+          expires_at: string | null
+          feedback_notes: string | null
+          id: string
+          invoice_id: string | null
+          matter_id: string | null
+          organization_id: string
+          recommendation: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          user_id: string | null
+          was_useful: boolean | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type: string
+          analysis_data?: Json | null
+          confidence_score?: number | null
+          contact_id?: string | null
+          created_at?: string | null
+          description: string
+          expires_at?: string | null
+          feedback_notes?: string | null
+          id?: string
+          invoice_id?: string | null
+          matter_id?: string | null
+          organization_id: string
+          recommendation?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          user_id?: string | null
+          was_useful?: boolean | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_type?: string
+          analysis_data?: Json | null
+          confidence_score?: number | null
+          contact_id?: string | null
+          created_at?: string | null
+          description?: string
+          expires_at?: string | null
+          feedback_notes?: string | null
+          id?: string
+          invoice_id?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          recommendation?: string | null
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          user_id?: string | null
+          was_useful?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "predictive_alerts_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]

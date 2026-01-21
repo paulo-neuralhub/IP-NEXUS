@@ -180,5 +180,8 @@ verify_jwt = false
 [functions.calendar-sync]
 verify_jwt = true
 
+[functions.run-predictive-analysis]
+verify_jwt = false
+
 [functions.generate-document-ai]
 verify_jwt = true

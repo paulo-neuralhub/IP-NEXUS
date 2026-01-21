@@ -110,6 +110,7 @@ import WorkflowTemplatesPage from "./pages/app/workflow/templates";
 import WorkflowDetailPage from "./pages/app/workflow/[id]";
 import EditWorkflowPage from "./pages/app/workflow/[id]/edit";
 import AnalyticsPage from "./pages/app/analytics";
+import AlertsPage from "./pages/app/alerts";
 import AnalyticsChartsPage from "./pages/app/analytics/charts";
 import CollabIndexPage from "./pages/app/collab";
 import CollabDetailPage from "./pages/app/collab/[id]";
@@ -269,6 +270,7 @@ const App = () => (
                   <Route path="rates" element={<BillingRatesPage />} />
                 </Route>
                 <Route path="reports" element={<ReportsPage />} />
+                <Route path="alerts" element={<AlertsPage />} />
                 <Route path="reports/new" element={<NewReportPage />} />
                 <Route path="help" element={<HelpLayout />}>
                   <Route index element={<HelpCenterIndex />} />
