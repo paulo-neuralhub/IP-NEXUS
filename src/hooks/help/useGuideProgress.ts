@@ -3,7 +3,6 @@
 // Prompt P78: Contextual Help System (100% functional)
 // ============================================================
 
-import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/auth-context";
@@ -18,10 +17,7 @@ export function useGuideProgress(featureKey: string) {
 
   const enabled = Boolean(user?.id && currentOrganization?.id && featureKey);
 
-  const queryKey = useMemo(
-    () => ["contextual-guide-progress", currentOrganization?.id, user?.id, featureKey],
-    [currentOrganization?.id, user?.id, featureKey],
-  );
+  const queryKey = ["contextual-guide-progress", currentOrganization?.id, user?.id, featureKey] as const;
 
   const progressQuery = useQuery({
     queryKey,
