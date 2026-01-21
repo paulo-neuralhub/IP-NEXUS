@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => ({
       "react",
       "react-dom",
       "@tanstack/react-query",
+      "@radix-ui/react-tooltip",
       "@dnd-kit/core",
       "@dnd-kit/sortable",
     ],
