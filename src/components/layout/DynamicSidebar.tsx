@@ -8,13 +8,14 @@ import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
 import { useOrganizationLicenses } from "@/hooks/use-module-access";
 import { usePendingSignaturesCount } from "@/hooks/signatures";
+import { useAlertStats } from "@/hooks/usePredictiveAlerts";
 import { MODULE_REGISTRY, type ModuleCode } from "@/lib/modules/module-registry";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
   Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, 
   Lock, Shield, ArrowRightLeft, Store, BarChart3, Scale, Sparkles,
-  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock
+  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -176,6 +177,15 @@ const MODULE_NAV: NavItem[] = [
 // Utility items (always visible)
 const UTILITY_NAV: NavItem[] = [
   {
+    path: "/app/alerts",
+    label: "Alertas IA",
+    icon: Bell,
+    moduleCode: "core",
+    color: "#EF4444",
+    requiresLicense: false,
+    badgeKey: "predictiveAlerts",
+  },
+  {
     path: "/app/migrator",
     label: "Migrator",
     icon: ArrowRightLeft,
@@ -199,10 +209,12 @@ export function DynamicSidebar() {
   const { currentOrganization, memberships, setCurrentOrganization } = useOrganization();
   const { data: licenses, isLoading } = useOrganizationLicenses();
   const { data: pendingSignaturesCount = 0 } = usePendingSignaturesCount();
+  const { data: alertStats } = useAlertStats();
 
   // Badge counts map
   const badgeCounts: Record<string, number> = {
     pendingSignatures: pendingSignaturesCount,
+    predictiveAlerts: (alertStats?.critical || 0) + (alertStats?.high || 0),
   };
 
   const otherOrgs = memberships.filter(m => m.organization_id !== currentOrganization?.id);
