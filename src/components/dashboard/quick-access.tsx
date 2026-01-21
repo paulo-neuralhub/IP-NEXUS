@@ -21,14 +21,25 @@ interface QuickAccessButtonProps {
   href: string;
   color: string;
   fullWidth?: boolean;
+  density?: 'default' | 'compact';
 }
 
-function QuickAccessButton({ icon: Icon, label, href, color, fullWidth }: QuickAccessButtonProps) {
+function QuickAccessButton({
+  icon: Icon,
+  label,
+  href,
+  color,
+  fullWidth,
+  density = 'default',
+}: QuickAccessButtonProps) {
   return (
     <Button
       variant="outline"
       className={cn(
-        "h-auto flex-col gap-2 py-4 hover:border-current transition-colors",
+        "h-auto flex-col gap-2 hover:border-current transition-colors",
+        density === 'compact'
+          ? "py-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
+          : "py-4",
         fullWidth && "w-full",
         color
       )}
@@ -54,6 +65,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/spider"
         color="text-module-spider hover:text-module-spider"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={FileText}
@@ -61,6 +73,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/docket"
         color="text-module-docket hover:text-module-docket"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={Users}
@@ -68,6 +81,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/crm"
         color="text-module-crm hover:text-module-crm"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={ShoppingCart}
@@ -75,6 +89,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/market"
         color="text-module-market hover:text-module-market"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={Sparkles}
@@ -82,6 +97,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/genius"
         color="text-module-genius hover:text-module-genius"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={Languages}
@@ -89,6 +105,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/genius/translator"
         color="text-module-genius hover:text-module-genius"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={Calculator}
@@ -96,6 +113,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/finance"
         color="text-module-finance hover:text-module-finance"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={Mail}
@@ -103,6 +121,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/marketing"
         color="text-module-marketing hover:text-module-marketing"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
       <QuickAccessButton
         icon={LinkIcon}
@@ -110,6 +129,7 @@ export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) 
         href="/app/ip-chain"
         color="text-primary hover:text-primary"
         fullWidth={variant === 'bar'}
+        density={variant === 'bar' ? 'compact' : 'default'}
       />
     </div>
   );
