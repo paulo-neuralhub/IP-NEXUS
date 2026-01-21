@@ -194,3 +194,9 @@ verify_jwt = false
 
 [functions.aggregate-analytics]
 verify_jwt = false
+
+[functions.health]
+verify_jwt = false
+
+[functions.uptime-check]
+verify_jwt = false
