@@ -36,7 +36,7 @@ function QuickAccessButton({
     <Button
       variant="outline"
       className={cn(
-        "h-auto flex-col gap-2 hover:border-current transition-colors",
+        "h-auto flex-col gap-2 bg-background hover:bg-warning/10 hover:border-current transition-colors",
         density === 'compact'
           ? "py-2.5 shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
           : "py-4",
