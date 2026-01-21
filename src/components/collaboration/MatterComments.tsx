@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useOrganization } from '@/contexts/organization-context';
-import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { 
   useMatterComments, 
@@ -24,6 +23,8 @@ import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 
+// Simple org user type to avoid TS deep instantiation
+type OrgUser = { id: string; full_name: string | null; avatar_url: string | null };
 interface Props {
   matterId: string;
 }
@@ -43,19 +44,21 @@ export function MatterComments({ matterId }: Props) {
   const updateMutation = useUpdateComment();
   const deleteMutation = useDeleteComment();
 
-  // Org users for mentions
-  const { data: orgUsers } = useQuery({
-    queryKey: ['org-users-mentions', currentOrganization?.id],
-    queryFn: async () => {
-      if (!currentOrganization?.id) return [];
-      const { data } = await supabase
+  // Org users for mentions - using useState to avoid deep type issues
+  const [orgUsers, setOrgUsers] = useState<OrgUser[]>([]);
+  
+  useEffect(() => {
+    if (!currentOrganization?.id) return;
+    
+    // Using raw query to avoid TS deep instantiation issues
+    (async () => {
+      const { data } = await (supabase as any)
         .from('users')
         .select('id, full_name, avatar_url')
         .eq('organization_id', currentOrganization.id);
-      return data || [];
-    },
-    enabled: !!currentOrganization?.id,
-  });
+      setOrgUsers((data || []) as OrgUser[]);
+    })();
+  }, [currentOrganization?.id]);
 
   // Scroll to bottom on new comments
   useEffect(() => {

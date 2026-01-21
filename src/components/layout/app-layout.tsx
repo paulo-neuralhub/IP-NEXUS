@@ -10,10 +10,14 @@ import { ContextualHelpProvider } from "@/components/help/ContextualHelpProvider
 import { TrialBanner } from "@/components/upgrade/TrialBanner";
 import { NexusGuideButton } from "@/components/nexus-guide";
 import { GlobalTimer } from "@/components/timetracking";
+import { usePresence } from "@/hooks/use-realtime-collab";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const { isOnline } = useNetworkStatus();
+  
+  // Track user presence for real-time collaboration
+  usePresence();
   
   // Adjust viewport height for mobile
   useViewportHeight();

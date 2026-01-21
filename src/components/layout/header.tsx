@@ -2,13 +2,12 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
 import { usePageTitle } from "@/contexts/page-context";
-import { ChevronRight, Bell } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import { getInitials } from "@/lib/utils";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { GlobalSearchTrigger } from "@/components/search";
-
+import { NotificationBell } from "@/components/notifications";
 export function Header() {
   const { profile } = useAuth();
   const { currentOrganization } = useOrganization();
@@ -37,10 +36,8 @@ export function Header() {
         {/* Language Switcher */}
         <LanguageSwitcher />
         
-        {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5" />
-        </Button>
+        {/* Notifications - Real-time bell */}
+        <NotificationBell />
 
         {/* User Avatar */}
         <Link to="/app/settings">
