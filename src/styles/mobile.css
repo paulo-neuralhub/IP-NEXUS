@@ -9,6 +9,7 @@
   --sab: env(safe-area-inset-bottom, 0px);
   --sal: env(safe-area-inset-left, 0px);
   --sar: env(safe-area-inset-right, 0px);
+  --vh: 1vh;
 }
 
 /* Clases utilitarias para safe areas */
@@ -221,15 +222,32 @@ body {
 /* Full viewport height accounting for mobile browser chrome */
 .h-screen-mobile {
   height: 100vh;
+  height: 100dvh;
   height: calc(var(--vh, 1vh) * 100);
 }
 
 /* Content area that accounts for bottom nav */
 .main-content-mobile {
-  padding-bottom: calc(4rem + var(--sab));
+  padding-bottom: calc(5rem + var(--sab));
 }
 
 /* Header spacing for status bar */
 .header-safe {
   padding-top: max(0.75rem, var(--sat));
+}
+
+/* Disable overscroll globally on mobile */
+@media (max-width: 768px) {
+  html, body {
+    overscroll-behavior: none;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+  }
+  
+  #root {
+    height: 100%;
+    overflow: hidden;
+  }
 }

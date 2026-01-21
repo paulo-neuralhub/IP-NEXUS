@@ -90,12 +90,9 @@ export function MobileBottomNav() {
 
   return (
     <>
-      {/* Spacer para que el contenido no quede debajo */}
-      <div className="h-16 md:hidden" />
-      
       {/* Bottom Navigation */}
-      <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border safe-area-bottom">
-        <div className="flex items-center justify-around h-16 px-2">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-md border-t border-border" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
+        <div className="flex items-center justify-around h-16 px-1 max-w-lg mx-auto">
           {/* Primeros 2 items */}
           {mainNavItems.slice(0, 2).map((item) => (
             <NavButton

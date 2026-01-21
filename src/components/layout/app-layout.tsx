@@ -5,7 +5,7 @@ import { DynamicSidebar } from "@/components/layout/DynamicSidebar";
 import { Header } from "@/components/layout/header";
 import { PageProvider } from "@/contexts/page-context";
 import { useIsMobile, useNetworkStatus, useViewportHeight } from "@/hooks/use-mobile";
-import { BottomNavigation, MobileHeader, OfflineBanner, PWAInstallPrompt } from "@/components/mobile";
+import { MobileBottomNav, MobileHeader, OfflineBanner, PWAInstallPrompt } from "@/components/mobile";
 import { ContextualHelpProvider } from "@/components/help/ContextualHelpProvider";
 import { TrialBanner } from "@/components/upgrade/TrialBanner";
 import { NexusGuideButton } from "@/components/nexus-guide";
@@ -30,16 +30,29 @@ export function AppLayout() {
             {isMobile ? (
               // Mobile Layout
               <div 
-                className="min-h-screen flex flex-col bg-background" 
-                style={{ minHeight: 'calc(var(--vh, 1vh) * 100)' }}
+                className="h-screen-mobile flex flex-col bg-background overflow-hidden"
               >
+                {/* Offline Banner */}
                 {!isOnline && <OfflineBanner />}
+                
+                {/* Mobile Header */}
                 <MobileHeader />
-                <main className="flex-1 pb-[72px] overflow-auto">
-                  <Outlet />
+                
+                {/* Main Content - scrollable */}
+                <main className="flex-1 overflow-y-auto overflow-x-hidden overscroll-none">
+                  <div className="px-4 py-4 pb-20">
+                    <Outlet />
+                  </div>
                 </main>
-                <BottomNavigation />
+                
+                {/* Bottom Navigation with FAB */}
+                <MobileBottomNav />
+                
+                {/* PWA Install Prompt */}
                 <PWAInstallPrompt />
+                
+                {/* Global Timer for mobile */}
+                <GlobalTimer />
               </div>
             ) : (
               // Desktop Layout

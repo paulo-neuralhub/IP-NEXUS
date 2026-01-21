@@ -20,16 +20,19 @@ export type DeviceType = 'mobile' | 'tablet' | 'desktop';
 // ==========================================
 
 export function useIsMobile(): boolean {
-  const [isMobile, setIsMobile] = useState<boolean>(false);
+  const [isMobile, setIsMobile] = useState<boolean>(() => {
+    // Initial check during SSR/hydration
+    if (typeof window === 'undefined') return false;
+    return window.innerWidth <= BREAKPOINTS.md;
+  });
 
   useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${BREAKPOINTS.md - 1}px)`);
-    const onChange = () => setIsMobile(window.innerWidth < BREAKPOINTS.md);
+    const checkMobile = () => setIsMobile(window.innerWidth <= BREAKPOINTS.md);
     
-    mql.addEventListener('change', onChange);
-    setIsMobile(window.innerWidth < BREAKPOINTS.md);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
     
-    return () => mql.removeEventListener('change', onChange);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
   return isMobile;
