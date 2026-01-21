@@ -17856,6 +17856,341 @@ export type Database = {
           },
         ]
       }
+      rfq_invitations: {
+        Row: {
+          agent_id: string
+          created_at: string | null
+          decline_reason: string | null
+          email_sent: boolean | null
+          expires_at: string | null
+          id: string
+          invitation_type: string | null
+          match_reasons: Json | null
+          match_score: number | null
+          push_sent: boolean | null
+          request_id: string
+          responded_at: string | null
+          sent_at: string | null
+          status: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string | null
+          decline_reason?: string | null
+          email_sent?: boolean | null
+          expires_at?: string | null
+          id?: string
+          invitation_type?: string | null
+          match_reasons?: Json | null
+          match_score?: number | null
+          push_sent?: boolean | null
+          request_id: string
+          responded_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string | null
+          decline_reason?: string | null
+          email_sent?: boolean | null
+          expires_at?: string | null
+          id?: string
+          invitation_type?: string | null
+          match_reasons?: Json | null
+          match_score?: number | null
+          push_sent?: boolean | null
+          request_id?: string
+          responded_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rfq_invitations_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "market_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfq_invitations_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "rfq_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rfq_quotes: {
+        Row: {
+          agent_id: string
+          attachments: Json | null
+          awarded_at: string | null
+          created_at: string | null
+          currency: string | null
+          deliverables: Json | null
+          estimated_duration_days: number
+          estimated_start_date: string | null
+          guarantees: string | null
+          id: string
+          methodology: string | null
+          payment_milestones: Json | null
+          payment_terms: string | null
+          price_breakdown: Json
+          price_per_jurisdiction: Json | null
+          proposal_detail: string | null
+          proposal_summary: string
+          questions: Json | null
+          reference_number: string
+          rejected_at: string | null
+          rejection_reason: string | null
+          relevant_experience: string | null
+          request_id: string
+          shortlisted_at: string | null
+          similar_cases_count: number | null
+          status: string | null
+          submitted_at: string | null
+          total_price: number
+          updated_at: string | null
+          valid_until: string | null
+          viewed_at: string | null
+        }
+        Insert: {
+          agent_id: string
+          attachments?: Json | null
+          awarded_at?: string | null
+          created_at?: string | null
+          currency?: string | null
+          deliverables?: Json | null
+          estimated_duration_days: number
+          estimated_start_date?: string | null
+          guarantees?: string | null
+          id?: string
+          methodology?: string | null
+          payment_milestones?: Json | null
+          payment_terms?: string | null
+          price_breakdown?: Json
+          price_per_jurisdiction?: Json | null
+          proposal_detail?: string | null
+          proposal_summary: string
+          questions?: Json | null
+          reference_number?: string
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          relevant_experience?: string | null
+          request_id: string
+          shortlisted_at?: string | null
+          similar_cases_count?: number | null
+          status?: string | null
+          submitted_at?: string | null
+          total_price: number
+          updated_at?: string | null
+          valid_until?: string | null
+          viewed_at?: string | null
+        }
+        Update: {
+          agent_id?: string
+          attachments?: Json | null
+          awarded_at?: string | null
+          created_at?: string | null
+          currency?: string | null
+          deliverables?: Json | null
+          estimated_duration_days?: number
+          estimated_start_date?: string | null
+          guarantees?: string | null
+          id?: string
+          methodology?: string | null
+          payment_milestones?: Json | null
+          payment_terms?: string | null
+          price_breakdown?: Json
+          price_per_jurisdiction?: Json | null
+          proposal_detail?: string | null
+          proposal_summary?: string
+          questions?: Json | null
+          reference_number?: string
+          rejected_at?: string | null
+          rejection_reason?: string | null
+          relevant_experience?: string | null
+          request_id?: string
+          shortlisted_at?: string | null
+          similar_cases_count?: number | null
+          status?: string | null
+          submitted_at?: string | null
+          total_price?: number
+          updated_at?: string | null
+          valid_until?: string | null
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rfq_quotes_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "market_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfq_quotes_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "rfq_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rfq_requests: {
+        Row: {
+          allow_counter_questions: boolean | null
+          attachments: Json | null
+          auto_match: boolean | null
+          awarded_at: string | null
+          awarded_notes: string | null
+          awarded_quote_id: string | null
+          budget_currency: string | null
+          budget_max: number | null
+          budget_min: number | null
+          budget_type: string | null
+          closes_at: string | null
+          created_at: string | null
+          deadline_completion: string | null
+          deadline_response: string | null
+          description: string
+          details: Json | null
+          id: string
+          invited_agent_ids: string[] | null
+          is_blind: boolean | null
+          jurisdictions: string[]
+          locarno_classes: string[] | null
+          max_quotes: number | null
+          nice_classes: number[] | null
+          organization_id: string | null
+          published_at: string | null
+          quotes_received: number | null
+          reference_number: string
+          requester_id: string
+          requirements: Json | null
+          service_category: string
+          service_type: string
+          status: string | null
+          title: string
+          transaction_id: string | null
+          updated_at: string | null
+          urgency: string | null
+          views_count: number | null
+        }
+        Insert: {
+          allow_counter_questions?: boolean | null
+          attachments?: Json | null
+          auto_match?: boolean | null
+          awarded_at?: string | null
+          awarded_notes?: string | null
+          awarded_quote_id?: string | null
+          budget_currency?: string | null
+          budget_max?: number | null
+          budget_min?: number | null
+          budget_type?: string | null
+          closes_at?: string | null
+          created_at?: string | null
+          deadline_completion?: string | null
+          deadline_response?: string | null
+          description: string
+          details?: Json | null
+          id?: string
+          invited_agent_ids?: string[] | null
+          is_blind?: boolean | null
+          jurisdictions?: string[]
+          locarno_classes?: string[] | null
+          max_quotes?: number | null
+          nice_classes?: number[] | null
+          organization_id?: string | null
+          published_at?: string | null
+          quotes_received?: number | null
+          reference_number?: string
+          requester_id: string
+          requirements?: Json | null
+          service_category: string
+          service_type: string
+          status?: string | null
+          title: string
+          transaction_id?: string | null
+          updated_at?: string | null
+          urgency?: string | null
+          views_count?: number | null
+        }
+        Update: {
+          allow_counter_questions?: boolean | null
+          attachments?: Json | null
+          auto_match?: boolean | null
+          awarded_at?: string | null
+          awarded_notes?: string | null
+          awarded_quote_id?: string | null
+          budget_currency?: string | null
+          budget_max?: number | null
+          budget_min?: number | null
+          budget_type?: string | null
+          closes_at?: string | null
+          created_at?: string | null
+          deadline_completion?: string | null
+          deadline_response?: string | null
+          description?: string
+          details?: Json | null
+          id?: string
+          invited_agent_ids?: string[] | null
+          is_blind?: boolean | null
+          jurisdictions?: string[]
+          locarno_classes?: string[] | null
+          max_quotes?: number | null
+          nice_classes?: number[] | null
+          organization_id?: string | null
+          published_at?: string | null
+          quotes_received?: number | null
+          reference_number?: string
+          requester_id?: string
+          requirements?: Json | null
+          service_category?: string
+          service_type?: string
+          status?: string | null
+          title?: string
+          transaction_id?: string | null
+          updated_at?: string | null
+          urgency?: string | null
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rfq_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "rfq_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfq_requests_requester_id_fkey"
+            columns: ["requester_id"]
+            isOneToOne: false
+            referencedRelation: "market_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfq_requests_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_permissions: {
         Row: {
           conditions: Json | null
