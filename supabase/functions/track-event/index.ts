@@ -18,6 +18,11 @@ interface TrackEventPayload {
   feature_key?: string;
   duration_seconds?: number;
   success?: boolean;
+  timestamp?: string;
+}
+
+interface BatchPayload {
+  events: TrackEventPayload[];
 }
 
 serve(async (req) => {
@@ -31,29 +36,21 @@ serve(async (req) => {
     
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    const body: TrackEventPayload = await req.json();
-    const {
-      event_name,
-      event_category,
-      properties = {},
-      page_path,
-      page_title,
-      referrer,
-      session_id,
-      screen_resolution,
-      feature_key,
-      duration_seconds,
-      success = true,
-    } = body;
+    const body = await req.json();
+    
+    // Support both single event and batch of events
+    const events: TrackEventPayload[] = body.events 
+      ? (body as BatchPayload).events 
+      : [body as TrackEventPayload];
 
-    if (!event_name || !event_category) {
+    if (events.length === 0) {
       return new Response(
-        JSON.stringify({ error: 'event_name and event_category are required' }),
+        JSON.stringify({ error: 'No events provided' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    // Get user from JWT if exists
+    // Get user from JWT if exists (once for all events)
     let userId: string | null = null;
     let orgId: string | null = null;
 
@@ -77,7 +74,7 @@ serve(async (req) => {
       }
     }
 
-    // Parse User-Agent for device info
+    // Parse User-Agent for device info (once for all events)
     const userAgent = req.headers.get('user-agent') || '';
     
     let deviceType: 'desktop' | 'tablet' | 'mobile' = 'desktop';
@@ -103,50 +100,71 @@ serve(async (req) => {
     else if (/android/i.test(userAgent)) os = 'Android';
     else if (/iphone|ipad|ipod/i.test(userAgent)) os = 'iOS';
 
-    // Generate session ID if not provided
-    const finalSessionId = session_id || crypto.randomUUID();
+    // Prepare events for insertion
+    const eventsToInsert = events
+      .filter(e => e.event_name && e.event_category)
+      .map((event) => ({
+        event_name: event.event_name,
+        event_category: event.event_category,
+        properties: event.properties || {},
+        page_path: event.page_path,
+        page_title: event.page_title,
+        referrer: event.referrer,
+        session_id: event.session_id || crypto.randomUUID(),
+        user_id: userId,
+        organization_id: orgId,
+        device_type: deviceType,
+        browser,
+        os,
+        screen_resolution: event.screen_resolution,
+      }));
 
-    // Insert event
-    const { error } = await supabase.from('analytics_events').insert({
-      event_name,
-      event_category,
-      properties,
-      page_path,
-      page_title,
-      referrer,
-      session_id: finalSessionId,
-      user_id: userId,
-      organization_id: orgId,
-      device_type: deviceType,
-      browser,
-      os,
-      screen_resolution,
-    });
+    if (eventsToInsert.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'No valid events to insert' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Batch insert all events
+    const { error } = await supabase.from('analytics_events').insert(eventsToInsert);
 
     if (error) {
-      console.error('Error inserting event:', error);
+      console.error('Error inserting events:', error);
       throw error;
     }
 
-    // If feature_use and feature_key provided, also insert into analytics_feature_usage
-    if (event_category === 'feature_use' && feature_key) {
-      const { error: featureError } = await supabase.from('analytics_feature_usage').insert({
+    // Handle feature usage events
+    const featureEvents = events.filter(
+      e => e.event_category === 'feature_use' && e.feature_key
+    );
+
+    if (featureEvents.length > 0) {
+      const featureRecords = featureEvents.map(event => ({
         organization_id: orgId,
         user_id: userId,
-        feature_key,
-        context: properties,
-        duration_seconds,
-        success,
-      });
+        feature_key: event.feature_key!,
+        context: event.properties || {},
+        duration_seconds: event.duration_seconds,
+        success: event.success ?? true,
+      }));
+
+      const { error: featureError } = await supabase
+        .from('analytics_feature_usage')
+        .insert(featureRecords);
 
       if (featureError) {
         console.error('Error inserting feature_usage:', featureError);
-        // Don't throw - main event already saved
+        // Don't throw - main events already saved
       }
     }
 
     return new Response(
-      JSON.stringify({ success: true, session_id: finalSessionId }),
+      JSON.stringify({ 
+        success: true, 
+        inserted: eventsToInsert.length,
+        session_id: eventsToInsert[0]?.session_id 
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error: unknown) {
