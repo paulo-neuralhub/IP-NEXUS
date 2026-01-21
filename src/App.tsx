@@ -174,6 +174,7 @@ import PortalMessages from "./pages/portal/PortalMessages";
 // Layout
 import { AppLayout } from "@/components/layout/app-layout";
 import { AuthGuard } from "@/components/layout/auth-guard";
+import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
 
 const queryClient = new QueryClient();
 
@@ -185,6 +186,7 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
+            <AnalyticsProvider>
             <Routes>
                 {/* Landing */}
                 <Route path="/" element={<Landing />} />
@@ -384,6 +386,7 @@ const App = () => (
                 {/* 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </AnalyticsProvider>
           </BrowserRouter>
         </BrandingProvider>
       </OrganizationProvider>
