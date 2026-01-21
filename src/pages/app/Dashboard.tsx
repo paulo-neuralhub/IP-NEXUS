@@ -91,6 +91,7 @@ const Dashboard = () => {
               Nueva vigilancia
             </Link>
           </Button>
+          <AICreditsCard used={data.aiCreditsUsed} total={data.aiCreditsTotal} variant="pill" />
           <Button asChild>
             <Link to="/app/genius">
               <Sparkles className="h-4 w-4 mr-2" />
@@ -135,7 +136,7 @@ const Dashboard = () => {
           <RecentActivity activities={data.recentActivity} />
         </div>
 
-        {/* Right Column - Alerts, Deadlines, Signatures, AI Credits, Quick Access */}
+        {/* Right Column - Alerts, Deadlines, Signatures */}
         <div className="space-y-6">
           {/* Predictive Alerts */}
           <AlertsWidget />
@@ -145,13 +146,6 @@ const Dashboard = () => {
 
           {/* Pending Signatures */}
           <PendingSignaturesWidget />
-
-          {/* AI Credits */}
-          <AICreditsCard
-            used={data.aiCreditsUsed}
-            total={data.aiCreditsTotal}
-          />
-
         </div>
       </div>
     </div>
