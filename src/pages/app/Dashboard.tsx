@@ -25,6 +25,7 @@ import {
   ExpiringAssetsWarning,
 } from "@/components/dashboard";
 import { PendingSignaturesWidget } from "@/components/signatures";
+import { AlertsWidget } from "@/components/dashboard/AlertsWidget";
 
 const Dashboard = () => {
   const { profile } = useAuth();
@@ -121,8 +122,11 @@ const Dashboard = () => {
           <RecentActivity activities={data.recentActivity} />
         </div>
 
-        {/* Right Column - Deadlines, Signatures, AI Credits, Quick Access */}
+        {/* Right Column - Alerts, Deadlines, Signatures, AI Credits, Quick Access */}
         <div className="space-y-6">
+          {/* Predictive Alerts */}
+          <AlertsWidget />
+
           {/* Upcoming Deadlines */}
           <UpcomingDeadlines deadlines={data.deadlines} />
 

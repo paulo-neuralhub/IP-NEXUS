@@ -6,7 +6,7 @@ import { MODULE_COLORS } from "@/lib/constants";
 import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
   Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, Lock, Shield,
-  Users2
+  Users2, Bell
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -25,6 +25,7 @@ const navItems = [
   { path: "/app/market", label: "Market", icon: Globe, module: "market" },
   { path: "/app/genius", label: "Genius", icon: Brain, module: "genius", addon: "genius" },
   { separator: true },
+  { path: "/app/alerts", label: "Alertas IA", icon: Bell, module: "alerts" },
   { path: "/app/finance", label: "Finance", icon: DollarSign, module: "finance" },
   { path: "/app/help", label: "Ayuda", icon: HelpCircle, module: "help" },
 ];
