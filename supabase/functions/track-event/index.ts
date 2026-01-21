@@ -15,6 +15,9 @@ interface TrackEventPayload {
   referrer?: string;
   session_id?: string;
   screen_resolution?: string;
+  feature_key?: string;
+  duration_seconds?: number;
+  success?: boolean;
 }
 
 serve(async (req) => {
@@ -38,6 +41,9 @@ serve(async (req) => {
       referrer,
       session_id,
       screen_resolution,
+      feature_key,
+      duration_seconds,
+      success = true,
     } = body;
 
     if (!event_name || !event_category) {
@@ -120,6 +126,23 @@ serve(async (req) => {
     if (error) {
       console.error('Error inserting event:', error);
       throw error;
+    }
+
+    // If feature_use and feature_key provided, also insert into analytics_feature_usage
+    if (event_category === 'feature_use' && feature_key) {
+      const { error: featureError } = await supabase.from('analytics_feature_usage').insert({
+        organization_id: orgId,
+        user_id: userId,
+        feature_key,
+        context: properties,
+        duration_seconds,
+        success,
+      });
+
+      if (featureError) {
+        console.error('Error inserting feature_usage:', featureError);
+        // Don't throw - main event already saved
+      }
     }
 
     return new Response(
