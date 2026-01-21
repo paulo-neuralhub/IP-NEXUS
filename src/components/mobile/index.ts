@@ -7,3 +7,4 @@ export * from './SwipeableListItem';
 export * from './PullToRefresh';
 export * from './MobileMenuPage';
 export * from './MobileLayout';
+export * from './MobileBottomNav';
