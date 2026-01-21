@@ -181,15 +181,15 @@ export function GeniusChatEnhanced({
         {/* Matter selector */}
         <div className="flex items-center gap-2">
           <Select
-            value={selectedMatterId || ''}
-            onValueChange={(v) => setSelectedMatterId(v || undefined)}
+            value={selectedMatterId || 'none'}
+            onValueChange={(v) => setSelectedMatterId(v === 'none' ? undefined : v)}
           >
             <SelectTrigger className="w-[200px] h-9">
               <Folder className="w-4 h-4 mr-2 text-muted-foreground" />
               <SelectValue placeholder="Vincular expediente" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Sin vincular</SelectItem>
+              <SelectItem value="none">Sin vincular</SelectItem>
               {matters.map((m) => (
                 <SelectItem key={m.id} value={m.id}>
                   {m.reference} - {m.title || m.mark_name}
