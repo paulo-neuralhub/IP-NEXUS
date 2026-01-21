@@ -74,7 +74,7 @@ export function FeatureGuide({
   };
 
   return (
-    <Card className={cn("w-full max-w-sm mx-auto border bg-muted/30 shadow-sm", className)}>
+    <Card className={cn("border shadow-sm", className, "mx-auto w-full max-w-sm bg-warning/10")}> 
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">

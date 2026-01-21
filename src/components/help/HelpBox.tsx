@@ -41,7 +41,7 @@ export function HelpBox({
   const config = useMemo(() => {
     const base = {
       // Keep vertical rhythm (less intrusive via softer tone), but make it narrower.
-      wrapper: "w-full max-w-sm rounded-xl border p-4",
+      wrapper: "rounded-xl border p-4",
       iconClass: "h-5 w-5 flex-shrink-0",
     };
 
@@ -50,7 +50,7 @@ export function HelpBox({
         return {
           ...base,
           Icon: Lightbulb,
-          wrapper: cn(base.wrapper, "bg-warning/5 border-warning/20"),
+          wrapper: cn(base.wrapper, "bg-warning/10 border-warning/20"),
           iconColor: "text-warning",
         };
       case "warning":
@@ -65,8 +65,9 @@ export function HelpBox({
         return {
           ...base,
           Icon: HelpCircle,
-          wrapper: cn(base.wrapper, "bg-primary/5 border-primary/20"),
-          iconColor: "text-primary",
+          // Soft toasted yellow so it reads as “contextual/punctual” help.
+          wrapper: cn(base.wrapper, "bg-warning/10 border-warning/20"),
+          iconColor: "text-warning",
         };
     }
   }, [variant]);
@@ -81,7 +82,7 @@ export function HelpBox({
   const isInternal = learnMoreUrl?.startsWith("/");
 
   return (
-    <div className={cn(config.wrapper, "mx-auto", className)}>
+    <div className={cn(config.wrapper, className, "mx-auto w-full max-w-sm")}> 
       <div className="flex items-start gap-2">
         <config.Icon className={cn(config.iconClass, config.iconColor)} />
 
