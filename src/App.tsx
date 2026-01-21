@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth-context";
 import { OrganizationProvider } from "@/contexts/organization-context";
+import { PortalAuthProvider } from "@/hooks/usePortalAuth";
 
 // Pages
 import Landing from "./pages/Landing";
@@ -137,6 +138,16 @@ import BackofficeCalendarPage from "./pages/backoffice/calendar";
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
 import KycVerificationPage from "./pages/app/market/kyc/[type]";
+
+// Portal Pages (Client Portal)
+import PortalLogin from "./pages/portal/PortalLogin";
+import PortalLayout from "./components/portal/PortalLayout";
+import PortalDashboard from "./pages/portal/PortalDashboard";
+import PortalMatters from "./pages/portal/PortalMatters";
+import PortalMatterDetail from "./pages/portal/PortalMatterDetail";
+import PortalDocuments from "./pages/portal/PortalDocuments";
+import PortalInvoices from "./pages/portal/PortalInvoices";
+import PortalMessages from "./pages/portal/PortalMessages";
 
 // Layout
 import { AppLayout } from "@/components/layout/app-layout";
@@ -312,6 +323,17 @@ const App = () => (
                 <Route path="settings" element={<BackofficeSettingsPage />} />
                 <Route path="calendar" element={<BackofficeCalendarPage />} />
                 <Route path="kill-switch" element={<KillSwitchPage />} />
+              </Route>
+              
+              {/* CLIENT PORTAL - Public facing for external clients */}
+              <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLogin /></PortalAuthProvider>} />
+              <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLayout /></PortalAuthProvider>}>
+                <Route path="dashboard" element={<PortalDashboard />} />
+                <Route path="matters" element={<PortalMatters />} />
+                <Route path="matters/:id" element={<PortalMatterDetail />} />
+                <Route path="documents" element={<PortalDocuments />} />
+                <Route path="invoices" element={<PortalInvoices />} />
+                <Route path="messages" element={<PortalMessages />} />
               </Route>
               
               {/* 404 */}
