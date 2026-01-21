@@ -1767,6 +1767,234 @@ export type Database = {
           },
         ]
       }
+      analytics_daily_metrics: {
+        Row: {
+          ai_queries: number | null
+          avg_page_load_ms: number | null
+          avg_session_duration_seconds: number | null
+          bounce_rate: number | null
+          client_errors: number | null
+          created_at: string | null
+          daily_active_users: number | null
+          documents_generated: number | null
+          id: string
+          matters_created: number | null
+          metric_date: string
+          monthly_active_users: number | null
+          new_users: number | null
+          organization_id: string | null
+          p95_page_load_ms: number | null
+          pages_per_session: number | null
+          quote_requests_created: number | null
+          quotes_sent: number | null
+          returning_users: number | null
+          searches_performed: number | null
+          server_errors: number | null
+          top_features: Json | null
+          top_pages: Json | null
+          total_sessions: number | null
+          updated_at: string | null
+          weekly_active_users: number | null
+        }
+        Insert: {
+          ai_queries?: number | null
+          avg_page_load_ms?: number | null
+          avg_session_duration_seconds?: number | null
+          bounce_rate?: number | null
+          client_errors?: number | null
+          created_at?: string | null
+          daily_active_users?: number | null
+          documents_generated?: number | null
+          id?: string
+          matters_created?: number | null
+          metric_date: string
+          monthly_active_users?: number | null
+          new_users?: number | null
+          organization_id?: string | null
+          p95_page_load_ms?: number | null
+          pages_per_session?: number | null
+          quote_requests_created?: number | null
+          quotes_sent?: number | null
+          returning_users?: number | null
+          searches_performed?: number | null
+          server_errors?: number | null
+          top_features?: Json | null
+          top_pages?: Json | null
+          total_sessions?: number | null
+          updated_at?: string | null
+          weekly_active_users?: number | null
+        }
+        Update: {
+          ai_queries?: number | null
+          avg_page_load_ms?: number | null
+          avg_session_duration_seconds?: number | null
+          bounce_rate?: number | null
+          client_errors?: number | null
+          created_at?: string | null
+          daily_active_users?: number | null
+          documents_generated?: number | null
+          id?: string
+          matters_created?: number | null
+          metric_date?: string
+          monthly_active_users?: number | null
+          new_users?: number | null
+          organization_id?: string | null
+          p95_page_load_ms?: number | null
+          pages_per_session?: number | null
+          quote_requests_created?: number | null
+          quotes_sent?: number | null
+          returning_users?: number | null
+          searches_performed?: number | null
+          server_errors?: number | null
+          top_features?: Json | null
+          top_pages?: Json | null
+          total_sessions?: number | null
+          updated_at?: string | null
+          weekly_active_users?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_daily_metrics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "analytics_daily_metrics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_events: {
+        Row: {
+          browser: string | null
+          country_code: string | null
+          created_at: string | null
+          device_type: string | null
+          event_category: string
+          event_date: string | null
+          event_name: string
+          id: string
+          organization_id: string | null
+          os: string | null
+          page_path: string | null
+          page_title: string | null
+          properties: Json | null
+          referrer: string | null
+          region: string | null
+          screen_resolution: string | null
+          session_id: string
+          user_id: string | null
+        }
+        Insert: {
+          browser?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          event_category: string
+          event_date?: string | null
+          event_name: string
+          id?: string
+          organization_id?: string | null
+          os?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          properties?: Json | null
+          referrer?: string | null
+          region?: string | null
+          screen_resolution?: string | null
+          session_id: string
+          user_id?: string | null
+        }
+        Update: {
+          browser?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          event_category?: string
+          event_date?: string | null
+          event_name?: string
+          id?: string
+          organization_id?: string | null
+          os?: string | null
+          page_path?: string | null
+          page_title?: string | null
+          properties?: Json | null
+          referrer?: string | null
+          region?: string | null
+          screen_resolution?: string | null
+          session_id?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "analytics_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      analytics_feature_usage: {
+        Row: {
+          context: Json | null
+          created_at: string | null
+          duration_seconds: number | null
+          feature_key: string
+          id: string
+          organization_id: string | null
+          success: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          feature_key: string
+          id?: string
+          organization_id?: string | null
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          feature_key?: string
+          id?: string
+          organization_id?: string | null
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_feature_usage_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "analytics_feature_usage_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       api_connections: {
         Row: {
           config: Json | null
@@ -23263,6 +23491,10 @@ export type Database = {
       }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
       assign_automatic_badges: { Args: never; Returns: undefined }
+      calculate_daily_analytics: {
+        Args: { p_date?: string }
+        Returns: undefined
+      }
       calculate_daily_rankings: { Args: never; Returns: undefined }
       calculate_deadline: {
         Args: {
