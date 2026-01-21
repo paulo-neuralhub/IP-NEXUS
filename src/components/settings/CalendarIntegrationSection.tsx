@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Calendar, Plus, Loader2, AlertCircle, Info } from 'lucide-react';
+import { Calendar, Plus, Loader2, AlertCircle, Info, Settings2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -16,6 +16,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import { Skeleton } from '@/components/ui/skeleton';
 import {
   type CalendarProvider,
@@ -24,6 +29,8 @@ import {
   useCalendarOAuthCallback,
 } from '@/hooks/use-calendar';
 import { CalendarConnectionCard } from './CalendarConnectionCard';
+import { CalendarOAuthConfig } from './CalendarOAuthConfig';
+import { usePermissions } from '@/hooks/use-permissions';
 
 // Available calendar providers
 const CALENDAR_PROVIDERS: {

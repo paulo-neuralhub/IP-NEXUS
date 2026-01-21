@@ -170,3 +170,12 @@ verify_jwt = true
 
 [functions.nexus-guide-chat]
 verify_jwt = false
+
+[functions.calendar-oauth-url]
+verify_jwt = true
+
+[functions.calendar-oauth-callback]
+verify_jwt = false
+
+[functions.calendar-sync]
+verify_jwt = true

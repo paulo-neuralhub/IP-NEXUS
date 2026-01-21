@@ -174,6 +174,11 @@ export default function IntegrationsPage() {
         <h1 className="text-2xl font-bold text-foreground">Integraciones</h1>
         <p className="text-muted-foreground">Conecta IP-NEXUS con servicios externos</p>
       </div>
+
+      {/* Calendar Integration Section */}
+      <CalendarIntegrationSection />
+
+      <Separator className="my-8" />
       
       {CATEGORIES.map(category => {
         const categoryIntegrations = INTEGRATIONS.filter(i => i.category === category.id);
