@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { registerServiceWorker, isPWAInstalled } from '@/lib/pwa/register-sw';
+import { logger } from '@/lib/logger';
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -68,7 +69,7 @@ export function usePWA() {
       setDeferredPrompt(null);
       return outcome === 'accepted';
     } catch (error) {
-      console.error('PWA install error:', error);
+      logger.error('PWA install error', { error });
       return false;
     }
   }, [deferredPrompt]);
