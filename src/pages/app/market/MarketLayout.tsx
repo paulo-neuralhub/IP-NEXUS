@@ -4,19 +4,19 @@ import {
   LayoutGrid, 
   Store, 
   Package, 
-  Gavel, 
   Heart, 
   Bell, 
   User, 
-  Shield,
   TrendingUp,
-  Users
+  Users,
+  FileQuestion
 } from 'lucide-react';
 import { ModuleGate } from '@/components/common/ModuleGate';
 
 const navItems = [
   { to: '/app/market', label: 'Explorar', icon: LayoutGrid, exact: true },
   { to: '/app/market/listings', label: 'Listings', icon: Store },
+  { to: '/app/market/rfq', label: 'Presupuestos', icon: FileQuestion },
   { to: '/app/market/agents', label: 'Agentes', icon: Users },
   { to: '/app/market/assets', label: 'Mis Activos', icon: Package },
   { to: '/app/market/transactions', label: 'Transacciones', icon: TrendingUp },
