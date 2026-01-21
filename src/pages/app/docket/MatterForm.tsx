@@ -37,6 +37,8 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
+import { FeatureGuide, InfoTooltip } from '@/components/help';
+import { useContextualHelp } from '@/hooks/useContextualHelp';
 
 const TYPE_CODES: Record<MatterType, string> = {
   trademark: 'TM',
@@ -75,6 +77,7 @@ const formSchema = z.object({
 type FormData = z.infer<typeof formSchema>;
 
 export default function MatterForm() {
+  const { featureKey, currentGuide, shouldShowGuide, getFieldTooltip } = useContextualHelp();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -222,6 +225,10 @@ export default function MatterForm() {
   
   return (
     <div className="p-6 space-y-6">
+      {currentGuide && shouldShowGuide(featureKey) ? (
+        <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
+      ) : null}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
@@ -280,7 +287,14 @@ export default function MatterForm() {
                 name="reference"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Referencia *</FormLabel>
+                    <FormLabel>
+                      <span className="inline-flex items-center gap-2">
+                        Referencia *
+                        {getFieldTooltip('matter.reference') ? (
+                          <InfoTooltip content={getFieldTooltip('matter.reference')!} />
+                        ) : null}
+                      </span>
+                    </FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="TM-2026-001" />
                     </FormControl>
@@ -426,7 +440,14 @@ export default function MatterForm() {
                   name="nice_classes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Clases Niza</FormLabel>
+                      <FormLabel>
+                        <span className="inline-flex items-center gap-2">
+                          Clases Niza
+                          {getFieldTooltip('matter.niceClasses') ? (
+                            <InfoTooltip content={getFieldTooltip('matter.niceClasses')!} />
+                          ) : null}
+                        </span>
+                      </FormLabel>
                       <FormControl>
                         <NiceClassSelector 
                           value={field.value || []} 
