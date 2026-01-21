@@ -12,7 +12,6 @@ import {
 import { 
   KanbanBoard, DealFormModal, DealDetailSheet 
 } from '@/components/features/crm';
-import { CrmAiTipCallout } from '@/components/features/crm/crm-ai-tip-callout';
 import { DEFAULT_PIPELINES } from '@/lib/constants/crm';
 import { toast } from 'sonner';
 import {
@@ -164,10 +163,6 @@ export default function CRMDashboard() {
               ))}
             </SelectContent>
           </Select>
-
-          <div className="hidden lg:block">
-            <CrmAiTipCallout />
-          </div>
         </div>
         <Button onClick={() => {
           setDefaultStageId('');
@@ -176,11 +171,6 @@ export default function CRMDashboard() {
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Deal
         </Button>
-      </div>
-
-      {/* Tip (mobile/tablet) */}
-      <div className="lg:hidden">
-        <CrmAiTipCallout />
       </div>
 
       {/* Stats */}

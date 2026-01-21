@@ -92,7 +92,7 @@ export function CrmAiTipCallout({
 
   const containerClass =
     variant === 'inline'
-      ? 'bg-background-warm border-warning/30 py-1 px-2 pr-8 max-w-[560px] h-8 flex items-center'
+      ? 'bg-background-warm border-warning/30 py-1 px-2 pr-8 max-w-[680px] h-8 flex items-center'
       : 'bg-background-warm border-warning/30 py-2 px-3 pr-10 max-w-[520px]';
 
   return (
