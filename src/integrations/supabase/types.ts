@@ -789,6 +789,179 @@ export type Database = {
           },
         ]
       }
+      ai_kb_disclaimers: {
+        Row: {
+          badge_color: string
+          badge_text: string
+          created_at: string | null
+          id: string
+          long_message: string
+          short_message: string
+          show_verification_prompt: boolean | null
+          tier: string
+          verification_message: string | null
+        }
+        Insert: {
+          badge_color: string
+          badge_text: string
+          created_at?: string | null
+          id?: string
+          long_message: string
+          short_message: string
+          show_verification_prompt?: boolean | null
+          tier: string
+          verification_message?: string | null
+        }
+        Update: {
+          badge_color?: string
+          badge_text?: string
+          created_at?: string | null
+          id?: string
+          long_message?: string
+          short_message?: string
+          show_verification_prompt?: boolean | null
+          tier?: string
+          verification_message?: string | null
+        }
+        Relationships: []
+      }
+      ai_kb_jurisdictions: {
+        Row: {
+          accuracy_feedback_negative: number | null
+          accuracy_feedback_positive: number | null
+          code: string
+          confidence_tier: string
+          coverage_gaps: string[] | null
+          created_at: string | null
+          data_sources: string[] | null
+          flag_emoji: string | null
+          id: string
+          is_active: boolean | null
+          is_beta: boolean | null
+          known_limitations: string[] | null
+          language_code: string | null
+          last_content_update: string | null
+          legal_disclaimer: string
+          name: string
+          name_local: string | null
+          official_registry_url: string | null
+          requires_plan: string | null
+          score_data_availability: number | null
+          score_knowledge_depth: number | null
+          score_overall: number | null
+          score_source_quality: number | null
+          score_update_recency: number | null
+          total_queries: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          accuracy_feedback_negative?: number | null
+          accuracy_feedback_positive?: number | null
+          code: string
+          confidence_tier?: string
+          coverage_gaps?: string[] | null
+          created_at?: string | null
+          data_sources?: string[] | null
+          flag_emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_beta?: boolean | null
+          known_limitations?: string[] | null
+          language_code?: string | null
+          last_content_update?: string | null
+          legal_disclaimer?: string
+          name: string
+          name_local?: string | null
+          official_registry_url?: string | null
+          requires_plan?: string | null
+          score_data_availability?: number | null
+          score_knowledge_depth?: number | null
+          score_overall?: number | null
+          score_source_quality?: number | null
+          score_update_recency?: number | null
+          total_queries?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          accuracy_feedback_negative?: number | null
+          accuracy_feedback_positive?: number | null
+          code?: string
+          confidence_tier?: string
+          coverage_gaps?: string[] | null
+          created_at?: string | null
+          data_sources?: string[] | null
+          flag_emoji?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_beta?: boolean | null
+          known_limitations?: string[] | null
+          language_code?: string | null
+          last_content_update?: string | null
+          legal_disclaimer?: string
+          name?: string
+          name_local?: string | null
+          official_registry_url?: string | null
+          requires_plan?: string | null
+          score_data_availability?: number | null
+          score_knowledge_depth?: number | null
+          score_overall?: number | null
+          score_source_quality?: number | null
+          score_update_recency?: number | null
+          total_queries?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      ai_kb_legal_areas: {
+        Row: {
+          area_code: string
+          area_icon: string | null
+          area_limitations: string[] | null
+          area_name: string
+          area_score: number | null
+          documents_indexed: number | null
+          id: string
+          is_active: boolean | null
+          jurisdiction_id: string
+          last_updated: string | null
+          requires_plan: string | null
+        }
+        Insert: {
+          area_code: string
+          area_icon?: string | null
+          area_limitations?: string[] | null
+          area_name: string
+          area_score?: number | null
+          documents_indexed?: number | null
+          id?: string
+          is_active?: boolean | null
+          jurisdiction_id: string
+          last_updated?: string | null
+          requires_plan?: string | null
+        }
+        Update: {
+          area_code?: string
+          area_icon?: string | null
+          area_limitations?: string[] | null
+          area_name?: string
+          area_score?: number | null
+          documents_indexed?: number | null
+          id?: string
+          is_active?: boolean | null
+          jurisdiction_id?: string
+          last_updated?: string | null
+          requires_plan?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_kb_legal_areas_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "ai_kb_jurisdictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_messages: {
         Row: {
           actions_taken: Json | null
@@ -23807,6 +23980,7 @@ export type Database = {
         Returns: boolean
       }
       is_member_of_org: { Args: { org_id: string }; Returns: boolean }
+      is_superadmin: { Args: never; Returns: boolean }
       provision_pack_modules: {
         Args: {
           p_billing_cycle?: string

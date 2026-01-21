@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   ChevronLeft,
   Globe,
+  Library,
   Flag,
   Key,
   ShieldCheck,
@@ -44,6 +45,7 @@ const sidebarSections = [
     items: [
       { label: 'IPO Registry', path: '/backoffice/ipo', icon: Globe },
       { label: 'AI Brain', path: '/backoffice/ai', icon: Brain },
+      { label: 'Knowledge Bases', path: '/backoffice/knowledge-bases', icon: Library },
     ],
   },
   {
