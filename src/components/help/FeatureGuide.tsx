@@ -78,8 +78,9 @@ export function FeatureGuide({
       className={cn(
         "border shadow-sm",
         className,
-        "mx-auto w-[420px] max-w-[92vw] bg-warning/10",
+        "mx-auto bg-warning/10 border-warning/20",
       )}
+      style={{ width: 360, maxWidth: "92vw" }}
     >
       <CardHeader className="pb-3">
         <div className="flex items-start justify-between gap-3">
