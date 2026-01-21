@@ -184,7 +184,7 @@ export default function SSOSettingsPage() {
         {config && (
           <div className="flex items-center gap-2">
             {config.is_active ? (
-              <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
+              <Badge className="bg-success/10 text-success border-success/20">
                 <Check className="w-3 h-3 mr-1" />
                 SSO Activo
               </Badge>

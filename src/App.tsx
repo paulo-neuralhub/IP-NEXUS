@@ -98,6 +98,7 @@ import GenerateDocumentPage from "./pages/app/genius/templates/generate";
 import DocumentViewPage from "./pages/app/genius/templates/document-view";
 import ToolsPage from "./pages/app/tools";
 import BrandingSettingsPage from "./pages/app/settings/branding";
+import SSOSettingsPage from "./pages/app/settings/sso";
 import NotFound from "./pages/NotFound";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
@@ -295,6 +296,7 @@ const App = () => (
                 <Route path="settings/audit" element={<AuditSettingsPage />} />
                 <Route path="settings/compliance" element={<ComplianceSettingsPage />} />
                 <Route path="settings/branding" element={<BrandingSettingsPage />} />
+                <Route path="settings/sso" element={<SSOSettingsPage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
                 <Route path="tools" element={<ToolsPage />} />
                 {/* Migrator redirect to Data Hub */}
