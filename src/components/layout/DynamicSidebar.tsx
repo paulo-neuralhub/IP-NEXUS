@@ -247,6 +247,8 @@ export function DynamicSidebar() {
     const Icon = item.icon;
     const badgeCount = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
 
+    const iconColor = hasAccess ? item.color : "hsl(var(--sidebar-foreground) / 0.35)";
+
     return (
       <Link
         key={item.path}
@@ -262,8 +264,15 @@ export function DynamicSidebar() {
         style={isActive ? { borderLeft: `3px solid ${item.color}` } : undefined}
       >
         <Icon 
-          className="h-5 w-5 shrink-0" 
-          style={{ color: isActive ? item.color : undefined }} 
+          className={cn(
+            "h-5 w-5 shrink-0 transition-opacity",
+            hasAccess
+              ? isActive
+                ? "opacity-100"
+                : "opacity-90 group-hover:opacity-100"
+              : "opacity-70"
+          )}
+          style={{ color: iconColor }}
         />
         <span className="flex-1 truncate">{item.label}</span>
         
