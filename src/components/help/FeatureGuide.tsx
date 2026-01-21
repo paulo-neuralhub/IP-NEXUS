@@ -75,11 +75,11 @@ export function FeatureGuide({
 
   return (
     <Card className={cn("border bg-card shadow-sm", className)}>
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-2 pt-3">
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1">
-            <CardTitle className="text-base">{title}</CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <CardTitle className="text-sm">{title}</CardTitle>
+            <p className="text-xs text-muted-foreground">
               Paso {currentStep + 1} de {steps.length}
             </p>
           </div>
@@ -90,19 +90,19 @@ export function FeatureGuide({
         </div>
       </CardHeader>
 
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         {step?.image ? (
           <img
             src={step.image}
             alt={step.title}
             loading="lazy"
-            className="h-40 w-full rounded-lg border object-cover"
+            className="h-28 w-full rounded-lg border object-cover"
           />
         ) : null}
 
         <div className="space-y-1">
-          <h3 className="font-medium leading-tight">{step?.title}</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">{step?.description}</p>
+          <h3 className="text-sm font-medium leading-tight">{step?.title}</h3>
+          <p className="text-xs text-muted-foreground leading-relaxed">{step?.description}</p>
         </div>
 
         <div className="flex items-center gap-1">
@@ -122,18 +122,22 @@ export function FeatureGuide({
             variant="outline"
             onClick={() => setCurrentStep((c) => Math.max(0, c - 1))}
             disabled={currentStep === 0}
+            className="h-8"
           >
             <ChevronLeft className="mr-2 h-4 w-4" />
             Anterior
           </Button>
 
           {isLastStep ? (
-            <Button onClick={handleComplete}>
+            <Button onClick={handleComplete} className="h-8">
               <CheckCircle className="mr-2 h-4 w-4" />
               Completar
             </Button>
           ) : (
-            <Button onClick={() => setCurrentStep((c) => Math.min(steps.length - 1, c + 1))}>
+            <Button
+              onClick={() => setCurrentStep((c) => Math.min(steps.length - 1, c + 1))}
+              className="h-8"
+            >
               Siguiente
               <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
