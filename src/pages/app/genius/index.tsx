@@ -6,8 +6,11 @@ import { usePageTitle } from '@/contexts/page-context';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { FeatureGuide, HelpBox } from '@/components/help';
+import { useContextualHelp } from '@/hooks/useContextualHelp';
 
 export default function GeniusPage() {
+  const { featureKey, currentGuide, shouldShowGuide } = useContextualHelp();
   const { setTitle } = usePageTitle();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -53,7 +56,22 @@ export default function GeniusPage() {
   };
   
   return (
-    <div className="h-[calc(100vh-8rem)] flex rounded-xl border bg-card overflow-hidden shadow-sm">
+    <div className="space-y-4">
+      {currentGuide && shouldShowGuide(featureKey) ? (
+        <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
+      ) : null}
+
+      <HelpBox
+        title="Tip rápido"
+        variant="info"
+        dismissible
+        dismissKey="genius_agents_tip"
+      >
+        Cambia de agente según la tarea (LEGAL/OPS/WATCH…). Si quieres mantener el contexto, abre una conversación existente
+        en la barra lateral.
+      </HelpBox>
+
+      <div className="h-[calc(100vh-10rem)] flex rounded-xl border bg-card overflow-hidden shadow-sm">
       {/* Mobile sidebar toggle */}
       <Button
         variant="ghost"
@@ -109,6 +127,7 @@ export default function GeniusPage() {
           />
         </div>
       </div>
+    </div>
     </div>
   );
 }

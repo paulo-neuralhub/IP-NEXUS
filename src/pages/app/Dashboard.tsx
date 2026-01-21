@@ -26,8 +26,11 @@ import {
 } from "@/components/dashboard";
 import { PendingSignaturesWidget } from "@/components/signatures";
 import { AlertsWidget } from "@/components/dashboard/AlertsWidget";
+import { FeatureGuide } from "@/components/help";
+import { useContextualHelp } from "@/hooks/useContextualHelp";
 
 const Dashboard = () => {
+  const { featureKey, currentGuide, shouldShowGuide } = useContextualHelp();
   const { profile } = useAuth();
   const { currentOrganization } = useOrganization();
   const { setTitle } = usePageTitle();
@@ -54,6 +57,13 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
+      {currentGuide && shouldShowGuide(featureKey) ? (
+        <FeatureGuide
+          featureKey={featureKey}
+          title={currentGuide.title}
+          steps={currentGuide.steps}
+        />
+      ) : null}
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="bg-background-card rounded-xl p-6 border border-border flex-1 mr-4">

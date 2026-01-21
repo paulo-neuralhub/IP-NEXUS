@@ -45,14 +45,31 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useToast } from '@/hooks/use-toast';
 import { CommandCenter } from '@/components/docket/god-mode';
+import { FeatureGuide, HelpBox } from '@/components/help';
+import { useContextualHelp } from '@/hooks/useContextualHelp';
 
 const ITEMS_PER_PAGE = 20;
 
 export default function DocketPage() {
   const [activeView, setActiveView] = useState<'command' | 'matters'>('command');
+  const { featureKey, currentGuide, shouldShowGuide } = useContextualHelp();
 
   return (
     <div className="p-6 space-y-6">
+      {currentGuide && shouldShowGuide(featureKey) ? (
+        <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
+      ) : null}
+
+      <HelpBox
+        title="Tip rápido"
+        variant="tip"
+        dismissible
+        dismissKey="docket_command_toggle_tip"
+      >
+        Alterna entre <span className="font-medium">Command Center</span> y{' '}
+        <span className="font-medium">Expedientes</span> según lo que necesites hacer.
+      </HelpBox>
+
       {/* View Toggle */}
       <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'command' | 'matters')}>
         <TabsList className="grid w-[400px] grid-cols-2">

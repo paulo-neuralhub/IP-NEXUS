@@ -13,6 +13,8 @@ import {
   Trophy
 } from 'lucide-react';
 import { ModuleGate } from '@/components/common/ModuleGate';
+import { FeatureGuide } from '@/components/help';
+import { useContextualHelp } from '@/hooks/useContextualHelp';
 
 const navItems = [
   { to: '/app/market', label: 'Explorar', icon: LayoutGrid, exact: true },
@@ -29,10 +31,15 @@ const navItems = [
 
 export default function MarketLayout() {
   const location = useLocation();
+  const { featureKey, currentGuide, shouldShowGuide } = useContextualHelp();
   
   return (
     <ModuleGate module="market">
       <div className="space-y-6">
+        {currentGuide && shouldShowGuide(featureKey) ? (
+          <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
+        ) : null}
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
