@@ -17,9 +17,10 @@ import {
   Users,
   KeyRound,
   Code,
+  TrendingUp,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { RequirePermission } from '@/components/auth/RequirePermission';
+import { RequirePermission, RequireRole } from '@/components/auth/RequirePermission';
 
 // Settings Section Components
 import GeneralSettings from './sections/GeneralSettings';
@@ -36,6 +37,7 @@ import TeamSettings from './sections/TeamSettings';
 import NotificationsSettings from './sections/NotificationsSettings';
 import SSOSettings from './sections/SSOSettings';
 import ApiWebhooksSettings from './sections/ApiWebhooksSettings';
+import CrmSettings from './sections/CrmSettings';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -50,6 +52,7 @@ const ORG_TABS = [
   { id: 'billing', label: 'Facturación', icon: CreditCard, permission: 'billing.view' },
   { id: 'modules', label: 'Módulos', icon: Boxes, permission: 'settings.update' },
   { id: 'team', label: 'Equipo', icon: Users, permission: 'team.view' },
+  { id: 'crm', label: 'CRM', icon: TrendingUp, permission: 'settings.view' },
 ];
 
 // Tabs for user settings
@@ -199,6 +202,11 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
         <RequirePermission permission="team.view">
           <TeamSettings />
         </RequirePermission>
+      )}
+      {activeTab === 'crm' && (
+        <RequireRole roles={["owner", "admin", "manager"]}>
+          <CrmSettings />
+        </RequireRole>
       )}
     </>
   );

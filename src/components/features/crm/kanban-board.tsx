@@ -32,11 +32,13 @@ export function KanbanBoard({ pipeline, deals, onDealClick, onAddDeal }: Props) 
     useSensor(KeyboardSensor)
   );
   
+  const stages = [...(pipeline.stages || [])].sort((a, b) => a.position - b.position);
+
   // Agrupar deals por stage
-  const dealsByStage = pipeline.stages?.reduce((acc, stage) => {
+  const dealsByStage = stages.reduce((acc, stage) => {
     acc[stage.id] = deals.filter(d => d.stage_id === stage.id);
     return acc;
-  }, {} as Record<string, Deal[]>) || {};
+  }, {} as Record<string, Deal[]>);
   
   const activeDeal = activeId ? deals.find(d => d.id === activeId) : null;
   
@@ -93,7 +95,7 @@ export function KanbanBoard({ pipeline, deals, onDealClick, onAddDeal }: Props) 
       onDragEnd={handleDragEnd}
     >
       <div className="flex gap-4 overflow-x-auto pb-4 min-h-[500px]">
-        {pipeline.stages?.map((stage) => (
+        {stages.map((stage) => (
           <KanbanColumn
             key={stage.id}
             stage={stage}
