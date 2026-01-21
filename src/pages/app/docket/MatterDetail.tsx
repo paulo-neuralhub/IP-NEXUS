@@ -3,12 +3,13 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Copy, 
   Calendar, DollarSign, User, Tag, FileText, History,
-  Upload, Download, File, X, Clock
+  Upload, Download, File, X, Clock, MessageSquare, Users
 } from 'lucide-react';
 import { useMatter, useMatterDocuments, useMatterEvents, useDeleteMatter } from '@/hooks/use-matters';
 import { MatterTimeWidget } from '@/components/timetracking';
 import { useOrganization } from '@/contexts/organization-context';
 import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator, DocumentList } from '@/components/features/docket';
+import { MatterPresence, MatterComments, MatterActivityFeed } from '@/components/collaboration';
 import { MATTER_TYPES, MATTER_STATUSES, MARK_TYPES, JURISDICTIONS } from '@/lib/constants/matters';
 import type { MatterType, MatterStatus, MarkType, Matter } from '@/types/matters';
 import { formatDate, formatCurrency } from '@/lib/utils';
@@ -148,35 +149,40 @@ export default function MatterDetail() {
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
-          <Button onClick={() => navigate(`/app/docket/${id}/edit`)}>
-            <Pencil className="h-4 w-4 mr-2" />
-            Editar
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon">
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => toast({ title: 'Duplicar', description: 'Próximamente' })}>
-                <Copy className="h-4 w-4 mr-2" />
-                Duplicar
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem 
-                className="text-destructive focus:text-destructive"
-                onClick={() => setShowDeleteDialog(true)}
-              >
-                <Trash2 className="h-4 w-4 mr-2" />
-                Eliminar
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+        {/* Presence indicators + Actions */}
+        <div className="flex items-center gap-4">
+          <MatterPresence matterId={id!} />
+          
+          <div className="flex items-center gap-2">
+            <Button onClick={() => navigate(`/app/docket/${id}/edit`)}>
+              <Pencil className="h-4 w-4 mr-2" />
+              Editar
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => toast({ title: 'Duplicar', description: 'Próximamente' })}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Duplicar
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem 
+                  className="text-destructive focus:text-destructive"
+                  onClick={() => setShowDeleteDialog(true)}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Eliminar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
-      
+
       {/* Content */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content */}
@@ -451,6 +457,12 @@ export default function MatterDetail() {
               </CardContent>
             </Card>
           )}
+          
+          {/* Comments - Real-time collaboration */}
+          <MatterComments matterId={id!} />
+          
+          {/* Activity Feed */}
+          <MatterActivityFeed matterId={id!} />
         </div>
       </div>
       
