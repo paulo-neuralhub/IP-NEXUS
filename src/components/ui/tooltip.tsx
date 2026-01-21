@@ -3,7 +3,20 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 
 import { cn } from "@/lib/utils";
 
-const TooltipProvider = TooltipPrimitive.Provider;
+/**
+ * NOTE:
+ * We intentionally make TooltipProvider a no-op wrapper.
+ * In some Vite prebundle states, Radix's TooltipProvider can crash with
+ * `Cannot read properties of null (reading 'useRef')` (duplicate React dispatcher).
+ * Tooltips still work without the provider; we only lose global delay config.
+ */
+type TooltipProviderProps = {
+  children: React.ReactNode;
+  // accept any extra props (e.g., delayDuration) for compatibility
+  [key: string]: unknown;
+};
+
+const TooltipProvider = ({ children }: TooltipProviderProps) => <>{children}</>;
 
 const Tooltip = TooltipPrimitive.Root;
 
