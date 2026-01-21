@@ -20,14 +20,16 @@ interface QuickAccessButtonProps {
   label: string;
   href: string;
   color: string;
+  fullWidth?: boolean;
 }
 
-function QuickAccessButton({ icon: Icon, label, href, color }: QuickAccessButtonProps) {
+function QuickAccessButton({ icon: Icon, label, href, color, fullWidth }: QuickAccessButtonProps) {
   return (
     <Button
       variant="outline"
       className={cn(
         "h-auto flex-col gap-2 py-4 hover:border-current transition-colors",
+        fullWidth && "w-full",
         color
       )}
       asChild
@@ -40,68 +42,92 @@ function QuickAccessButton({ icon: Icon, label, href, color }: QuickAccessButton
   );
 }
 
-export function QuickAccess() {
+export function QuickAccess({ variant = 'card' }: { variant?: 'card' | 'bar' }) {
+  const content = (
+    <div className={cn(
+      "grid gap-2",
+      variant === 'bar' ? "grid-cols-2 md:grid-cols-3 lg:grid-cols-9" : "grid-cols-3"
+    )}>
+      <QuickAccessButton
+        icon={Eye}
+        label="Spider"
+        href="/app/spider"
+        color="text-module-spider hover:text-module-spider"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={FileText}
+        label="Docket"
+        href="/app/docket"
+        color="text-module-docket hover:text-module-docket"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={Users}
+        label="CRM"
+        href="/app/crm"
+        color="text-module-crm hover:text-module-crm"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={ShoppingCart}
+        label="Market"
+        href="/app/market"
+        color="text-module-market hover:text-module-market"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={Sparkles}
+        label="Genius"
+        href="/app/genius"
+        color="text-module-genius hover:text-module-genius"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={Languages}
+        label="Traductor"
+        href="/app/genius/translator"
+        color="text-module-genius hover:text-module-genius"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={Calculator}
+        label="Finance"
+        href="/app/finance"
+        color="text-module-finance hover:text-module-finance"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={Mail}
+        label="Marketing"
+        href="/app/marketing"
+        color="text-module-marketing hover:text-module-marketing"
+        fullWidth={variant === 'bar'}
+      />
+      <QuickAccessButton
+        icon={LinkIcon}
+        label="IP-Chain"
+        href="/app/ip-chain"
+        color="text-primary hover:text-primary"
+        fullWidth={variant === 'bar'}
+      />
+    </div>
+  );
+
+  if (variant === 'bar') {
+    return (
+      <section aria-label="Accesos rápidos" className="w-full">
+        {content}
+      </section>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Accesos Rápidos</CardTitle>
       </CardHeader>
-      <CardContent className="grid grid-cols-3 gap-2">
-        <QuickAccessButton
-          icon={Eye}
-          label="Spider"
-          href="/app/spider"
-          color="text-module-spider hover:text-module-spider"
-        />
-        <QuickAccessButton
-          icon={FileText}
-          label="Docket"
-          href="/app/docket"
-          color="text-module-docket hover:text-module-docket"
-        />
-        <QuickAccessButton
-          icon={Users}
-          label="CRM"
-          href="/app/crm"
-          color="text-module-crm hover:text-module-crm"
-        />
-        <QuickAccessButton
-          icon={ShoppingCart}
-          label="Market"
-          href="/app/market"
-          color="text-module-market hover:text-module-market"
-        />
-        <QuickAccessButton
-          icon={Sparkles}
-          label="Genius"
-          href="/app/genius"
-          color="text-module-genius hover:text-module-genius"
-        />
-        <QuickAccessButton
-          icon={Languages}
-          label="Traductor"
-          href="/app/genius/translator"
-          color="text-module-genius hover:text-module-genius"
-        />
-        <QuickAccessButton
-          icon={Calculator}
-          label="Finance"
-          href="/app/finance"
-          color="text-module-finance hover:text-module-finance"
-        />
-        <QuickAccessButton
-          icon={Mail}
-          label="Marketing"
-          href="/app/marketing"
-          color="text-module-marketing hover:text-module-marketing"
-        />
-        <QuickAccessButton
-          icon={LinkIcon}
-          label="IP-Chain"
-          href="/app/ip-chain"
-          color="text-indigo-500 hover:text-indigo-500"
-        />
-      </CardContent>
+      <CardContent>{content}</CardContent>
     </Card>
   );
 }

@@ -100,6 +100,9 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Quick Access (full-width) */}
+      <QuickAccess variant="bar" />
+
       {/* Critical Alerts */}
       <CriticalAlertsBanner count={data.criticalAlerts} />
 
@@ -149,8 +152,6 @@ const Dashboard = () => {
             total={data.aiCreditsTotal}
           />
 
-          {/* Quick Access */}
-          <QuickAccess />
         </div>
       </div>
     </div>
