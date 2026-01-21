@@ -2251,6 +2251,92 @@ export type Database = {
           },
         ]
       }
+      billing_rates: {
+        Row: {
+          contact_id: string | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          effective_from: string | null
+          effective_until: string | null
+          hourly_rate: number
+          id: string
+          is_active: boolean | null
+          matter_type: string | null
+          name: string | null
+          organization_id: string
+          rate_type: string
+          role_name: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          effective_from?: string | null
+          effective_until?: string | null
+          hourly_rate: number
+          id?: string
+          is_active?: boolean | null
+          matter_type?: string | null
+          name?: string | null
+          organization_id: string
+          rate_type: string
+          role_name?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          effective_from?: string | null
+          effective_until?: string | null
+          hourly_rate?: number
+          id?: string
+          is_active?: boolean | null
+          matter_type?: string | null
+          name?: string | null
+          organization_id?: string
+          rate_type?: string
+          role_name?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "billing_rates_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_rates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "billing_rates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_rates_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blockchain_timestamps: {
         Row: {
           block_number: number | null
@@ -19332,6 +19418,143 @@ export type Database = {
           },
         ]
       }
+      time_entries: {
+        Row: {
+          activity_type: string | null
+          approved_at: string | null
+          approved_by: string | null
+          billing_amount: number | null
+          billing_rate: number | null
+          billing_rate_id: string | null
+          billing_status: string | null
+          created_at: string | null
+          currency: string | null
+          date: string
+          description: string
+          duration_minutes: number
+          end_time: string | null
+          id: string
+          invoice_id: string | null
+          invoice_line_id: string | null
+          is_billable: boolean | null
+          matter_id: string
+          organization_id: string
+          rejection_reason: string | null
+          start_time: string | null
+          task_id: string | null
+          timer_running: boolean | null
+          timer_started_at: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          activity_type?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          billing_amount?: number | null
+          billing_rate?: number | null
+          billing_rate_id?: string | null
+          billing_status?: string | null
+          created_at?: string | null
+          currency?: string | null
+          date?: string
+          description: string
+          duration_minutes: number
+          end_time?: string | null
+          id?: string
+          invoice_id?: string | null
+          invoice_line_id?: string | null
+          is_billable?: boolean | null
+          matter_id: string
+          organization_id: string
+          rejection_reason?: string | null
+          start_time?: string | null
+          task_id?: string | null
+          timer_running?: boolean | null
+          timer_started_at?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          activity_type?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          billing_amount?: number | null
+          billing_rate?: number | null
+          billing_rate_id?: string | null
+          billing_status?: string | null
+          created_at?: string | null
+          currency?: string | null
+          date?: string
+          description?: string
+          duration_minutes?: number
+          end_time?: string | null
+          id?: string
+          invoice_id?: string | null
+          invoice_line_id?: string | null
+          is_billable?: boolean | null
+          matter_id?: string
+          organization_id?: string
+          rejection_reason?: string | null
+          start_time?: string | null
+          task_id?: string | null
+          timer_running?: boolean | null
+          timer_started_at?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "time_entries_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_billing_rate_id_fkey"
+            columns: ["billing_rate_id"]
+            isOneToOne: false
+            referencedRelation: "billing_rates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "time_entries_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "time_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trademark_visuals: {
         Row: {
           color_histogram: Json | null
@@ -21016,6 +21239,14 @@ export type Database = {
       get_analytics_stats: {
         Args: { p_days?: number; p_organization_id: string }
         Returns: Json
+      }
+      get_applicable_rate: {
+        Args: {
+          p_matter_id: string
+          p_organization_id: string
+          p_user_id: string
+        }
+        Returns: number
       }
       get_assets_grouped: {
         Args: { p_group_by: string; p_organization_id: string }
