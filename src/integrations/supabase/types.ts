@@ -17139,6 +17139,196 @@ export type Database = {
           },
         ]
       }
+      signature_audit_log: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_ip: string | null
+          actor_name: string | null
+          actor_type: string | null
+          actor_user_agent: string | null
+          created_at: string | null
+          details: Json | null
+          id: string
+          signature_request_id: string
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_ip?: string | null
+          actor_name?: string | null
+          actor_type?: string | null
+          actor_user_agent?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          signature_request_id: string
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_ip?: string | null
+          actor_name?: string | null
+          actor_type?: string | null
+          actor_user_agent?: string | null
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          signature_request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signature_audit_log_signature_request_id_fkey"
+            columns: ["signature_request_id"]
+            isOneToOne: false
+            referencedRelation: "signature_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      signature_requests: {
+        Row: {
+          certificate_url: string | null
+          completed_at: string | null
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          document_hash: string | null
+          document_id: string | null
+          document_name: string
+          document_url: string
+          email_message: string | null
+          email_subject: string | null
+          expires_at: string | null
+          external_envelope_id: string | null
+          id: string
+          last_reminder_at: string | null
+          matter_id: string | null
+          organization_id: string
+          provider: string | null
+          reminder_sent_count: number | null
+          sent_at: string | null
+          signature_type: string | null
+          signed_document_hash: string | null
+          signed_document_url: string | null
+          signers: Json
+          status: string | null
+          updated_at: string | null
+          voided_at: string | null
+          voided_reason: string | null
+        }
+        Insert: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_hash?: string | null
+          document_id?: string | null
+          document_name: string
+          document_url: string
+          email_message?: string | null
+          email_subject?: string | null
+          expires_at?: string | null
+          external_envelope_id?: string | null
+          id?: string
+          last_reminder_at?: string | null
+          matter_id?: string | null
+          organization_id: string
+          provider?: string | null
+          reminder_sent_count?: number | null
+          sent_at?: string | null
+          signature_type?: string | null
+          signed_document_hash?: string | null
+          signed_document_url?: string | null
+          signers?: Json
+          status?: string | null
+          updated_at?: string | null
+          voided_at?: string | null
+          voided_reason?: string | null
+        }
+        Update: {
+          certificate_url?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_hash?: string | null
+          document_id?: string | null
+          document_name?: string
+          document_url?: string
+          email_message?: string | null
+          email_subject?: string | null
+          expires_at?: string | null
+          external_envelope_id?: string | null
+          id?: string
+          last_reminder_at?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          provider?: string | null
+          reminder_sent_count?: number | null
+          sent_at?: string | null
+          signature_type?: string | null
+          signed_document_hash?: string | null
+          signed_document_url?: string | null
+          signers?: Json
+          status?: string | null
+          updated_at?: string | null
+          voided_at?: string | null
+          voided_reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signature_requests_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_requests_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_requests_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_requests_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "signature_requests_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "signature_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       similarity_analyses: {
         Row: {
           ai_explanation: string | null
@@ -20734,6 +20924,33 @@ export type Database = {
           total_users: number | null
         }
         Relationships: []
+      }
+      signature_stats: {
+        Row: {
+          completed_count: number | null
+          declined_count: number | null
+          expired_count: number | null
+          organization_id: string | null
+          pending_count: number | null
+          total_count: number | null
+          voided_count: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signature_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "signature_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
