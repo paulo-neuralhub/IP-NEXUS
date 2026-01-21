@@ -4656,6 +4656,103 @@ export type Database = {
           },
         ]
       }
+      document_templates: {
+        Row: {
+          ai_max_tokens: number | null
+          ai_model: string | null
+          ai_system_prompt: string | null
+          ai_temperature: number | null
+          ai_user_prompt_template: string | null
+          average_rating: number | null
+          category: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_public: boolean | null
+          name: string
+          organization_id: string | null
+          output_format: string | null
+          tags: string[] | null
+          template_content: string
+          template_type: string | null
+          updated_at: string | null
+          usage_count: number | null
+          variables: Json | null
+        }
+        Insert: {
+          ai_max_tokens?: number | null
+          ai_model?: string | null
+          ai_system_prompt?: string | null
+          ai_temperature?: number | null
+          ai_user_prompt_template?: string | null
+          average_rating?: number | null
+          category: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          name: string
+          organization_id?: string | null
+          output_format?: string | null
+          tags?: string[] | null
+          template_content: string
+          template_type?: string | null
+          updated_at?: string | null
+          usage_count?: number | null
+          variables?: Json | null
+        }
+        Update: {
+          ai_max_tokens?: number | null
+          ai_model?: string | null
+          ai_system_prompt?: string | null
+          ai_temperature?: number | null
+          ai_user_prompt_template?: string | null
+          average_rating?: number | null
+          category?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_public?: boolean | null
+          name?: string
+          organization_id?: string | null
+          output_format?: string | null
+          tags?: string[] | null
+          template_content?: string
+          template_type?: string | null
+          updated_at?: string | null
+          usage_count?: number | null
+          variables?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "document_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_validity_alerts: {
         Row: {
           acknowledged_at: string | null
@@ -6479,6 +6576,141 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      generated_documents: {
+        Row: {
+          ai_model_used: string | null
+          ai_prompt_used: string | null
+          ai_tokens_used: number | null
+          content: string
+          created_at: string | null
+          created_by: string | null
+          export_format: string | null
+          exported_at: string | null
+          exported_document_id: string | null
+          generation_time_ms: number | null
+          id: string
+          matter_id: string | null
+          name: string
+          organization_id: string
+          parent_id: string | null
+          status: string | null
+          template_id: string | null
+          updated_at: string | null
+          user_feedback: string | null
+          user_rating: number | null
+          variables_input: Json | null
+          variables_resolved: Json | null
+          version: number | null
+        }
+        Insert: {
+          ai_model_used?: string | null
+          ai_prompt_used?: string | null
+          ai_tokens_used?: number | null
+          content: string
+          created_at?: string | null
+          created_by?: string | null
+          export_format?: string | null
+          exported_at?: string | null
+          exported_document_id?: string | null
+          generation_time_ms?: number | null
+          id?: string
+          matter_id?: string | null
+          name: string
+          organization_id: string
+          parent_id?: string | null
+          status?: string | null
+          template_id?: string | null
+          updated_at?: string | null
+          user_feedback?: string | null
+          user_rating?: number | null
+          variables_input?: Json | null
+          variables_resolved?: Json | null
+          version?: number | null
+        }
+        Update: {
+          ai_model_used?: string | null
+          ai_prompt_used?: string | null
+          ai_tokens_used?: number | null
+          content?: string
+          created_at?: string | null
+          created_by?: string | null
+          export_format?: string | null
+          exported_at?: string | null
+          exported_document_id?: string | null
+          generation_time_ms?: number | null
+          id?: string
+          matter_id?: string | null
+          name?: string
+          organization_id?: string
+          parent_id?: string | null
+          status?: string | null
+          template_id?: string | null
+          updated_at?: string | null
+          user_feedback?: string | null
+          user_rating?: number | null
+          variables_input?: Json | null
+          variables_resolved?: Json | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "generated_documents_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_exported_document_id_fkey"
+            columns: ["exported_document_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "generated_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "generated_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
             referencedColumns: ["id"]
           },
         ]
