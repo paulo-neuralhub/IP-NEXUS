@@ -7,13 +7,14 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
 import { useOrganizationLicenses } from "@/hooks/use-module-access";
+import { usePendingSignaturesCount } from "@/hooks/signatures";
 import { MODULE_REGISTRY, type ModuleCode } from "@/lib/modules/module-registry";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
   Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, 
   Lock, Shield, ArrowRightLeft, Store, BarChart3, Scale, Sparkles,
-  Code, Upload, Wallet, Briefcase, GitBranch
+  Code, Upload, Wallet, Briefcase, GitBranch, PenTool
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -45,6 +46,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   ArrowRightLeft,
   Code,
   HelpCircle,
+  PenTool,
 };
 
 interface NavItem {
@@ -54,6 +56,7 @@ interface NavItem {
   moduleCode: ModuleCode;
   color: string;
   requiresLicense: boolean;
+  badgeKey?: string; // Key for dynamic badge count
 }
 
 // Core navigation items (always visible)
@@ -143,6 +146,15 @@ const MODULE_NAV: NavItem[] = [
     requiresLicense: true,
   },
   {
+    path: "/app/legal-ops/signatures",
+    label: "Firmas",
+    icon: PenTool,
+    moduleCode: "legalops",
+    color: "#10B981",
+    requiresLicense: true,
+    badgeKey: "pendingSignatures",
+  },
+  {
     path: "/app/workflow",
     label: "Workflow",
     icon: GitBranch,
@@ -177,6 +189,12 @@ export function DynamicSidebar() {
   const { profile, signOut } = useAuth();
   const { currentOrganization, memberships, setCurrentOrganization } = useOrganization();
   const { data: licenses, isLoading } = useOrganizationLicenses();
+  const { data: pendingSignaturesCount = 0 } = usePendingSignaturesCount();
+
+  // Badge counts map
+  const badgeCounts: Record<string, number> = {
+    pendingSignatures: pendingSignaturesCount,
+  };
 
   const otherOrgs = memberships.filter(m => m.organization_id !== currentOrganization?.id);
   
@@ -205,6 +223,7 @@ export function DynamicSidebar() {
     const license = getModuleLicense(item.moduleCode);
     const isTrialing = license?.trial_ends_at !== null && license?.trial_ends_at !== undefined;
     const Icon = item.icon;
+    const badgeCount = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
 
     return (
       <Link
@@ -228,6 +247,16 @@ export function DynamicSidebar() {
         
         {!hasAccess && (
           <Lock className="h-4 w-4 shrink-0" />
+        )}
+        
+        {/* Dynamic badge count (e.g., pending signatures) */}
+        {hasAccess && badgeCount > 0 && (
+          <Badge 
+            variant="destructive" 
+            className="text-[10px] px-1.5 py-0 min-w-[20px] h-5 flex items-center justify-center"
+          >
+            {badgeCount}
+          </Badge>
         )}
         
         {hasAccess && isTrialing && (

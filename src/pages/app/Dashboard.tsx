@@ -24,6 +24,7 @@ import {
   QuickAccess,
   ExpiringAssetsWarning,
 } from "@/components/dashboard";
+import { PendingSignaturesWidget } from "@/components/signatures";
 
 const Dashboard = () => {
   const { profile } = useAuth();
@@ -120,10 +121,13 @@ const Dashboard = () => {
           <RecentActivity activities={data.recentActivity} />
         </div>
 
-        {/* Right Column - Deadlines, AI Credits, Quick Access */}
+        {/* Right Column - Deadlines, Signatures, AI Credits, Quick Access */}
         <div className="space-y-6">
           {/* Upcoming Deadlines */}
           <UpcomingDeadlines deadlines={data.deadlines} />
+
+          {/* Pending Signatures */}
+          <PendingSignaturesWidget />
 
           {/* AI Credits */}
           <AICreditsCard

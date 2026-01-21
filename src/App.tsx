@@ -112,6 +112,11 @@ import SearchPage from "./pages/app/SearchPage";
 import LegalOpsAssistantPage from "./pages/app/legal-ops/assistant";
 import LegalOpsClient360Page from "./pages/app/legal-ops/client-360";
 import LegalOpsCommunicationsPage from "./pages/app/legal-ops/communications";
+import SignaturesListPage from "./pages/app/legal-ops/signatures";
+import SignatureDetailPage from "./pages/app/legal-ops/signatures/[id]";
+
+// Public Signing Page
+import SignDocumentPage from "./pages/sign/SignDocument";
 // Backoffice Pages
 import BackofficeLayout from "./layouts/backoffice-layout";
 import BackofficeDashboard from "./pages/backoffice";
@@ -293,6 +298,8 @@ const App = () => (
                 <Route path="legal-ops/assistant" element={<LegalOpsAssistantPage />} />
                 <Route path="legal-ops/client-360" element={<LegalOpsClient360Page />} />
                 <Route path="legal-ops/communications" element={<LegalOpsCommunicationsPage />} />
+                <Route path="legal-ops/signatures" element={<SignaturesListPage />} />
+                <Route path="legal-ops/signatures/:id" element={<SignatureDetailPage />} />
               </Route>
               
               {/* BACKOFFICE - Panel de administración consolidado */}
@@ -324,6 +331,9 @@ const App = () => (
                 <Route path="calendar" element={<BackofficeCalendarPage />} />
                 <Route path="kill-switch" element={<KillSwitchPage />} />
               </Route>
+              
+              {/* PUBLIC SIGNATURE PAGE - No auth required */}
+              <Route path="/sign/:token" element={<SignDocumentPage />} />
               
               {/* CLIENT PORTAL - Public facing for external clients */}
               <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLogin /></PortalAuthProvider>} />

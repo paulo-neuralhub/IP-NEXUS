@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Download, Trash2, Eye, Plus, Shield, Calendar } from 'lucide-react';
+import { FileText, Download, Trash2, Eye, Plus, Shield, Calendar, PenTool } from 'lucide-react';
 import { useMatterDocuments } from '@/hooks/use-matters';
 import { useDeleteDocument, useDownloadDocument } from '@/hooks/use-matter-files';
 import { DOCUMENT_CATEGORIES } from '@/lib/constants/matters';
@@ -8,8 +8,10 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { EmptyState } from '@/components/ui/empty-state';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { DocumentUploadModal } from './document-upload-modal';
 import { DocumentPreviewModal } from './document-preview-modal';
+import { RequestSignatureDialog } from '@/components/signatures/RequestSignatureDialog';
 import type { MatterDocument } from '@/types/matters';
 import {
   AlertDialog,
@@ -31,6 +33,7 @@ export function DocumentList({ matterId }: Props) {
   const [uploadOpen, setUploadOpen] = useState(false);
   const [previewDoc, setPreviewDoc] = useState<MatterDocument | null>(null);
   const [deleteDoc, setDeleteDoc] = useState<MatterDocument | null>(null);
+  const [signatureDoc, setSignatureDoc] = useState<MatterDocument | null>(null);
   const deleteMutation = useDeleteDocument();
   const downloadMutation = useDownloadDocument();
   
@@ -140,6 +143,22 @@ export function DocumentList({ matterId }: Props) {
                     
                     {/* Actions */}
                     <div className="flex items-center gap-1">
+                      {/* Request Signature */}
+                      {doc.mime_type === 'application/pdf' && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => setSignatureDoc(doc)}
+                              className="text-primary hover:text-primary"
+                            >
+                              <PenTool className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Solicitar firma</TooltipContent>
+                        </Tooltip>
+                      )}
                       {(doc.mime_type?.startsWith('image/') || doc.mime_type === 'application/pdf') && (
                         <Button variant="ghost" size="icon" onClick={() => setPreviewDoc(doc)}>
                           <Eye className="h-4 w-4" />
@@ -202,6 +221,23 @@ export function DocumentList({ matterId }: Props) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      
+      {/* Signature Request Modal */}
+      {signatureDoc && (
+        <RequestSignatureDialog
+          open={!!signatureDoc}
+          onOpenChange={() => setSignatureDoc(null)}
+          document={{
+            id: signatureDoc.id,
+            name: signatureDoc.name,
+            url: signatureDoc.file_path,
+          }}
+          matter={{
+            id: matterId,
+            reference: '',
+          }}
+        />
+      )}
     </div>
   );
 }
