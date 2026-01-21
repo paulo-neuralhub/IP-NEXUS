@@ -50,7 +50,7 @@ const ACTIVITY_TYPES = [
   { value: 'other', label: 'Otro' },
 ];
 
-export function GlobalTimer() {
+export function GlobalTimer({ placement = 'floating' }: { placement?: 'floating' | 'sidebar' }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
 
@@ -146,8 +146,10 @@ export function GlobalTimer() {
 
   if (isLoading) return null;
 
-  // Minimized state - just a small floating button
-  if (isMinimized) {
+  const isFloating = placement === 'floating';
+
+  // Minimized state - just a small floating button (floating mode only)
+  if (isFloating && isMinimized) {
     return (
       <div className="fixed bottom-6 right-6 z-50">
         <Button
@@ -170,10 +172,14 @@ export function GlobalTimer() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div
+      className={cn(
+        isFloating ? 'fixed bottom-6 right-6 z-50' : 'w-full',
+      )}
+    >
       <Card className={cn(
         'shadow-xl transition-all duration-200',
-        isExpanded ? 'w-80' : 'w-64'
+        isFloating ? (isExpanded ? 'w-80' : 'w-64') : 'w-full'
       )}>
         <CardContent className="p-3">
           {/* Header */}
@@ -196,14 +202,16 @@ export function GlobalTimer() {
               >
                 {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronUp className="h-3 w-3" />}
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-6 w-6"
-                onClick={() => setIsMinimized(true)}
-              >
-                <Minimize2 className="h-3 w-3" />
-              </Button>
+              {isFloating && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={() => setIsMinimized(true)}
+                >
+                  <Minimize2 className="h-3 w-3" />
+                </Button>
+              )}
             </div>
           </div>
 

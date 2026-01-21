@@ -65,7 +65,7 @@ export function AppLayout() {
                     <Outlet />
                   </main>
                 </div>
-                <GlobalTimer />
+                {/* Timer stays floating on mobile; on desktop it's embedded in the sidebar */}
                 <NexusGuideButton />
               </div>
             )}

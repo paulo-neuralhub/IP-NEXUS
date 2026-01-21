@@ -25,6 +25,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
+import { GlobalTimer } from "@/components/timetracking";
 
 // Icon mapping
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -358,6 +359,11 @@ export function DynamicSidebar() {
           </>
         )}
       </nav>
+
+      {/* Timer (placed below Help and above Settings to avoid overlapping floating widgets) */}
+      <div className="px-3 py-3">
+        <GlobalTimer placement="sidebar" />
+      </div>
 
       {/* Settings */}
       <div className="px-3 py-2 border-t border-white/10">
