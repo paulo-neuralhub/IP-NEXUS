@@ -15205,6 +15205,132 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_branding: {
+        Row: {
+          accent_color: string | null
+          app_name: string | null
+          colors: Json | null
+          created_at: string | null
+          custom_domain: string | null
+          custom_domain_ssl_status: string | null
+          custom_domain_verified: boolean | null
+          custom_email_domain: string | null
+          custom_email_from_name: string | null
+          domain_verification_token: string | null
+          favicon_url: string | null
+          font_family: string | null
+          heading_font_family: string | null
+          id: string
+          logo_dark_url: string | null
+          logo_url: string | null
+          meta_description: string | null
+          meta_title: string | null
+          organization_id: string | null
+          plan_allows_white_label: boolean | null
+          portal_background_url: string | null
+          portal_logo_url: string | null
+          portal_primary_color: string | null
+          portal_welcome_message: string | null
+          primary_color: string | null
+          secondary_color: string | null
+          show_powered_by: boolean | null
+          smtp_host: string | null
+          smtp_last_test_at: string | null
+          smtp_password_encrypted: string | null
+          smtp_port: number | null
+          smtp_user: string | null
+          smtp_verified: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          accent_color?: string | null
+          app_name?: string | null
+          colors?: Json | null
+          created_at?: string | null
+          custom_domain?: string | null
+          custom_domain_ssl_status?: string | null
+          custom_domain_verified?: boolean | null
+          custom_email_domain?: string | null
+          custom_email_from_name?: string | null
+          domain_verification_token?: string | null
+          favicon_url?: string | null
+          font_family?: string | null
+          heading_font_family?: string | null
+          id?: string
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          organization_id?: string | null
+          plan_allows_white_label?: boolean | null
+          portal_background_url?: string | null
+          portal_logo_url?: string | null
+          portal_primary_color?: string | null
+          portal_welcome_message?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          show_powered_by?: boolean | null
+          smtp_host?: string | null
+          smtp_last_test_at?: string | null
+          smtp_password_encrypted?: string | null
+          smtp_port?: number | null
+          smtp_user?: string | null
+          smtp_verified?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          accent_color?: string | null
+          app_name?: string | null
+          colors?: Json | null
+          created_at?: string | null
+          custom_domain?: string | null
+          custom_domain_ssl_status?: string | null
+          custom_domain_verified?: boolean | null
+          custom_email_domain?: string | null
+          custom_email_from_name?: string | null
+          domain_verification_token?: string | null
+          favicon_url?: string | null
+          font_family?: string | null
+          heading_font_family?: string | null
+          id?: string
+          logo_dark_url?: string | null
+          logo_url?: string | null
+          meta_description?: string | null
+          meta_title?: string | null
+          organization_id?: string | null
+          plan_allows_white_label?: boolean | null
+          portal_background_url?: string | null
+          portal_logo_url?: string | null
+          portal_primary_color?: string | null
+          portal_welcome_message?: string | null
+          primary_color?: string | null
+          secondary_color?: string | null
+          show_powered_by?: boolean | null
+          smtp_host?: string | null
+          smtp_last_test_at?: string | null
+          smtp_password_encrypted?: string | null
+          smtp_port?: number | null
+          smtp_user?: string | null
+          smtp_verified?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_branding_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "organization_branding_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_module_licenses: {
         Row: {
           billing_cycle: string | null
