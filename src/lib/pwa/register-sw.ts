@@ -1,6 +1,21 @@
 import { logger } from '@/lib/logger';
 
 export async function registerServiceWorker() {
+  // IMPORTANT:
+  // In Lovable preview/dev builds the app is served from a Vite-like dev output
+  // (e.g. /node_modules/.vite/deps/*). Registering a Service Worker there can
+  // cache *mixed* JS chunks across refreshes and trigger React "dispatcher null"
+  // errors (useRef/useState/useEffect).
+  // لذلك: en DEV deshabilitamos el SW y limpiamos cualquier registro previo.
+  if (import.meta.env.DEV) {
+    try {
+      await unregisterServiceWorker();
+    } catch {
+      // ignore
+    }
+    return null;
+  }
+
   if (!('serviceWorker' in navigator)) {
     logger.debug('Service Worker not supported');
     return null;
@@ -33,7 +48,7 @@ export async function registerServiceWorker() {
     
     return registration;
   } catch (error) {
-    console.error('Service Worker registration failed:', error);
+    logger.error('Service Worker registration failed', { error });
     return null;
   }
 }
