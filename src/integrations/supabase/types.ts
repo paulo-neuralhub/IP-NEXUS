@@ -7699,11 +7699,16 @@ export type Database = {
           article_type: string | null
           category_id: string | null
           content: string
+          content_es: string | null
           created_at: string | null
           created_by: string | null
           display_order: number | null
+          excerpt: string | null
+          excerpt_es: string | null
           featured_image: string | null
           helpful_count: number | null
+          helpful_no: number | null
+          helpful_yes: number | null
           id: string
           is_featured: boolean | null
           is_published: boolean | null
@@ -7715,9 +7720,12 @@ export type Database = {
           published_at: string | null
           search_vector: unknown
           slug: string
+          sort_order: number | null
+          status: string | null
           summary: string | null
           tags: string[] | null
           title: string
+          title_es: string | null
           translations: Json | null
           updated_at: string | null
           video_duration: number | null
@@ -7728,11 +7736,16 @@ export type Database = {
           article_type?: string | null
           category_id?: string | null
           content: string
+          content_es?: string | null
           created_at?: string | null
           created_by?: string | null
           display_order?: number | null
+          excerpt?: string | null
+          excerpt_es?: string | null
           featured_image?: string | null
           helpful_count?: number | null
+          helpful_no?: number | null
+          helpful_yes?: number | null
           id?: string
           is_featured?: boolean | null
           is_published?: boolean | null
@@ -7744,9 +7757,12 @@ export type Database = {
           published_at?: string | null
           search_vector?: unknown
           slug: string
+          sort_order?: number | null
+          status?: string | null
           summary?: string | null
           tags?: string[] | null
           title: string
+          title_es?: string | null
           translations?: Json | null
           updated_at?: string | null
           video_duration?: number | null
@@ -7757,11 +7773,16 @@ export type Database = {
           article_type?: string | null
           category_id?: string | null
           content?: string
+          content_es?: string | null
           created_at?: string | null
           created_by?: string | null
           display_order?: number | null
+          excerpt?: string | null
+          excerpt_es?: string | null
           featured_image?: string | null
           helpful_count?: number | null
+          helpful_no?: number | null
+          helpful_yes?: number | null
           id?: string
           is_featured?: boolean | null
           is_published?: boolean | null
@@ -7773,9 +7794,12 @@ export type Database = {
           published_at?: string | null
           search_vector?: unknown
           slug?: string
+          sort_order?: number | null
+          status?: string | null
           summary?: string | null
           tags?: string[] | null
           title?: string
+          title_es?: string | null
           translations?: Json | null
           updated_at?: string | null
           video_duration?: number | null
@@ -7804,6 +7828,7 @@ export type Database = {
           color: string | null
           created_at: string | null
           description: string | null
+          description_es: string | null
           display_order: number | null
           icon: string | null
           id: string
@@ -7811,12 +7836,16 @@ export type Database = {
           name: string
           parent_id: string | null
           slug: string
+          sort_order: number | null
+          title: string | null
+          title_es: string | null
           updated_at: string | null
         }
         Insert: {
           color?: string | null
           created_at?: string | null
           description?: string | null
+          description_es?: string | null
           display_order?: number | null
           icon?: string | null
           id?: string
@@ -7824,12 +7853,16 @@ export type Database = {
           name: string
           parent_id?: string | null
           slug: string
+          sort_order?: number | null
+          title?: string | null
+          title_es?: string | null
           updated_at?: string | null
         }
         Update: {
           color?: string | null
           created_at?: string | null
           description?: string | null
+          description_es?: string | null
           display_order?: number | null
           icon?: string | null
           id?: string
@@ -7837,6 +7870,9 @@ export type Database = {
           name?: string
           parent_id?: string | null
           slug?: string
+          sort_order?: number | null
+          title?: string | null
+          title_es?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -7848,6 +7884,42 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      help_faqs: {
+        Row: {
+          answer: string
+          answer_es: string
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          question: string
+          question_es: string
+          sort_order: number
+        }
+        Insert: {
+          answer: string
+          answer_es: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          question: string
+          question_es: string
+          sort_order?: number
+        }
+        Update: {
+          answer?: string
+          answer_es?: string
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          question?: string
+          question_es?: string
+          sort_order?: number
+        }
+        Relationships: []
       }
       help_rule_execution_log: {
         Row: {
@@ -23664,6 +23736,14 @@ export type Database = {
       }
       increment_article_feedback: {
         Args: { p_article_id: string; p_is_helpful: boolean }
+        Returns: undefined
+      }
+      increment_help_counter: {
+        Args: { p_article_id: string; p_field: string }
+        Returns: undefined
+      }
+      increment_help_view_count: {
+        Args: { p_article_id: string }
         Returns: undefined
       }
       increment_rate_limit: {
