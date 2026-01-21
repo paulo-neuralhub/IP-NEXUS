@@ -6,11 +6,17 @@ export interface HelpCategory {
   id: string;
   slug: string;
   name: string;
+  /** P77 bilingual fields (optional; kept for backward compatibility) */
+  title?: string | null;
+  title_es?: string | null;
   description: string | null;
+  description_es?: string | null;
   icon: string | null;
   color: string | null;
   parent_id: string | null;
   display_order: number;
+  /** P77 ordering (optional; kept for backward compatibility) */
+  sort_order?: number | null;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -20,8 +26,14 @@ export interface HelpArticle {
   id: string;
   slug: string;
   title: string;
+  /** P77 bilingual fields (optional; kept for backward compatibility) */
+  title_es?: string | null;
   summary: string | null;
   content: string;
+  /** P77 bilingual fields (optional; kept for backward compatibility) */
+  content_es?: string | null;
+  excerpt?: string | null;
+  excerpt_es?: string | null;
   category_id: string | null;
   category?: HelpCategory;
   tags: string[];
@@ -33,8 +45,12 @@ export interface HelpArticle {
   meta_title: string | null;
   meta_description: string | null;
   display_order: number;
+  /** P77 ordering (optional; kept for backward compatibility) */
+  sort_order?: number | null;
   is_featured: boolean;
   is_published: boolean;
+  /** P77 status (optional; kept for backward compatibility) */
+  status?: 'draft' | 'published' | 'archived' | string | null;
   language: string;
   translations: Record<string, string>;
   view_count: number;
@@ -54,6 +70,18 @@ export interface HelpArticleFeedback {
   is_helpful: boolean;
   feedback_text: string | null;
   created_at: string;
+}
+
+export interface HelpFAQ {
+  id: string;
+  question: string;
+  question_es: string;
+  answer: string;
+  answer_es: string;
+  category: string;
+  sort_order: number;
+  is_active?: boolean;
+  created_at?: string;
 }
 
 export interface SupportTicket {
