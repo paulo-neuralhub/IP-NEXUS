@@ -299,14 +299,7 @@ export function DynamicSidebar() {
           </Badge>
         )}
         
-        {hasAccess && license?.tier_code === 'enterprise' && (
-          <Badge 
-            variant="secondary" 
-            className="text-[10px] px-1.5 py-0 bg-amber-500/20 text-amber-400"
-          >
-            ENT
-          </Badge>
-        )}
+        {/* Removed ENT badge to reduce visual noise */}
 
         {/* Tooltip on hover for locked modules */}
         {!hasAccess && (
