@@ -17925,6 +17925,67 @@ export type Database = {
           },
         ]
       }
+      scim_sync_logs: {
+        Row: {
+          changes_applied: Json | null
+          created_at: string | null
+          error_message: string | null
+          external_id: string | null
+          id: string
+          operation: string | null
+          organization_id: string | null
+          resource_type: string | null
+          success: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          changes_applied?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          operation?: string | null
+          organization_id?: string | null
+          resource_type?: string | null
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          changes_applied?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          external_id?: string | null
+          id?: string
+          operation?: string | null
+          organization_id?: string | null
+          resource_type?: string | null
+          success?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scim_sync_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "scim_sync_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scim_sync_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       search_history: {
         Row: {
           created_at: string | null
@@ -19307,6 +19368,168 @@ export type Database = {
           source_type?: string | null
         }
         Relationships: []
+      }
+      sso_configurations: {
+        Row: {
+          allowed_domains: string[] | null
+          attribute_mapping: Json | null
+          auto_provision_users: boolean | null
+          auto_update_users: boolean | null
+          created_at: string | null
+          default_role: string | null
+          id: string
+          is_active: boolean | null
+          is_verified: boolean | null
+          last_sync_at: string | null
+          oidc_authorization_url: string | null
+          oidc_client_id: string | null
+          oidc_client_secret_encrypted: string | null
+          oidc_issuer_url: string | null
+          oidc_scopes: string | null
+          oidc_token_url: string | null
+          oidc_userinfo_url: string | null
+          organization_id: string | null
+          provider_type: string
+          require_sso: boolean | null
+          role_mapping: Json | null
+          saml_certificate: string | null
+          saml_entity_id: string | null
+          saml_metadata_url: string | null
+          saml_slo_url: string | null
+          saml_sso_url: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_domains?: string[] | null
+          attribute_mapping?: Json | null
+          auto_provision_users?: boolean | null
+          auto_update_users?: boolean | null
+          created_at?: string | null
+          default_role?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          last_sync_at?: string | null
+          oidc_authorization_url?: string | null
+          oidc_client_id?: string | null
+          oidc_client_secret_encrypted?: string | null
+          oidc_issuer_url?: string | null
+          oidc_scopes?: string | null
+          oidc_token_url?: string | null
+          oidc_userinfo_url?: string | null
+          organization_id?: string | null
+          provider_type: string
+          require_sso?: boolean | null
+          role_mapping?: Json | null
+          saml_certificate?: string | null
+          saml_entity_id?: string | null
+          saml_metadata_url?: string | null
+          saml_slo_url?: string | null
+          saml_sso_url?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_domains?: string[] | null
+          attribute_mapping?: Json | null
+          auto_provision_users?: boolean | null
+          auto_update_users?: boolean | null
+          created_at?: string | null
+          default_role?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_verified?: boolean | null
+          last_sync_at?: string | null
+          oidc_authorization_url?: string | null
+          oidc_client_id?: string | null
+          oidc_client_secret_encrypted?: string | null
+          oidc_issuer_url?: string | null
+          oidc_scopes?: string | null
+          oidc_token_url?: string | null
+          oidc_userinfo_url?: string | null
+          organization_id?: string | null
+          provider_type?: string
+          require_sso?: boolean | null
+          role_mapping?: Json | null
+          saml_certificate?: string | null
+          saml_entity_id?: string | null
+          saml_metadata_url?: string | null
+          saml_slo_url?: string | null
+          saml_sso_url?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sso_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "sso_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sso_sessions: {
+        Row: {
+          attributes_received: Json | null
+          id: string
+          ip_address: string | null
+          logged_in_at: string | null
+          logged_out_at: string | null
+          logout_reason: string | null
+          name_id: string | null
+          session_index: string | null
+          sso_configuration_id: string | null
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attributes_received?: Json | null
+          id?: string
+          ip_address?: string | null
+          logged_in_at?: string | null
+          logged_out_at?: string | null
+          logout_reason?: string | null
+          name_id?: string | null
+          session_index?: string | null
+          sso_configuration_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attributes_received?: Json | null
+          id?: string
+          ip_address?: string | null
+          logged_in_at?: string | null
+          logged_out_at?: string | null
+          logout_reason?: string | null
+          name_id?: string | null
+          session_index?: string | null
+          sso_configuration_id?: string | null
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sso_sessions_sso_configuration_id_fkey"
+            columns: ["sso_configuration_id"]
+            isOneToOne: false
+            referencedRelation: "sso_configurations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sso_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stripe_customers: {
         Row: {
