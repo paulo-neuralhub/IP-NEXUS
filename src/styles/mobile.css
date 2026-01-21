@@ -1,0 +1,235 @@
+/* =====================================================
+   MOBILE-FIRST STYLES & SAFE AREA
+   Complementa los estilos existentes de PWA
+   ===================================================== */
+
+/* Safe Area Insets (para notches, dynamic islands, etc.) */
+:root {
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+}
+
+/* Clases utilitarias para safe areas */
+.safe-area-top {
+  padding-top: var(--sat);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--sab);
+}
+
+.safe-area-left {
+  padding-left: var(--sal);
+}
+
+.safe-area-right {
+  padding-right: var(--sar);
+}
+
+.safe-area-x {
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+
+.safe-area-y {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+}
+
+.safe-area-all {
+  padding-top: var(--sat);
+  padding-bottom: var(--sab);
+  padding-left: var(--sal);
+  padding-right: var(--sar);
+}
+
+/* Padding bottom que incluye safe area (para contenido sobre bottom nav) */
+.pb-safe {
+  padding-bottom: max(1rem, var(--sab));
+}
+
+/* =====================================================
+   TOUCH TARGETS
+   Mínimo 44x44px según Apple HIG y Material Design
+   ===================================================== */
+
+.touch-target {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* Botones y elementos interactivos en móvil */
+@media (max-width: 768px) {
+  button:not(.btn-xs),
+  [role="button"]:not(.btn-xs),
+  select {
+    min-height: 44px;
+  }
+
+  /* Aumentar área táctil de iconos pequeños */
+  .icon-button {
+    padding: 12px;
+  }
+}
+
+/* =====================================================
+   INPUTS EN MÓVIL
+   Prevenir zoom automático en iOS (requiere 16px mínimo)
+   ===================================================== */
+
+@media (max-width: 768px) {
+  input,
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
+/* =====================================================
+   SCROLL BEHAVIOR
+   ===================================================== */
+
+/* Prevenir overscroll/bounce en toda la app */
+html,
+body {
+  overscroll-behavior: none;
+}
+
+/* Scroll suave pero respetar preferencias */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Ocultar scrollbar en móvil pero mantener funcionalidad */
+@media (max-width: 768px) {
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* =====================================================
+   PULL TO REFRESH (opcional, si lo implementas)
+   ===================================================== */
+
+.pull-to-refresh-container {
+  overscroll-behavior-y: contain;
+}
+
+/* =====================================================
+   ANIMACIONES MÓVIL
+   ===================================================== */
+
+/* Slide up para sheets/modals */
+@keyframes slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* Fade in */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Reducir animaciones si el usuario lo prefiere */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =====================================================
+   STANDALONE/PWA MODE ESPECÍFICO
+   ===================================================== */
+
+@media (display-mode: standalone) {
+  /* Ocultar elementos que no aplican en PWA */
+  .hide-in-pwa {
+    display: none !important;
+  }
+  
+  /* Ajustar header para status bar del sistema */
+  .pwa-header {
+    padding-top: var(--sat);
+  }
+}
+
+/* =====================================================
+   SELECTION & HIGHLIGHT
+   ===================================================== */
+
+/* Color de selección */
+::selection {
+  background-color: hsl(var(--primary) / 0.3);
+}
+
+/* Desactivar highlight de tap en móvil para botones custom */
+@media (max-width: 768px) {
+  button,
+  [role="button"],
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* =====================================================
+   LANDSCAPE ORIENTATION
+   ===================================================== */
+
+@media (max-width: 768px) and (orientation: landscape) {
+  /* Reducir altura de elementos en landscape */
+  .mobile-header {
+    height: 48px;
+  }
+  
+  .bottom-nav {
+    height: 56px;
+  }
+}
+
+/* =====================================================
+   MOBILE SPECIFIC UTILITIES
+   ===================================================== */
+
+/* Full viewport height accounting for mobile browser chrome */
+.h-screen-mobile {
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Content area that accounts for bottom nav */
+.main-content-mobile {
+  padding-bottom: calc(4rem + var(--sab));
+}
+
+/* Header spacing for status bar */
+.header-safe {
+  padding-top: max(0.75rem, var(--sat));
+}

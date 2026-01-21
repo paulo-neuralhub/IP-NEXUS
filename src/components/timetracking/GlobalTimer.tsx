@@ -69,6 +69,17 @@ export function GlobalTimer() {
   const startTimerMutation = useStartTimer();
   const stopTimerMutation = useStopTimer();
 
+  // Listen for global start-timer event (from MobileBottomNav quick actions)
+  useEffect(() => {
+    const handleStartGlobalTimer = () => {
+      setIsMinimized(false);
+      setIsExpanded(true);
+    };
+    
+    window.addEventListener('start-global-timer', handleStartGlobalTimer);
+    return () => window.removeEventListener('start-global-timer', handleStartGlobalTimer);
+  }, []);
+
   // Update elapsed when timer is active
   useEffect(() => {
     if (activeTimer?.timer_started_at) {
