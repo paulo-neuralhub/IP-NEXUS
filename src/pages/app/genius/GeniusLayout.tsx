@@ -1,5 +1,5 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
-import { Brain, MessageSquare, Scale, FileText, Languages, History } from 'lucide-react';
+import { Brain, MessageSquare, Scale, FileText, Languages, History, FileStack } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePageTitle } from '@/contexts/page-context';
 import { useEffect } from 'react';
@@ -10,7 +10,8 @@ const geniusNav = [
   { path: '/app/genius/comparator', label: 'Comparador', icon: Scale },
   { path: '/app/genius/opposition', label: 'Oposición', icon: FileText },
   { path: '/app/genius/translator', label: 'Traductor', icon: Languages },
-  { path: '/app/genius/documents', label: 'Documentos', icon: History },
+  { path: '/app/genius/templates', label: 'Plantillas', icon: FileStack },
+  { path: '/app/genius/documents', label: 'Historial', icon: History },
 ];
 
 export default function GeniusLayout() {

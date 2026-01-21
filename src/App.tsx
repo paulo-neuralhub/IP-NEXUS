@@ -92,6 +92,9 @@ import AuditSettingsPage from "./pages/app/settings/audit";
 import ComplianceSettingsPage from "./pages/app/settings/compliance";
 import IPChainPage from "./pages/app/ip-chain";
 import TranslatorPage from "./pages/app/genius/translator";
+import DocumentTemplatesPage from "./pages/app/genius/templates";
+import GenerateDocumentPage from "./pages/app/genius/templates/generate";
+import DocumentViewPage from "./pages/app/genius/templates/document-view";
 import ToolsPage from "./pages/app/tools";
 import NotFound from "./pages/NotFound";
 import ReportsPage from "./pages/app/reports";
@@ -248,6 +251,9 @@ const App = () => (
                   <Route path="opposition" element={<GeniusOppositionPage />} />
                   <Route path="translator" element={<TranslatorPage />} />
                   <Route path="documents" element={<GeniusDocumentsPage />} />
+                  <Route path="templates" element={<DocumentTemplatesPage />} />
+                  <Route path="templates/generate/:templateId" element={<GenerateDocumentPage />} />
+                  <Route path="templates/view/:documentId" element={<DocumentViewPage />} />
                 </Route>
                 <Route path="finance" element={<FinanceLayout />}>
                   <Route index element={<FinanceDashboard />} />
