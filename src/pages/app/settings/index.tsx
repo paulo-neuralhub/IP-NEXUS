@@ -15,6 +15,7 @@ import {
   Key,
   Laptop,
   Users,
+  KeyRound,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RequirePermission } from '@/components/auth/RequirePermission';
@@ -32,6 +33,7 @@ import IntegrationsSettings from './sections/IntegrationsSettings';
 import BillingSettings from './sections/BillingSettings';
 import TeamSettings from './sections/TeamSettings';
 import NotificationsSettings from './sections/NotificationsSettings';
+import SSOSettings from './sections/SSOSettings';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -39,6 +41,7 @@ const ORG_TABS = [
   { id: 'branding', label: 'Marca', icon: Palette, permission: 'settings.view' },
   { id: 'regional', label: 'Regional', icon: Globe, permission: 'settings.view' },
   { id: 'security', label: 'Seguridad', icon: Shield, permission: 'settings.update' },
+  { id: 'sso', label: 'SSO Enterprise', icon: KeyRound, permission: 'settings.update' },
   { id: 'integrations', label: 'Integraciones', icon: Link, permission: 'settings.view' },
   { id: 'email', label: 'Email', icon: Mail, permission: 'settings.update' },
   { id: 'billing', label: 'Facturación', icon: CreditCard, permission: 'billing.view' },
@@ -161,6 +164,11 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
       {activeTab === 'security' && (
         <RequirePermission permission="settings.update">
           <SecuritySettings />
+        </RequirePermission>
+      )}
+      {activeTab === 'sso' && (
+        <RequirePermission permission="settings.update">
+          <SSOSettings />
         </RequirePermission>
       )}
       {activeTab === 'integrations' && (
