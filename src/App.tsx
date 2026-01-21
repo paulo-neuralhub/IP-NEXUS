@@ -1,5 +1,6 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth-context";
@@ -179,18 +180,19 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <OrganizationProvider>
-        <BrandingProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Landing */}
-              <Route path="/" element={<Landing />} />
-              <Route path="/market" element={<MarketLandingPage />} />
-              <Route path="/pricing" element={<PricingPage />} />
-              <Route path="/spider-pro" element={<SpiderLandingPage />} />
+    <TooltipProvider>
+      <AuthProvider>
+        <OrganizationProvider>
+          <BrandingProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Landing */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/market" element={<MarketLandingPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
+                <Route path="/spider-pro" element={<SpiderLandingPage />} />
               
               {/* Auth - Public */}
               <Route path="/login" element={<Login />} />
@@ -381,13 +383,14 @@ const App = () => (
                 <Route path="messages" element={<PortalMessages />} />
               </Route>
               
-              {/* 404 */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </BrandingProvider>
-      </OrganizationProvider>
-    </AuthProvider>
+                {/* 404 */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          </BrandingProvider>
+        </OrganizationProvider>
+      </AuthProvider>
+    </TooltipProvider>
   </QueryClientProvider>
 );
 

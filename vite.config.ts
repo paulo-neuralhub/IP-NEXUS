@@ -17,20 +17,9 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
-    // Prevent duplicate React instances (fixes: hooks dispatcher null)
-    dedupe: [
-      "react",
-      "react-dom",
-      "react-dom/client",
-      "react/jsx-runtime",
-      "react/jsx-dev-runtime",
-      "scheduler",
-    ],
+    dedupe: ["react", "react-dom"],
   },
   optimizeDeps: {
-    include: [
-      "@dnd-kit/core",
-      "@dnd-kit/sortable",
-    ],
+    include: ["react", "react-dom", "@dnd-kit/core", "@dnd-kit/sortable"],
   },
 }));
