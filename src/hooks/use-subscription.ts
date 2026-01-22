@@ -6,6 +6,7 @@ import type {
   SubscriptionPlan, 
   PlanLimits 
 } from '@/types/backoffice';
+import { coercePlanLimits } from '@/lib/subscription/planLimits';
 
 // ===== HELPER: Storage Usage =====
 async function getStorageUsage(organizationId: string): Promise<number> {
@@ -35,7 +36,14 @@ export function useSubscriptionPlans() {
         .eq('is_active', true)
         .order('sort_order');
       if (error) throw error;
-      return data as SubscriptionPlan[];
+      return (data ?? []).map((row) => {
+        const features = Array.isArray((row as any).features) ? ((row as any).features as string[]) : [];
+        return {
+          ...(row as unknown as SubscriptionPlan),
+          limits: coercePlanLimits((row as any).limits),
+          features,
+        };
+      });
     },
     staleTime: 1000 * 60 * 60, // 1 hora
   });
@@ -57,7 +65,21 @@ export function useCurrentSubscription() {
         .eq('organization_id', currentOrganization!.id)
         .maybeSingle();
       if (error) throw error;
-      return data as Subscription | null;
+      if (!data) return null;
+
+      const planRow = (data as any).plan as unknown;
+      const plan = planRow
+        ? ({
+            ...(planRow as SubscriptionPlan),
+            limits: coercePlanLimits((planRow as any).limits),
+            features: Array.isArray((planRow as any).features) ? ((planRow as any).features as string[]) : [],
+          } as SubscriptionPlan)
+        : undefined;
+
+      return {
+        ...(data as unknown as Subscription),
+        plan,
+      } as Subscription;
     },
     enabled: !!currentOrganization?.id,
   });
@@ -71,7 +93,7 @@ export function usePlanLimits() {
     queryKey: ['plan-limits', subscription?.plan_id],
     queryFn: async () => {
       if (!subscription?.plan) return null;
-      return subscription.plan.limits as PlanLimits;
+      return coercePlanLimits(subscription.plan.limits);
     },
     enabled: !!subscription?.plan,
   });
