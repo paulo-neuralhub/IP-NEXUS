@@ -74,3 +74,7 @@ export {
 } from './useAIRequestLogs';
 
 export { useDiscoverAIModels } from './useAIModelDiscovery';
+
+// FinOps
+export { useAIFinOpsDashboard } from './useAIFinOps';
+
