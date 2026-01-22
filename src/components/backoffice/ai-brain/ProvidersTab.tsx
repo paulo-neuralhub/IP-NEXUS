@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Settings, Trash2, TestTube, Loader2 } from 'lucide-react';
+import { Brain, Settings, Trash2, TestTube, Loader2, RefreshCw } from 'lucide-react';
 import { AIProvider } from '@/types/ai-brain.types';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -11,7 +11,9 @@ interface ProvidersTabProps {
   onEdit: (provider: AIProvider) => void;
   onDelete: (id: string) => void;
   onTest: (provider: AIProvider) => void;
+  onDiscoverModels: (provider: AIProvider) => void;
   testingProviderId?: string | null;
+  discoveringProviderId?: string | null;
 }
 
 export function ProvidersTab({ 
@@ -20,12 +22,14 @@ export function ProvidersTab({
   onEdit, 
   onDelete, 
   onTest,
-  testingProviderId 
+  onDiscoverModels,
+  testingProviderId,
+  discoveringProviderId,
 }: ProvidersTabProps) {
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'active':
-        return <Badge className="bg-green-500/10 text-green-600 border-green-500/20">Activo</Badge>;
+        return <Badge>Activo</Badge>;
       case 'error':
         return <Badge variant="destructive">Error</Badge>;
       default:
@@ -36,13 +40,13 @@ export function ProvidersTab({
   const getHealthBadge = (health: string) => {
     switch (health) {
       case 'healthy':
-        return <Badge className="bg-green-500/10 text-green-600">🟢 Healthy</Badge>;
+        return <Badge variant="secondary">Healthy</Badge>;
       case 'degraded':
-        return <Badge className="bg-yellow-500/10 text-yellow-600">🟡 Degraded</Badge>;
+        return <Badge variant="secondary">Degraded</Badge>;
       case 'down':
-        return <Badge className="bg-red-500/10 text-red-600">🔴 Down</Badge>;
+        return <Badge variant="destructive">Down</Badge>;
       default:
-        return <Badge variant="secondary">🔵 Unknown</Badge>;
+        return <Badge variant="secondary">Unknown</Badge>;
     }
   };
 
@@ -105,6 +109,19 @@ export function ProvidersTab({
                 <div className="flex items-center gap-2">
                   {getStatusBadge(provider.status)}
                   {getHealthBadge(provider.health_status)}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => onDiscoverModels(provider)}
+                    disabled={discoveringProviderId === provider.id}
+                    title="Sincronizar modelos"
+                  >
+                    {discoveringProviderId === provider.id ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="h-4 w-4" />
+                    )}
+                  </Button>
                   <Button 
                     variant="outline" 
                     size="sm" 

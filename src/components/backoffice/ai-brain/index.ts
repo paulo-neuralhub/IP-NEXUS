@@ -1,6 +1,7 @@
 export { AIBrainHeader } from './AIBrainHeader';
 export { AIBrainStatsCards } from './AIBrainStatsCards';
 export { ProvidersTab } from './ProvidersTab';
+export { ModelsTab } from './ModelsTab';
 export { TaskRouterTab } from './TaskRouterTab';
 export { CircuitBreakerTab } from './CircuitBreakerTab';
 export { RAGTab } from './RAGTab';

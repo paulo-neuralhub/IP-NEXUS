@@ -18,6 +18,8 @@ import {
   useToggleModelActive,
 } from './useAIModels';
 
+import { useDiscoverAIModels } from './useAIModelDiscovery';
+
 import {
   useAITaskAssignments as useAITaskAssignmentsQuery,
   useCreateAITaskAssignment,
@@ -76,6 +78,7 @@ export function useAIModels(providerId?: string) {
   const updateModel = useUpdateAIModel();
   const deleteModel = useDeleteAIModel();
   const toggleActive = useToggleModelActive();
+  const discoverModels = useDiscoverAIModels();
 
   return {
     models: query.data || [],
@@ -87,6 +90,7 @@ export function useAIModels(providerId?: string) {
     updateModel,
     deleteModel,
     toggleActive,
+    discoverModels,
   };
 }
 
