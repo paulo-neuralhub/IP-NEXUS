@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { ArrowLeft, Building2, MessageSquareText } from "lucide-react";
 import { useCRMAccount } from "@/hooks/crm/v2/accounts";
 import { useClient360 } from "@/hooks/crm/v2/client360";
-import { useAccountTimeline } from "@/hooks/crm/v2/interactions";
+import { useCRMInteractions } from "@/hooks/crm/v2/interactions";
 
 type Account = {
   id: string;
@@ -36,7 +36,7 @@ export default function CRMV2AccountDetail() {
 
   const { data: accountData, isLoading: loadingAccount } = useCRMAccount(id);
   const { data: client360, isLoading: loading360 } = useClient360(id);
-  const { data: timelineData, isLoading: loadingTimeline } = useAccountTimeline(id, 25);
+  const { data: timelineData, isLoading: loadingTimeline } = useCRMInteractions({ account_id: id });
 
   const account = useMemo(() => (accountData as Account | null) ?? null, [accountData]);
   const timeline = useMemo(() => (timelineData as TimelineItem[]) ?? [], [timelineData]);

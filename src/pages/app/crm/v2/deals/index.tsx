@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { usePageTitle } from "@/contexts/page-context";
 import { useCRMDeals } from "@/hooks/crm/v2/deals";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -13,7 +14,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Search, TrendingUp } from "lucide-react";
+import { Search, TrendingUp, Plus } from "lucide-react";
+import { DealFormModal } from "@/components/features/crm/v2/DealFormModal";
 
 type DealRow = {
   id: string;
@@ -30,6 +32,7 @@ export default function CRMV2DealsList() {
   const accountId = params.get("account") ?? undefined;
 
   const [search, setSearch] = useState("");
+  const [showDealForm, setShowDealForm] = useState(false);
   const { data, isLoading } = useCRMDeals({
     search: search || undefined,
     account_id: accountId,
@@ -39,9 +42,15 @@ export default function CRMV2DealsList() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Deals</h1>
-        <p className="text-muted-foreground">Pipeline y oportunidades</p>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Deals</h1>
+          <p className="text-muted-foreground">Pipeline y oportunidades</p>
+        </div>
+        <Button onClick={() => setShowDealForm(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nuevo Deal
+        </Button>
       </div>
 
       <div className="relative max-w-sm">
@@ -91,6 +100,8 @@ export default function CRMV2DealsList() {
           )}
         </CardContent>
       </Card>
+
+      <DealFormModal open={showDealForm} onClose={() => setShowDealForm(false)} defaultAccountId={accountId} />
     </div>
   );
 }

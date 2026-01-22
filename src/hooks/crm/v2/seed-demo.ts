@@ -142,6 +142,48 @@ export function useSeedCRMDemoData() {
         })
       );
       if (dealsError) throw dealsError;
+
+      // 4) Interactions (timeline)
+      const interactionsSeed = [
+        { account_id: accA.id, contact_id: contactByAccount.get(accA.id)?.id, channel: "email", direction: "inbound", subject: "Consulta inicial marca", daysAgo: 10 },
+        { account_id: accA.id, contact_id: contactByAccount.get(accA.id)?.id, channel: "call", direction: "outbound", subject: "Seguimiento propuesta", daysAgo: 7 },
+        { account_id: accB.id, contact_id: contactByAccount.get(accB.id)?.id, channel: "whatsapp", direction: "inbound", subject: "Duda renovación", daysAgo: 5 },
+        { account_id: accC.id, contact_id: contactByAccount.get(accC.id)?.id, channel: "meeting", direction: "outbound", subject: "Reunión estrategia PI", daysAgo: 2 },
+      ];
+
+      const { error: interactionsError } = await fromTable("crm_interactions").insert(
+        interactionsSeed.map((i) => ({
+          organization_id: organizationId,
+          account_id: i.account_id,
+          contact_id: i.contact_id,
+          channel: i.channel,
+          direction: i.direction,
+          subject: i.subject,
+          created_at: new Date(Date.now() - i.daysAgo * 24 * 60 * 60 * 1000).toISOString(),
+        }))
+      );
+      if (interactionsError) throw interactionsError;
+
+      // 5) Tasks (pendientes + futuras)
+      const tasksSeed = [
+        { account_id: accA.id, title: "Preparar docs para registro marca", status: "pending", dueDays: 5 },
+        { account_id: accB.id, title: "Follow-up propuesta multi-país", status: "in_progress", dueDays: 10 },
+        { account_id: accC.id, title: "Enviar informe oposición", status: "pending", dueDays: 7 },
+        { account_id: accA.id, title: "Revisar contrato renovación", status: "pending", dueDays: 15 },
+      ];
+
+      const { error: tasksError } = await fromTable("crm_tasks").insert(
+        tasksSeed.map((t) => ({
+          organization_id: organizationId,
+          account_id: t.account_id,
+          title: t.title,
+          status: t.status,
+          assigned_to: userId,
+          due_date: addDaysISO(t.dueDays),
+          created_at: nowIso,
+        }))
+      );
+      if (tasksError) throw tasksError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["crm-dashboard-kpis"] });
@@ -149,8 +191,10 @@ export function useSeedCRMDemoData() {
       queryClient.invalidateQueries({ queryKey: ["crm-deals"] });
       queryClient.invalidateQueries({ queryKey: ["crm-accounts"] });
       queryClient.invalidateQueries({ queryKey: ["crm-contacts"] });
+      queryClient.invalidateQueries({ queryKey: ["crm-interactions"] });
+      queryClient.invalidateQueries({ queryKey: ["crm-tasks"] });
 
-      toast({ title: "Datos demo creados", description: "Ya puedes ver etapas y métricas en el CRM." });
+      toast({ title: "Datos demo completos", description: "CRM poblado: Accounts, Contacts, Deals, Interactions y Tasks." });
     },
     onError: (error: unknown) => {
       const message = error instanceof Error ? error.message : "Error desconocido";
