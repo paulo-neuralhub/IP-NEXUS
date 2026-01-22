@@ -25050,6 +25050,14 @@ export type Database = {
         }
         Returns: Json
       }
+      ai_route_request: {
+        Args: {
+          p_category?: string
+          p_requires_vision?: boolean
+          p_task_code: string
+        }
+        Returns: Json
+      }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
       assign_automatic_badges: { Args: never; Returns: undefined }
       calculate_daily_analytics: {
