@@ -35,6 +35,7 @@ type DealRow = {
   pipeline_id?: string | null;
   amount?: number | null;
   expected_close_date?: string | null;
+  stage_entered_at?: string | null;
   account?: { id: string; name?: string | null } | null;
 };
 
@@ -148,6 +149,7 @@ export default function CRMV2DealsList() {
                   name: r.name ?? r.id,
                   amount: r.amount,
                   stage_id: r.stage_id ?? null,
+                  stage_entered_at: r.stage_entered_at ?? null,
                   account: r.account ?? null,
                 }))}
                 onDealClick={handleDealClick}

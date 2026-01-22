@@ -72,6 +72,8 @@ import CRMV2DealsList from "./pages/app/crm/v2/deals";
 import CRMV2DealDetail from "./pages/app/crm/v2/deals/DealDetail";
 import CRMV2InteractionsList from "./pages/app/crm/v2/interactions";
 import CRMV2TasksList from "./pages/app/crm/v2/tasks";
+import CRMLeadsPage from "./pages/app/crm/v2/leads";
+import CRMPipelinesPage from "./pages/app/crm/v2/pipelines";
 import MarketingLayout from "./pages/app/marketing/MarketingLayout";
 import MarketingDashboard from "./pages/app/marketing/MarketingDashboard";
 import TemplateList from "./pages/app/marketing/templates";
@@ -243,8 +245,10 @@ const App = () => (
                   <Route path="accounts/:id" element={<CRMV2AccountDetail />} />
                   <Route path="contacts" element={<CRMV2ContactsList />} />
                   <Route path="contacts/:id" element={<CRMV2ContactDetail />} />
+                  <Route path="leads" element={<CRMLeadsPage />} />
                   <Route path="deals" element={<CRMV2DealsList />} />
                   <Route path="deals/:id" element={<CRMV2DealDetail />} />
+                  <Route path="pipelines" element={<CRMPipelinesPage />} />
                   <Route path="interactions" element={<CRMV2InteractionsList />} />
                   <Route path="tasks" element={<CRMV2TasksList />} />
                 </Route>
