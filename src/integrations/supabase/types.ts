@@ -5535,6 +5535,7 @@ export type Database = {
           correction_distance: number | null
           created_at: string | null
           created_by: string | null
+          crm_interaction_id: string | null
           feedback_notes: string | null
           few_shot_quality_score: number | null
           human_action: string | null
@@ -5557,6 +5558,7 @@ export type Database = {
           correction_distance?: number | null
           created_at?: string | null
           created_by?: string | null
+          crm_interaction_id?: string | null
           feedback_notes?: string | null
           few_shot_quality_score?: number | null
           human_action?: string | null
@@ -5579,6 +5581,7 @@ export type Database = {
           correction_distance?: number | null
           created_at?: string | null
           created_by?: string | null
+          crm_interaction_id?: string | null
           feedback_notes?: string | null
           few_shot_quality_score?: number | null
           human_action?: string | null
@@ -5600,6 +5603,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_learning_logs_crm_interaction_id_fkey"
+            columns: ["crm_interaction_id"]
+            isOneToOne: false
+            referencedRelation: "crm_interactions"
             referencedColumns: ["id"]
           },
           {
@@ -5641,6 +5651,8 @@ export type Database = {
           confidence: number | null
           contact_id: string | null
           created_at: string | null
+          crm_contact_id: string | null
+          crm_deal_id: string | null
           deal_id: string | null
           description: string | null
           expires_at: string | null
@@ -5667,6 +5679,8 @@ export type Database = {
           confidence?: number | null
           contact_id?: string | null
           created_at?: string | null
+          crm_contact_id?: string | null
+          crm_deal_id?: string | null
           deal_id?: string | null
           description?: string | null
           expires_at?: string | null
@@ -5693,6 +5707,8 @@ export type Database = {
           confidence?: number | null
           contact_id?: string | null
           created_at?: string | null
+          crm_contact_id?: string | null
+          crm_deal_id?: string | null
           deal_id?: string | null
           description?: string | null
           expires_at?: string | null
@@ -5724,6 +5740,20 @@ export type Database = {
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_crm_contact_id_fkey"
+            columns: ["crm_contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_crm_deal_id_fkey"
+            columns: ["crm_deal_id"]
+            isOneToOne: false
+            referencedRelation: "crm_deals"
             referencedColumns: ["id"]
           },
           {
@@ -5775,9 +5805,13 @@ export type Database = {
           account_id: string | null
           created_at: string
           email: string | null
+          email_opted_in: boolean | null
+          email_opted_in_at: string | null
           full_name: string
           id: string
           is_lead: boolean
+          last_contacted_at: string | null
+          last_contacted_channel: string | null
           lead_score: number
           lead_status: string
           metadata: Json
@@ -5785,17 +5819,25 @@ export type Database = {
           phone: string | null
           photo_url: string | null
           portal_access_enabled: boolean
+          preferred_channel: string | null
           tags: string[]
           updated_at: string
           whatsapp_enabled: boolean
+          whatsapp_opted_in: boolean | null
+          whatsapp_opted_in_at: string | null
+          whatsapp_phone: string | null
         }
         Insert: {
           account_id?: string | null
           created_at?: string
           email?: string | null
+          email_opted_in?: boolean | null
+          email_opted_in_at?: string | null
           full_name: string
           id?: string
           is_lead?: boolean
+          last_contacted_at?: string | null
+          last_contacted_channel?: string | null
           lead_score?: number
           lead_status?: string
           metadata?: Json
@@ -5803,17 +5845,25 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           portal_access_enabled?: boolean
+          preferred_channel?: string | null
           tags?: string[]
           updated_at?: string
           whatsapp_enabled?: boolean
+          whatsapp_opted_in?: boolean | null
+          whatsapp_opted_in_at?: string | null
+          whatsapp_phone?: string | null
         }
         Update: {
           account_id?: string | null
           created_at?: string
           email?: string | null
+          email_opted_in?: boolean | null
+          email_opted_in_at?: string | null
           full_name?: string
           id?: string
           is_lead?: boolean
+          last_contacted_at?: string | null
+          last_contacted_channel?: string | null
           lead_score?: number
           lead_status?: string
           metadata?: Json
@@ -5821,9 +5871,13 @@ export type Database = {
           phone?: string | null
           photo_url?: string | null
           portal_access_enabled?: boolean
+          preferred_channel?: string | null
           tags?: string[]
           updated_at?: string
           whatsapp_enabled?: boolean
+          whatsapp_opted_in?: boolean | null
+          whatsapp_opted_in_at?: string | null
+          whatsapp_phone?: string | null
         }
         Relationships: [
           {
@@ -5832,6 +5886,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "crm_accounts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
           },
           {
             foreignKeyName: "crm_contacts_organization_id_fkey"
@@ -5867,16 +5928,22 @@ export type Database = {
           expected_close_date: string | null
           id: string
           lost_to_competitor: string | null
+          matter_id: string | null
           metadata: Json
           name: string
           opportunity_type: string | null
           organization_id: string
           owner_id: string | null
+          patent_title: string | null
           pipeline_id: string | null
+          renewal_date: string | null
+          service_type: string | null
           stage: string
           stage_entered_at: string
           stage_history: Json
           stage_id: string | null
+          territory: string | null
+          trademark_name: string | null
           updated_at: string
           weighted_amount: number | null
         }
@@ -5890,16 +5957,22 @@ export type Database = {
           expected_close_date?: string | null
           id?: string
           lost_to_competitor?: string | null
+          matter_id?: string | null
           metadata?: Json
           name: string
           opportunity_type?: string | null
           organization_id: string
           owner_id?: string | null
+          patent_title?: string | null
           pipeline_id?: string | null
+          renewal_date?: string | null
+          service_type?: string | null
           stage?: string
           stage_entered_at?: string
           stage_history?: Json
           stage_id?: string | null
+          territory?: string | null
+          trademark_name?: string | null
           updated_at?: string
           weighted_amount?: number | null
         }
@@ -5913,16 +5986,22 @@ export type Database = {
           expected_close_date?: string | null
           id?: string
           lost_to_competitor?: string | null
+          matter_id?: string | null
           metadata?: Json
           name?: string
           opportunity_type?: string | null
           organization_id?: string
           owner_id?: string | null
+          patent_title?: string | null
           pipeline_id?: string | null
+          renewal_date?: string | null
+          service_type?: string | null
           stage?: string
           stage_entered_at?: string
           stage_history?: Json
           stage_id?: string | null
+          territory?: string | null
+          trademark_name?: string | null
           updated_at?: string
           weighted_amount?: number | null
         }
@@ -5933,6 +6012,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "crm_accounts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
           },
           {
             foreignKeyName: "crm_deals_contact_id_fkey"
@@ -5953,6 +6039,20 @@ export type Database = {
             columns: ["stage_id"]
             isOneToOne: false
             referencedRelation: "crm_pipeline_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
             referencedColumns: ["id"]
           },
           {
@@ -6040,6 +6140,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "crm_interactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "crm_interactions_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
@@ -6080,6 +6187,7 @@ export type Database = {
         Row: {
           contact_id: string
           created_at: string | null
+          crm_contact_id: string | null
           decay_days: number | null
           event_data: Json | null
           event_type: string
@@ -6093,6 +6201,7 @@ export type Database = {
         Insert: {
           contact_id: string
           created_at?: string | null
+          crm_contact_id?: string | null
           decay_days?: number | null
           event_data?: Json | null
           event_type: string
@@ -6106,6 +6215,7 @@ export type Database = {
         Update: {
           contact_id?: string
           created_at?: string | null
+          crm_contact_id?: string | null
           decay_days?: number | null
           event_data?: Json | null
           event_type?: string
@@ -6122,6 +6232,13 @@ export type Database = {
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_lead_events_crm_contact_id_fkey"
+            columns: ["crm_contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
             referencedColumns: ["id"]
           },
           {
@@ -6436,6 +6553,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "crm_accounts"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
           },
           {
             foreignKeyName: "crm_tasks_assigned_to_fkey"
@@ -27387,6 +27511,94 @@ export type Database = {
           total_users: number | null
         }
         Relationships: []
+      }
+      crm_client_360_view: {
+        Row: {
+          account_id: string | null
+          account_name: string | null
+          account_status: string | null
+          account_tier: string | null
+          churn_risk_level: string | null
+          created_at: string | null
+          health_score: number | null
+          interactions_30d: number | null
+          last_interaction_at: string | null
+          last_interaction_date: string | null
+          open_deals: number | null
+          open_pipeline_value: number | null
+          organization_id: string | null
+          pending_tasks: number | null
+          total_contacts: number | null
+          total_leads: number | null
+          total_revenue: number | null
+          updated_at: string | null
+          won_deals: number | null
+        }
+        Insert: {
+          account_id?: string | null
+          account_name?: string | null
+          account_status?: string | null
+          account_tier?: string | null
+          churn_risk_level?: string | null
+          created_at?: string | null
+          health_score?: number | null
+          interactions_30d?: never
+          last_interaction_at?: string | null
+          last_interaction_date?: never
+          open_deals?: never
+          open_pipeline_value?: never
+          organization_id?: string | null
+          pending_tasks?: never
+          total_contacts?: never
+          total_leads?: never
+          total_revenue?: never
+          updated_at?: string | null
+          won_deals?: never
+        }
+        Update: {
+          account_id?: string | null
+          account_name?: string | null
+          account_status?: string | null
+          account_tier?: string | null
+          churn_risk_level?: string | null
+          created_at?: string | null
+          health_score?: number | null
+          interactions_30d?: never
+          last_interaction_at?: string | null
+          last_interaction_date?: never
+          open_deals?: never
+          open_pipeline_value?: never
+          organization_id?: string | null
+          pending_tasks?: never
+          total_contacts?: never
+          total_leads?: never
+          total_revenue?: never
+          updated_at?: string | null
+          won_deals?: never
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ipo_expiring_credentials: {
         Row: {
