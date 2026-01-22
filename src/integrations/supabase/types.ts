@@ -5447,6 +5447,86 @@ export type Database = {
           },
         ]
       }
+      crm_accounts: {
+        Row: {
+          account_manager_id: string | null
+          churn_risk_level: string | null
+          created_at: string
+          health_score: number | null
+          id: string
+          last_interaction_at: string | null
+          legal_name: string | null
+          metadata: Json
+          name: string
+          organization_id: string
+          status: string
+          tags: string[]
+          tier: string
+          updated_at: string
+        }
+        Insert: {
+          account_manager_id?: string | null
+          churn_risk_level?: string | null
+          created_at?: string
+          health_score?: number | null
+          id?: string
+          last_interaction_at?: string | null
+          legal_name?: string | null
+          metadata?: Json
+          name: string
+          organization_id: string
+          status?: string
+          tags?: string[]
+          tier?: string
+          updated_at?: string
+        }
+        Update: {
+          account_manager_id?: string | null
+          churn_risk_level?: string | null
+          created_at?: string
+          health_score?: number | null
+          id?: string
+          last_interaction_at?: string | null
+          legal_name?: string | null
+          metadata?: Json
+          name?: string
+          organization_id?: string
+          status?: string
+          tags?: string[]
+          tier?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_accounts_account_manager_id_fkey"
+            columns: ["account_manager_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_ai_learning_logs: {
         Row: {
           ai_model: string | null
@@ -5690,6 +5770,292 @@ export type Database = {
           },
         ]
       }
+      crm_contacts: {
+        Row: {
+          account_id: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_lead: boolean
+          lead_score: number
+          lead_status: string
+          metadata: Json
+          organization_id: string
+          phone: string | null
+          photo_url: string | null
+          portal_access_enabled: boolean
+          tags: string[]
+          updated_at: string
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          account_id?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_lead?: boolean
+          lead_score?: number
+          lead_status?: string
+          metadata?: Json
+          organization_id: string
+          phone?: string | null
+          photo_url?: string | null
+          portal_access_enabled?: boolean
+          tags?: string[]
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          account_id?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_lead?: boolean
+          lead_score?: number
+          lead_status?: string
+          metadata?: Json
+          organization_id?: string
+          phone?: string | null
+          photo_url?: string | null
+          portal_access_enabled?: boolean
+          tags?: string[]
+          updated_at?: string
+          whatsapp_enabled?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_contacts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_deals: {
+        Row: {
+          account_id: string | null
+          actual_close_date: string | null
+          amount: number | null
+          close_reason: string | null
+          contact_id: string | null
+          created_at: string
+          expected_close_date: string | null
+          id: string
+          lost_to_competitor: string | null
+          metadata: Json
+          name: string
+          opportunity_type: string | null
+          organization_id: string
+          owner_id: string | null
+          stage: string
+          stage_entered_at: string
+          stage_history: Json
+          updated_at: string
+          weighted_amount: number | null
+        }
+        Insert: {
+          account_id?: string | null
+          actual_close_date?: string | null
+          amount?: number | null
+          close_reason?: string | null
+          contact_id?: string | null
+          created_at?: string
+          expected_close_date?: string | null
+          id?: string
+          lost_to_competitor?: string | null
+          metadata?: Json
+          name: string
+          opportunity_type?: string | null
+          organization_id: string
+          owner_id?: string | null
+          stage?: string
+          stage_entered_at?: string
+          stage_history?: Json
+          updated_at?: string
+          weighted_amount?: number | null
+        }
+        Update: {
+          account_id?: string | null
+          actual_close_date?: string | null
+          amount?: number | null
+          close_reason?: string | null
+          contact_id?: string | null
+          created_at?: string
+          expected_close_date?: string | null
+          id?: string
+          lost_to_competitor?: string | null
+          metadata?: Json
+          name?: string
+          opportunity_type?: string | null
+          organization_id?: string
+          owner_id?: string | null
+          stage?: string
+          stage_entered_at?: string
+          stage_history?: Json
+          updated_at?: string
+          weighted_amount?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_deals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_owner_id_fkey"
+            columns: ["owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_interactions: {
+        Row: {
+          account_id: string | null
+          ai_suggested_response: string | null
+          assigned_to: string | null
+          channel: string
+          contact_id: string | null
+          content: string | null
+          created_at: string
+          direction: string | null
+          id: string
+          metadata: Json
+          organization_id: string
+          status: string | null
+          subject: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          ai_suggested_response?: string | null
+          assigned_to?: string | null
+          channel?: string
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string
+          direction?: string | null
+          id?: string
+          metadata?: Json
+          organization_id: string
+          status?: string | null
+          subject?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          ai_suggested_response?: string | null
+          assigned_to?: string | null
+          channel?: string
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string
+          direction?: string | null
+          id?: string
+          metadata?: Json
+          organization_id?: string
+          status?: string | null
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_interactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_lead_events: {
         Row: {
           contact_id: string
@@ -5849,6 +6215,97 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      crm_tasks: {
+        Row: {
+          account_id: string | null
+          assigned_to: string | null
+          completed_at: string | null
+          contact_id: string | null
+          created_at: string
+          description: string | null
+          due_date: string | null
+          id: string
+          metadata: Json
+          organization_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          account_id?: string | null
+          assigned_to?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json
+          organization_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          account_id?: string | null
+          assigned_to?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string
+          description?: string | null
+          due_date?: string | null
+          id?: string
+          metadata?: Json
+          organization_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_tasks_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       dashboard_widgets: {
         Row: {
@@ -27031,9 +27488,23 @@ export type Database = {
         Returns: boolean
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      crm_get_client_360: { Args: { p_account_id: string }; Returns: Json }
+      crm_get_pipeline_summary: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       crm_initialize_tenant_pipelines: {
         Args: { p_organization_id: string }
         Returns: number
+      }
+      crm_log_lead_event: {
+        Args: {
+          p_contact_id: string
+          p_event_data?: Json
+          p_event_source?: string
+          p_event_type: string
+        }
+        Returns: string
       }
       daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
