@@ -3,6 +3,7 @@ import { SortableContext, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { CRMPipelineStage } from "@/hooks/crm/v2/pipelines";
+import type React from "react";
 
 type DealLite = {
   id: string;

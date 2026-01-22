@@ -18,6 +18,8 @@ import { useUpdateDealStage } from "@/hooks/crm/v2/deals";
 import { KanbanColumn } from "./kanban-column";
 import { DealKanbanCard } from "./deal-kanban-card";
 
+import type React from "react";
+
 type DealRow = {
   id: string;
   name: string;

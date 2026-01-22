@@ -24,12 +24,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCreateCRMDeal } from "@/hooks/crm/v2/deals";
 import { useCRMAccounts } from "@/hooks/crm/v2/accounts";
 import { useCRMContacts } from "@/hooks/crm/v2/contacts";
+import { useCRMPipelines, type CRMPipelineStage } from "@/hooks/crm/v2/pipelines";
 
 const dealSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
   account_id: z.string().min(1, "La cuenta es obligatoria"),
   contact_id: z.string().optional(),
-  stage: z.string().default("lead_in"),
+  pipeline_id: z.string().min(1, "El pipeline es obligatorio"),
+  stage_id: z.string().min(1, "La etapa es obligatoria"),
   amount: z.string().optional(),
   expected_close_date: z.string().optional(),
   notes: z.string().optional(),
@@ -41,22 +43,29 @@ interface Props {
   open: boolean;
   onClose: () => void;
   defaultAccountId?: string;
+  defaultPipelineId?: string;
+  defaultStageId?: string;
 }
 
-const STAGE_OPTIONS = [
-  { value: "lead_in", label: "Lead Entrante" },
-  { value: "contact", label: "Contacto Inicial" },
-  { value: "needs", label: "Análisis de Necesidades" },
-  { value: "proposal", label: "Propuesta Enviada" },
-  { value: "negotiation", label: "Negociación" },
-  { value: "won", label: "Ganado" },
-  { value: "lost", label: "Perdido" },
-];
+type AccountLite = { id: string; name?: string | null };
+type ContactLite = { id: string; account_id?: string | null; full_name?: string | null };
 
-export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
+export function DealFormModal({
+  open,
+  onClose,
+  defaultAccountId,
+  defaultPipelineId,
+  defaultStageId,
+}: Props) {
   const createDeal = useCreateCRMDeal();
   const { data: accounts = [] } = useCRMAccounts();
   const { data: contacts = [] } = useCRMContacts();
+  const { data: pipelines = [] } = useCRMPipelines();
+
+  const defaultPipeline =
+    pipelines.find((p) => p.id === defaultPipelineId) || pipelines.find((p) => p.is_default) || pipelines[0];
+  const defaultStage =
+    (defaultPipeline?.stages ?? []).find((s) => s.id === defaultStageId) || (defaultPipeline?.stages ?? [])[0];
 
   const form = useForm<DealFormValues>({
     resolver: zodResolver(dealSchema),
@@ -64,7 +73,8 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
       name: "",
       account_id: defaultAccountId ?? "",
       contact_id: "",
-      stage: "lead_in",
+      pipeline_id: defaultPipeline?.id ?? "",
+      stage_id: defaultStage?.id ?? "",
       amount: "",
       expected_close_date: "",
       notes: "",
@@ -72,16 +82,24 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
   });
 
   useEffect(() => {
-    if (open && defaultAccountId) {
-      form.setValue("account_id", defaultAccountId);
-    }
-  }, [open, defaultAccountId, form]);
+    if (!open) return;
+    if (defaultAccountId) form.setValue("account_id", defaultAccountId);
+
+    // Si se abre desde Kanban: prioriza stage/pipeline por props
+    if (defaultPipeline?.id) form.setValue("pipeline_id", defaultPipeline.id);
+    if (defaultStage?.id) form.setValue("stage_id", defaultStage.id);
+  }, [open, defaultAccountId, defaultPipeline?.id, defaultStage?.id, form]);
 
   const onSubmit = async (values: DealFormValues) => {
+    const pipeline = pipelines.find((p) => p.id === values.pipeline_id);
+    const stage = (pipeline?.stages ?? []).find((s) => s.id === values.stage_id);
+
     const payload: Record<string, unknown> = {
       name: values.name,
       account_id: values.account_id,
-      stage: values.stage,
+      pipeline_id: values.pipeline_id,
+      stage_id: values.stage_id,
+      stage: stage?.name ?? "",
       opportunity_type: "sales",
       stage_entered_at: new Date().toISOString(),
     };
@@ -90,8 +108,8 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
     if (values.amount) {
       const numAmount = parseFloat(values.amount);
       payload.amount = numAmount;
-      const prob = STAGE_PROBABILITY[values.stage] ?? 50;
-      payload.weighted_amount = Math.round((numAmount * prob) / 100);
+      const prob = stage?.probability ?? 50;
+      payload.weighted_amount = Math.round((numAmount * Number(prob)) / 100);
     }
     if (values.expected_close_date) payload.expected_close_date = values.expected_close_date;
     if (values.notes) payload.metadata = { notes: values.notes };
@@ -102,7 +120,22 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
   };
 
   const selectedAccount = form.watch("account_id");
-  const availableContacts = contacts.filter((c: any) => c.account_id === selectedAccount);
+  const availableContacts = (contacts as ContactLite[]).filter((c) => c.account_id === selectedAccount);
+
+  const selectedPipelineId = form.watch("pipeline_id");
+  const selectedPipeline = pipelines.find((p) => p.id === selectedPipelineId) ?? defaultPipeline;
+  const stageOptions = (selectedPipeline?.stages ?? []) as CRMPipelineStage[];
+
+  useEffect(() => {
+    // Si cambias pipeline, forzamos primera etapa
+    if (!open) return;
+    const currentStageId = form.getValues("stage_id");
+    const stillValid = stageOptions.some((s) => s.id === currentStageId);
+    if (!stillValid) {
+      const first = stageOptions[0];
+      if (first?.id) form.setValue("stage_id", first.id);
+    }
+  }, [open, selectedPipelineId, stageOptions, form]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -128,7 +161,7 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
                 <SelectValue placeholder="Seleccionar cuenta" />
               </SelectTrigger>
               <SelectContent>
-                {accounts.map((a: any) => (
+                {(accounts as AccountLite[]).map((a) => (
                   <SelectItem key={a.id} value={a.id}>
                     {a.name}
                   </SelectItem>
@@ -151,7 +184,7 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
                 <SelectValue placeholder={availableContacts.length === 0 ? "Sin contactos" : "Seleccionar contacto"} />
               </SelectTrigger>
               <SelectContent>
-                {availableContacts.map((c: any) => (
+                {availableContacts.map((c) => (
                   <SelectItem key={c.id} value={c.id}>
                     {c.full_name}
                   </SelectItem>
@@ -160,17 +193,37 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
             </Select>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <Label htmlFor="stage">Etapa inicial</Label>
-              <Select value={form.watch("stage")} onValueChange={(v) => form.setValue("stage", v)}>
+              <Label htmlFor="pipeline_id">Pipeline</Label>
+              <Select value={form.watch("pipeline_id")} onValueChange={(v) => form.setValue("pipeline_id", v)}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue placeholder="Seleccionar pipeline" />
                 </SelectTrigger>
                 <SelectContent>
-                  {STAGE_OPTIONS.map((s) => (
-                    <SelectItem key={s.value} value={s.value}>
-                      {s.label}
+                  {pipelines.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      {p.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="stage_id">Etapa</Label>
+              <Select
+                value={form.watch("stage_id")}
+                onValueChange={(v) => form.setValue("stage_id", v)}
+                disabled={!selectedPipelineId || stageOptions.length === 0}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={stageOptions.length === 0 ? "Sin etapas" : "Seleccionar etapa"} />
+                </SelectTrigger>
+                <SelectContent>
+                  {stageOptions.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>
+                      {s.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -206,13 +259,3 @@ export function DealFormModal({ open, onClose, defaultAccountId }: Props) {
     </Dialog>
   );
 }
-
-const STAGE_PROBABILITY: Record<string, number> = {
-  lead_in: 10,
-  contact: 20,
-  needs: 35,
-  proposal: 55,
-  negotiation: 75,
-  won: 100,
-  lost: 0,
-};
