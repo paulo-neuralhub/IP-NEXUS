@@ -315,11 +315,11 @@ export default function AIBrainPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="providers">Providers</TabsTrigger>
-            <TabsTrigger value="models">Models</TabsTrigger>
-          <TabsTrigger value="router">Task Router</TabsTrigger>
+          <TabsTrigger value="models">Modelos</TabsTrigger>
+          <TabsTrigger value="router">Routing</TabsTrigger>
           <TabsTrigger value="circuit">Circuit Breaker</TabsTrigger>
           <TabsTrigger value="rag">RAG</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="analytics">Costes</TabsTrigger>
         </TabsList>
 
         <TabsContent value="providers" className="space-y-4">

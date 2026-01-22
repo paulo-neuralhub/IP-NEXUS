@@ -32,15 +32,14 @@ export function TaskRouterTab({
   };
 
   const getCategoryBadge = (category: string) => {
-    const colors: Record<string, string> = {
-      agent: 'bg-purple-500/10 text-purple-600',
-      analysis: 'bg-blue-500/10 text-blue-600',
-      generation: 'bg-green-500/10 text-green-600',
-      classification: 'bg-orange-500/10 text-orange-600',
-      general: 'bg-gray-500/10 text-gray-600'
-    };
-    return <Badge className={colors[category] || colors.general}>{category}</Badge>;
+    // Nota: evitamos colores hardcodeados; usamos variantes semánticas del design system.
+    const normalized = (category || 'general').toLowerCase();
+    const variant: 'default' | 'secondary' | 'destructive' | 'outline' =
+      normalized === 'analysis' ? 'secondary' : normalized === 'agent' ? 'default' : 'outline';
+    return <Badge variant={variant}>{normalized}</Badge>;
   };
+
+  const sortedTasks = [...tasks].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
 
   if (isLoading) {
     return (
@@ -72,7 +71,7 @@ export function TaskRouterTab({
         </div>
         <Button onClick={onAdd}>
           <Plus className="h-4 w-4 mr-2" />
-          New Task
+          Nueva tarea
         </Button>
       </CardHeader>
       <CardContent>
@@ -87,6 +86,7 @@ export function TaskRouterTab({
             <table className="w-full">
               <thead>
                 <tr className="border-b">
+                  <th className="text-left py-3 px-4 font-medium">Prioridad</th>
                   <th className="text-left py-3 px-4 font-medium">Task</th>
                   <th className="text-left py-3 px-4 font-medium">Category</th>
                   <th className="text-left py-3 px-4 font-medium">Primary</th>
@@ -98,8 +98,11 @@ export function TaskRouterTab({
                 </tr>
               </thead>
               <tbody>
-                {tasks.map((task) => (
+                {sortedTasks.map((task) => (
                   <tr key={task.id} className="border-b">
+                    <td className="py-3 px-4">
+                      <Badge variant="secondary">{task.priority ?? 0}</Badge>
+                    </td>
                     <td className="py-3 px-4">
                       <div>
                         <p className="font-medium">{task.task_name}</p>
