@@ -18,7 +18,7 @@ import {
   Globe,
   Library,
   Flag,
-  Key,
+  Plug,
   ShieldCheck,
   Scale,
   MessageSquare,
@@ -54,7 +54,7 @@ const sidebarSections = [
     items: [
       { label: 'Calendar', path: '/backoffice/calendar', icon: Calendar },
       { label: 'Feature Flags', path: '/backoffice/feature-flags', icon: Flag },
-      { label: 'API Keys', path: '/backoffice/api-keys', icon: Key },
+      { label: 'Integraciones', path: '/backoffice/integrations', icon: Plug },
       { label: 'Announcements', path: '/backoffice/announcements', icon: Megaphone },
     ],
   },

@@ -72,3 +72,5 @@ export {
   useRecentAIErrors,
   useAIRequestLogStats,
 } from './useAIRequestLogs';
+
+export { useDiscoverAIModels } from './useAIModelDiscovery';

@@ -153,6 +153,7 @@ import NewIPOOfficePage from "./pages/backoffice/ipo/new";
 import EditIPOOfficePage from "./pages/backoffice/ipo/edit";
 import FeatureFlagsPage from "./pages/backoffice/feature-flags";
 import BackofficeApiKeysPage from "./pages/backoffice/api-keys";
+import BackofficeIntegrationsPage from "./pages/backoffice/integrations";
 import AnnouncementsPage from "./pages/backoffice/announcements";
 import BackofficeFeedbackPage from "./pages/backoffice/feedback";
 import BackofficeAuditPage from "./pages/backoffice/audit";
@@ -372,6 +373,7 @@ const App = () => (
                 <Route path="ai" element={<AIBrainPage />} />
                 {/* Tools */}
                 <Route path="feature-flags" element={<FeatureFlagsPage />} />
+                <Route path="integrations" element={<BackofficeIntegrationsPage />} />
                 <Route path="api-keys" element={<BackofficeApiKeysPage />} />
                 <Route path="announcements" element={<AnnouncementsPage />} />
                 {/* Compliance */}

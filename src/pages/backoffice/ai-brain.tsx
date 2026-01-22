@@ -51,6 +51,7 @@ export default function AIBrainPage() {
   
   const [testingProviderId, setTestingProviderId] = useState<string | null>(null);
   const [refreshingRagId, setRefreshingRagId] = useState<string | null>(null);
+  const [discoveringProviderId, setDiscoveringProviderId] = useState<string | null>(null);
 
   // Data hooks
   const { 
@@ -62,7 +63,7 @@ export default function AIBrainPage() {
     testProvider 
   } = useAIProviders();
   
-  const { models, isLoading: modelsLoading } = useAIModels();
+  const { models, isLoading: modelsLoading, toggleActive: toggleModelActive, discoverModels } = useAIModels();
   
   const { 
     tasks, 
@@ -127,6 +128,25 @@ export default function AIBrainPage() {
       // Error toast handled in hook
     } finally {
       setTestingProviderId(null);
+    }
+  };
+
+  const handleDiscoverModels = async (provider: AIProvider) => {
+    setDiscoveringProviderId(provider.id);
+    try {
+      await discoverModels.mutateAsync({ providerId: provider.id });
+    } catch (error) {
+      // Error toast handled in hook
+    } finally {
+      setDiscoveringProviderId(null);
+    }
+  };
+
+  const handleToggleModelActive = async (id: string, isActive: boolean) => {
+    try {
+      await toggleModelActive.mutateAsync({ id, is_active: isActive });
+    } catch (error) {
+      // Error toast handled in hook
     }
   };
 
@@ -248,6 +268,7 @@ export default function AIBrainPage() {
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList>
           <TabsTrigger value="providers">Providers</TabsTrigger>
+            <TabsTrigger value="models">Models</TabsTrigger>
           <TabsTrigger value="router">Task Router</TabsTrigger>
           <TabsTrigger value="circuit">Circuit Breaker</TabsTrigger>
           <TabsTrigger value="rag">RAG</TabsTrigger>
@@ -261,8 +282,27 @@ export default function AIBrainPage() {
             onEdit={openProviderDialog}
             onDelete={handleDeleteProvider}
             onTest={handleTestProvider}
+            onDiscoverModels={handleDiscoverModels}
             testingProviderId={testingProviderId}
+            discoveringProviderId={discoveringProviderId}
           />
+        </TabsContent>
+
+        <TabsContent value="models" className="space-y-4">
+          <div className="text-sm text-muted-foreground">
+            Gestión de modelos: activa/desactiva por provider y revisa capacidades/precios.
+          </div>
+          {/* Nota: UI completa de modelos se añadirá aquí en el siguiente paso */}
+          <div className="rounded-lg border p-4">
+            <p className="font-medium">Próximo paso</p>
+            <p className="text-sm text-muted-foreground">
+              Ya puedes sincronizar modelos por provider desde la pestaña “Providers”.
+            </p>
+            <div className="mt-3 flex items-center gap-2">
+              <span className="text-sm">Toggle rápido (demo):</span>
+              <span className="text-xs text-muted-foreground">{models.length} modelos cargados</span>
+            </div>
+          </div>
         </TabsContent>
 
         <TabsContent value="router" className="space-y-4">
