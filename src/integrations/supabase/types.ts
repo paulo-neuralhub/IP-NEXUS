@@ -5079,6 +5079,71 @@ export type Database = {
           },
         ]
       }
+      demo_seed_entities: {
+        Row: {
+          created_at: string
+          id: string
+          row_id: string
+          run_id: string
+          table_name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          row_id: string
+          run_id: string
+          table_name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          row_id?: string
+          run_id?: string
+          table_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_seed_entities_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "demo_seed_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      demo_seed_runs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          organization_id: string
+          seed_version: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          organization_id: string
+          seed_version?: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          organization_id?: string
+          seed_version?: string
+          status?: string
+        }
+        Relationships: []
+      }
       document_chunks: {
         Row: {
           chunk_index: number
