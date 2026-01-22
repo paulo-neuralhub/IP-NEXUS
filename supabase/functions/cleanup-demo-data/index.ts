@@ -25,6 +25,23 @@ function getEnv(name: string): string {
 }
 
 const DELETE_ORDER = [
+  // Market
+  "market_offers",
+  "market_listings",
+  "market_assets",
+  // RFQ
+  "rfq_invitations",
+  "rfq_quotes",
+  "rfq_requests",
+  // Marketing
+  "email_sends",
+  "email_campaigns",
+  "contact_list_members",
+  "contact_lists",
+  "email_templates",
+  // Spider / Filing
+  "watchlists",
+  "filing_applications",
   "invoice_items",
   "invoices",
   "deadline_alerts",
@@ -35,6 +52,8 @@ const DELETE_ORDER = [
   "billing_clients",
   "matters",
   "contacts",
+  // Market users last (can be referenced by other Market tables)
+  "market_users",
 ];
 
 serve(async (req) => {

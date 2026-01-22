@@ -10,6 +10,8 @@ type SeedRequest = {
   organization_id: string;
 };
 
+type IdRow = { id: string };
+
 function json(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
@@ -25,6 +27,15 @@ function getEnv(name: string): string {
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function pickMany<T>(arr: T[], count: number): T[] {
+  const copy = [...arr];
+  const out: T[] = [];
+  while (copy.length && out.length < count) {
+    out.push(copy.splice(Math.floor(Math.random() * copy.length), 1)[0]);
+  }
+  return out;
 }
 
 function daysAgo(days: number) {
@@ -112,7 +123,7 @@ serve(async (req) => {
       if (error) throw error;
     };
 
-    // 4) Seed realistic-ish data (minimal required columns)
+    // 4) Seed realistic-ish data (coherent cross-module dataset)
     const firmContacts = [
       { name: "Nexus Demo Law Firm", company: true },
       { name: "Acme Foods S.L.", company: true },
@@ -142,6 +153,7 @@ serve(async (req) => {
           source: "demo-seed",
           tags: ["demo"],
           lifecycle_stage: "customer",
+          created_by: userData.user.id,
         })
         .select("id")
         .single();
@@ -188,6 +200,11 @@ serve(async (req) => {
 
         const markName = type === "trademark" ? pick(["NEXAL", "SOLARIA", "BLUEPEAK", "VELA", "COBALT"]) : null;
 
+        const jurisdictionCode = pick(jurisdictions);
+        const filingDate = daysAgo(90 + Math.floor(Math.random() * 720));
+        const expiryDate = new Date(filingDate.getTime() + 10 * 365 * 24 * 60 * 60 * 1000);
+        const nextRenewalDate = new Date(expiryDate.getTime() - 180 * 24 * 60 * 60 * 1000);
+
         const { data, error } = await adminClient
           .from("matters")
           .insert({
@@ -196,11 +213,16 @@ serve(async (req) => {
             title: `${type.toUpperCase()} — ${markName ?? reference}`,
             type,
             status: "active",
-            jurisdiction: pick(jurisdictions),
+            jurisdiction: jurisdictionCode,
+            jurisdiction_code: jurisdictionCode,
+            filing_date: filingDate.toISOString().slice(0, 10),
+            expiry_date: expiryDate.toISOString().slice(0, 10),
+            next_renewal_date: nextRenewalDate.toISOString().slice(0, 10),
             mark_name: markName,
             owner_name: firmContacts[cIdx].name,
             tags: ["demo"],
             notes: "Expediente de demostración generado automáticamente.",
+            created_by: userData.user.id,
           })
           .select("id")
           .single();
@@ -237,18 +259,67 @@ serve(async (req) => {
       await register("matter_deadlines", data.id);
     }
 
-    // Deals (15) using existing pipeline+stage
-    const { data: pipelineRow, error: pipeErr } = await adminClient
-      .from("pipelines")
-      .select("id")
-      .eq("owner_type", "tenant")
-      .order("is_default", { ascending: false })
-      .order("position", { ascending: true })
-      .limit(1)
-      .maybeSingle();
-    if (pipeErr) throw pipeErr;
-    if (!pipelineRow) throw new Error("No tenant pipelines found");
-    const pipelineId = pipelineRow.id as string;
+    // CRM: ensure at least 1 pipeline+stages exist (some orgs might be new)
+    let pipelineId: string | null = null;
+    {
+      const { data: pipelineRow, error: pipeErr } = await adminClient
+        .from("pipelines")
+        .select("id")
+        .eq("organization_id", organizationId)
+        .eq("owner_type", "tenant")
+        .eq("is_active", true)
+        .order("is_default", { ascending: false })
+        .order("position", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      if (pipeErr) throw pipeErr;
+      pipelineId = (pipelineRow?.id as string) ?? null;
+    }
+
+    if (!pipelineId) {
+      const { data: pipeline, error: createPipeErr } = await adminClient
+        .from("pipelines")
+        .insert({
+          organization_id: organizationId,
+          owner_type: "tenant",
+          name: "Captación de Clientes",
+          pipeline_type: "sales",
+          is_default: true,
+          is_active: true,
+          position: 0,
+        })
+        .select("id")
+        .single();
+      if (createPipeErr) throw createPipeErr;
+      pipelineId = pipeline.id;
+      await register("pipelines", pipeline.id);
+
+      const stages = [
+        { name: "Lead Entrante", color: "#3B82F6", probability: 10 },
+        { name: "Contacto Inicial", color: "#0EA5E9", probability: 20 },
+        { name: "Propuesta Enviada", color: "#F59E0B", probability: 50 },
+        { name: "Negociación", color: "#8B5CF6", probability: 70 },
+        { name: "Cliente Ganado", color: "#22C55E", probability: 100, is_won_stage: true },
+        { name: "Perdido", color: "#EF4444", probability: 0, is_lost_stage: true },
+      ];
+
+      const { data: stageRows, error: stageInsErr } = await adminClient
+        .from("pipeline_stages")
+        .insert(
+          stages.map((s, idx) => ({
+            pipeline_id: pipelineId,
+            name: s.name,
+            color: s.color,
+            probability: s.probability,
+            position: idx,
+            is_won_stage: (s as any).is_won_stage ?? false,
+            is_lost_stage: (s as any).is_lost_stage ?? false,
+          })),
+        )
+        .select("id");
+      if (stageInsErr) throw stageInsErr;
+      for (const r of (stageRows ?? []) as IdRow[]) await register("pipeline_stages", r.id);
+    }
 
     const { data: stageRow, error: stageErr } = await adminClient
       .from("pipeline_stages")
@@ -277,12 +348,403 @@ serve(async (req) => {
           contact_id: contactId,
           status: "open",
           tags: ["demo"],
+          created_by: userData.user.id,
         })
         .select("id")
         .single();
       if (error) throw error;
       dealIds.push(data.id);
       await register("deals", data.id);
+    }
+
+    // Spider: watchlists linked to matters
+    for (let i = 0; i < 3; i++) {
+      const matterId = pick(matterIds);
+      const { data, error } = await adminClient
+        .from("watchlists")
+        .insert({
+          organization_id: organizationId,
+          owner_type: "tenant",
+          name: `Vigilancia demo #${i + 1}`,
+          description: "Watchlist demo para simular alertas de vigilancia.",
+          type: "trademark",
+          watch_terms: [pick(["NEXAL", "SOLARIA", "BLUEPEAK", "VELA"]), pick(["NEX", "SOL", "PEAK", "LAB"])],
+          watch_classes: [3, 5, 9, 25],
+          watch_jurisdictions: ["ES", "EU"],
+          matter_id: matterId,
+          similarity_threshold: 75,
+          notify_email: true,
+          notify_in_app: true,
+          notify_frequency: "weekly",
+          notify_users: [userData.user.id],
+          is_active: true,
+          created_by: userData.user.id,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("watchlists", data.id);
+    }
+
+    // Filing: create a couple of filing_applications linked to matters
+    {
+      const filingMatterId = pick(matterIds);
+      const applicantContactId = pick(contactIds);
+      const officeCode = pick(["OEPM", "EUIPO", "WIPO"]);
+
+      // Office id is required but depends on your offices table; we store a dummy UUID if the FK is optional.
+      // If it is enforced, you should seed offices separately; for now we try to fetch one.
+      let officeId: string | null = null;
+      try {
+        const officeRes = await adminClient.from("filing_offices").select("id").limit(1).maybeSingle();
+        officeId = (officeRes.data?.id as string) ?? null;
+      } catch {
+        // Table might not exist in some environments; skip filing demo.
+        officeId = null;
+      }
+
+      if (officeId) {
+        const { data, error } = await adminClient
+          .from("filing_applications")
+          .insert({
+            organization_id: organizationId,
+            filing_type: "new_application",
+            ip_type: "trademark",
+            office_id: officeId,
+            office_code: officeCode,
+            matter_id: filingMatterId,
+            applicant_id: applicantContactId,
+            applicant_data: {
+              name: firmContacts[0].name,
+              country: "ES",
+              address: "C/ Demo 123, Madrid",
+            },
+            application_data: {
+              mark_name: "NEXAL",
+              mark_type: "word",
+              nice_classes: [9, 35],
+              goods_services: "Software; servicios legales; consultoría empresarial.",
+            },
+            status: "draft",
+            validation_status: "pending",
+            created_by: userData.user.id,
+          })
+          .select("id")
+          .single();
+        if (error) throw error;
+        await register("filing_applications", data.id);
+      }
+    }
+
+    // Marketing: templates + list + campaign + some sends
+    const templateIds: string[] = [];
+    for (const tpl of [
+      {
+        name: "Bienvenida nuevo cliente",
+        category: "welcome",
+        subject: "Bienvenido a IP-NEXUS — primeros pasos",
+        preview: "Te enseñamos cómo empezar en 5 minutos.",
+      },
+      {
+        name: "Alerta de vencimiento",
+        category: "alerts",
+        subject: "Vencimiento próximo: acción requerida",
+        preview: "Revisa el expediente y confirma instrucciones.",
+      },
+      {
+        name: "Propuesta comercial",
+        category: "sales",
+        subject: "Propuesta para gestión integral de PI",
+        preview: "Adjuntamos propuesta y próximos pasos.",
+      },
+    ]) {
+      const { data, error } = await adminClient
+        .from("email_templates")
+        .insert({
+          organization_id: organizationId,
+          owner_type: "tenant",
+          name: tpl.name,
+          category: tpl.category,
+          subject: tpl.subject,
+          preview_text: tpl.preview,
+          html_content: `<!doctype html><html><body style="font-family:Arial,sans-serif"><h2>${tpl.subject}</h2><p>${tpl.preview}</p><p style="color:#64748B">(DEMO) Plantilla generada automáticamente.</p></body></html>`,
+          is_active: true,
+          is_system: false,
+          created_by: userData.user.id,
+          available_variables: ["{{contact.name}}", "{{organization.name}}"],
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      templateIds.push(data.id);
+      await register("email_templates", data.id);
+    }
+
+    const { data: listRow, error: listErr } = await adminClient
+      .from("contact_lists")
+      .insert({
+        organization_id: organizationId,
+        owner_type: "tenant",
+        name: "Clientes DEMO",
+        description: "Lista demo vinculada a contactos seed.",
+        type: "static",
+        is_active: true,
+      })
+      .select("id")
+      .single();
+    if (listErr) throw listErr;
+    const listId = listRow.id as string;
+    await register("contact_lists", listId);
+
+    for (const cid of pickMany(contactIds, Math.min(6, contactIds.length))) {
+      const { data, error } = await adminClient
+        .from("contact_list_members")
+        .insert({
+          list_id: listId,
+          contact_id: cid,
+          added_by: userData.user.id,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("contact_list_members", data.id);
+    }
+
+    const { data: campaign, error: campErr } = await adminClient
+      .from("email_campaigns")
+      .insert({
+        organization_id: organizationId,
+        owner_type: "tenant",
+        name: "Campaña DEMO — Bienvenida",
+        description: "Campaña demo (borrador) para visualizar Marketing.",
+        campaign_type: "regular",
+        template_id: templateIds[0] ?? null,
+        subject: "Bienvenido a IP-NEXUS",
+        preview_text: "Primeros pasos para tu equipo.",
+        from_name: "IP-NEXUS",
+        from_email: "no-reply@demo.ip-nexus.local",
+        html_content: "<p>(DEMO) Bienvenido…</p>",
+        list_ids: [listId],
+        status: "draft",
+        created_by: userData.user.id,
+      })
+      .select("id")
+      .single();
+    if (campErr) throw campErr;
+    const campaignId = campaign.id as string;
+    await register("email_campaigns", campaignId);
+
+    for (const cid of pickMany(contactIds, 5)) {
+      const { data, error } = await adminClient
+        .from("email_sends")
+        .insert({
+          campaign_id: campaignId,
+          contact_id: cid,
+          status: pick(["queued", "sent", "delivered"]),
+          sent_at: daysAgo(Math.floor(Math.random() * 30)).toISOString(),
+          delivered_at: daysAgo(Math.floor(Math.random() * 25)).toISOString(),
+          open_count: Math.random() < 0.6 ? 1 + Math.floor(Math.random() * 3) : 0,
+          click_count: Math.random() < 0.3 ? 1 : 0,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("email_sends", data.id);
+    }
+
+    // Market: create demo market users + assets + listings + rfq flow tied to current org
+    const marketUserIds: string[] = [];
+    // Ensure current user has a market_user profile (so RFQ pages work)
+    {
+      const { data: existing, error } = await adminClient
+        .from("market_users")
+        .select("id")
+        .eq("auth_user_id", userData.user.id)
+        .maybeSingle();
+      if (error) throw error;
+      if (!existing) {
+        const { data: mu, error: muErr } = await adminClient
+          .from("market_users")
+          .insert({
+            auth_user_id: userData.user.id,
+            organization_id: organizationId,
+            user_type: "buyer",
+            email: userData.user.email ?? `buyer-${userData.user.id}@demo.ip-nexus.local`,
+            display_name: "Buyer DEMO",
+            country: "ES",
+            is_active: true,
+            is_public_profile: false,
+            accepts_new_clients: true,
+          })
+          .select("id")
+          .single();
+        if (muErr) throw muErr;
+        await register("market_users", mu.id);
+        marketUserIds.push(mu.id);
+      }
+    }
+
+    // Demo agents
+    const agentSeeds = [
+      { name: "María López", country: "ES", jurisdictions: ["ES", "EU"] },
+      { name: "Jean Martin", country: "FR", jurisdictions: ["EU", "WO"] },
+      { name: "Anna Schmidt", country: "DE", jurisdictions: ["DE", "EU"] },
+      { name: "James Taylor", country: "GB", jurisdictions: ["GB", "EU"] },
+    ];
+
+    for (let i = 0; i < agentSeeds.length; i++) {
+      const a = agentSeeds[i];
+      const { data, error } = await adminClient
+        .from("market_users")
+        .insert({
+          organization_id: null,
+          user_type: "agent",
+          email: `agent-${i + 1}@demo.ip-nexus.local`,
+          display_name: a.name,
+          country: a.country,
+          is_agent: true,
+          is_verified_agent: true,
+          is_active: true,
+          is_public_profile: true,
+          accepts_new_clients: true,
+          jurisdictions: a.jurisdictions,
+          specializations: ["trademarks", "patents"],
+          years_experience: 8 + i,
+          hourly_rate: 120 + i * 20,
+          rate_currency: "EUR",
+          reputation_score: 75 + i * 5,
+          rating_avg: 4.5,
+          ratings_count: 12 + i,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      marketUserIds.push(data.id);
+      await register("market_users", data.id);
+    }
+
+    // Assets + listings
+    const listingIds: string[] = [];
+    for (let i = 0; i < 3; i++) {
+      const sellerId = pick(marketUserIds);
+      const { data: asset, error: assetErr } = await adminClient
+        .from("market_assets")
+        .insert({
+          owner_id: sellerId,
+          asset_type: "trademark",
+          asset_category: "brand",
+          title: `Marca DEMO ${i + 1}`,
+          description: "Activo DEMO para mercado (marca).",
+          jurisdiction: pick(["ES", "EU"]),
+          word_mark: pick(["NEXAL", "SOLARIA", "VELA"]),
+          nice_classes: [9, 35],
+          verification_status: "verified",
+          verified_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+      if (assetErr) throw assetErr;
+      await register("market_assets", asset.id);
+
+      const { data: listing, error: listingErr } = await adminClient
+        .from("market_listings")
+        .insert({
+          listing_number: `LIST-DEMO-${String(i + 1).padStart(4, "0")}`,
+          asset_id: asset.id,
+          seller_id: sellerId,
+          status: "active",
+          transaction_types: ["sale"],
+          asking_price: 15000 + i * 5000,
+          currency: "EUR",
+          title: `Venta: ${pick(["NEXAL", "SOLARIA", "VELA"])} (${pick(["ES", "EU"])})`,
+          description: "Listing DEMO para probar filtros y ofertas.",
+          is_featured: i === 0,
+          published_at: new Date().toISOString(),
+        })
+        .select("id")
+        .single();
+      if (listingErr) throw listingErr;
+      listingIds.push(listing.id);
+      await register("market_listings", listing.id);
+    }
+
+    // Offers
+    for (let i = 0; i < 5; i++) {
+      const listingId = pick(listingIds);
+      const buyerId = pick(marketUserIds);
+      const { data, error } = await adminClient
+        .from("market_offers")
+        .insert({
+          listing_id: listingId,
+          buyer_id: buyerId,
+          offer_type: "offer",
+          amount: 10000 + i * 1000,
+          currency: "EUR",
+          status: pick(["pending", "accepted", "rejected"]),
+          message: "Oferta DEMO.",
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("market_offers", data.id);
+    }
+
+    // RFQ request + quotes
+    {
+      const { data: requester, error: requesterErr } = await adminClient
+        .from("market_users")
+        .select("id")
+        .eq("auth_user_id", userData.user.id)
+        .maybeSingle();
+      if (requesterErr) throw requesterErr;
+
+      if (requester?.id) {
+        const { data: rfq, error: rfqErr } = await adminClient
+          .from("rfq_requests")
+          .insert({
+            reference_number: `RFQ-DEMO-${String(Math.floor(Math.random() * 9000) + 1000)}`,
+            requester_id: requester.id,
+            organization_id: organizationId,
+            service_category: "trademark",
+            service_type: "trademark_filing",
+            title: "Registro de marca en España (DEMO)",
+            description: "Necesito registrar una marca denominativa con 2 clases.",
+            jurisdictions: ["ES"],
+            nice_classes: [9, 35],
+            budget_min: 400,
+            budget_max: 900,
+            budget_currency: "EUR",
+            budget_type: "fixed",
+            urgency: "normal",
+            status: "open",
+            published_at: new Date().toISOString(),
+            closes_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+          })
+          .select("id")
+          .single();
+        if (rfqErr) throw rfqErr;
+        await register("rfq_requests", rfq.id);
+
+        // Quotes from 2 agents
+        const agents = marketUserIds.slice(-agentSeeds.length);
+        for (const agentId of pickMany(agents, 2)) {
+          const { data: quote, error: qErr } = await adminClient
+            .from("rfq_quotes")
+            .insert({
+              request_id: rfq.id,
+              agent_id: agentId,
+              status: "submitted",
+              amount: 650,
+              currency: "EUR",
+              message: "Propuesta DEMO para presentación en OEPM.",
+              estimated_days: 7,
+            })
+            .select("id")
+            .single();
+          if (qErr) throw qErr;
+          await register("rfq_quotes", quote.id);
+        }
+      }
     }
 
     // Invoices (50) + items
