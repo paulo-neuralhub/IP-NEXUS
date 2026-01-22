@@ -69,6 +69,7 @@ import CRMV2AccountDetail from "./pages/app/crm/v2/accounts/AccountDetail";
 import CRMV2ContactsList from "./pages/app/crm/v2/contacts";
 import CRMV2ContactDetail from "./pages/app/crm/v2/contacts/ContactDetail";
 import CRMV2DealsList from "./pages/app/crm/v2/deals";
+import CRMV2DealDetail from "./pages/app/crm/v2/deals/DealDetail";
 import CRMV2InteractionsList from "./pages/app/crm/v2/interactions";
 import CRMV2TasksList from "./pages/app/crm/v2/tasks";
 import MarketingLayout from "./pages/app/marketing/MarketingLayout";
@@ -243,6 +244,7 @@ const App = () => (
                   <Route path="contacts" element={<CRMV2ContactsList />} />
                   <Route path="contacts/:id" element={<CRMV2ContactDetail />} />
                   <Route path="deals" element={<CRMV2DealsList />} />
+                  <Route path="deals/:id" element={<CRMV2DealDetail />} />
                   <Route path="interactions" element={<CRMV2InteractionsList />} />
                   <Route path="tasks" element={<CRMV2TasksList />} />
                 </Route>

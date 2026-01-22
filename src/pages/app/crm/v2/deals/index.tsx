@@ -25,6 +25,7 @@ import {
 import { Search, TrendingUp, Plus, LayoutGrid, List } from "lucide-react";
 import { DealFormModal } from "@/components/features/crm/v2/DealFormModal";
 import { DealsKanbanBoard } from "@/components/features/crm/v2/kanban";
+import { DealDetailSheet } from "@/components/features/crm/v2/DealDetailSheet";
 
 type DealRow = {
   id: string;
@@ -46,6 +47,8 @@ export default function CRMV2DealsList() {
   const [view, setView] = useState<"list" | "kanban">("kanban");
   const [showDealForm, setShowDealForm] = useState(false);
   const [prefillStageId, setPrefillStageId] = useState<string | undefined>(undefined);
+  const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
+  const [showDealSheet, setShowDealSheet] = useState(false);
 
   const { data: pipelines = [] } = useCRMPipelines();
   const { data: defaultPipeline } = useDefaultCRMPipeline();
@@ -59,6 +62,18 @@ export default function CRMV2DealsList() {
   });
 
   const rows = useMemo(() => (data ?? []) as DealRow[], [data]);
+  const selectedDeal = useMemo(() => rows.find((d) => d.id === selectedDealId), [rows, selectedDealId]);
+
+  function handleDealClick(dealId: string) {
+    setSelectedDealId(dealId);
+    setShowDealSheet(true);
+  }
+
+  function handleEditFromSheet(dealId: string) {
+    setShowDealSheet(false);
+    // TODO: Abrir modal edición con el deal cargado
+    setShowDealForm(true);
+  }
 
   return (
     <div className="space-y-6">
@@ -135,9 +150,7 @@ export default function CRMV2DealsList() {
                   stage_id: r.stage_id ?? null,
                   account: r.account ?? null,
                 }))}
-                onDealClick={() => {
-                  // Por ahora solo abrimos el modal en modo "nuevo" desde columna; detalle/edit lo añadimos luego si lo pides.
-                }}
+                onDealClick={handleDealClick}
                 onAddDeal={(stageId) => {
                   setPrefillStageId(stageId);
                   setShowDealForm(true);
@@ -176,7 +189,7 @@ export default function CRMV2DealsList() {
                 </TableHeader>
                 <TableBody>
                   {rows.map((d) => (
-                    <TableRow key={d.id}>
+                    <TableRow key={d.id} className="cursor-pointer" onClick={() => handleDealClick(d.id)}>
                       <TableCell className="font-medium">{d.name || d.id}</TableCell>
                       <TableCell className="text-muted-foreground">{d.account?.name ?? "—"}</TableCell>
                       <TableCell className="text-muted-foreground">{d.stage ?? "—"}</TableCell>
@@ -199,6 +212,13 @@ export default function CRMV2DealsList() {
         defaultAccountId={accountId}
         defaultPipelineId={pipelineId}
         defaultStageId={prefillStageId}
+      />
+
+      <DealDetailSheet
+        deal={selectedDeal ?? null}
+        open={showDealSheet}
+        onClose={() => setShowDealSheet(false)}
+        onEdit={handleEditFromSheet}
       />
     </div>
   );

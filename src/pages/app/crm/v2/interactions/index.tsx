@@ -1,10 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { usePageTitle } from "@/contexts/page-context";
 import { useCRMInteractions } from "@/hooks/crm/v2/interactions";
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageSquareText } from "lucide-react";
+import { MessageSquareText, Plus } from "lucide-react";
+import { InteractionFormModal } from "@/components/features/crm/v2/InteractionFormModal";
 
 type InteractionRow = {
   id: string;
@@ -22,15 +24,22 @@ export default function CRMV2InteractionsList() {
   usePageTitle("Interacciones");
   const [params] = useSearchParams();
   const accountId = params.get("account") ?? undefined;
+  const [showForm, setShowForm] = useState(false);
 
   const { data, isLoading } = useCRMInteractions(accountId ? { account_id: accountId } : undefined);
   const rows = useMemo(() => (data ?? []) as InteractionRow[], [data]);
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Interacciones</h1>
-        <p className="text-muted-foreground">Timeline de comunicaciones (email, call, whatsapp, etc.)</p>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Interacciones</h1>
+          <p className="text-muted-foreground">Timeline de comunicaciones (email, call, whatsapp, etc.)</p>
+        </div>
+        <Button onClick={() => setShowForm(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nueva
+        </Button>
       </div>
 
       <Card>
@@ -73,6 +82,8 @@ export default function CRMV2InteractionsList() {
           )}
         </CardContent>
       </Card>
+
+      <InteractionFormModal open={showForm} onClose={() => setShowForm(false)} defaultAccountId={accountId} />
     </div>
   );
 }

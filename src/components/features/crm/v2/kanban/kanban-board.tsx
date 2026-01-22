@@ -72,10 +72,18 @@ export function DealsKanbanBoard({ pipeline, deals, onDealClick, onAddDeal }: Pr
   const dealsByStage = useMemo(() => {
     const map: Record<string, DealRow[]> = {};
     for (const s of stages) map[s.id] = [];
+    const orphans: DealRow[] = [];
     for (const d of deals) {
       const sid = d.stage_id ?? "";
-      if (!sid || !map[sid]) continue;
+      if (!sid || !map[sid]) {
+        orphans.push(d);
+        continue;
+      }
       map[sid].push(d);
+    }
+    // Si hay deals sin stage_id, los metemos en la primera columna con advertencia
+    if (orphans.length > 0 && stages.length > 0) {
+      map[stages[0].id] = [...orphans, ...map[stages[0].id]];
     }
     return map;
   }, [deals, stages]);

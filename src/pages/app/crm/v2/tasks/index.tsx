@@ -1,11 +1,12 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { usePageTitle } from "@/contexts/page-context";
 import { useCRMTasks, useCompleteCRMTask } from "@/hooks/crm/v2/tasks";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { CheckSquare, Check, Clock } from "lucide-react";
+import { CheckSquare, Check, Clock, Plus } from "lucide-react";
+import { TaskFormModal } from "@/components/features/crm/v2/TaskFormModal";
 
 type TaskRow = {
   id: string;
@@ -20,6 +21,7 @@ export default function CRMV2TasksList() {
   usePageTitle("Tareas");
   const [params] = useSearchParams();
   const accountId = params.get("account") ?? undefined;
+  const [showForm, setShowForm] = useState(false);
 
   const { data, isLoading } = useCRMTasks({
     account_id: accountId,
@@ -30,9 +32,15 @@ export default function CRMV2TasksList() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Tareas</h1>
-        <p className="text-muted-foreground">Pendientes y en progreso</p>
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Tareas</h1>
+          <p className="text-muted-foreground">Pendientes y en progreso</p>
+        </div>
+        <Button onClick={() => setShowForm(true)}>
+          <Plus className="w-4 h-4 mr-2" />
+          Nueva
+        </Button>
       </div>
 
       <Card>
@@ -83,6 +91,8 @@ export default function CRMV2TasksList() {
           )}
         </CardContent>
       </Card>
+
+      <TaskFormModal open={showForm} onClose={() => setShowForm(false)} defaultAccountId={accountId} />
     </div>
   );
 }
