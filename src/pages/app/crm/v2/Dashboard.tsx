@@ -6,6 +6,8 @@ import { TrendingUp, Users, Building2, CheckSquare, Percent } from "lucide-react
 import { useCRMDashboardKPIs } from "@/hooks/crm/v2/dashboard";
 import { usePipelineSummary } from "@/hooks/crm/v2/deals";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
+import { useSeedCRMDemoData } from "@/hooks/crm/v2/seed-demo";
 import {
   Table,
   TableBody,
@@ -20,6 +22,7 @@ export default function CRMV2Dashboard() {
 
   const { data, isLoading } = useCRMDashboardKPIs();
   const { data: pipelineSummary, isLoading: isLoadingPipelineSummary } = usePipelineSummary();
+  const seed = useSeedCRMDemoData();
 
   const cards = useMemo(() => {
     const kpis = data;
@@ -68,6 +71,19 @@ export default function CRMV2Dashboard() {
       <div>
         <h1 className="text-2xl font-bold text-foreground">CRM V2</h1>
         <p className="text-muted-foreground">Visión global (Accounts · Contacts · Deals · Interactions · Tasks)</p>
+      </div>
+
+      <div className="flex items-center justify-between gap-3">
+        <div className="text-sm text-muted-foreground">
+          {pipelineSummary?.total ? `${pipelineSummary.total} deals` : "Sin datos aún"}
+        </div>
+        <Button
+          onClick={() => seed.mutate()}
+          disabled={seed.isPending}
+          variant="secondary"
+        >
+          {seed.isPending ? "Generando..." : "Generar datos demo"}
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
