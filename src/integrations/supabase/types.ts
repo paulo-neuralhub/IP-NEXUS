@@ -28759,6 +28759,14 @@ export type Database = {
       }
     }
     Functions: {
+      _crm_seed_default_email_templates: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
+      _crm_seed_default_whatsapp_templates: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
       admin_change_organization_plan: {
         Args: {
           p_billing_cycle?: string
@@ -28918,6 +28926,10 @@ export type Database = {
         Args: { p_organization_id: string; p_template_code: string }
         Returns: string
       }
+      crm_assert_org_member: {
+        Args: { p_organization_id: string }
+        Returns: undefined
+      }
       crm_get_automation_executions: {
         Args: { p_automation_id: string; p_limit?: number; p_status?: string }
         Returns: Json
@@ -28945,6 +28957,10 @@ export type Database = {
       }
       crm_get_pending_approvals: { Args: { p_user_id?: string }; Returns: Json }
       crm_get_pipeline_summary: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
+      crm_initialize_communication_templates: {
         Args: { p_organization_id: string }
         Returns: Json
       }
@@ -29010,6 +29026,14 @@ export type Database = {
       crm_resolve_approval: {
         Args: { p_approval_id: string; p_decision: string; p_notes?: string }
         Returns: boolean
+      }
+      crm_seed_default_email_templates: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
+      crm_seed_default_whatsapp_templates: {
+        Args: { p_organization_id: string }
+        Returns: number
       }
       daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
