@@ -30,7 +30,17 @@ export function useUpdateOrganization() {
   const { currentOrganization } = useOrganization();
   
   return useMutation({
-    mutationFn: async (data: Partial<{ name: string; slug: string; website: string; logo_url: string }>) => {
+    mutationFn: async (
+      data: Partial<{
+        name: string;
+        slug: string;
+        website: string;
+        logo_url: string;
+        whatsapp_business_id: string;
+        whatsapp_phone: string;
+        whatsapp_phone_number_id: string;
+      }>
+    ) => {
       const { data: org, error } = await supabase
         .from('organizations')
         .update({ ...data, updated_at: new Date().toISOString() })

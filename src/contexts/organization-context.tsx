@@ -11,6 +11,9 @@ interface Organization {
   addons: string[];
   status: string;
   settings: Record<string, unknown>;
+  whatsapp_business_id?: string | null;
+  whatsapp_phone?: string | null;
+  whatsapp_phone_number_id?: string | null;
   created_at: string;
   updated_at: string;
 }

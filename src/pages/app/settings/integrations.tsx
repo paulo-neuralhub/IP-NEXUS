@@ -28,6 +28,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CalendarIntegrationSection } from '@/components/settings/CalendarIntegrationSection';
+import { WhatsAppIntegrationSection } from '@/components/settings/WhatsAppIntegrationSection';
 
 interface IntegrationField {
   key: string;
@@ -177,6 +178,11 @@ export default function IntegrationsPage() {
 
       {/* Calendar Integration Section */}
       <CalendarIntegrationSection />
+
+      <Separator className="my-8" />
+
+      {/* WhatsApp (Meta Cloud API) */}
+      <WhatsAppIntegrationSection />
 
       <Separator className="my-8" />
       

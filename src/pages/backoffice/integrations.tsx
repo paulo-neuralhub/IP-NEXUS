@@ -73,6 +73,26 @@ export default function BackofficeIntegrationsPage() {
           )}
         </CardContent>
       </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>WhatsApp (Meta)</CardTitle>
+          <CardDescription>
+            La configuración del token/verify token se realiza por organización desde la App (Integraciones).
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-between gap-4">
+          <p className="text-sm text-muted-foreground">
+            Los secretos se guardan cifrados por tenant (secure-credentials). Aquí solo lo monitorizamos.
+          </p>
+          <Button asChild variant="outline" size="sm">
+            <Link to="/app/settings/integrations">
+              <ExternalLink className="h-4 w-4 mr-2" />
+              Abrir configuración
+            </Link>
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 }
