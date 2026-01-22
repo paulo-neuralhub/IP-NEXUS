@@ -32,7 +32,9 @@ export function useGuideProgress(featureKey: string) {
         .maybeSingle();
 
       if (error) throw error;
-      return (data?.status as GuideProgressStatus | undefined) ?? undefined;
+      // React Query queryFn must never return `undefined`.
+      // Use `null` to represent “no progress yet”.
+      return (data?.status as GuideProgressStatus | null) ?? null;
     },
   });
 
