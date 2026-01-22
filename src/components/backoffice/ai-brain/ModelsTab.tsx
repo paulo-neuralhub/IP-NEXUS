@@ -18,14 +18,39 @@ import { Skeleton } from '@/components/ui/skeleton';
 type CapKey = 'text' | 'code' | 'tools' | 'vision' | 'voice' | 'video' | 'reasoning';
 
 const CAP_ICONS: Record<CapKey, { label: string; Icon: React.ComponentType<{ className?: string }> }> = {
-  text: { label: 'Text', Icon: Braces },
-  code: { label: 'Code', Icon: Code },
-  tools: { label: 'Functions', Icon: FunctionSquare },
-  vision: { label: 'Vision', Icon: Eye },
-  voice: { label: 'Voice', Icon: Mic },
-  video: { label: 'Video', Icon: Video },
-  reasoning: { label: 'Reasoning', Icon: Sparkles },
+  text: { label: 'Texto', Icon: Braces },
+  code: { label: 'Código', Icon: Code },
+  tools: { label: 'Funciones', Icon: FunctionSquare },
+  vision: { label: 'Visión', Icon: Eye },
+  voice: { label: 'Voz', Icon: Mic },
+  video: { label: 'Vídeo', Icon: Video },
+  reasoning: { label: 'Razonamiento', Icon: Sparkles },
 };
+
+function getProviderHealthBadge(provider: AIProvider) {
+  const health = provider.health_status;
+  const labelMap: Record<AIProvider['health_status'], string> = {
+    healthy: 'Healthy',
+    degraded: 'Degraded',
+    down: 'Down',
+    unknown: 'Unknown',
+  };
+
+  const variant: 'default' | 'secondary' | 'destructive' | 'outline' =
+    health === 'healthy'
+      ? 'default'
+      : health === 'degraded'
+        ? 'secondary'
+        : health === 'down'
+          ? 'destructive'
+          : 'outline';
+
+  return (
+    <Badge variant={variant} className="whitespace-nowrap">
+      {labelMap[health]}
+    </Badge>
+  );
+}
 
 function pickCapabilities(model: AIModel): CapKey[] {
   const caps = model.capabilities || {};
@@ -86,7 +111,7 @@ export function ModelsTab({
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Models</CardTitle>
+          <CardTitle>Modelos</CardTitle>
           <CardDescription>Activación y capacidades por modelo</CardDescription>
         </CardHeader>
         <CardContent className="space-y-2">
@@ -109,6 +134,7 @@ export function ModelsTab({
                 <CardTitle className="flex items-center gap-2">
                   {p.name}
                   <Badge variant="secondary" className="uppercase">{p.code}</Badge>
+                  {getProviderHealthBadge(p)}
                 </CardTitle>
                 <CardDescription>
                   Modelos detectados: {list.length}. Activa/desactiva modelos y revisa capacidades/precios.
@@ -134,7 +160,7 @@ export function ModelsTab({
                     <thead>
                       <tr className="border-b">
                         <th className="text-left py-3 px-4 font-medium">Modelo</th>
-                        <th className="text-left py-3 px-4 font-medium">Capabilities</th>
+                        <th className="text-left py-3 px-4 font-medium">Capacidades</th>
                         <th className="text-left py-3 px-4 font-medium">Context</th>
                         <th className="text-left py-3 px-4 font-medium">Input</th>
                         <th className="text-left py-3 px-4 font-medium">Output</th>

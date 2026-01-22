@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Brain, RefreshCw, Plus } from 'lucide-react';
-import { toast } from 'sonner';
 
 interface AIBrainHeaderProps {
   onAddProvider: () => void;
@@ -23,11 +22,11 @@ export function AIBrainHeader({ onAddProvider, onRefresh, isRefreshing }: AIBrai
       <div className="flex gap-2">
         <Button variant="outline" onClick={onRefresh} disabled={isRefreshing}>
           <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-          Sync Status
+          Sincronizar estado
         </Button>
         <Button onClick={onAddProvider}>
           <Plus className="h-4 w-4 mr-2" />
-          Add Provider
+          Añadir provider
         </Button>
       </div>
     </div>
