@@ -7,6 +7,7 @@ export { CircuitBreakerTab } from './CircuitBreakerTab';
 export { RAGTab } from './RAGTab';
 export { AnalyticsTab } from './AnalyticsTab';
 export { PromptsTab } from './PromptsTab';
+export { FinOpsTab } from './FinOpsTab';
 export { ProviderDialog } from './dialogs/ProviderDialog';
 export { TaskDialog } from './dialogs/TaskDialog';
 export { RAGDialog } from './dialogs/RAGDialog';

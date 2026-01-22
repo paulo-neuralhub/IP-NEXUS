@@ -24,6 +24,7 @@ import {
   CircuitBreakerTab,
   RAGTab,
   AnalyticsTab,
+  FinOpsTab,
   ProviderDialog,
   TaskDialog,
   RAGDialog
@@ -386,10 +387,7 @@ export default function AIBrainPage() {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <AnalyticsTab
-            analytics={summary}
-            isLoading={analyticsLoading}
-          />
+          <FinOpsTab />
         </TabsContent>
       </Tabs>
 

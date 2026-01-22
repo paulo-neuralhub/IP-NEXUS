@@ -459,6 +459,191 @@ export type Database = {
           },
         ]
       }
+      ai_budget_alerts: {
+        Row: {
+          acknowledged: boolean
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          action_details: Json | null
+          action_taken: string | null
+          alert_type: string
+          budget_amount: number | null
+          budget_config_id: string | null
+          client_id: string | null
+          created_at: string
+          current_spend: number | null
+          id: string
+          organization_id: string | null
+          threshold_percent: number | null
+        }
+        Insert: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          action_details?: Json | null
+          action_taken?: string | null
+          alert_type: string
+          budget_amount?: number | null
+          budget_config_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          current_spend?: number | null
+          id?: string
+          organization_id?: string | null
+          threshold_percent?: number | null
+        }
+        Update: {
+          acknowledged?: boolean
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          action_details?: Json | null
+          action_taken?: string | null
+          alert_type?: string
+          budget_amount?: number | null
+          budget_config_id?: string | null
+          client_id?: string | null
+          created_at?: string
+          current_spend?: number | null
+          id?: string
+          organization_id?: string | null
+          threshold_percent?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_budget_alerts_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_alerts_budget_config_id_fkey"
+            columns: ["budget_config_id"]
+            isOneToOne: false
+            referencedRelation: "ai_budget_config"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_alerts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "ai_budget_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_budget_config: {
+        Row: {
+          alert_at_100: boolean
+          alert_at_50: boolean
+          alert_at_80: boolean
+          alert_email: string | null
+          alert_webhook_url: string | null
+          budget_amount: number
+          created_at: string
+          current_period_spend: number
+          current_period_start: string | null
+          fallback_model_id: string | null
+          hard_limit: boolean
+          hard_limit_action: string
+          id: string
+          is_active: boolean
+          model_id: string | null
+          module: string | null
+          organization_id: string | null
+          period_type: string
+          scope_type: string
+          updated_at: string
+        }
+        Insert: {
+          alert_at_100?: boolean
+          alert_at_50?: boolean
+          alert_at_80?: boolean
+          alert_email?: string | null
+          alert_webhook_url?: string | null
+          budget_amount: number
+          created_at?: string
+          current_period_spend?: number
+          current_period_start?: string | null
+          fallback_model_id?: string | null
+          hard_limit?: boolean
+          hard_limit_action?: string
+          id?: string
+          is_active?: boolean
+          model_id?: string | null
+          module?: string | null
+          organization_id?: string | null
+          period_type?: string
+          scope_type: string
+          updated_at?: string
+        }
+        Update: {
+          alert_at_100?: boolean
+          alert_at_50?: boolean
+          alert_at_80?: boolean
+          alert_email?: string | null
+          alert_webhook_url?: string | null
+          budget_amount?: number
+          created_at?: string
+          current_period_spend?: number
+          current_period_start?: string | null
+          fallback_model_id?: string | null
+          hard_limit?: boolean
+          hard_limit_action?: string
+          id?: string
+          is_active?: boolean
+          model_id?: string | null
+          module?: string | null
+          organization_id?: string | null
+          period_type?: string
+          scope_type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_budget_config_fallback_model_id_fkey"
+            columns: ["fallback_model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_config_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "ai_budget_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_circuit_breaker_states: {
         Row: {
           avg_latency_ms: number | null
@@ -1565,6 +1750,151 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      ai_transaction_ledger: {
+        Row: {
+          billable_amount: number
+          billing_strategy: string
+          client_id: string | null
+          cost_input: number
+          cost_output: number
+          cost_total: number
+          created_at: string
+          error_code: string | null
+          error_message: string | null
+          id: string
+          input_tokens: number
+          is_billable: boolean
+          jurisdiction_code: string | null
+          latency_ms: number | null
+          markup_percent: number | null
+          matter_id: string | null
+          model_code: string | null
+          model_id: string | null
+          module: string
+          organization_id: string
+          output_tokens: number
+          provider_id: string | null
+          routing_reason: string | null
+          routing_rule_id: string | null
+          session_id: string | null
+          status: string
+          task_type: string | null
+          total_tokens: number
+          transaction_id: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          billable_amount?: number
+          billing_strategy?: string
+          client_id?: string | null
+          cost_input?: number
+          cost_output?: number
+          cost_total?: number
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          input_tokens?: number
+          is_billable?: boolean
+          jurisdiction_code?: string | null
+          latency_ms?: number | null
+          markup_percent?: number | null
+          matter_id?: string | null
+          model_code?: string | null
+          model_id?: string | null
+          module: string
+          organization_id: string
+          output_tokens?: number
+          provider_id?: string | null
+          routing_reason?: string | null
+          routing_rule_id?: string | null
+          session_id?: string | null
+          status?: string
+          task_type?: string | null
+          total_tokens?: number
+          transaction_id: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          billable_amount?: number
+          billing_strategy?: string
+          client_id?: string | null
+          cost_input?: number
+          cost_output?: number
+          cost_total?: number
+          created_at?: string
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          input_tokens?: number
+          is_billable?: boolean
+          jurisdiction_code?: string | null
+          latency_ms?: number | null
+          markup_percent?: number | null
+          matter_id?: string | null
+          model_code?: string | null
+          model_id?: string | null
+          module?: string
+          organization_id?: string
+          output_tokens?: number
+          provider_id?: string | null
+          routing_reason?: string | null
+          routing_rule_id?: string | null
+          session_id?: string | null
+          status?: string
+          task_type?: string | null
+          total_tokens?: number
+          transaction_id?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_transaction_ledger_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_transaction_ledger_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_transaction_ledger_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "ai_transaction_ledger_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_transaction_ledger_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "ai_providers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_transaction_ledger_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ai_translation_glossaries: {
         Row: {
@@ -3606,6 +3936,119 @@ export type Database = {
             columns: ["audit_log_id"]
             isOneToOne: false
             referencedRelation: "audit_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_ai_billing_rules: {
+        Row: {
+          alert_email: string | null
+          alert_threshold_percent: number
+          billing_mode: string
+          client_id: string | null
+          created_at: string
+          current_month: string
+          current_month_queries: number
+          current_month_spend: number
+          current_month_tokens: number
+          daily_budget: number | null
+          downgrade_to_model_id: string | null
+          flat_rate_per_query: number | null
+          id: string
+          invoice_line_description: string
+          is_active: boolean
+          last_alert_at: string | null
+          limit_action: string
+          markup_percent: number | null
+          monthly_budget: number | null
+          monthly_cap: number | null
+          organization_id: string
+          query_limit_daily: number | null
+          query_limit_monthly: number | null
+          show_on_invoice: boolean
+          updated_at: string
+        }
+        Insert: {
+          alert_email?: string | null
+          alert_threshold_percent?: number
+          billing_mode?: string
+          client_id?: string | null
+          created_at?: string
+          current_month?: string
+          current_month_queries?: number
+          current_month_spend?: number
+          current_month_tokens?: number
+          daily_budget?: number | null
+          downgrade_to_model_id?: string | null
+          flat_rate_per_query?: number | null
+          id?: string
+          invoice_line_description?: string
+          is_active?: boolean
+          last_alert_at?: string | null
+          limit_action?: string
+          markup_percent?: number | null
+          monthly_budget?: number | null
+          monthly_cap?: number | null
+          organization_id: string
+          query_limit_daily?: number | null
+          query_limit_monthly?: number | null
+          show_on_invoice?: boolean
+          updated_at?: string
+        }
+        Update: {
+          alert_email?: string | null
+          alert_threshold_percent?: number
+          billing_mode?: string
+          client_id?: string | null
+          created_at?: string
+          current_month?: string
+          current_month_queries?: number
+          current_month_spend?: number
+          current_month_tokens?: number
+          daily_budget?: number | null
+          downgrade_to_model_id?: string | null
+          flat_rate_per_query?: number | null
+          id?: string
+          invoice_line_description?: string
+          is_active?: boolean
+          last_alert_at?: string | null
+          limit_action?: string
+          markup_percent?: number | null
+          monthly_budget?: number | null
+          monthly_cap?: number | null
+          organization_id?: string
+          query_limit_daily?: number | null
+          query_limit_monthly?: number | null
+          show_on_invoice?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_ai_billing_rules_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_ai_billing_rules_downgrade_to_model_id_fkey"
+            columns: ["downgrade_to_model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_ai_billing_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "client_ai_billing_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -24571,6 +25014,18 @@ export type Database = {
           p_billing_cycle?: string
           p_organization_id: string
           p_pack_code: string
+        }
+        Returns: Json
+      }
+      ai_get_client_billing_summary: {
+        Args: { p_month?: string; p_organization_id: string }
+        Returns: Json
+      }
+      ai_get_finops_dashboard: {
+        Args: {
+          p_end_date?: string
+          p_organization_id: string
+          p_start_date?: string
         }
         Returns: Json
       }
