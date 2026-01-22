@@ -27,7 +27,9 @@ export interface ContactFilters {
 }
 
 export interface DealFilters {
+  pipeline_id?: UUID;
   stage?: string[];
+  stage_id?: UUID[];
   owner_id?: UUID;
   account_id?: UUID;
   opportunity_type?: string[];

@@ -5872,9 +5872,11 @@ export type Database = {
           opportunity_type: string | null
           organization_id: string
           owner_id: string | null
+          pipeline_id: string | null
           stage: string
           stage_entered_at: string
           stage_history: Json
+          stage_id: string | null
           updated_at: string
           weighted_amount: number | null
         }
@@ -5893,9 +5895,11 @@ export type Database = {
           opportunity_type?: string | null
           organization_id: string
           owner_id?: string | null
+          pipeline_id?: string | null
           stage?: string
           stage_entered_at?: string
           stage_history?: Json
+          stage_id?: string | null
           updated_at?: string
           weighted_amount?: number | null
         }
@@ -5914,9 +5918,11 @@ export type Database = {
           opportunity_type?: string | null
           organization_id?: string
           owner_id?: string | null
+          pipeline_id?: string | null
           stage?: string
           stage_entered_at?: string
           stage_history?: Json
+          stage_id?: string | null
           updated_at?: string
           weighted_amount?: number | null
         }
@@ -5961,6 +5967,20 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "pipelines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_stage_id_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "pipeline_stages"
             referencedColumns: ["id"]
           },
         ]

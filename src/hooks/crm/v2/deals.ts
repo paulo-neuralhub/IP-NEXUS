@@ -14,6 +14,8 @@ export function useCRMDeals(filters?: DealFilters) {
       let query = fromTable("crm_deals")
         .select(
           `*,
+           pipeline_id,
+           stage_id,
            account:crm_accounts!account_id(id, name, tier, health_score),
            contact:crm_contacts!contact_id(id, full_name, email),
            owner:users!owner_id(id, full_name, avatar_url)
@@ -23,8 +25,10 @@ export function useCRMDeals(filters?: DealFilters) {
         .order("expected_close_date", { ascending: true, nullsFirst: false });
 
       if (filters?.stage?.length) query = query.in("stage", filters.stage);
+      if (filters?.stage_id?.length) query = query.in("stage_id", filters.stage_id);
       if (filters?.owner_id) query = query.eq("owner_id", filters.owner_id);
       if (filters?.account_id) query = query.eq("account_id", filters.account_id);
+      if (filters?.pipeline_id) query = query.eq("pipeline_id", filters.pipeline_id);
       if (filters?.opportunity_type?.length) query = query.in("opportunity_type", filters.opportunity_type);
       if (filters?.amount_min !== undefined) query = query.gte("amount", filters.amount_min);
       if (filters?.amount_max !== undefined) query = query.lte("amount", filters.amount_max);
@@ -82,6 +86,28 @@ export function useCreateCRMDeal() {
   });
 }
 
+export function useUpdateCRMDeal() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (params: { id: string; data: Record<string, unknown> }) => {
+      const { data, error } = await fromTable("crm_deals").update(params.data).eq("id", params.id).select().single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["crm-deals"] });
+      queryClient.invalidateQueries({ queryKey: ["pipeline-summary"] });
+      toast({ title: "Deal actualizado" });
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Error desconocido";
+      toast({ title: "Error al actualizar deal", description: message, variant: "destructive" });
+    },
+  });
+}
+
 export function useUpdateDealStage() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -89,19 +115,26 @@ export function useUpdateDealStage() {
   return useMutation({
     mutationFn: async (params: {
       dealId: string;
-      newStage: string;
+      newStageId: string;
       closeReason?: string;
       lostToCompetitor?: string;
     }) => {
       const { data: currentDeal, error: currentError } = await fromTable("crm_deals")
-        .select("stage, stage_entered_at, stage_history")
+        .select("stage, stage_id, stage_entered_at, stage_history, amount")
         .eq("id", params.dealId)
         .single();
       if (currentError) throw currentError;
 
+      // Load target stage (pipeline_stages)
+      const { data: targetStage, error: stageError } = await fromTable("pipeline_stages")
+        .select("id, name, probability, is_won_stage, is_lost_stage")
+        .eq("id", params.newStageId)
+        .single();
+      if (stageError) throw stageError;
+
       const stageHistory = (currentDeal?.stage_history as unknown[] | null) ?? [];
       stageHistory.push({
-        stage: currentDeal?.stage,
+        stage: (currentDeal as any)?.stage,
         entered_at: currentDeal?.stage_entered_at,
         exited_at: new Date().toISOString(),
         days_in_stage: Math.floor(
@@ -111,12 +144,21 @@ export function useUpdateDealStage() {
       });
 
       const updates: Record<string, unknown> = {
-        stage: params.newStage,
+        stage: targetStage?.name ?? "",
+        stage_id: targetStage?.id ?? params.newStageId,
         stage_entered_at: new Date().toISOString(),
         stage_history: stageHistory,
       };
 
-      if (params.newStage === "won" || params.newStage === "lost") {
+      // weighted_amount recalculation (if amount exists)
+      const amount = (currentDeal as any)?.amount as number | null | undefined;
+      if (amount != null && targetStage?.probability != null) {
+        updates.weighted_amount = Math.round((Number(amount) * Number(targetStage.probability)) / 100);
+      }
+
+      const isWon = !!targetStage?.is_won_stage;
+      const isLost = !!targetStage?.is_lost_stage;
+      if (isWon || isLost) {
         updates.actual_close_date = new Date().toISOString().split("T")[0];
         if (params.closeReason) updates.close_reason = params.closeReason;
         if (params.lostToCompetitor) updates.lost_to_competitor = params.lostToCompetitor;
