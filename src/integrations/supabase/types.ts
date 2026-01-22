@@ -5942,6 +5942,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "crm_deals_crm_pipeline_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "crm_pipelines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_crm_stage_fkey"
+            columns: ["stage_id"]
+            isOneToOne: false
+            referencedRelation: "crm_pipeline_stages"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "crm_deals_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -5967,20 +5981,6 @@ export type Database = {
             columns: ["owner_id"]
             isOneToOne: false
             referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_deals_pipeline_id_fkey"
-            columns: ["pipeline_id"]
-            isOneToOne: false
-            referencedRelation: "pipelines"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_deals_stage_id_fkey"
-            columns: ["stage_id"]
-            isOneToOne: false
-            referencedRelation: "pipeline_stages"
             referencedColumns: ["id"]
           },
         ]
@@ -6147,6 +6147,80 @@ export type Database = {
           },
         ]
       }
+      crm_pipeline_stages: {
+        Row: {
+          auto_actions: Json | null
+          code: string
+          color: string | null
+          created_at: string | null
+          creates_matter: boolean | null
+          expected_days: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_lost: boolean | null
+          is_won: boolean | null
+          name: string
+          name_es: string | null
+          pipeline_id: string
+          probability: number | null
+          requires_amount: boolean | null
+          requires_close_date: boolean | null
+          sort_order: number
+          updated_at: string | null
+        }
+        Insert: {
+          auto_actions?: Json | null
+          code: string
+          color?: string | null
+          created_at?: string | null
+          creates_matter?: boolean | null
+          expected_days?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_lost?: boolean | null
+          is_won?: boolean | null
+          name: string
+          name_es?: string | null
+          pipeline_id: string
+          probability?: number | null
+          requires_amount?: boolean | null
+          requires_close_date?: boolean | null
+          sort_order?: number
+          updated_at?: string | null
+        }
+        Update: {
+          auto_actions?: Json | null
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          creates_matter?: boolean | null
+          expected_days?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_lost?: boolean | null
+          is_won?: boolean | null
+          name?: string
+          name_es?: string | null
+          pipeline_id?: string
+          probability?: number | null
+          requires_amount?: boolean | null
+          requires_close_date?: boolean | null
+          sort_order?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_pipeline_stages_pipeline_id_fkey"
+            columns: ["pipeline_id"]
+            isOneToOne: false
+            referencedRelation: "crm_pipelines"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_pipeline_template_audit: {
         Row: {
           action: string
@@ -6235,6 +6309,79 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      crm_pipelines: {
+        Row: {
+          code: string
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          name_es: string | null
+          organization_id: string
+          pipeline_type: string
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          name_es?: string | null
+          organization_id: string
+          pipeline_type?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          name_es?: string | null
+          organization_id?: string
+          pipeline_type?: string
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_pipelines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_pipelines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_pipelines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       crm_tasks: {
         Row: {
@@ -27509,9 +27656,21 @@ export type Database = {
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       crm_get_client_360: { Args: { p_account_id: string }; Returns: Json }
+      crm_get_dashboard_kpis: {
+        Args: {
+          p_date_from?: string
+          p_date_to?: string
+          p_organization_id: string
+        }
+        Returns: Json
+      }
       crm_get_pipeline_summary: {
         Args: { p_organization_id: string }
         Returns: Json
+      }
+      crm_initialize_default_pipelines: {
+        Args: { p_organization_id: string }
+        Returns: number
       }
       crm_initialize_tenant_pipelines: {
         Args: { p_organization_id: string }
@@ -27525,6 +27684,10 @@ export type Database = {
           p_event_type: string
         }
         Returns: string
+      }
+      crm_reorder_pipeline_stages: {
+        Args: { p_pipeline_id: string; p_stage_ids: string[] }
+        Returns: boolean
       }
       daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
