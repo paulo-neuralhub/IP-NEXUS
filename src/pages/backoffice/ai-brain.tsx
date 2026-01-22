@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // Hooks
 import { 
@@ -58,6 +59,7 @@ export default function AIBrainPage() {
   const { 
     providers, 
     isLoading: providersLoading, 
+    refetch: refetchProviders,
     createProvider, 
     updateProvider, 
     deleteProvider, 
@@ -148,6 +150,50 @@ export default function AIBrainPage() {
       await toggleModelActive.mutateAsync({ id, is_active: isActive });
     } catch (error) {
       // Error toast handled in hook
+    }
+  };
+
+  const handleCreateDefaultProviders = async () => {
+    try {
+      const defaults = [
+        { name: 'OpenAI', code: 'openai', base_url: 'https://api.openai.com/v1' },
+        { name: 'Gemini', code: 'gemini', base_url: null },
+        { name: 'Anthropic (Claude)', code: 'anthropic', base_url: 'https://api.anthropic.com' },
+        { name: 'xAI (Grok)', code: 'grok', base_url: 'https://api.x.ai/v1' },
+        { name: 'Meta (Llama)', code: 'meta', base_url: null },
+        { name: 'DeepSeek', code: 'deepseek', base_url: 'https://api.deepseek.com/v1' },
+        { name: 'Qwen', code: 'qwen', base_url: 'https://dashscope.aliyuncs.com/compatible-mode/v1' },
+        { name: 'Mistral', code: 'mistral', base_url: 'https://api.mistral.ai/v1' },
+        { name: 'Perplexity', code: 'perplexity', base_url: 'https://api.perplexity.ai' },
+        { name: 'Kimi (Moonshot)', code: 'kimi', base_url: 'https://api.moonshot.cn/v1' },
+      ] as const;
+
+      const existingCodes = new Set(providers.map((p) => p.code.toLowerCase()));
+      const toInsert = defaults
+        .filter((p) => !existingCodes.has(p.code))
+        .map((p) => ({
+          name: p.name,
+          code: p.code,
+          base_url: p.base_url,
+          api_key_encrypted: null,
+          is_gateway: false,
+          status: 'active',
+          health_status: 'unknown',
+          config: {},
+        }));
+
+      if (!toInsert.length) {
+        toast.info('Ya están creados todos los providers por defecto.');
+        return;
+      }
+
+      const { error } = await supabase.from('ai_providers').insert(toInsert);
+      if (error) throw error;
+
+      await refetchProviders();
+      toast.success(`Providers creados: ${toInsert.length}`);
+    } catch (e) {
+      toast.error(`No se pudieron crear providers: ${e instanceof Error ? e.message : 'Error desconocido'}`);
     }
   };
 
@@ -284,6 +330,7 @@ export default function AIBrainPage() {
             onDelete={handleDeleteProvider}
             onTest={handleTestProvider}
             onDiscoverModels={handleDiscoverModels}
+            onCreateDefaults={handleCreateDefaultProviders}
             testingProviderId={testingProviderId}
             discoveringProviderId={discoveringProviderId}
           />

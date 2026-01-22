@@ -12,6 +12,7 @@ interface ProvidersTabProps {
   onDelete: (id: string) => void;
   onTest: (provider: AIProvider) => void;
   onDiscoverModels: (provider: AIProvider) => void;
+  onCreateDefaults?: () => void;
   testingProviderId?: string | null;
   discoveringProviderId?: string | null;
 }
@@ -23,6 +24,7 @@ export function ProvidersTab({
   onDelete, 
   onTest,
   onDiscoverModels,
+  onCreateDefaults,
   testingProviderId,
   discoveringProviderId,
 }: ProvidersTabProps) {
@@ -80,8 +82,18 @@ export function ProvidersTab({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>AI Providers</CardTitle>
-        <CardDescription>Gestión de proveedores de IA y sus API keys</CardDescription>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <CardTitle>AI Providers</CardTitle>
+            <CardDescription>Gestión de proveedores de IA y sus API keys</CardDescription>
+          </div>
+
+          {onCreateDefaults && (
+            <Button variant="outline" size="sm" onClick={onCreateDefaults}>
+              Crear providers por defecto
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -90,6 +102,13 @@ export function ProvidersTab({
               <Brain className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p>No hay providers configurados</p>
               <p className="text-sm">Añade un provider para comenzar</p>
+              {onCreateDefaults && (
+                <div className="mt-4">
+                  <Button variant="outline" onClick={onCreateDefaults}>
+                    Crear providers por defecto
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             providers.map((provider) => (
