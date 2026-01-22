@@ -18,6 +18,7 @@ import {
   AIBrainHeader,
   AIBrainStatsCards,
   ProvidersTab,
+  ModelsTab,
   TaskRouterTab,
   CircuitBreakerTab,
   RAGTab,
@@ -289,20 +290,17 @@ export default function AIBrainPage() {
         </TabsContent>
 
         <TabsContent value="models" className="space-y-4">
-          <div className="text-sm text-muted-foreground">
-            Gestión de modelos: activa/desactiva por provider y revisa capacidades/precios.
-          </div>
-          {/* Nota: UI completa de modelos se añadirá aquí en el siguiente paso */}
-          <div className="rounded-lg border p-4">
-            <p className="font-medium">Próximo paso</p>
-            <p className="text-sm text-muted-foreground">
-              Ya puedes sincronizar modelos por provider desde la pestaña “Providers”.
-            </p>
-            <div className="mt-3 flex items-center gap-2">
-              <span className="text-sm">Toggle rápido (demo):</span>
-              <span className="text-xs text-muted-foreground">{models.length} modelos cargados</span>
-            </div>
-          </div>
+          <ModelsTab
+            providers={providers}
+            models={models}
+            isLoading={modelsLoading || providersLoading}
+            onToggleActive={handleToggleModelActive}
+            onDiscover={(providerId) => {
+              const p = providers.find((x) => x.id === providerId);
+              if (p) handleDiscoverModels(p);
+            }}
+            discoveringProviderId={discoveringProviderId}
+          />
         </TabsContent>
 
         <TabsContent value="router" className="space-y-4">

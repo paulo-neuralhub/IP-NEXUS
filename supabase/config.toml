@@ -209,3 +209,9 @@ verify_jwt = false
 
 [functions.cleanup-demo-data]
 verify_jwt = false
+
+[functions.ai-test-provider]
+verify_jwt = false
+
+[functions.ai-discover-models]
+verify_jwt = false

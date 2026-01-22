@@ -31,12 +31,17 @@ function pickCapabilities(model: AIModel): CapKey[] {
   const caps = model.capabilities || {};
   const out: CapKey[] = [];
 
+  const has = (k: CapKey) => {
+    const v = (caps as Record<string, boolean | undefined>)[k];
+    return v === true;
+  };
+
   // Explicit flags if present
-  if (caps.vision) out.push('vision');
-  if (caps.tools) out.push('tools');
-  if ((caps as any).voice) out.push('voice');
-  if ((caps as any).video) out.push('video');
-  if ((caps as any).reasoning) out.push('reasoning');
+  if (has('vision')) out.push('vision');
+  if (has('tools')) out.push('tools');
+  if (has('voice')) out.push('voice');
+  if (has('video')) out.push('video');
+  if (has('reasoning')) out.push('reasoning');
 
   // Fallback heuristics
   if (!out.length) out.push('text');
