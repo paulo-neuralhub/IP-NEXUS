@@ -65,6 +65,13 @@ export type Database = {
             foreignKeyName: "access_audit_log_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_audit_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -138,6 +145,13 @@ export type Database = {
             foreignKeyName: "access_logs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "access_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -200,6 +214,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "active_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "active_sessions_organization_id_fkey"
             columns: ["organization_id"]
@@ -338,6 +359,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -534,6 +562,13 @@ export type Database = {
             foreignKeyName: "ai_budget_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -626,6 +661,13 @@ export type Database = {
             columns: ["model_id"]
             isOneToOne: false
             referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_budget_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -806,6 +848,13 @@ export type Database = {
             foreignKeyName: "ai_conversations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -914,6 +963,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -1493,6 +1549,13 @@ export type Database = {
             foreignKeyName: "ai_rate_limits_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_rate_limits_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -1582,6 +1645,13 @@ export type Database = {
             columns: ["model_id"]
             isOneToOne: false
             referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_request_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -1870,6 +1940,13 @@ export type Database = {
             foreignKeyName: "ai_transaction_ledger_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_transaction_ledger_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -1937,6 +2014,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "ai_translation_glossaries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ai_translation_glossaries_organization_id_fkey"
             columns: ["organization_id"]
@@ -2029,6 +2113,13 @@ export type Database = {
             foreignKeyName: "ai_translations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_translations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -2091,6 +2182,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "ai_usage_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ai_usage_organization_id_fkey"
             columns: ["organization_id"]
@@ -2183,6 +2281,13 @@ export type Database = {
             foreignKeyName: "ai_usage_aggregates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_usage_aggregates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -2254,6 +2359,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "ai_usage_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "ai_usage_events_organization_id_fkey"
             columns: ["organization_id"]
@@ -2336,6 +2448,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "alert_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "alert_configurations_organization_id_fkey"
             columns: ["organization_id"]
@@ -2442,6 +2561,13 @@ export type Database = {
             foreignKeyName: "analytics_daily_metrics_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_daily_metrics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -2520,6 +2646,13 @@ export type Database = {
             foreignKeyName: "analytics_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -2564,6 +2697,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "analytics_feature_usage_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "analytics_feature_usage_organization_id_fkey"
             columns: ["organization_id"]
@@ -2618,6 +2758,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "api_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "api_connections_organization_id_fkey"
             columns: ["organization_id"]
@@ -2701,6 +2848,13 @@ export type Database = {
             foreignKeyName: "api_keys_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "api_keys_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -2768,6 +2922,13 @@ export type Database = {
             columns: ["api_key_id"]
             isOneToOne: false
             referencedRelation: "api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "api_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -2888,6 +3049,13 @@ export type Database = {
             foreignKeyName: "audio_transcriptions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audio_transcriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -2944,6 +3112,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "audit_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "audit_logs_organization_id_fkey"
             columns: ["organization_id"]
@@ -3094,6 +3269,13 @@ export type Database = {
             foreignKeyName: "automations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -3141,6 +3323,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "availability_exceptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "availability_exceptions_organization_id_fkey"
             columns: ["organization_id"]
@@ -3205,6 +3394,13 @@ export type Database = {
           valid_until?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "availability_slots_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "availability_slots_organization_id_fkey"
             columns: ["organization_id"]
@@ -3307,6 +3503,13 @@ export type Database = {
             foreignKeyName: "billing_clients_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -3369,6 +3572,13 @@ export type Database = {
           stripe_subscription_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "billing_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "billing_events_organization_id_fkey"
             columns: ["organization_id"]
@@ -3446,6 +3656,13 @@ export type Database = {
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "billing_rates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -3553,6 +3770,13 @@ export type Database = {
             foreignKeyName: "blockchain_timestamps_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blockchain_timestamps_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -3633,6 +3857,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "calendar_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "calendar_connections_organization_id_fkey"
             columns: ["organization_id"]
@@ -3769,6 +4000,13 @@ export type Database = {
             foreignKeyName: "calendar_integrations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "calendar_integrations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -3877,6 +4115,13 @@ export type Database = {
           usage_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "capability_usage_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "capability_usage_organization_id_fkey"
             columns: ["organization_id"]
@@ -4035,6 +4280,13 @@ export type Database = {
             columns: ["downgrade_to_model_id"]
             isOneToOne: false
             referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_ai_billing_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -4200,6 +4452,13 @@ export type Database = {
             foreignKeyName: "client_documents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -4283,6 +4542,13 @@ export type Database = {
             foreignKeyName: "client_portals_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_portals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -4336,6 +4602,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "communication_channels_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "communication_channels_organization_id_fkey"
             columns: ["organization_id"]
@@ -4561,6 +4834,13 @@ export type Database = {
             foreignKeyName: "communications_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -4643,6 +4923,13 @@ export type Database = {
             foreignKeyName: "compliance_checks_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "compliance_checks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -4696,6 +4983,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "consent_audit_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "consent_audit_log_organization_id_fkey"
             columns: ["organization_id"]
@@ -4806,6 +5100,13 @@ export type Database = {
             foreignKeyName: "contact_lists_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_lists_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -4830,31 +5131,50 @@ export type Database = {
           country: string | null
           created_at: string | null
           created_by: string | null
+          crm_owner_id: string | null
           custom_fields: Json | null
           department: string | null
           email: string | null
           employee_count: string | null
           id: string
           industry: string | null
+          is_decision_maker: boolean | null
+          is_primary_contact: boolean | null
           job_title: string | null
           last_contacted_at: string | null
+          last_interaction_at: string | null
+          lead_classification: string | null
+          lead_score: number | null
+          lead_score_components: Json | null
+          lead_source: string | null
+          lead_status: string | null
           lifecycle_stage: string | null
           mobile: string | null
           name: string
+          next_followup_date: string | null
           notes: string | null
           organization_id: string
           owner_type: string
           phone: string | null
+          portal_access_enabled: boolean | null
+          portal_last_login: string | null
           postal_code: string | null
+          preferred_contact_method: string | null
+          preferred_language: string | null
           search_vector: unknown
           source: string | null
           source_detail: string | null
           state: string | null
           tags: string[] | null
           tax_id: string | null
+          timezone: string | null
+          total_interactions: number | null
           type: string
           updated_at: string | null
           website: string | null
+          whatsapp_enabled: boolean | null
+          whatsapp_opted_in_at: string | null
+          whatsapp_phone: string | null
         }
         Insert: {
           address_line1?: string | null
@@ -4867,31 +5187,50 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           created_by?: string | null
+          crm_owner_id?: string | null
           custom_fields?: Json | null
           department?: string | null
           email?: string | null
           employee_count?: string | null
           id?: string
           industry?: string | null
+          is_decision_maker?: boolean | null
+          is_primary_contact?: boolean | null
           job_title?: string | null
           last_contacted_at?: string | null
+          last_interaction_at?: string | null
+          lead_classification?: string | null
+          lead_score?: number | null
+          lead_score_components?: Json | null
+          lead_source?: string | null
+          lead_status?: string | null
           lifecycle_stage?: string | null
           mobile?: string | null
           name: string
+          next_followup_date?: string | null
           notes?: string | null
           organization_id: string
           owner_type?: string
           phone?: string | null
+          portal_access_enabled?: boolean | null
+          portal_last_login?: string | null
           postal_code?: string | null
+          preferred_contact_method?: string | null
+          preferred_language?: string | null
           search_vector?: unknown
           source?: string | null
           source_detail?: string | null
           state?: string | null
           tags?: string[] | null
           tax_id?: string | null
+          timezone?: string | null
+          total_interactions?: number | null
           type?: string
           updated_at?: string | null
           website?: string | null
+          whatsapp_enabled?: boolean | null
+          whatsapp_opted_in_at?: string | null
+          whatsapp_phone?: string | null
         }
         Update: {
           address_line1?: string | null
@@ -4904,31 +5243,50 @@ export type Database = {
           country?: string | null
           created_at?: string | null
           created_by?: string | null
+          crm_owner_id?: string | null
           custom_fields?: Json | null
           department?: string | null
           email?: string | null
           employee_count?: string | null
           id?: string
           industry?: string | null
+          is_decision_maker?: boolean | null
+          is_primary_contact?: boolean | null
           job_title?: string | null
           last_contacted_at?: string | null
+          last_interaction_at?: string | null
+          lead_classification?: string | null
+          lead_score?: number | null
+          lead_score_components?: Json | null
+          lead_source?: string | null
+          lead_status?: string | null
           lifecycle_stage?: string | null
           mobile?: string | null
           name?: string
+          next_followup_date?: string | null
           notes?: string | null
           organization_id?: string
           owner_type?: string
           phone?: string | null
+          portal_access_enabled?: boolean | null
+          portal_last_login?: string | null
           postal_code?: string | null
+          preferred_contact_method?: string | null
+          preferred_language?: string | null
           search_vector?: unknown
           source?: string | null
           source_detail?: string | null
           state?: string | null
           tags?: string[] | null
           tax_id?: string | null
+          timezone?: string | null
+          total_interactions?: number | null
           type?: string
           updated_at?: string | null
           website?: string | null
+          whatsapp_enabled?: boolean | null
+          whatsapp_opted_in_at?: string | null
+          whatsapp_phone?: string | null
         }
         Relationships: [
           {
@@ -4943,6 +5301,20 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_crm_owner_id_fkey"
+            columns: ["crm_owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -4994,6 +5366,13 @@ export type Database = {
             foreignKeyName: "contextual_guide_progress_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contextual_guide_progress_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -5009,6 +5388,304 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_account_health_history: {
+        Row: {
+          change_factors: Json | null
+          churn_risk_score: number | null
+          health_components: Json
+          health_score: number
+          id: string
+          organization_id: string
+          recorded_at: string | null
+          triggered_by: string | null
+        }
+        Insert: {
+          change_factors?: Json | null
+          churn_risk_score?: number | null
+          health_components: Json
+          health_score: number
+          id?: string
+          organization_id: string
+          recorded_at?: string | null
+          triggered_by?: string | null
+        }
+        Update: {
+          change_factors?: Json | null
+          churn_risk_score?: number | null
+          health_components?: Json
+          health_score?: number
+          id?: string
+          organization_id?: string
+          recorded_at?: string | null
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_account_health_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_account_health_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_account_health_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_ai_learning_logs: {
+        Row: {
+          ai_model: string | null
+          ai_output: string
+          context_type: string
+          correction_distance: number | null
+          created_at: string | null
+          created_by: string | null
+          feedback_notes: string | null
+          few_shot_quality_score: number | null
+          human_action: string | null
+          human_output: string | null
+          id: string
+          included_in_few_shot: boolean | null
+          input_context: Json | null
+          interaction_id: string | null
+          organization_id: string
+          processed_at: string | null
+          processed_for_training: boolean | null
+          prompt_hash: string | null
+          semantic_similarity: number | null
+          time_to_action_seconds: number | null
+        }
+        Insert: {
+          ai_model?: string | null
+          ai_output: string
+          context_type: string
+          correction_distance?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          feedback_notes?: string | null
+          few_shot_quality_score?: number | null
+          human_action?: string | null
+          human_output?: string | null
+          id?: string
+          included_in_few_shot?: boolean | null
+          input_context?: Json | null
+          interaction_id?: string | null
+          organization_id: string
+          processed_at?: string | null
+          processed_for_training?: boolean | null
+          prompt_hash?: string | null
+          semantic_similarity?: number | null
+          time_to_action_seconds?: number | null
+        }
+        Update: {
+          ai_model?: string | null
+          ai_output?: string
+          context_type?: string
+          correction_distance?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          feedback_notes?: string | null
+          few_shot_quality_score?: number | null
+          human_action?: string | null
+          human_output?: string | null
+          id?: string
+          included_in_few_shot?: boolean | null
+          input_context?: Json | null
+          interaction_id?: string | null
+          organization_id?: string
+          processed_at?: string | null
+          processed_for_training?: boolean | null
+          prompt_hash?: string | null
+          semantic_similarity?: number | null
+          time_to_action_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_ai_learning_logs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_learning_logs_interaction_id_fkey"
+            columns: ["interaction_id"]
+            isOneToOne: false
+            referencedRelation: "activities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_learning_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_learning_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_ai_learning_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_ai_recommendations: {
+        Row: {
+          action_taken: string | null
+          actioned_at: string | null
+          actioned_by: string | null
+          actual_impact: number | null
+          confidence: number | null
+          contact_id: string | null
+          created_at: string | null
+          deal_id: string | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          matter_id: string | null
+          organization_id: string
+          outcome: string | null
+          outcome_measured: boolean | null
+          predicted_impact: number | null
+          priority: string | null
+          reasoning: string | null
+          status: string | null
+          suggested_action: Json | null
+          title: string
+          type: string
+          updated_at: string | null
+          urgency: number | null
+        }
+        Insert: {
+          action_taken?: string | null
+          actioned_at?: string | null
+          actioned_by?: string | null
+          actual_impact?: number | null
+          confidence?: number | null
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          matter_id?: string | null
+          organization_id: string
+          outcome?: string | null
+          outcome_measured?: boolean | null
+          predicted_impact?: number | null
+          priority?: string | null
+          reasoning?: string | null
+          status?: string | null
+          suggested_action?: Json | null
+          title: string
+          type: string
+          updated_at?: string | null
+          urgency?: number | null
+        }
+        Update: {
+          action_taken?: string | null
+          actioned_at?: string | null
+          actioned_by?: string | null
+          actual_impact?: number | null
+          confidence?: number | null
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          matter_id?: string | null
+          organization_id?: string
+          outcome?: string | null
+          outcome_measured?: boolean | null
+          predicted_impact?: number | null
+          priority?: string | null
+          reasoning?: string | null
+          status?: string | null
+          suggested_action?: Json | null
+          title?: string
+          type?: string
+          updated_at?: string | null
+          urgency?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_ai_recommendations_actioned_by_fkey"
+            columns: ["actioned_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -5059,6 +5736,13 @@ export type Database = {
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_lead_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -5174,6 +5858,13 @@ export type Database = {
             foreignKeyName: "dashboards_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dashboards_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -5243,6 +5934,13 @@ export type Database = {
             foreignKeyName: "data_connectors_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_connectors_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -5308,6 +6006,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "data_exports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "data_exports_organization_id_fkey"
             columns: ["organization_id"]
@@ -5384,6 +6089,13 @@ export type Database = {
             foreignKeyName: "data_imports_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "data_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -5437,6 +6149,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "data_retention_policies_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "data_retention_policies_organization_id_fkey"
             columns: ["organization_id"]
@@ -5518,6 +6237,13 @@ export type Database = {
             columns: ["deadline_id"]
             isOneToOne: false
             referencedRelation: "matter_deadlines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -5747,6 +6473,13 @@ export type Database = {
             foreignKeyName: "deals_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -5877,6 +6610,13 @@ export type Database = {
             foreignKeyName: "document_chunks_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_chunks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -5933,6 +6673,13 @@ export type Database = {
           source_type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "document_embeddings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "document_embeddings_organization_id_fkey"
             columns: ["organization_id"]
@@ -6055,6 +6802,13 @@ export type Database = {
             foreignKeyName: "document_entities_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_entities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -6152,6 +6906,13 @@ export type Database = {
             foreignKeyName: "document_templates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -6213,6 +6974,13 @@ export type Database = {
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "client_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_validity_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -6346,6 +7114,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_campaigns_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -6518,6 +7293,13 @@ export type Database = {
             foreignKeyName: "email_ingestion_queue_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_ingestion_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -6681,6 +7463,13 @@ export type Database = {
             foreignKeyName: "email_templates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -6740,6 +7529,13 @@ export type Database = {
             columns: ["contact_id"]
             isOneToOne: false
             referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_unsubscribes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -6816,6 +7612,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -7043,6 +7846,13 @@ export type Database = {
             foreignKeyName: "filing_applications_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -7200,6 +8010,13 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_drafts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -7377,6 +8194,13 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -7645,6 +8469,13 @@ export type Database = {
             foreignKeyName: "finance_portfolios_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_portfolios_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -7840,6 +8671,13 @@ export type Database = {
             foreignKeyName: "finance_valuations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_valuations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -7979,6 +8817,13 @@ export type Database = {
             foreignKeyName: "gdpr_requests_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gdpr_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -8100,6 +8945,13 @@ export type Database = {
             foreignKeyName: "generated_documents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -8187,6 +9039,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_reports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -8292,6 +9151,13 @@ export type Database = {
           verified_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "genius_generated_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "genius_generated_documents_organization_id_fkey"
             columns: ["organization_id"]
@@ -8497,6 +9363,13 @@ export type Database = {
             foreignKeyName: "genius_trademark_comparisons_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "genius_trademark_comparisons_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -8653,6 +9526,13 @@ export type Database = {
             columns: ["article_id"]
             isOneToOne: false
             referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_article_feedback_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -8941,6 +9821,13 @@ export type Database = {
             foreignKeyName: "help_rule_execution_log_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_rule_execution_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -9119,6 +10006,13 @@ export type Database = {
             columns: ["clicked_article_id"]
             isOneToOne: false
             referencedRelation: "help_articles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "help_search_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -9447,6 +10341,13 @@ export type Database = {
             foreignKeyName: "import_files_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_files_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -9525,6 +10426,13 @@ export type Database = {
             foreignKeyName: "import_jobs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -9598,6 +10506,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "import_mapping_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "import_mapping_templates_organization_id_fkey"
             columns: ["organization_id"]
@@ -9710,6 +10625,13 @@ export type Database = {
             foreignKeyName: "import_snapshots_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_snapshots_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -9778,6 +10700,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "import_sources_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "import_sources_organization_id_fkey"
             columns: ["organization_id"]
@@ -9864,6 +10793,13 @@ export type Database = {
             foreignKeyName: "import_sync_configs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_sync_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -9924,6 +10860,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "import_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "import_templates_organization_id_fkey"
             columns: ["organization_id"]
@@ -10073,6 +11016,13 @@ export type Database = {
             foreignKeyName: "imports_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -10128,6 +11078,13 @@ export type Database = {
             columns: ["invited_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -10333,6 +11290,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -12569,6 +13533,13 @@ export type Database = {
             foreignKeyName: "jurisdiction_rules_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jurisdiction_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -12836,6 +13807,13 @@ export type Database = {
             foreignKeyName: "legalops_ai_feedback_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legalops_ai_feedback_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -12953,6 +13931,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legalops_ai_interactions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -14373,6 +15358,13 @@ export type Database = {
             foreignKeyName: "market_users_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_users_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -14554,6 +15546,13 @@ export type Database = {
             foreignKeyName: "matter_activity_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_activity_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -14635,6 +15634,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_comments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -14783,6 +15789,13 @@ export type Database = {
             foreignKeyName: "matter_costs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_costs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -14923,6 +15936,13 @@ export type Database = {
             foreignKeyName: "matter_deadlines_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_deadlines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -15010,6 +16030,13 @@ export type Database = {
             foreignKeyName: "matter_documents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_documents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -15089,6 +16116,13 @@ export type Database = {
             foreignKeyName: "matter_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -15148,6 +16182,13 @@ export type Database = {
             columns: ["child_matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_family_relations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -15398,6 +16439,13 @@ export type Database = {
             foreignKeyName: "matters_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -15446,6 +16494,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "memberships_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "memberships_organization_id_fkey"
             columns: ["organization_id"]
@@ -15524,6 +16579,13 @@ export type Database = {
             foreignKeyName: "metrics_cache_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "metrics_cache_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -15595,6 +16657,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "migration_agents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "migration_agents_organization_id_fkey"
             columns: ["organization_id"]
@@ -15681,6 +16750,13 @@ export type Database = {
             foreignKeyName: "migration_connections_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "migration_connections_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -15761,6 +16837,13 @@ export type Database = {
           validation_warnings?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "migration_files_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "migration_files_organization_id_fkey"
             columns: ["organization_id"]
@@ -16003,6 +17086,13 @@ export type Database = {
             foreignKeyName: "migration_projects_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "migration_projects_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -16201,6 +17291,13 @@ export type Database = {
             foreignKeyName: "migration_syncs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "migration_syncs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -16287,6 +17384,13 @@ export type Database = {
           recorded_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "module_usage_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "module_usage_log_organization_id_fkey"
             columns: ["organization_id"]
@@ -16382,6 +17486,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "monitored_deadlines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -16586,6 +17697,13 @@ export type Database = {
             foreignKeyName: "notifications_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -16670,6 +17788,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "oauth_applications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "oauth_applications_organization_id_fkey"
             columns: ["organization_id"]
@@ -16782,6 +17907,13 @@ export type Database = {
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ocr_results_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -16952,6 +18084,13 @@ export type Database = {
           tour_progress?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "onboarding_progress_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "onboarding_progress_organization_id_fkey"
             columns: ["organization_id"]
@@ -17136,6 +18275,13 @@ export type Database = {
             foreignKeyName: "organization_branding_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_branding_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -17186,6 +18332,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "organization_capabilities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "organization_capabilities_organization_id_fkey"
             columns: ["organization_id"]
@@ -17243,6 +18396,13 @@ export type Database = {
           stripe_subscription_item_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "organization_jurisdictions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "organization_jurisdictions_organization_id_fkey"
             columns: ["organization_id"]
@@ -17339,6 +18499,13 @@ export type Database = {
             foreignKeyName: "organization_module_licenses_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_module_licenses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -17389,6 +18556,13 @@ export type Database = {
             columns: ["office_id"]
             isOneToOne: false
             referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_offices_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -17451,6 +18625,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "organization_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "organization_settings_organization_id_fkey"
             columns: ["organization_id"]
@@ -17536,6 +18717,13 @@ export type Database = {
             foreignKeyName: "organization_subscriptions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -17557,42 +18745,98 @@ export type Database = {
       }
       organizations: {
         Row: {
+          account_source: string | null
+          account_tier: string | null
           addons: string[] | null
+          churn_risk_level: string | null
+          churn_risk_score: number | null
           created_at: string | null
+          crm_owner_id: string | null
+          days_since_contact: number | null
           default_language: string | null
+          health_components: Json | null
+          health_score: number | null
           id: string
+          industry: string | null
+          ip_portfolio_summary: Json | null
+          is_platform_org: boolean | null
+          last_interaction_at: string | null
+          lifetime_value: number | null
           name: string
+          outstanding_balance: number | null
+          payment_score: number | null
           plan: string
+          sentiment_score: number | null
           settings: Json | null
           slug: string
           status: string
           updated_at: string | null
         }
         Insert: {
+          account_source?: string | null
+          account_tier?: string | null
           addons?: string[] | null
+          churn_risk_level?: string | null
+          churn_risk_score?: number | null
           created_at?: string | null
+          crm_owner_id?: string | null
+          days_since_contact?: number | null
           default_language?: string | null
+          health_components?: Json | null
+          health_score?: number | null
           id?: string
+          industry?: string | null
+          ip_portfolio_summary?: Json | null
+          is_platform_org?: boolean | null
+          last_interaction_at?: string | null
+          lifetime_value?: number | null
           name: string
+          outstanding_balance?: number | null
+          payment_score?: number | null
           plan?: string
+          sentiment_score?: number | null
           settings?: Json | null
           slug: string
           status?: string
           updated_at?: string | null
         }
         Update: {
+          account_source?: string | null
+          account_tier?: string | null
           addons?: string[] | null
+          churn_risk_level?: string | null
+          churn_risk_score?: number | null
           created_at?: string | null
+          crm_owner_id?: string | null
+          days_since_contact?: number | null
           default_language?: string | null
+          health_components?: Json | null
+          health_score?: number | null
           id?: string
+          industry?: string | null
+          ip_portfolio_summary?: Json | null
+          is_platform_org?: boolean | null
+          last_interaction_at?: string | null
+          lifetime_value?: number | null
           name?: string
+          outstanding_balance?: number | null
+          payment_score?: number | null
           plan?: string
+          sentiment_score?: number | null
           settings?: Json | null
           slug?: string
           status?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "organizations_crm_owner_id_fkey"
+            columns: ["crm_owner_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payments: {
         Row: {
@@ -17652,6 +18896,13 @@ export type Database = {
             columns: ["internal_invoice_id"]
             isOneToOne: false
             referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -17801,6 +19052,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "pipelines_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "pipelines_organization_id_fkey"
             columns: ["organization_id"]
@@ -18123,6 +19381,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "portal_approvals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "portal_approvals_organization_id_fkey"
             columns: ["organization_id"]
@@ -18485,6 +19750,13 @@ export type Database = {
             foreignKeyName: "portal_signatures_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_signatures_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -18651,6 +19923,13 @@ export type Database = {
             foreignKeyName: "portfolio_valuations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portfolio_valuations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -18707,6 +19986,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "portfolios_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "portfolios_organization_id_fkey"
             columns: ["organization_id"]
@@ -18856,6 +20142,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -19133,6 +20426,13 @@ export type Database = {
             foreignKeyName: "quotes_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -19239,6 +20539,13 @@ export type Database = {
             foreignKeyName: "renewal_schedule_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "renewal_schedule_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -19332,6 +20639,13 @@ export type Database = {
             foreignKeyName: "report_definitions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_definitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -19391,6 +20705,13 @@ export type Database = {
           triggered_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "report_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "report_executions_organization_id_fkey"
             columns: ["organization_id"]
@@ -19472,6 +20793,13 @@ export type Database = {
             foreignKeyName: "report_templates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "report_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -19527,6 +20855,13 @@ export type Database = {
             columns: ["granted_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_permissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -19661,6 +20996,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "retention_policies_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "retention_policies_organization_id_fkey"
             columns: ["organization_id"]
@@ -19986,6 +21328,13 @@ export type Database = {
             foreignKeyName: "rfq_requests_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rfq_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20109,6 +21458,13 @@ export type Database = {
             foreignKeyName: "roles_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20187,6 +21543,13 @@ export type Database = {
             foreignKeyName: "saved_searches_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_searches_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20252,6 +21615,13 @@ export type Database = {
           success_count?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "scheduled_exports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "scheduled_exports_organization_id_fkey"
             columns: ["organization_id"]
@@ -20339,6 +21709,13 @@ export type Database = {
             foreignKeyName: "scheduled_reports_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "scheduled_reports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20396,6 +21773,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "scim_sync_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "scim_sync_logs_organization_id_fkey"
             columns: ["organization_id"]
@@ -20458,6 +21842,13 @@ export type Database = {
             foreignKeyName: "search_history_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "search_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20499,6 +21890,13 @@ export type Database = {
           term?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "search_synonyms_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "search_synonyms_organization_id_fkey"
             columns: ["organization_id"]
@@ -20569,6 +21967,13 @@ export type Database = {
             foreignKeyName: "security_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "security_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20634,6 +22039,13 @@ export type Database = {
           to_name?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "sent_emails_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "sent_emails_organization_id_fkey"
             columns: ["organization_id"]
@@ -20719,6 +22131,13 @@ export type Database = {
             foreignKeyName: "service_fees_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_fees_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -20772,6 +22191,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "settings_audit_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "settings_audit_log_organization_id_fkey"
             columns: ["organization_id"]
@@ -20966,6 +22392,13 @@ export type Database = {
             foreignKeyName: "signature_requests_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -21039,6 +22472,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "similarity_analyses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -21188,6 +22628,13 @@ export type Database = {
             foreignKeyName: "smart_tasks_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -21311,6 +22758,13 @@ export type Database = {
             foreignKeyName: "spider_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -21399,6 +22853,13 @@ export type Database = {
             columns: ["connector_id"]
             isOneToOne: false
             referencedRelation: "spider_connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_connector_credentials_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -21714,6 +23175,13 @@ export type Database = {
             foreignKeyName: "spider_jobs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -21895,6 +23363,13 @@ export type Database = {
             foreignKeyName: "sso_configurations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sso_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -22011,6 +23486,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "stripe_customers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "stripe_customers_organization_id_fkey"
             columns: ["organization_id"]
@@ -22169,6 +23651,13 @@ export type Database = {
             columns: ["new_plan_id"]
             isOneToOne: false
             referencedRelation: "subscription_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -22435,6 +23924,13 @@ export type Database = {
             foreignKeyName: "subscriptions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -22587,6 +24083,13 @@ export type Database = {
             foreignKeyName: "support_tickets_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "support_tickets_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -22674,6 +24177,13 @@ export type Database = {
             columns: ["connector_id"]
             isOneToOne: false
             referencedRelation: "data_connectors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_jobs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -22940,6 +24450,13 @@ export type Database = {
             foreignKeyName: "teams_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "teams_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -23031,6 +24548,13 @@ export type Database = {
             foreignKeyName: "tenant_ai_config_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_ai_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -23113,6 +24637,13 @@ export type Database = {
             columns: ["legal_document_id"]
             isOneToOne: false
             referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_consents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -23300,6 +24831,13 @@ export type Database = {
             foreignKeyName: "time_entries_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "time_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -23387,6 +24925,13 @@ export type Database = {
             foreignKeyName: "trademark_visuals_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trademark_visuals_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -23425,6 +24970,13 @@ export type Database = {
           period_start?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "usage_metrics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "usage_metrics_organization_id_fkey"
             columns: ["organization_id"]
@@ -23492,6 +25044,13 @@ export type Database = {
             foreignKeyName: "usage_records_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "usage_records_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -23545,6 +25104,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_consents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_consents_organization_id_fkey"
             columns: ["organization_id"]
@@ -23614,6 +25180,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "user_feedback_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_feedback_organization_id_fkey"
             columns: ["organization_id"]
@@ -23694,6 +25267,13 @@ export type Database = {
             foreignKeyName: "user_presence_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_presence_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -23754,6 +25334,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "user_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_sessions_organization_id_fkey"
             columns: ["organization_id"]
@@ -23938,6 +25525,13 @@ export type Database = {
             foreignKeyName: "vision_analyses_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vision_analyses_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -24074,6 +25668,13 @@ export type Database = {
             columns: ["action_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watch_results_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -24223,6 +25824,13 @@ export type Database = {
             columns: ["matter_id"]
             isOneToOne: false
             referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlists_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
@@ -24399,6 +26007,13 @@ export type Database = {
             foreignKeyName: "webhooks_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhooks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -24461,6 +26076,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "whatsapp_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "whatsapp_sessions_organization_id_fkey"
             columns: ["organization_id"]
@@ -24593,6 +26215,13 @@ export type Database = {
             foreignKeyName: "workflow_executions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -24676,6 +26305,13 @@ export type Database = {
             foreignKeyName: "workflow_queue_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -24748,6 +26384,13 @@ export type Database = {
           workflow_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "workflow_schedules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "workflow_schedules_organization_id_fkey"
             columns: ["organization_id"]
@@ -24841,6 +26484,13 @@ export type Database = {
             foreignKeyName: "workflow_templates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -24894,6 +26544,13 @@ export type Database = {
           value_type?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "workflow_variables_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "workflow_variables_organization_id_fkey"
             columns: ["organization_id"]
@@ -24963,6 +26620,13 @@ export type Database = {
             foreignKeyName: "ai_usage_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_usage_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -24974,6 +26638,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      backoffice_tenant_crm: {
+        Row: {
+          account_tier: string | null
+          ai_conversations_30d: number | null
+          billing_cycle: string | null
+          churn_risk_level: string | null
+          churn_risk_score: number | null
+          customer_since: string | null
+          days_since_contact: number | null
+          health_score: number | null
+          id: string | null
+          industry: string | null
+          last_interaction_at: string | null
+          last_matter_created: string | null
+          lifetime_value: number | null
+          matters_last_30d: number | null
+          name: string | null
+          plan: string | null
+          renewal_date: string | null
+          sentiment_score: number | null
+          slug: string | null
+          status: string | null
+          subscription_status: string | null
+          total_contacts: number | null
+          total_deals: number | null
+          total_matters: number | null
+          total_users: number | null
+        }
+        Relationships: []
       }
       ipo_expiring_credentials: {
         Row: {
@@ -25022,6 +26716,13 @@ export type Database = {
             foreignKeyName: "matters_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
@@ -25055,6 +26756,13 @@ export type Database = {
           voided_count: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "signature_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "signature_requests_organization_id_fkey"
             columns: ["organization_id"]
@@ -25150,6 +26858,22 @@ export type Database = {
       }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
       assign_automatic_badges: { Args: never; Returns: undefined }
+      backoffice_get_platform_metrics: { Args: never; Returns: Json }
+      backoffice_get_tenant_detail: {
+        Args: { p_tenant_id: string }
+        Returns: Json
+      }
+      backoffice_get_tenant_list: {
+        Args: {
+          p_filter_plan?: string
+          p_filter_risk?: string
+          p_limit?: number
+          p_offset?: number
+          p_sort_by?: string
+          p_sort_order?: string
+        }
+        Returns: Json
+      }
       calculate_daily_analytics: {
         Args: { p_date?: string }
         Returns: undefined
@@ -25296,6 +27020,7 @@ export type Database = {
       }
       get_ui_config: { Args: { p_organization_id: string }; Returns: Json }
       get_user_org_ids: { Args: never; Returns: string[] }
+      get_user_organization_ids: { Args: never; Returns: string[] }
       get_user_permissions: {
         Args: { _organization_id: string; _user_id: string }
         Returns: {
@@ -25305,6 +27030,7 @@ export type Database = {
           scope: Database["public"]["Enums"]["permission_scope"]
         }[]
       }
+      get_user_platform_role: { Args: never; Returns: string }
       get_user_role: {
         Args: { _organization_id: string; _user_id: string }
         Returns: {
@@ -25354,6 +27080,7 @@ export type Database = {
         Args: { p_api_key_id: string }
         Returns: undefined
       }
+      is_backoffice_admin: { Args: never; Returns: boolean }
       is_holiday: {
         Args: { check_date: string; country: string; region?: string }
         Returns: boolean
