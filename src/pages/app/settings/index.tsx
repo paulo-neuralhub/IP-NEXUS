@@ -38,6 +38,7 @@ import NotificationsSettings from './sections/NotificationsSettings';
 import SSOSettings from './sections/SSOSettings';
 import ApiWebhooksSettings from './sections/ApiWebhooksSettings';
 import CrmSettings from './sections/CrmSettings';
+import EmailSettings from './sections/EmailSettings';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -188,7 +189,9 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
         </RequirePermission>
       )}
       {activeTab === 'email' && (
-        <div className="text-muted-foreground">Configuración de Email - Próximamente</div>
+        <RequirePermission permission="settings.update">
+          <EmailSettings />
+        </RequirePermission>
       )}
       {activeTab === 'billing' && (
         <RequirePermission permission="billing.view">

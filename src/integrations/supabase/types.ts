@@ -23748,6 +23748,61 @@ export type Database = {
           },
         ]
       }
+      secure_credentials: {
+        Row: {
+          created_at: string
+          credential_key: string
+          encrypted_value: string
+          id: string
+          organization_id: string | null
+          owner_type: string
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          credential_key: string
+          encrypted_value: string
+          id?: string
+          organization_id?: string | null
+          owner_type?: string
+          provider: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          credential_key?: string
+          encrypted_value?: string
+          id?: string
+          organization_id?: string | null
+          owner_type?: string
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "secure_credentials_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "secure_credentials_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "secure_credentials_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       security_alerts: {
         Row: {
           actions_taken: Json | null
@@ -29143,6 +29198,15 @@ export type Database = {
         Returns: {
           count: number
           entity_type: string
+        }[]
+      }
+      secure_credentials_status: {
+        Args: { p_organization_id: string }
+        Returns: {
+          credential_key: string
+          is_configured: boolean
+          provider: string
+          updated_at: string
         }[]
       }
       show_limit: { Args: never; Returns: number }
