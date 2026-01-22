@@ -5613,13 +5613,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_ai_learning_logs_interaction_id_fkey"
-            columns: ["interaction_id"]
-            isOneToOne: false
-            referencedRelation: "activities"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "crm_ai_learning_logs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -5736,13 +5729,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_ai_recommendations_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "contacts"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "crm_ai_recommendations_crm_contact_id_fkey"
             columns: ["crm_contact_id"]
             isOneToOne: false
@@ -5754,13 +5740,6 @@ export type Database = {
             columns: ["crm_deal_id"]
             isOneToOne: false
             referencedRelation: "crm_deals"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_ai_recommendations_deal_id_fkey"
-            columns: ["deal_id"]
-            isOneToOne: false
-            referencedRelation: "deals"
             referencedColumns: ["id"]
           },
           {
@@ -6227,13 +6206,6 @@ export type Database = {
           source?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "crm_lead_events_contact_id_fkey"
-            columns: ["contact_id"]
-            isOneToOne: false
-            referencedRelation: "contacts"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "crm_lead_events_crm_contact_id_fkey"
             columns: ["crm_contact_id"]
