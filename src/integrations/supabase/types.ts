@@ -5013,6 +5013,70 @@ export type Database = {
           },
         ]
       }
+      crm_lead_events: {
+        Row: {
+          contact_id: string
+          created_at: string | null
+          decay_days: number | null
+          event_data: Json | null
+          event_type: string
+          expires_at: string | null
+          id: string
+          occurred_at: string | null
+          organization_id: string
+          score_impact: number
+          source: string | null
+        }
+        Insert: {
+          contact_id: string
+          created_at?: string | null
+          decay_days?: number | null
+          event_data?: Json | null
+          event_type: string
+          expires_at?: string | null
+          id?: string
+          occurred_at?: string | null
+          organization_id: string
+          score_impact: number
+          source?: string | null
+        }
+        Update: {
+          contact_id?: string
+          created_at?: string | null
+          decay_days?: number | null
+          event_data?: Json | null
+          event_type?: string
+          expires_at?: string | null
+          id?: string
+          occurred_at?: string | null
+          organization_id?: string
+          score_impact?: number
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_lead_events_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_lead_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_lead_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       dashboard_widgets: {
         Row: {
           available_options: Json | null
