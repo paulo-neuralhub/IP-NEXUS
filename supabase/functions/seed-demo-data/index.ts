@@ -31,6 +31,29 @@ function daysAgo(days: number) {
   return new Date(Date.now() - days * 24 * 60 * 60 * 1000);
 }
 
+function formatError(e: unknown): string {
+  if (e instanceof Error) return e.message;
+  if (typeof e === "string") return e;
+
+  // Supabase/PostgREST errors are often plain objects
+  try {
+    const anyErr = e as Record<string, unknown>;
+    const msg = typeof anyErr.message === "string" ? anyErr.message : null;
+    const details = typeof anyErr.details === "string" ? anyErr.details : null;
+    const hint = typeof anyErr.hint === "string" ? anyErr.hint : null;
+    const code = typeof anyErr.code === "string" ? anyErr.code : null;
+
+    const parts = [msg, details, hint, code ? `code=${code}` : null].filter(
+      (p): p is string => !!p && p.trim().length > 0,
+    );
+    if (parts.length) return parts.join(" | ");
+
+    return JSON.stringify(e);
+  } catch {
+    return String(e);
+  }
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
   if (req.method !== "POST") return json({ error: "Method not allowed" }, 405);
@@ -402,7 +425,10 @@ serve(async (req) => {
 
     return json({ ok: true, run_id: runId });
   } catch (e) {
-    const msg = e instanceof Error ? e.message : String(e);
+    // NOTE: Most Supabase SDK errors are not instances of Error.
+    // Serialize them so the client can see the real message.
+    const msg = formatError(e);
+    console.error("seed-demo-data error", e);
     // Best-effort response; run may still exist.
     return json({ ok: false, error: msg }, 500);
   }
