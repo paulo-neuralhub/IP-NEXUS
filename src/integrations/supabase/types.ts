@@ -6064,6 +6064,252 @@ export type Database = {
           },
         ]
       }
+      crm_email_templates: {
+        Row: {
+          body_html: string
+          body_text: string | null
+          category: string | null
+          code: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          from_email: string | null
+          from_name: string | null
+          id: string
+          is_active: boolean | null
+          is_system: boolean | null
+          last_used_at: string | null
+          metadata: Json | null
+          name: string
+          organization_id: string
+          reply_to: string | null
+          subject: string
+          updated_at: string | null
+          usage_count: number | null
+          variables: Json | null
+        }
+        Insert: {
+          body_html: string
+          body_text?: string | null
+          category?: string | null
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          from_email?: string | null
+          from_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          last_used_at?: string | null
+          metadata?: Json | null
+          name: string
+          organization_id: string
+          reply_to?: string | null
+          subject: string
+          updated_at?: string | null
+          usage_count?: number | null
+          variables?: Json | null
+        }
+        Update: {
+          body_html?: string
+          body_text?: string | null
+          category?: string | null
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          from_email?: string | null
+          from_name?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          last_used_at?: string | null
+          metadata?: Json | null
+          name?: string
+          organization_id?: string
+          reply_to?: string | null
+          subject?: string
+          updated_at?: string | null
+          usage_count?: number | null
+          variables?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_email_templates_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_email_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_email_tracking: {
+        Row: {
+          bcc_emails: string[] | null
+          body_preview: string | null
+          bounce_type: string | null
+          cc_emails: string[] | null
+          clicked_links: Json | null
+          contact_id: string | null
+          created_at: string | null
+          deal_id: string | null
+          delivered_at: string | null
+          error_code: string | null
+          error_message: string | null
+          first_clicked_at: string | null
+          first_opened_at: string | null
+          from_email: string
+          from_name: string | null
+          id: string
+          interaction_id: string | null
+          last_opened_at: string | null
+          metadata: Json | null
+          opened_count: number | null
+          organization_id: string
+          provider: string | null
+          provider_message_id: string | null
+          reply_to: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          template_code: string | null
+          to_email: string
+          to_name: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bcc_emails?: string[] | null
+          body_preview?: string | null
+          bounce_type?: string | null
+          cc_emails?: string[] | null
+          clicked_links?: Json | null
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          delivered_at?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          first_clicked_at?: string | null
+          first_opened_at?: string | null
+          from_email: string
+          from_name?: string | null
+          id?: string
+          interaction_id?: string | null
+          last_opened_at?: string | null
+          metadata?: Json | null
+          opened_count?: number | null
+          organization_id: string
+          provider?: string | null
+          provider_message_id?: string | null
+          reply_to?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          template_code?: string | null
+          to_email: string
+          to_name?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bcc_emails?: string[] | null
+          body_preview?: string | null
+          bounce_type?: string | null
+          cc_emails?: string[] | null
+          clicked_links?: Json | null
+          contact_id?: string | null
+          created_at?: string | null
+          deal_id?: string | null
+          delivered_at?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          first_clicked_at?: string | null
+          first_opened_at?: string | null
+          from_email?: string
+          from_name?: string | null
+          id?: string
+          interaction_id?: string | null
+          last_opened_at?: string | null
+          metadata?: Json | null
+          opened_count?: number | null
+          organization_id?: string
+          provider?: string | null
+          provider_message_id?: string | null
+          reply_to?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          template_code?: string | null
+          to_email?: string
+          to_name?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_email_tracking_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_tracking_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "crm_deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_tracking_interaction_id_fkey"
+            columns: ["interaction_id"]
+            isOneToOne: false
+            referencedRelation: "crm_interactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_tracking_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_email_tracking_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_email_tracking_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_interactions: {
         Row: {
           account_id: string | null
@@ -6563,6 +6809,241 @@ export type Database = {
           },
           {
             foreignKeyName: "crm_tasks_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_whatsapp_messages: {
+        Row: {
+          contact_id: string | null
+          content: string | null
+          created_at: string | null
+          delivered_at: string | null
+          direction: string
+          error_code: string | null
+          error_message: string | null
+          from_phone: string
+          id: string
+          interaction_id: string | null
+          media_caption: string | null
+          media_filename: string | null
+          media_id: string | null
+          media_mime_type: string | null
+          media_url: string | null
+          message_type: string
+          metadata: Json | null
+          organization_id: string
+          read_at: string | null
+          sent_at: string | null
+          status: string | null
+          template_components: Json | null
+          template_language: string | null
+          template_name: string | null
+          template_namespace: string | null
+          to_phone: string
+          updated_at: string | null
+          wa_conversation_id: string | null
+          wa_message_id: string | null
+          wa_phone_number_id: string | null
+        }
+        Insert: {
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          direction: string
+          error_code?: string | null
+          error_message?: string | null
+          from_phone: string
+          id?: string
+          interaction_id?: string | null
+          media_caption?: string | null
+          media_filename?: string | null
+          media_id?: string | null
+          media_mime_type?: string | null
+          media_url?: string | null
+          message_type?: string
+          metadata?: Json | null
+          organization_id: string
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          template_components?: Json | null
+          template_language?: string | null
+          template_name?: string | null
+          template_namespace?: string | null
+          to_phone: string
+          updated_at?: string | null
+          wa_conversation_id?: string | null
+          wa_message_id?: string | null
+          wa_phone_number_id?: string | null
+        }
+        Update: {
+          contact_id?: string | null
+          content?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          direction?: string
+          error_code?: string | null
+          error_message?: string | null
+          from_phone?: string
+          id?: string
+          interaction_id?: string | null
+          media_caption?: string | null
+          media_filename?: string | null
+          media_id?: string | null
+          media_mime_type?: string | null
+          media_url?: string | null
+          message_type?: string
+          metadata?: Json | null
+          organization_id?: string
+          read_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          template_components?: Json | null
+          template_language?: string | null
+          template_name?: string | null
+          template_namespace?: string | null
+          to_phone?: string
+          updated_at?: string | null
+          wa_conversation_id?: string | null
+          wa_message_id?: string | null
+          wa_phone_number_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_whatsapp_messages_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_whatsapp_messages_interaction_id_fkey"
+            columns: ["interaction_id"]
+            isOneToOne: false
+            referencedRelation: "crm_interactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_whatsapp_templates: {
+        Row: {
+          approved_at: string | null
+          body_example: string | null
+          body_text: string
+          buttons: Json | null
+          category: string | null
+          code: string
+          created_at: string | null
+          footer_text: string | null
+          header_example: string | null
+          header_text: string | null
+          header_type: string | null
+          id: string
+          language: string | null
+          metadata: Json | null
+          name: string
+          organization_id: string
+          rejection_reason: string | null
+          status: string | null
+          updated_at: string | null
+          variables: Json | null
+          wa_namespace: string | null
+          wa_template_id: string | null
+          wa_template_name: string
+        }
+        Insert: {
+          approved_at?: string | null
+          body_example?: string | null
+          body_text: string
+          buttons?: Json | null
+          category?: string | null
+          code: string
+          created_at?: string | null
+          footer_text?: string | null
+          header_example?: string | null
+          header_text?: string | null
+          header_type?: string | null
+          id?: string
+          language?: string | null
+          metadata?: Json | null
+          name: string
+          organization_id: string
+          rejection_reason?: string | null
+          status?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+          wa_namespace?: string | null
+          wa_template_id?: string | null
+          wa_template_name: string
+        }
+        Update: {
+          approved_at?: string | null
+          body_example?: string | null
+          body_text?: string
+          buttons?: Json | null
+          category?: string | null
+          code?: string
+          created_at?: string | null
+          footer_text?: string | null
+          header_example?: string | null
+          header_text?: string | null
+          header_type?: string | null
+          id?: string
+          language?: string | null
+          metadata?: Json | null
+          name?: string
+          organization_id?: string
+          rejection_reason?: string | null
+          status?: string | null
+          updated_at?: string | null
+          variables?: Json | null
+          wa_namespace?: string | null
+          wa_template_id?: string | null
+          wa_template_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_whatsapp_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_whatsapp_templates_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_whatsapp_templates_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -19563,6 +20044,8 @@ export type Database = {
           crm_owner_id: string | null
           days_since_contact: number | null
           default_language: string | null
+          email_from_address: string | null
+          email_from_name: string | null
           health_components: Json | null
           health_score: number | null
           id: string
@@ -19580,6 +20063,9 @@ export type Database = {
           slug: string
           status: string
           updated_at: string | null
+          whatsapp_business_id: string | null
+          whatsapp_phone: string | null
+          whatsapp_phone_number_id: string | null
         }
         Insert: {
           account_source?: string | null
@@ -19591,6 +20077,8 @@ export type Database = {
           crm_owner_id?: string | null
           days_since_contact?: number | null
           default_language?: string | null
+          email_from_address?: string | null
+          email_from_name?: string | null
           health_components?: Json | null
           health_score?: number | null
           id?: string
@@ -19608,6 +20096,9 @@ export type Database = {
           slug: string
           status?: string
           updated_at?: string | null
+          whatsapp_business_id?: string | null
+          whatsapp_phone?: string | null
+          whatsapp_phone_number_id?: string | null
         }
         Update: {
           account_source?: string | null
@@ -19619,6 +20110,8 @@ export type Database = {
           crm_owner_id?: string | null
           days_since_contact?: number | null
           default_language?: string | null
+          email_from_address?: string | null
+          email_from_name?: string | null
           health_components?: Json | null
           health_score?: number | null
           id?: string
@@ -19636,6 +20129,9 @@ export type Database = {
           slug?: string
           status?: string
           updated_at?: string | null
+          whatsapp_business_id?: string | null
+          whatsapp_phone?: string | null
+          whatsapp_phone_number_id?: string | null
         }
         Relationships: [
           {
@@ -27840,6 +28336,10 @@ export type Database = {
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       crm_get_client_360: { Args: { p_account_id: string }; Returns: Json }
+      crm_get_contact_communications: {
+        Args: { p_contact_id: string; p_limit?: number }
+        Returns: Json
+      }
       crm_get_dashboard_kpis: {
         Args: {
           p_date_from?: string
@@ -27852,6 +28352,10 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: Json
       }
+      crm_initialize_default_email_templates: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
       crm_initialize_default_pipelines: {
         Args: { p_organization_id: string }
         Returns: number
@@ -27860,12 +28364,46 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: number
       }
+      crm_log_email_sent: {
+        Args: {
+          p_body_preview?: string
+          p_contact_id?: string
+          p_deal_id?: string
+          p_from_email: string
+          p_from_name?: string
+          p_interaction_id?: string
+          p_metadata?: Json
+          p_organization_id: string
+          p_provider?: string
+          p_provider_message_id?: string
+          p_subject: string
+          p_template_code?: string
+          p_to_email: string
+        }
+        Returns: string
+      }
       crm_log_lead_event: {
         Args: {
           p_contact_id: string
           p_event_data?: Json
           p_event_source?: string
           p_event_type: string
+        }
+        Returns: string
+      }
+      crm_log_whatsapp_sent: {
+        Args: {
+          p_contact_id?: string
+          p_content?: string
+          p_interaction_id?: string
+          p_message_type: string
+          p_metadata?: Json
+          p_organization_id: string
+          p_template_name?: string
+          p_to_phone: string
+          p_wa_conversation_id?: string
+          p_wa_message_id?: string
+          p_wa_phone_number_id?: string
         }
         Returns: string
       }
