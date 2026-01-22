@@ -25029,6 +25029,27 @@ export type Database = {
         }
         Returns: Json
       }
+      ai_log_transaction_with_billing: {
+        Args: {
+          p_client_id?: string
+          p_error_code?: string
+          p_error_message?: string
+          p_input_tokens: number
+          p_jurisdiction_code?: string
+          p_latency_ms: number
+          p_model_id: string
+          p_module: string
+          p_organization_id: string
+          p_output_tokens: number
+          p_routing_reason?: string
+          p_routing_rule_id?: string
+          p_session_id?: string
+          p_status?: string
+          p_task_type?: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
       assign_automatic_badges: { Args: never; Returns: undefined }
       calculate_daily_analytics: {
