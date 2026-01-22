@@ -4,6 +4,8 @@ type Props = {
   title: string;
   subtitle?: string;
   amount?: number | null;
+  daysInStage?: number | null;
+  isStale?: boolean;
   isDragging?: boolean;
   onClick?: () => void;
 };
@@ -13,7 +15,17 @@ function formatEUR(amount?: number | null) {
   return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(amount);
 }
 
-export function DealKanbanCard({ title, subtitle, amount, isDragging, onClick }: Props) {
+export function DealKanbanCard({
+  title,
+  subtitle,
+  amount,
+  daysInStage,
+  isStale,
+  isDragging,
+  onClick,
+}: Props) {
+  const showDays = typeof daysInStage === "number";
+
   return (
     <button
       type="button"
@@ -31,6 +43,13 @@ export function DealKanbanCard({ title, subtitle, amount, isDragging, onClick }:
         </div>
         <div className="text-xs text-muted-foreground shrink-0">{formatEUR(amount)}</div>
       </div>
+
+      {showDays ? (
+        <div className="mt-2 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">{daysInStage ?? 0} días en etapa</p>
+          {isStale ? <span className="text-xs text-destructive">Estancado</span> : null}
+        </div>
+      ) : null}
     </button>
   );
 }

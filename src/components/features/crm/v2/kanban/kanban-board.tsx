@@ -25,6 +25,7 @@ type DealRow = {
   name: string;
   amount?: number | null;
   stage_id?: string | null;
+  stage_entered_at?: string | null;
   account?: { id: string; name?: string | null } | null;
 };
 
@@ -41,6 +42,16 @@ function SortableDeal({ deal, onClick }: { deal: DealRow; onClick: () => void })
         title={deal.name}
         subtitle={deal.account?.name ?? undefined}
         amount={deal.amount}
+        daysInStage={
+          deal.stage_entered_at
+            ? Math.floor((Date.now() - new Date(deal.stage_entered_at).getTime()) / (1000 * 60 * 60 * 24))
+            : undefined
+        }
+        isStale={
+          deal.stage_entered_at
+            ? Math.floor((Date.now() - new Date(deal.stage_entered_at).getTime()) / (1000 * 60 * 60 * 24)) > 14
+            : false
+        }
         isDragging={isDragging}
         onClick={onClick}
       />

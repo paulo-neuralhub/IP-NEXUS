@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useLocation } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { LayoutGrid, Building2, Users, TrendingUp, MessageSquareText, CheckSquare } from 'lucide-react';
+import { LayoutGrid, Building2, Users, TrendingUp, MessageSquareText, CheckSquare, UserPlus, KanbanSquare } from 'lucide-react';
 import { ModuleGate } from '@/components/common/ModuleGate';
 import { CrmAiTipCallout } from '@/components/features/crm/crm-ai-tip-callout';
 
@@ -8,7 +8,9 @@ const navItems = [
   { to: '/app/crm', label: 'Dashboard', icon: LayoutGrid, exact: true },
   { to: '/app/crm/accounts', label: 'Cuentas', icon: Building2 },
   { to: '/app/crm/contacts', label: 'Contactos', icon: Users },
+  { to: '/app/crm/leads', label: 'Leads', icon: UserPlus },
   { to: '/app/crm/deals', label: 'Deals', icon: TrendingUp },
+  { to: '/app/crm/pipelines', label: 'Pipelines', icon: KanbanSquare },
   { to: '/app/crm/interactions', label: 'Interacciones', icon: MessageSquareText },
   { to: '/app/crm/tasks', label: 'Tareas', icon: CheckSquare },
 ];
