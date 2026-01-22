@@ -98,9 +98,12 @@ export function useUpdateCRMAccount() {
       return data;
     },
     onSuccess: (data) => {
+      const accountId = (data as { id?: string } | null)?.id;
       queryClient.invalidateQueries({ queryKey: ["crm-accounts"] });
-      queryClient.invalidateQueries({ queryKey: ["crm-account", data.id] });
-      queryClient.invalidateQueries({ queryKey: ["client-360", data.id] });
+      if (accountId) {
+        queryClient.invalidateQueries({ queryKey: ["crm-account", accountId] });
+        queryClient.invalidateQueries({ queryKey: ["client-360", accountId] });
+      }
       toast({ title: "Cuenta actualizada" });
     },
     onError: (error: unknown) => {

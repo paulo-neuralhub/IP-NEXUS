@@ -15,14 +15,14 @@ export { supabase };
 // These helpers keep strict typing out of the call sites.
 // ============================================================
 
-type FromReturn = ReturnType<typeof supabase.from>;
-
-export function fromTable(table: string): FromReturn {
-  return (supabase as unknown as { from: (t: string) => FromReturn }).from(table);
+// NOTE: We intentionally return `any` here.
+// Reason: Supabase's generated types can become huge unions when table/function
+// names are dynamic strings, causing TS2589 (deep/infinite instantiation).
+// Call sites should cast `data` to their domain types.
+export function fromTable(table: string): any {
+  return (supabase as unknown as any).from(table);
 }
 
-type RpcReturn = ReturnType<typeof supabase.rpc>;
-
-export function rpcFn(fn: string, args?: Record<string, unknown>): RpcReturn {
-  return (supabase as unknown as { rpc: (f: string, a?: Record<string, unknown>) => RpcReturn }).rpc(fn, args);
+export function rpcFn(fn: string, args?: Record<string, unknown>): any {
+  return (supabase as unknown as any).rpc(fn, args);
 }
