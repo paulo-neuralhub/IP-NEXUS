@@ -3,10 +3,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
 import type { 
   Subscription, 
-  SubscriptionPlan, 
   PlanLimits 
 } from '@/types/backoffice';
 import { coercePlanLimits } from '@/lib/subscription/planLimits';
+import { mapSubscriptionPlanRow, mapSubscriptionRow } from '@/lib/subscription/mappers';
 
 // ===== HELPER: Storage Usage =====
 async function getStorageUsage(organizationId: string): Promise<number> {
@@ -36,14 +36,7 @@ export function useSubscriptionPlans() {
         .eq('is_active', true)
         .order('sort_order');
       if (error) throw error;
-      return (data ?? []).map((row) => {
-        const features = Array.isArray((row as any).features) ? ((row as any).features as string[]) : [];
-        return {
-          ...(row as unknown as SubscriptionPlan),
-          limits: coercePlanLimits((row as any).limits),
-          features,
-        };
-      });
+      return (data ?? []).map(mapSubscriptionPlanRow);
     },
     staleTime: 1000 * 60 * 60, // 1 hora
   });
@@ -66,20 +59,7 @@ export function useCurrentSubscription() {
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-
-      const planRow = (data as any).plan as unknown;
-      const plan = planRow
-        ? ({
-            ...(planRow as SubscriptionPlan),
-            limits: coercePlanLimits((planRow as any).limits),
-            features: Array.isArray((planRow as any).features) ? ((planRow as any).features as string[]) : [],
-          } as SubscriptionPlan)
-        : undefined;
-
-      return {
-        ...(data as unknown as Subscription),
-        plan,
-      } as Subscription;
+      return mapSubscriptionRow(data);
     },
     enabled: !!currentOrganization?.id,
   });
