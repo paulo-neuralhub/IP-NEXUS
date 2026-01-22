@@ -6,6 +6,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Lovable AI Gateway allowed models change over time; keep a safe default.
+// If we ever store model preferences in DB, normalize them through this.
+const DEFAULT_MODEL = "google/gemini-3-flash-preview";
+
 const SYSTEM_PROMPT = `Eres IP-Genius, el asistente IA especializado en Propiedad Intelectual para IP-NEXUS.
 
 CAPACIDADES:
@@ -299,7 +303,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "anthropic/claude-sonnet-4",
+        model: DEFAULT_MODEL,
         messages: [
           { role: "system", content: fullSystemPrompt },
           ...messages
@@ -314,18 +318,33 @@ serve(async (req) => {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("AI gateway error:", response.status, errorText);
-      
+
+      // Bubble up useful errors to the client (don’t hide 400s as 500s).
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
           status: 429,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
-      
-      return new Response(JSON.stringify({ error: "AI gateway error" }), {
-        status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+
+      if (response.status === 402) {
+        return new Response(JSON.stringify({ error: "Payment required" }), {
+          status: 402,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      return new Response(
+        JSON.stringify({
+          error: "AI gateway error",
+          status: response.status,
+          details: errorText,
+        }),
+        {
+          status: response.status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     const aiResponse = await response.json();
@@ -385,7 +404,7 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "anthropic/claude-sonnet-4",
+          model: DEFAULT_MODEL,
           messages: [
             { role: "system", content: fullSystemPrompt },
             ...messages,
@@ -419,7 +438,7 @@ serve(async (req) => {
         conversation_id: conversationId,
         role: "assistant",
         content: finalContent,
-        model_used: "anthropic/claude-sonnet-4",
+        model_used: DEFAULT_MODEL,
         tokens_input: aiResponse.usage?.prompt_tokens,
         tokens_output: aiResponse.usage?.completion_tokens,
         response_time_ms: responseTimeMs,
