@@ -20,9 +20,13 @@ export { supabase };
 // names are dynamic strings, causing TS2589 (deep/infinite instantiation).
 // Call sites should cast `data` to their domain types.
 export function fromTable(table: string): any {
-  return (supabase as unknown as any).from(table);
+  // Ensure the *expression* is also typed as `any` so TS doesn't attempt to
+  // resolve Postgrest generic types for unknown tables.
+  const client: any = supabase;
+  return client.from(table);
 }
 
 export function rpcFn(fn: string, args?: Record<string, unknown>): any {
-  return (supabase as unknown as any).rpc(fn, args);
+  const client: any = supabase;
+  return client.rpc(fn, args);
 }
