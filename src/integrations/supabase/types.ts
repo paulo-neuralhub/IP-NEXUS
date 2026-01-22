@@ -5761,6 +5761,95 @@ export type Database = {
           },
         ]
       }
+      crm_pipeline_template_audit: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          metadata: Json
+          template_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          template_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json
+          template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_pipeline_template_audit_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "crm_pipeline_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      crm_pipeline_templates: {
+        Row: {
+          auto_trigger_pipeline: string | null
+          category: string | null
+          code: string
+          color: string | null
+          created_at: string
+          default_stages: Json
+          description_es: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_system: boolean
+          name_es: string
+          pipeline_type: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          auto_trigger_pipeline?: string | null
+          category?: string | null
+          code: string
+          color?: string | null
+          created_at?: string
+          default_stages?: Json
+          description_es?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          name_es: string
+          pipeline_type?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_trigger_pipeline?: string | null
+          category?: string | null
+          code?: string
+          color?: string | null
+          created_at?: string
+          default_stages?: Json
+          description_es?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_system?: boolean
+          name_es?: string
+          pipeline_type?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       dashboard_widgets: {
         Row: {
           available_options: Json | null
@@ -18964,6 +19053,7 @@ export type Database = {
       pipeline_stages: {
         Row: {
           auto_actions: Json | null
+          code: string | null
           color: string | null
           created_at: string | null
           id: string
@@ -18977,6 +19067,7 @@ export type Database = {
         }
         Insert: {
           auto_actions?: Json | null
+          code?: string | null
           color?: string | null
           created_at?: string | null
           id?: string
@@ -18990,6 +19081,7 @@ export type Database = {
         }
         Update: {
           auto_actions?: Json | null
+          code?: string | null
           color?: string | null
           created_at?: string | null
           id?: string
@@ -19023,6 +19115,7 @@ export type Database = {
           owner_type: string
           pipeline_type: string | null
           position: number | null
+          template_code: string | null
           updated_at: string | null
         }
         Insert: {
@@ -19036,6 +19129,7 @@ export type Database = {
           owner_type?: string
           pipeline_type?: string | null
           position?: number | null
+          template_code?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -19049,6 +19143,7 @@ export type Database = {
           owner_type?: string
           pipeline_type?: string | null
           position?: number | null
+          template_code?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -26936,6 +27031,10 @@ export type Database = {
         Returns: boolean
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      crm_initialize_tenant_pipelines: {
+        Args: { p_organization_id: string }
+        Returns: number
+      }
       daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
       dmetaphone: { Args: { "": string }; Returns: string }
