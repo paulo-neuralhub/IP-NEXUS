@@ -70,6 +70,19 @@ export interface OrganizationEmail {
     username: string;
     password_encrypted?: string;
   } | null;
+
+  // Ingesta (Inbox) por IMAP (polling)
+  inbound_imap?: boolean;
+  imap_config?: {
+    host: string;
+    port: number;
+    secure: boolean;
+    username: string;
+    mailbox?: string;
+    poll_minutes?: number;
+    password_encrypted?: string;
+  } | null;
+
   default_sender_name?: string;
   default_sender_email?: string | null;
   reply_to_email?: string | null;
@@ -196,6 +209,7 @@ const DEFAULT_ORG_SETTINGS: Omit<OrganizationSettings, 'id' | 'organization_id'>
   },
   email: {
     custom_smtp: false,
+    inbound_imap: false,
     default_sender_name: 'IP-NEXUS',
   },
   modules: {

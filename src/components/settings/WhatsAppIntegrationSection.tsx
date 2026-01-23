@@ -12,6 +12,8 @@ import { useUpdateOrganization } from '@/hooks/use-organization-members';
 import { useSecureCredentialStatus, useUpsertSecureCredential } from '@/hooks/use-secure-credentials';
 import { toast } from 'sonner';
 
+import { WhatsAppWebQrSection } from '@/components/settings/WhatsAppWebQrSection';
+
 type WhatsAppFormState = {
   whatsapp_business_id: string;
   whatsapp_phone: string;
@@ -190,6 +192,8 @@ export function WhatsAppIntegrationSection() {
           </div>
         </CardContent>
       </Card>
+
+      <WhatsAppWebQrSection />
     </div>
   );
 }
