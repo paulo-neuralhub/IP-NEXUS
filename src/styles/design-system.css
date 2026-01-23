@@ -1,0 +1,212 @@
+/* ================================================
+   IP-NEXUS DESIGN SYSTEM (P-UI-01)
+   Global CSS variables (HSL) + optional utility classes
+   ================================================ */
+
+:root {
+    /* ===== FONDOS ===== */
+    /* #F4F7FE */
+    --ip-bg-primary: 226 78% 98%;
+    /* #FFFFFF */
+    --ip-bg-white: 0 0% 100%;
+    --ip-bg-card: 0 0% 100%;
+
+    /* ===== SIDEBAR ===== */
+    /* #1e293b */
+    --ip-sidebar-from: 215 28% 17%;
+    /* #0f172a */
+    --ip-sidebar-to: 222 47% 11%;
+    /* #22d3ee */
+    --ip-sidebar-accent-from: 189 85% 53%;
+    /* #3b82f6 */
+    --ip-sidebar-accent-to: 217 91% 60%;
+
+    /* ===== STATS GRADIENTES ===== */
+    /* Blue: #3B82F6 -> #2563EB */
+    --ip-stat-blue-from: 217 91% 60%;
+    --ip-stat-blue-to: 217 91% 53%;
+
+    /* Emerald: #10B981 -> #059669 */
+    --ip-stat-emerald-from: 160 84% 39%;
+    --ip-stat-emerald-to: 163 94% 30%;
+
+    /* Purple: #8B5CF6 -> #7C3AED */
+    --ip-stat-purple-from: 258 90% 66%;
+    --ip-stat-purple-to: 262 83% 58%;
+
+    /* Orange: #F97316 -> #EA580C */
+    --ip-stat-orange-from: 25 95% 53%;
+    --ip-stat-orange-to: 20 90% 48%;
+
+    /* ===== BOTONES DE ACCIÓN ===== */
+    /* call */
+    /* #f0f9ff */
+    --ip-action-call-bg: 204 100% 97%;
+    /* #0284c7 */
+    --ip-action-call-text: 199 98% 39%;
+    /* #e0f2fe */
+    --ip-action-call-hover: 204 94% 94%;
+
+    /* email */
+    /* #eff6ff */
+    --ip-action-email-bg: 214 100% 97%;
+    /* #2563eb */
+    --ip-action-email-text: 221 83% 53%;
+    /* #dbeafe */
+    --ip-action-email-hover: 214 95% 93%;
+
+    /* whatsapp */
+    /* #f0fdf4 */
+    --ip-action-whatsapp-bg: 138 76% 97%;
+    /* #16a34a */
+    --ip-action-whatsapp-text: 142 76% 36%;
+    /* #dcfce7 */
+    --ip-action-whatsapp-hover: 138 76% 92%;
+
+    /* ===== TIMELINE COLORS ===== */
+    --ip-timeline-email-bg: 214 95% 93%;
+    --ip-timeline-email-border: 213 94% 87%;
+
+    --ip-timeline-call-bg: 204 94% 94%;
+    --ip-timeline-call-border: 199 89% 85%;
+
+    --ip-timeline-whatsapp-bg: 138 76% 92%;
+    --ip-timeline-whatsapp-border: 141 73% 84%;
+
+    --ip-timeline-note-bg: 210 20% 96%;
+    --ip-timeline-note-border: 214 32% 91%;
+
+    --ip-timeline-meeting-bg: 270 100% 96%;
+    --ip-timeline-meeting-border: 269 100% 92%;
+
+    --ip-timeline-task-bg: 48 100% 88%;
+    --ip-timeline-task-border: 48 96% 77%;
+
+    /* ===== PENDING ACTIVITIES ===== */
+    --ip-pending-bg: 48 100% 96%;
+    --ip-pending-border: 48 96% 77%;
+    --ip-pending-text: 32 91% 35%;
+
+    /* ===== BADGES ===== */
+    --ip-badge-vip-bg: 48 100% 88%;
+    --ip-badge-vip-text: 32 91% 35%;
+
+    /* ===== TEXTO ===== */
+    /* #0f172a */
+    --ip-text-primary: 222 47% 11%;
+    /* #475569 */
+    --ip-text-secondary: 215 19% 35%;
+    /* #94a3b8 */
+    --ip-text-muted: 214 20% 65%;
+
+    /* ===== BORDES ===== */
+    /* #e2e8f0 */
+    --ip-border-light: 214 32% 91%;
+    /* #cbd5e1 */
+    --ip-border-default: 214 27% 84%;
+
+    /* ===== Wire into existing semantic tokens ===== */
+    --background: var(--ip-bg-primary);
+    --background-card: var(--ip-bg-card);
+    --card: var(--ip-bg-card);
+    --foreground: var(--ip-text-primary);
+    --muted-foreground: var(--ip-text-secondary);
+    --border: var(--ip-border-light);
+}
+
+/* ===== CLASES DE UTILIDAD PERSONALIZADAS (opcionales) ===== */
+
+/* Gradientes para Stats */
+.ip-stat-blue {
+  background: linear-gradient(135deg, hsl(var(--ip-stat-blue-from)), hsl(var(--ip-stat-blue-to)));
+}
+
+.ip-stat-emerald {
+  background: linear-gradient(135deg, hsl(var(--ip-stat-emerald-from)), hsl(var(--ip-stat-emerald-to)));
+}
+
+.ip-stat-purple {
+  background: linear-gradient(135deg, hsl(var(--ip-stat-purple-from)), hsl(var(--ip-stat-purple-to)));
+}
+
+.ip-stat-orange {
+  background: linear-gradient(135deg, hsl(var(--ip-stat-orange-from)), hsl(var(--ip-stat-orange-to)));
+}
+
+/* Sidebar gradient */
+.ip-sidebar-gradient {
+  background: linear-gradient(180deg, hsl(var(--ip-sidebar-from)), hsl(var(--ip-sidebar-to)));
+}
+
+/* Sidebar accent (logo) */
+.ip-sidebar-accent {
+  background: linear-gradient(135deg, hsl(var(--ip-sidebar-accent-from)), hsl(var(--ip-sidebar-accent-to)));
+}
+
+/* Avatar gradient */
+.ip-avatar-gradient {
+  background: linear-gradient(135deg, hsl(var(--ip-stat-blue-from)), hsl(var(--ip-stat-purple-from)));
+}
+
+/* Timeline item styles */
+.ip-timeline-email {
+  background-color: hsl(var(--ip-timeline-email-bg));
+  border-color: hsl(var(--ip-timeline-email-border));
+}
+
+.ip-timeline-call {
+  background-color: hsl(var(--ip-timeline-call-bg));
+  border-color: hsl(var(--ip-timeline-call-border));
+}
+
+.ip-timeline-whatsapp {
+  background-color: hsl(var(--ip-timeline-whatsapp-bg));
+  border-color: hsl(var(--ip-timeline-whatsapp-border));
+}
+
+.ip-timeline-note {
+  background-color: hsl(var(--ip-timeline-note-bg));
+  border-color: hsl(var(--ip-timeline-note-border));
+}
+
+.ip-timeline-meeting {
+  background-color: hsl(var(--ip-timeline-meeting-bg));
+  border-color: hsl(var(--ip-timeline-meeting-border));
+}
+
+.ip-timeline-task {
+  background-color: hsl(var(--ip-timeline-task-bg));
+  border-color: hsl(var(--ip-timeline-task-border));
+}
+
+/* Pending activities */
+.ip-pending-section {
+  background-color: hsl(var(--ip-pending-bg));
+  border-color: hsl(var(--ip-pending-border));
+  color: hsl(var(--ip-pending-text));
+}
+
+/* Action buttons */
+.ip-btn-call {
+  background-color: hsl(var(--ip-action-call-bg));
+  color: hsl(var(--ip-action-call-text));
+}
+.ip-btn-call:hover {
+  background-color: hsl(var(--ip-action-call-hover));
+}
+
+.ip-btn-email {
+  background-color: hsl(var(--ip-action-email-bg));
+  color: hsl(var(--ip-action-email-text));
+}
+.ip-btn-email:hover {
+  background-color: hsl(var(--ip-action-email-hover));
+}
+
+.ip-btn-whatsapp {
+  background-color: hsl(var(--ip-action-whatsapp-bg));
+  color: hsl(var(--ip-action-whatsapp-text));
+}
+.ip-btn-whatsapp:hover {
+  background-color: hsl(var(--ip-action-whatsapp-hover));
+}

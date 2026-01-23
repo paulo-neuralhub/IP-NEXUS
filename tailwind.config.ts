@@ -113,6 +113,32 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+
+        // IP-NEXUS (P-UI-01) - design system tokens (HSL variables)
+        ip: {
+          bg: {
+            DEFAULT: "hsl(var(--ip-bg-primary))",
+            secondary: "hsl(var(--ip-bg-white))",
+            card: "hsl(var(--ip-bg-card))",
+          },
+          sidebar: {
+            from: "hsl(var(--ip-sidebar-from))",
+            to: "hsl(var(--ip-sidebar-to))",
+            "accent-from": "hsl(var(--ip-sidebar-accent-from))",
+            "accent-to": "hsl(var(--ip-sidebar-accent-to))",
+          },
+          stats: {
+            blue: "hsl(var(--ip-stat-blue-from))",
+            emerald: "hsl(var(--ip-stat-emerald-from))",
+            purple: "hsl(var(--ip-stat-purple-from))",
+            orange: "hsl(var(--ip-stat-orange-from))",
+          },
+          action: {
+            call: "hsl(var(--ip-action-call-text))",
+            email: "hsl(var(--ip-action-email-text))",
+            whatsapp: "hsl(var(--ip-action-whatsapp-text))",
+          },
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
