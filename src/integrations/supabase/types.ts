@@ -1386,6 +1386,7 @@ export type Database = {
           category: string
           content: string
           created_at: string
+          embedding: string | null
           id: string
           is_active: boolean
           keywords: string[]
@@ -1399,6 +1400,7 @@ export type Database = {
           category: string
           content: string
           created_at?: string
+          embedding?: string | null
           id?: string
           is_active?: boolean
           keywords?: string[]
@@ -1412,6 +1414,7 @@ export type Database = {
           category?: string
           content?: string
           created_at?: string
+          embedding?: string | null
           id?: string
           is_active?: boolean
           keywords?: string[]
@@ -28233,6 +28236,13 @@ export type Database = {
             foreignKeyName: "system_alerts_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
+            referencedRelation: "system_events_log"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
             referencedRelation: "v_pending_events"
             referencedColumns: ["id"]
           },
@@ -31824,6 +31834,110 @@ export type Database = {
           },
         ]
       }
+      system_events_log: {
+        Row: {
+          action_taken: string | null
+          action_taken_at: string | null
+          action_taken_by: string | null
+          category: string | null
+          description: string | null
+          event_data: Json | null
+          event_type: string | null
+          id: string | null
+          metadata: Json | null
+          occurred_at: string | null
+          organization_id: string | null
+          parent_event_id: string | null
+          processed: boolean | null
+          processed_at: string | null
+          related_entity_id: string | null
+          related_entity_type: string | null
+          requires_action: boolean | null
+          search_vector: unknown
+          severity: string | null
+          tags: string[] | null
+          title: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_taken?: string | null
+          action_taken_at?: string | null
+          action_taken_by?: string | null
+          category?: never
+          description?: string | null
+          event_data?: Json | null
+          event_type?: string | null
+          id?: string | null
+          metadata?: never
+          occurred_at?: string | null
+          organization_id?: string | null
+          parent_event_id?: never
+          processed?: never
+          processed_at?: never
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          requires_action?: boolean | null
+          search_vector?: unknown
+          severity?: string | null
+          tags?: string[] | null
+          title?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_taken?: string | null
+          action_taken_at?: string | null
+          action_taken_by?: string | null
+          category?: never
+          description?: string | null
+          event_data?: Json | null
+          event_type?: string | null
+          id?: string | null
+          metadata?: never
+          occurred_at?: string | null
+          organization_id?: string | null
+          parent_event_id?: never
+          processed?: never
+          processed_at?: never
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          requires_action?: boolean | null
+          search_vector?: unknown
+          severity?: string | null
+          tags?: string[] | null
+          title?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "system_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       v_active_alerts: {
         Row: {
           acknowledged_at: string | null
@@ -31873,6 +31987,13 @@ export type Database = {
             columns: ["event_id"]
             isOneToOne: false
             referencedRelation: "system_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "system_events_log"
             referencedColumns: ["id"]
           },
           {
@@ -32693,6 +32814,20 @@ export type Database = {
           p_user_id?: string
         }
         Returns: string
+      }
+      match_knowledge: {
+        Args: {
+          match_count?: number
+          match_threshold?: number
+          query_embedding: string
+        }
+        Returns: {
+          category: string
+          content: string
+          id: string
+          similarity: number
+          title: string
+        }[]
       }
       provision_pack_modules: {
         Args: {
