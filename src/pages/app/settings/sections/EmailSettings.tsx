@@ -1,14 +1,13 @@
-import { useEffect, useMemo, useState } from 'react';
-import { Mail, ShieldAlert, Save } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ShieldAlert } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
-import { Button } from '@/components/ui/button';
 import { useOrganizationSettings, useUpdateOrganizationSettings } from '@/hooks/use-settings';
 import { useSecureCredentialStatus, useUpsertSecureCredential } from '@/hooks/use-secure-credentials';
 import { toast } from 'sonner';
+
+import { ImapIngestCard, type ImapFormState } from './email/ImapIngestCard';
+import { SmtpSettingsCard, type SmtpFormState } from './email/SmtpSettingsCard';
 
 export default function EmailSettings() {
   const { data: settings, isLoading } = useOrganizationSettings();
@@ -16,7 +15,7 @@ export default function EmailSettings() {
   const statusQuery = useSecureCredentialStatus();
   const upsertSecret = useUpsertSecureCredential();
 
-  const [form, setForm] = useState({
+  const [smtpForm, setSmtpForm] = useState<SmtpFormState>({
     enabled: false,
     host: '',
     port: 587,
@@ -27,9 +26,20 @@ export default function EmailSettings() {
     default_sender_email: '',
   });
 
+  const [imapForm, setImapForm] = useState<ImapFormState>({
+    enabled: false,
+    host: '',
+    port: 993,
+    secure: true,
+    username: '',
+    password: '',
+    mailbox: 'INBOX',
+    poll_minutes: 5,
+  });
+
   useEffect(() => {
     const email = settings?.email;
-    setForm((prev) => ({
+    setSmtpForm((prev) => ({
       ...prev,
       enabled: !!email?.custom_smtp,
       host: email?.smtp_config?.host || '',
@@ -40,48 +50,88 @@ export default function EmailSettings() {
       default_sender_name: email?.default_sender_name || '',
       default_sender_email: email?.default_sender_email || '',
     }));
+
+    setImapForm((prev) => ({
+      ...prev,
+      enabled: !!email?.inbound_imap,
+      host: email?.imap_config?.host || '',
+      port: email?.imap_config?.port || 993,
+      secure: email?.imap_config ? !!email.imap_config.secure : true,
+      username: email?.imap_config?.username || '',
+      password: '',
+      mailbox: email?.imap_config?.mailbox || 'INBOX',
+      poll_minutes: email?.imap_config?.poll_minutes || 5,
+    }));
   }, [settings?.id]);
 
   const isSaving = updateOrg.isPending || upsertSecret.isPending;
-
-  const smtpPasswordConfigured = useMemo(() => {
-    const items = statusQuery.data?.credentials ?? [];
-    return items.some((i) => i.provider === 'smtp' && i.credential_key === 'password' && i.is_configured);
-  }, [statusQuery.data]);
-
+  const credentials = statusQuery.data?.credentials ?? [];
   const encryptionReady = !!statusQuery.data?.encryption_ready;
 
-  const handleSave = async () => {
+  const handleSaveSmtp = async () => {
     try {
-      // Save non-secret config in org settings
       await updateOrg.mutateAsync({
         category: 'email',
         updates: {
-          custom_smtp: form.enabled,
-          default_sender_name: form.default_sender_name || undefined,
-          default_sender_email: form.default_sender_email || undefined,
-          smtp_config: form.enabled
+          custom_smtp: smtpForm.enabled,
+          default_sender_name: smtpForm.default_sender_name || undefined,
+          default_sender_email: smtpForm.default_sender_email || undefined,
+          smtp_config: smtpForm.enabled
             ? {
-                host: form.host,
-                port: Number.isFinite(form.port) ? form.port : 587,
-                secure: !!form.secure,
-                username: form.username,
-                password_encrypted: smtpPasswordConfigured ? 'configured' : undefined,
+                host: smtpForm.host,
+                port: Number.isFinite(smtpForm.port) ? smtpForm.port : 587,
+                secure: !!smtpForm.secure,
+                username: smtpForm.username,
+                password_encrypted: 'configured',
               }
             : null,
         },
       });
 
-      // Save password (secret) separately if provided
-      if (form.enabled && form.password.trim().length > 0) {
+      if (smtpForm.enabled && smtpForm.password.trim().length > 0) {
         const res = await upsertSecret.mutateAsync({
           provider: 'smtp',
           credential_key: 'password',
-          value: form.password,
+          value: smtpForm.password,
         });
         if ((res as any)?.error) throw new Error((res as any).message || (res as any).error);
         toast.success('Contraseña SMTP guardada');
-        setForm((p) => ({ ...p, password: '' }));
+        setSmtpForm((p) => ({ ...p, password: '' }));
+      }
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : 'Error al guardar');
+    }
+  };
+
+  const handleSaveImap = async () => {
+    try {
+      await updateOrg.mutateAsync({
+        category: 'email',
+        updates: {
+          inbound_imap: imapForm.enabled,
+          imap_config: imapForm.enabled
+            ? {
+                host: imapForm.host,
+                port: Number.isFinite(imapForm.port) ? imapForm.port : 993,
+                secure: !!imapForm.secure,
+                username: imapForm.username,
+                mailbox: imapForm.mailbox || 'INBOX',
+                poll_minutes: Number.isFinite(imapForm.poll_minutes) ? imapForm.poll_minutes : 5,
+                password_encrypted: 'configured',
+              }
+            : null,
+        },
+      });
+
+      if (imapForm.enabled && imapForm.password.trim().length > 0) {
+        const res = await upsertSecret.mutateAsync({
+          provider: 'imap',
+          credential_key: 'password',
+          value: imapForm.password,
+        });
+        if ((res as any)?.error) throw new Error((res as any).message || (res as any).error);
+        toast.success('Contraseña IMAP guardada');
+        setImapForm((p) => ({ ...p, password: '' }));
       }
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Error al guardar');
@@ -103,7 +153,7 @@ export default function EmailSettings() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-semibold text-foreground">Email</h2>
-        <p className="text-muted-foreground">Configura el envío de emails (SMTP)</p>
+        <p className="text-muted-foreground">Configura el envío (SMTP) y la ingesta (IMAP) de emails</p>
       </div>
 
       {!encryptionReady && (
@@ -116,83 +166,23 @@ export default function EmailSettings() {
         </Alert>
       )}
 
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Mail className="h-5 w-5 text-primary" />
-            <CardTitle className="text-base">SMTP personalizado</CardTitle>
-          </div>
-          <CardDescription>Envía desde tu servidor (o proveedor) SMTP</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <Label>Activar SMTP</Label>
-              <p className="text-sm text-muted-foreground">Usar SMTP en lugar del proveedor por defecto</p>
-            </div>
-            <Switch checked={form.enabled} onCheckedChange={(v) => setForm((p) => ({ ...p, enabled: v }))} />
-          </div>
+      <SmtpSettingsCard
+        form={smtpForm}
+        setForm={setSmtpForm}
+        encryptionReady={encryptionReady}
+        credentials={credentials}
+        isSaving={isSaving}
+        onSave={handleSaveSmtp}
+      />
 
-          {form.enabled && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2 col-span-2">
-                <Label>Servidor</Label>
-                <Input value={form.host} onChange={(e) => setForm((p) => ({ ...p, host: e.target.value }))} placeholder="smtp.tuempresa.com" />
-              </div>
-              <div className="space-y-2">
-                <Label>Puerto</Label>
-                <Input
-                  type="number"
-                  value={form.port}
-                  onChange={(e) => setForm((p) => ({ ...p, port: parseInt(e.target.value || '0', 10) || 587 }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Conexión segura (TLS)</Label>
-                <div className="h-10 flex items-center">
-                  <Switch checked={form.secure} onCheckedChange={(v) => setForm((p) => ({ ...p, secure: v }))} />
-                </div>
-              </div>
-              <div className="space-y-2 col-span-2">
-                <Label>Usuario</Label>
-                <Input value={form.username} onChange={(e) => setForm((p) => ({ ...p, username: e.target.value }))} placeholder="notificaciones@tuempresa.com" />
-              </div>
-              <div className="space-y-2 col-span-2">
-                <Label>Contraseña</Label>
-                <Input
-                  type="password"
-                  value={form.password}
-                  onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
-                  placeholder={smtpPasswordConfigured ? '•••••••• (ya configurada)' : '••••••••'}
-                />
-                <p className="text-xs text-muted-foreground">
-                  {smtpPasswordConfigured
-                    ? 'Ya hay una contraseña guardada. Escribe aquí para reemplazarla.'
-                    : 'Se guardará cifrada en cuanto exista ENCRYPTION_KEY.'}
-                </p>
-              </div>
-            </div>
-          )}
-
-          <div className="grid grid-cols-2 gap-4 pt-2 border-t">
-            <div className="space-y-2">
-              <Label>Nombre remitente</Label>
-              <Input value={form.default_sender_name} onChange={(e) => setForm((p) => ({ ...p, default_sender_name: e.target.value }))} placeholder="IP-NEXUS" />
-            </div>
-            <div className="space-y-2">
-              <Label>Email remitente</Label>
-              <Input value={form.default_sender_email} onChange={(e) => setForm((p) => ({ ...p, default_sender_email: e.target.value }))} placeholder="noreply@tuempresa.com" />
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={isSaving}>
-              <Save className="h-4 w-4 mr-2" />
-              {isSaving ? 'Guardando…' : 'Guardar'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+      <ImapIngestCard
+        form={imapForm}
+        setForm={setImapForm}
+        encryptionReady={encryptionReady}
+        credentials={credentials}
+        isSaving={isSaving}
+        onSave={handleSaveImap}
+      />
     </div>
   );
 }
