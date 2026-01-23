@@ -186,7 +186,7 @@ export function SoftphoneWidget() {
       <button
         type="button"
         onClick={() => setIsMinimized(false)}
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl bg-accent px-4 py-3 text-accent-foreground shadow-lg"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl bg-success px-4 py-3 text-success-foreground shadow-lg"
       >
         <Phone className="h-4 w-4" />
         <span className="font-mono text-sm">{formatDuration(callDuration)}</span>
@@ -201,7 +201,7 @@ export function SoftphoneWidget() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground shadow-lg transition-transform hover:scale-105"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-success text-success-foreground shadow-lg transition-transform hover:scale-105"
         aria-label="Abrir teléfono"
       >
         <Phone className="h-6 w-6" />
