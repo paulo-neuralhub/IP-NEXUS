@@ -172,13 +172,15 @@ export default function IntegrationsSettings() {
         <p className="text-muted-foreground">Conecta IP-NEXUS con servicios externos</p>
       </div>
 
-      {/* Calendar Integration Section */}
-      <CalendarIntegrationSection />
+      {/* WhatsApp (Meta Cloud API) */}
+      <section aria-label="WhatsApp" id="whatsapp">
+        <WhatsAppIntegrationSection />
+      </section>
 
       <Separator className="my-8" />
 
-      {/* WhatsApp (Meta Cloud API) */}
-      <WhatsAppIntegrationSection />
+      {/* Calendar Integration Section */}
+      <CalendarIntegrationSection />
 
       <Separator className="my-8" />
       
