@@ -30,10 +30,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { useIsSuperadmin } from '@/hooks/use-admin';
+import { useIsBackofficeStaff } from '@/hooks/backoffice/useBackofficeAccess';
 import { usePendingEventsCount } from '@/hooks/useSystemEvents';
 import { Spinner } from '@/components/ui/spinner';
 import { SoftphoneWidget } from '@/components/voip/SoftphoneWidget';
+import { AiAgentFloatingButton } from '@/components/backoffice/AiAgent/AiAgentFloatingButton';
 
 const sidebarSections = [
   {
@@ -90,7 +91,7 @@ const sidebarSections = [
 
 export default function BackofficeLayout() {
   const location = useLocation();
-  const { data: isSuperadmin, isLoading } = useIsSuperadmin();
+  const { data: isBackofficeStaff, isLoading } = useIsBackofficeStaff();
   const { data: pendingEventsCount = 0 } = usePendingEventsCount();
 
   if (isLoading) {
@@ -104,7 +105,7 @@ export default function BackofficeLayout() {
     );
   }
 
-  if (!isSuperadmin) {
+  if (!isBackofficeStaff) {
     return <Navigate to="/app" replace />;
   }
 
@@ -184,6 +185,9 @@ export default function BackofficeLayout() {
 
       {/* Softphone Widget (VoIP) */}
       <SoftphoneWidget />
+
+      {/* Backoffice AI Agent */}
+      <AiAgentFloatingButton />
     </div>
   );
 }
