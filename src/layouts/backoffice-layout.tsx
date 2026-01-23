@@ -30,6 +30,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { useIsSuperadmin } from '@/hooks/use-admin';
 import { Spinner } from '@/components/ui/spinner';
+import { SoftphoneWidget } from '@/components/voip/SoftphoneWidget';
 
 const sidebarSections = [
   {
@@ -169,6 +170,9 @@ export default function BackofficeLayout() {
           <Outlet />
         </div>
       </main>
+
+      {/* Softphone Widget (VoIP) */}
+      <SoftphoneWidget />
     </div>
   );
 }
