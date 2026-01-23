@@ -15,7 +15,7 @@ import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
   Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, 
   Lock, Shield, ArrowRightLeft, Store, BarChart3, Scale, Sparkles,
-  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell
+  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell, MessageSquare
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -50,6 +50,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   HelpCircle,
   PenTool,
   Clock,
+  MessageSquare,
 };
 
 interface NavItem {
@@ -164,6 +165,14 @@ const MODULE_NAV: NavItem[] = [
     color: "#10B981",
     requiresLicense: true,
     badgeKey: "pendingSignatures",
+  },
+  {
+    path: "/app/communications",
+    label: "Comunicaciones",
+    icon: MessageSquare,
+    moduleCode: "communications",
+    color: MODULE_REGISTRY.communications.color,
+    requiresLicense: true,
   },
   {
     path: "/app/workflow",

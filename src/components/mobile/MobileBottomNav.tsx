@@ -14,6 +14,7 @@ import {
   Settings,
   Search,
   Bell,
+  MessageSquare,
   LucideIcon
 } from 'lucide-react';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
@@ -53,6 +54,7 @@ const quickActions: QuickAction[] = [
 
 const moreMenuItems: NavItem[] = [
   { icon: Search, label: 'IP Spider', path: '/app/spider' },
+  { icon: MessageSquare, label: 'Comunicaciones', path: '/app/communications' },
   { icon: FileText, label: 'Documentos', path: '/app/legal-ops/documents' },
   { icon: CheckSquare, label: 'Tareas', path: '/app/legal-ops/tasks' },
   { icon: Calendar, label: 'Calendario', path: '/app/legal-ops/calendar' },

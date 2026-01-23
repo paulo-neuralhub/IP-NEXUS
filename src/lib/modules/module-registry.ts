@@ -232,6 +232,20 @@ export const MODULE_REGISTRY = {
       pro: { imports_month: -1 },
     },
   },
+  communications: {
+    code: 'communications',
+    name: 'Comunicaciones',
+    description: 'Inbox unificado (Email + WhatsApp) y templates',
+    icon: 'MessageSquare',
+    color: '#0EA5E9',
+    routes: '/app/communications',
+    standalone: false,
+    dependencies: ['crm'],
+    features: {
+      basic: ['inbox', 'email', 'whatsapp'],
+      pro: ['templates', 'automation_hooks'],
+    },
+  },
   api: {
     code: 'api',
     name: 'API',
