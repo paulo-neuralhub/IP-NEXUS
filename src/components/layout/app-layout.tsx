@@ -13,6 +13,7 @@ import { NexusGuideButton } from "@/components/nexus-guide";
 import { GlobalTimer } from "@/components/timetracking";
 import { usePresence } from "@/hooks/use-realtime-collab";
 import { PageContainer } from "@/components/layout/PageContainer";
+import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
@@ -76,6 +77,9 @@ export function AppLayout() {
                 
                 {/* Global Timer for mobile */}
                 <GlobalTimer />
+
+                {/* Softphone Widget (VoIP) */}
+                <SoftphoneWidget />
               </div>
             ) : (
               // Desktop Layout
@@ -96,6 +100,9 @@ export function AppLayout() {
                 </div>
                 {/* Timer stays floating on mobile; on desktop it's embedded in the sidebar */}
                 <NexusGuideButton />
+
+                {/* Softphone Widget (VoIP) */}
+                <SoftphoneWidget />
               </div>
             )}
           </ContextualHelpProvider>
