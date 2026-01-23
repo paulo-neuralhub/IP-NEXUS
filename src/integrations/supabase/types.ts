@@ -2590,6 +2590,45 @@ export type Database = {
           },
         ]
       }
+      alert_types: {
+        Row: {
+          auto_email: boolean | null
+          code: string
+          created_at: string | null
+          default_priority: string | null
+          description: string | null
+          email_template: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          suggested_action: string | null
+        }
+        Insert: {
+          auto_email?: boolean | null
+          code: string
+          created_at?: string | null
+          default_priority?: string | null
+          description?: string | null
+          email_template?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          suggested_action?: string | null
+        }
+        Update: {
+          auto_email?: boolean | null
+          code?: string
+          created_at?: string | null
+          default_priority?: string | null
+          description?: string | null
+          email_template?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          suggested_action?: string | null
+        }
+        Relationships: []
+      }
       analytics_daily_metrics: {
         Row: {
           ai_queries: number | null
@@ -27931,6 +27970,145 @@ export type Database = {
           },
         ]
       }
+      system_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_data: Json | null
+          alert_type: string
+          assigned_at: string | null
+          assigned_to: string | null
+          created_at: string | null
+          email_sent: boolean | null
+          email_sent_at: string | null
+          event_id: string | null
+          expires_at: string | null
+          id: string
+          message: string | null
+          organization_id: string | null
+          priority: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string | null
+          suggested_action: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_data?: Json | null
+          alert_type: string
+          assigned_at?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          event_id?: string | null
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          organization_id?: string | null
+          priority?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          suggested_action?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          acknowledged_at?: string | null
+          acknowledged_by?: string | null
+          alert_data?: Json | null
+          alert_type?: string
+          assigned_at?: string | null
+          assigned_to?: string | null
+          created_at?: string | null
+          email_sent?: boolean | null
+          email_sent_at?: string | null
+          event_id?: string | null
+          expires_at?: string | null
+          id?: string
+          message?: string | null
+          organization_id?: string | null
+          priority?: string | null
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          suggested_action?: string | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_alerts_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "system_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "v_pending_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "system_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       system_announcements: {
         Row: {
           created_at: string | null
@@ -31482,6 +31660,101 @@ export type Database = {
           },
         ]
       }
+      v_active_alerts: {
+        Row: {
+          acknowledged_at: string | null
+          acknowledged_by: string | null
+          alert_data: Json | null
+          alert_type: string | null
+          alert_type_name: string | null
+          alert_type_suggested_action: string | null
+          assigned_at: string | null
+          assigned_to: string | null
+          assigned_to_email: string | null
+          created_at: string | null
+          email_sent: boolean | null
+          email_sent_at: string | null
+          event_id: string | null
+          expires_at: string | null
+          id: string | null
+          message: string | null
+          organization_id: string | null
+          organization_name: string | null
+          priority: string | null
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string | null
+          suggested_action: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "system_alerts_acknowledged_by_fkey"
+            columns: ["acknowledged_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "system_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "v_pending_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "system_alerts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "system_alerts_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       v_event_stats: {
         Row: {
           action_required_count: number | null
@@ -31933,6 +32206,17 @@ export type Database = {
         Returns: boolean
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      create_alert: {
+        Args: {
+          p_alert_data?: Json
+          p_alert_type: string
+          p_event_id?: string
+          p_message?: string
+          p_organization_id?: string
+          p_title: string
+        }
+        Returns: string
+      }
       create_voip_call: {
         Args: {
           p_call_sid: string
