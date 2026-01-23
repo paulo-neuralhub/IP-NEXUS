@@ -29,6 +29,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { CalendarIntegrationSection } from '@/components/settings/CalendarIntegrationSection';
 import { WhatsAppIntegrationSection } from '@/components/settings/WhatsAppIntegrationSection';
+import { TwilioVoipIntegrationSection } from '@/components/settings/TwilioVoipIntegrationSection';
 
 interface IntegrationField {
   key: string;
@@ -185,6 +186,11 @@ export default function IntegrationsPage() {
       <WhatsAppIntegrationSection />
 
       <Separator className="my-8" />
+
+      {/* VoIP (Twilio) */}
+      <TwilioVoipIntegrationSection />
+
+      <Separator className="my-8" />
       
       {CATEGORIES.map(category => {
         const categoryIntegrations = INTEGRATIONS.filter(i => i.category === category.id);
@@ -216,7 +222,7 @@ export default function IntegrationsPage() {
                             <div className="flex items-center gap-2">
                               <CardTitle className="text-base">{integration.name}</CardTitle>
                               {connected && (
-                                <Badge variant="secondary" className="bg-green-100 text-green-700">
+                                 <Badge variant="secondary" className="bg-secondary text-secondary-foreground">
                                   <Check className="w-3 h-3 mr-1" /> Conectado
                                 </Badge>
                               )}

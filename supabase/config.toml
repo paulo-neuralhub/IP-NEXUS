@@ -215,3 +215,9 @@ verify_jwt = false
 
 [functions.ai-discover-models]
 verify_jwt = false
+
+[functions.twilio-voice-token]
+verify_jwt = false
+
+[functions.twilio-voice-webhook]
+verify_jwt = false

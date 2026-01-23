@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Device } from '@twilio/voice-sdk';
 import { supabase } from '@/integrations/supabase/client';
+import { useOrganization } from '@/contexts/organization-context';
 
 type TwilioDeviceState = {
   device: Device | null;
@@ -10,6 +11,7 @@ type TwilioDeviceState = {
 };
 
 export function useTwilioDevice(): TwilioDeviceState {
+  const { currentOrganization } = useOrganization();
   const [device, setDevice] = useState<Device | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +28,10 @@ export function useTwilioDevice(): TwilioDeviceState {
       const { data: auth } = await supabase.auth.getSession();
       if (!auth.session) throw new Error('No hay sesión');
 
+      if (!currentOrganization?.id) throw new Error('Selecciona una organización');
+
       const { data, error: fnError } = await supabase.functions.invoke('twilio-voice-token', {
-        body: {},
+        body: { organization_id: currentOrganization.id },
       });
 
       if (fnError) throw new Error(fnError.message);
@@ -46,7 +50,7 @@ export function useTwilioDevice(): TwilioDeviceState {
       twilioDevice.on('tokenWillExpire', async () => {
         try {
           const { data: refresh, error: refreshErr } = await supabase.functions.invoke('twilio-voice-token', {
-            body: {},
+            body: { organization_id: currentOrganization?.id },
           });
           if (refreshErr) return;
           if (refresh?.token) twilioDevice.updateToken(refresh.token);
@@ -62,7 +66,7 @@ export function useTwilioDevice(): TwilioDeviceState {
       setError(msg);
       setIsReady(false);
     }
-  }, [device]);
+  }, [currentOrganization?.id, device]);
 
   useEffect(() => {
     void initialize();
