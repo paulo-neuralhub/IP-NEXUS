@@ -202,6 +202,7 @@ import PortalMessages from "./pages/portal/PortalMessages";
 import { AppLayout } from "@/components/layout/app-layout";
 import { AuthGuard } from "@/components/layout/auth-guard";
 import { AnalyticsProvider } from "@/components/analytics/AnalyticsProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const queryClient = new QueryClient();
 
@@ -213,8 +214,9 @@ const App = () => (
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <AnalyticsProvider>
-            <Routes>
+            <TooltipProvider delayDuration={0}>
+              <AnalyticsProvider>
+              <Routes>
                 {/* Landing */}
                 <Route path="/" element={<Landing />} />
                 <Route path="/market" element={<MarketLandingPage />} />
@@ -441,8 +443,9 @@ const App = () => (
               
                 {/* 404 */}
               <Route path="*" element={<NotFound />} />
-            </Routes>
-            </AnalyticsProvider>
+              </Routes>
+              </AnalyticsProvider>
+            </TooltipProvider>
           </BrowserRouter>
         </BrandingProvider>
       </OrganizationProvider>

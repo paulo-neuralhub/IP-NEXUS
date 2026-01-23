@@ -318,12 +318,15 @@ export function GdprDashboard() {
       {/* Type Filter */}
       <div className="flex items-center gap-4">
         <Search className="h-4 w-4 text-muted-foreground" />
-        <Select value={typeFilter} onValueChange={setTypeFilter}>
+        <Select
+          value={typeFilter || '__all__'}
+          onValueChange={(v) => setTypeFilter(v === '__all__' ? '' : v)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder={t('gdpr.filter.type', 'All Types')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t('gdpr.filter.all', 'All Types')}</SelectItem>
+            <SelectItem value="__all__">{t('gdpr.filter.all', 'All Types')}</SelectItem>
             {Object.entries(REQUEST_TYPE_CONFIG).map(([key, config]) => (
               <SelectItem key={key} value={key}>
                 {config.label}
