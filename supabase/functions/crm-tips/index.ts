@@ -16,6 +16,22 @@ Reglas:
 - Menciona (si encaja) que las etapas y los pipelines se configuran en /app/settings (sección CRM).
 - No inventes funcionalidades.`;
 
+// Simple in-memory cache (best-effort). Edge runtimes often reuse isolates,
+// so this can significantly reduce provider calls during bursts.
+type TipCacheEntry = { tip: string; expiresAt: number };
+const TIP_CACHE = new Map<string, TipCacheEntry>();
+
+function getFallbackTip(module?: string, section?: string) {
+  // Keep it under ~90 chars and aligned with the product.
+  if (module === 'crm') {
+    return 'Configura etapas y pipelines en /app/settings (CRM) para ordenar tu Kanban.';
+  }
+  if (section) {
+    return `Revisa Configuración para ajustar ${section} según tu flujo de trabajo.`;
+  }
+  return 'Revisa Configuración para ajustar tu flujo de trabajo.';
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -32,6 +48,15 @@ serve(async (req) => {
     }
 
     const { currentPath, module, section } = await req.json();
+
+    // Cache key should be stable, low cardinality.
+    const cacheKey = `${String(module || '')}:${String(section || '')}:${String(currentPath || '')}`;
+    const cached = TIP_CACHE.get(cacheKey);
+    if (cached && cached.expiresAt > Date.now()) {
+      return new Response(JSON.stringify({ tip: cached.tip, cached: true }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
@@ -72,9 +97,13 @@ serve(async (req) => {
       console.error('AI gateway error:', response.status, errorText);
 
       if (response.status === 429) {
-        return new Response(JSON.stringify({ error: 'Rate limit exceeded. Inténtalo de nuevo en unos segundos.' }), {
-          status: 429,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        // IMPORTANT: Return 200 with a safe fallback tip to avoid client hard-fail / blank screens.
+        // Also cache the fallback briefly to prevent thundering-herd retries.
+        const fallbackTip = getFallbackTip(module, section);
+        TIP_CACHE.set(cacheKey, { tip: fallbackTip, expiresAt: Date.now() + 5 * 60 * 1000 });
+        return new Response(JSON.stringify({ tip: fallbackTip, rate_limited: true }), {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Retry-After': '10' },
         });
       }
 
@@ -93,6 +122,11 @@ serve(async (req) => {
 
     const ai = await response.json();
     const tip = String(ai?.choices?.[0]?.message?.content || '').trim();
+
+    // Cache successful tip for 10 minutes to reduce provider calls.
+    if (tip) {
+      TIP_CACHE.set(cacheKey, { tip, expiresAt: Date.now() + 10 * 60 * 1000 });
+    }
 
     return new Response(JSON.stringify({ tip }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
