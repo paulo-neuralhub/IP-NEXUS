@@ -88,7 +88,7 @@ export function CommunicationDetail({ communicationId }: CommunicationDetailProp
               size="icon"
               onClick={handleToggleStar}
             >
-              <Star className={`w-4 h-4 ${comm.is_starred ? 'text-yellow-500 fill-yellow-500' : ''}`} />
+              <Star className={`w-4 h-4 ${comm.is_starred ? 'fill-current text-primary' : ''}`} />
             </Button>
             <Button 
               variant="ghost" 
@@ -186,10 +186,10 @@ export function CommunicationDetail({ communicationId }: CommunicationDetailProp
           <div className="p-6">
             {/* Disclaimer de IA si hay clasificación automática */}
             {comm.ai_category && !comm.manual_category && (
-              <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg dark:bg-amber-950/30 dark:border-amber-800">
+                 <div className="mb-4 p-3 bg-muted border border-border rounded-lg">
                 <div className="flex items-start gap-2">
-                  <Bot className="w-4 h-4 text-amber-600 mt-0.5" />
-                  <p className="text-xs text-amber-800 dark:text-amber-200">
+                    <Bot className="w-4 h-4 text-primary mt-0.5" />
+                    <p className="text-xs text-muted-foreground">
                     Este mensaje ha sido clasificado automáticamente por IA. 
                     La clasificación es una sugerencia y puede contener errores. 
                     Puede cambiarla usando el menú de clasificación.

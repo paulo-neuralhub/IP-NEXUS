@@ -1,5 +1,5 @@
-import { CommunicationsList } from "@/components/features/communications/CommunicationsList";
+import { CommunicationsInbox } from "@/components/legal-ops";
 
 export default function EmailInboxPage() {
-  return <CommunicationsList title="Email Inbox" channel="email" basePath="/app/communications/email" />;
+  return <CommunicationsInbox defaultChannel="email" defaultTab="all" />;
 }

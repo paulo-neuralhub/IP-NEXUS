@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   useCommunications, 
   useMarkAsRead, 
@@ -23,19 +23,29 @@ import { AIClassificationBadge } from './AIClassificationBadge';
 
 const CHANNEL_ICONS: Record<CommChannel, React.ReactNode> = {
   email: <Mail className="w-4 h-4" />,
-  whatsapp: <MessageSquare className="w-4 h-4 text-green-500" />,
-  portal: <Globe className="w-4 h-4 text-blue-500" />,
+  whatsapp: <MessageSquare className="w-4 h-4 text-primary" />,
+  portal: <Globe className="w-4 h-4 text-primary" />,
   phone: <Phone className="w-4 h-4" />,
   sms: <MessageSquare className="w-4 h-4" />,
   in_person: <MessageSquare className="w-4 h-4" />,
   other: <MessageSquare className="w-4 h-4" />
 };
 
-export function CommunicationsInbox() {
+type InboxProps = {
+  defaultChannel?: CommChannel | null;
+  defaultTab?: 'all' | 'unread' | 'starred';
+};
+
+export function CommunicationsInbox({ defaultChannel = null, defaultTab = 'all' }: InboxProps) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'starred'>('all');
-  const [channelFilter, setChannelFilter] = useState<CommChannel | null>(null);
+  const [activeTab, setActiveTab] = useState<'all' | 'unread' | 'starred'>(defaultTab);
+  const [channelFilter, setChannelFilter] = useState<CommChannel | null>(defaultChannel);
   const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    setActiveTab(defaultTab);
+    setChannelFilter(defaultChannel);
+  }, [defaultChannel, defaultTab]);
 
   const { data: stats } = useInboxStats();
   const { data: commsResult, isLoading, refetch } = useCommunications({
@@ -74,7 +84,7 @@ export function CommunicationsInbox() {
               <Badge variant="destructive">{stats?.unread} sin leer</Badge>
             )}
             {(stats?.urgent ?? 0) > 0 && (
-              <Badge variant="destructive" className="bg-red-600">
+              <Badge variant="destructive">
                 {stats?.urgent} urgente
               </Badge>
             )}
@@ -194,6 +204,8 @@ function CommunicationListItem({
 
   const effectiveCategory = communication.manual_category || communication.ai_category;
 
+  const toggleStar = useToggleStar();
+
   return (
     <div
       onClick={onSelect}
@@ -216,7 +228,7 @@ function CommunicationListItem({
               {senderName}
             </span>
             <span className="text-xs text-muted-foreground">
-              {formatDistanceToNow(new Date(received_at), { 
+              {formatDistanceToNow(new Date(received_at || communication.created_at), { 
                 addSuffix: true, 
                 locale: es 
               })}
@@ -246,12 +258,21 @@ function CommunicationListItem({
             )}
 
             {/* Estrella */}
-            {is_starred && (
-              <Star className="w-3 h-3 text-yellow-500 fill-yellow-500" />
-            )}
+            <button
+              type="button"
+              className="inline-flex items-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                toggleStar.mutate({ id: communication.id, is_starred: !is_starred });
+              }}
+              aria-label={is_starred ? 'Quitar estrella' : 'Marcar con estrella'}
+            >
+              <Star className={`w-3.5 h-3.5 ${is_starred ? 'fill-current text-primary' : 'text-muted-foreground'}`} />
+            </button>
           </div>
         </div>
       </div>
     </div>
   );
 }
+

@@ -1,5 +1,5 @@
-import { CommunicationsList } from "@/components/features/communications/CommunicationsList";
+import { CommunicationsInbox } from "@/components/legal-ops";
 
 export default function CommunicationsUnifiedPage() {
-  return <CommunicationsList title="Historial unificado" basePath="/app/communications" />;
+  return <CommunicationsInbox defaultChannel={null} defaultTab="all" />;
 }

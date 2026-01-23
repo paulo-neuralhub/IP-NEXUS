@@ -1,5 +1,5 @@
-import { CommunicationsList } from "@/components/features/communications/CommunicationsList";
+import { CommunicationsInbox } from "@/components/legal-ops";
 
 export default function WhatsAppInboxPage() {
-  return <CommunicationsList title="WhatsApp Inbox" channel="whatsapp" basePath="/app/communications/whatsapp" />;
+  return <CommunicationsInbox defaultChannel="whatsapp" defaultTab="all" />;
 }
