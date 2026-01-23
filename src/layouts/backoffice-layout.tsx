@@ -53,6 +53,7 @@ const sidebarSections = [
     label: 'Tools',
     items: [
       { label: 'Calendar', path: '/backoffice/calendar', icon: Calendar },
+      { label: 'Comunicaciones', path: '/backoffice/communications/whatsapp', icon: MessageSquare },
       { label: 'Feature Flags', path: '/backoffice/feature-flags', icon: Flag },
       { label: 'Integraciones', path: '/backoffice/integrations', icon: Plug },
       { label: 'Announcements', path: '/backoffice/announcements', icon: Megaphone },

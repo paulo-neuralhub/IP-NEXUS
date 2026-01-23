@@ -139,6 +139,14 @@ import CollabIndexPage from "./pages/app/collab";
 import CollabDetailPage from "./pages/app/collab/[id]";
 import SearchPage from "./pages/app/SearchPage";
 
+// Communications (Frontend + Backoffice)
+import CommunicationsUnifiedPage from "./pages/app/communications";
+import WhatsAppInboxPage from "./pages/app/communications/whatsapp";
+import EmailInboxPage from "./pages/app/communications/email";
+import CommunicationDetailPage from "./pages/app/communications/CommunicationDetail";
+import BackofficeWhatsAppCommunicationsPage from "./pages/backoffice/communications/whatsapp";
+import BackofficeEmailCommunicationsPage from "./pages/backoffice/communications/email";
+
 // Legal Ops Pages
 import LegalOpsAssistantPage from "./pages/app/legal-ops/assistant";
 import LegalOpsClient360Page from "./pages/app/legal-ops/client-360";
@@ -361,6 +369,13 @@ const App = () => (
                 <Route path="collab" element={<CollabIndexPage />} />
                 <Route path="collab/:id" element={<CollabDetailPage />} />
                 <Route path="search" element={<SearchPage />} />
+                {/* Communications */}
+                <Route path="communications" element={<CommunicationsUnifiedPage />} />
+                <Route path="communications/:id" element={<CommunicationDetailPage />} />
+                <Route path="communications/whatsapp" element={<WhatsAppInboxPage />} />
+                <Route path="communications/whatsapp/:id" element={<CommunicationDetailPage />} />
+                <Route path="communications/email" element={<EmailInboxPage />} />
+                <Route path="communications/email/:id" element={<CommunicationDetailPage />} />
                 <Route path="onboarding" element={<Onboarding />} />
                 {/* Legal Ops */}
                 <Route path="legal-ops" element={<Navigate to="/app/legal-ops/assistant" replace />} />
@@ -378,6 +393,9 @@ const App = () => (
                 <Route path="tenants" element={<TenantsPage />} />
                 <Route path="users" element={<BackofficeUsersPage />} />
                 <Route path="billing" element={<BillingPage />} />
+                {/* Communications */}
+                <Route path="communications/whatsapp" element={<BackofficeWhatsAppCommunicationsPage />} />
+                <Route path="communications/email" element={<BackofficeEmailCommunicationsPage />} />
                 {/* IPO Registry */}
                 <Route path="ipo" element={<IPORegistryPage />} />
                 <Route path="ipo/new" element={<NewIPOOfficePage />} />

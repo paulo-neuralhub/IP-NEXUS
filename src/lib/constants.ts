@@ -49,6 +49,7 @@ export const MODULE_COLORS = {
   marketing: '#F97316',
   collab: '#06B6D4',
   alerts: '#EF4444',
+  communications: '#64748B',
   help: '#6B7280',
 } as const;
 
