@@ -7379,6 +7379,220 @@ export type Database = {
           },
         ]
       }
+      crm_voip_calls: {
+        Row: {
+          account_id: string | null
+          ai_action_items: Json
+          ai_entities: Json
+          ai_keywords: Json
+          ai_processed: boolean
+          ai_sentiment: string | null
+          ai_sentiment_score: number | null
+          ai_summary: string | null
+          ai_topics: Json
+          answered_at: string | null
+          call_sid: string | null
+          caller_name: string | null
+          conference_sid: string | null
+          contact_id: string | null
+          created_at: string
+          direction: string
+          duration_seconds: number
+          ended_at: string | null
+          follow_up_date: string | null
+          follow_up_required: boolean
+          from_number: string
+          id: string
+          initiated_at: string
+          matter_id: string | null
+          metadata: Json
+          notes: string | null
+          organization_id: string
+          parent_call_sid: string | null
+          provider: string
+          quality_issues: Json
+          quality_score: number | null
+          recording_consent: boolean
+          recording_duration_seconds: number | null
+          recording_enabled: boolean
+          recording_sid: string | null
+          recording_storage_path: string | null
+          recording_url: string | null
+          ringing_at: string | null
+          status: string
+          to_number: string
+          transcription_confidence: number | null
+          transcription_language: string
+          transcription_segments: Json
+          transcription_status: string
+          transcription_text: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          ai_action_items?: Json
+          ai_entities?: Json
+          ai_keywords?: Json
+          ai_processed?: boolean
+          ai_sentiment?: string | null
+          ai_sentiment_score?: number | null
+          ai_summary?: string | null
+          ai_topics?: Json
+          answered_at?: string | null
+          call_sid?: string | null
+          caller_name?: string | null
+          conference_sid?: string | null
+          contact_id?: string | null
+          created_at?: string
+          direction: string
+          duration_seconds?: number
+          ended_at?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean
+          from_number: string
+          id?: string
+          initiated_at?: string
+          matter_id?: string | null
+          metadata?: Json
+          notes?: string | null
+          organization_id: string
+          parent_call_sid?: string | null
+          provider?: string
+          quality_issues?: Json
+          quality_score?: number | null
+          recording_consent?: boolean
+          recording_duration_seconds?: number | null
+          recording_enabled?: boolean
+          recording_sid?: string | null
+          recording_storage_path?: string | null
+          recording_url?: string | null
+          ringing_at?: string | null
+          status?: string
+          to_number: string
+          transcription_confidence?: number | null
+          transcription_language?: string
+          transcription_segments?: Json
+          transcription_status?: string
+          transcription_text?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          ai_action_items?: Json
+          ai_entities?: Json
+          ai_keywords?: Json
+          ai_processed?: boolean
+          ai_sentiment?: string | null
+          ai_sentiment_score?: number | null
+          ai_summary?: string | null
+          ai_topics?: Json
+          answered_at?: string | null
+          call_sid?: string | null
+          caller_name?: string | null
+          conference_sid?: string | null
+          contact_id?: string | null
+          created_at?: string
+          direction?: string
+          duration_seconds?: number
+          ended_at?: string | null
+          follow_up_date?: string | null
+          follow_up_required?: boolean
+          from_number?: string
+          id?: string
+          initiated_at?: string
+          matter_id?: string | null
+          metadata?: Json
+          notes?: string | null
+          organization_id?: string
+          parent_call_sid?: string | null
+          provider?: string
+          quality_issues?: Json
+          quality_score?: number | null
+          recording_consent?: boolean
+          recording_duration_seconds?: number | null
+          recording_enabled?: boolean
+          recording_sid?: string | null
+          recording_storage_path?: string | null
+          recording_url?: string | null
+          ringing_at?: string | null
+          status?: string
+          to_number?: string
+          transcription_confidence?: number | null
+          transcription_language?: string
+          transcription_segments?: Json
+          transcription_status?: string
+          transcription_text?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       crm_whatsapp_messages: {
         Row: {
           contact_id: string | null
@@ -27473,6 +27687,186 @@ export type Database = {
           },
         ]
       }
+      voip_phone_numbers: {
+        Row: {
+          assigned_to_user_id: string | null
+          capabilities: Json
+          created_at: string
+          friendly_name: string | null
+          id: string
+          is_primary: boolean
+          organization_id: string
+          phone_number: string
+          phone_number_sid: string | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_to_user_id?: string | null
+          capabilities?: Json
+          created_at?: string
+          friendly_name?: string | null
+          id?: string
+          is_primary?: boolean
+          organization_id: string
+          phone_number: string
+          phone_number_sid?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_to_user_id?: string | null
+          capabilities?: Json
+          created_at?: string
+          friendly_name?: string | null
+          id?: string
+          is_primary?: boolean
+          organization_id?: string
+          phone_number?: string
+          phone_number_sid?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voip_phone_numbers_assigned_to_user_id_fkey"
+            columns: ["assigned_to_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voip_phone_numbers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voip_phone_numbers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "voip_phone_numbers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voip_settings: {
+        Row: {
+          account_sid: string | null
+          ai_analysis_enabled: boolean
+          ai_model: string
+          ai_provider: string
+          api_key_secret: string | null
+          api_key_sid: string | null
+          auth_token: string | null
+          created_at: string
+          fallback_number: string | null
+          id: string
+          max_call_duration_minutes: number
+          max_concurrent_calls: number
+          organization_id: string
+          primary_number: string | null
+          provider: string
+          recording_consent_message: string
+          recording_consent_required: boolean
+          recording_enabled: boolean
+          recording_storage: string
+          status_callback_url: string | null
+          transcription_enabled: boolean
+          transcription_language: string
+          transcription_provider: string
+          updated_at: string
+          webhook_url: string | null
+        }
+        Insert: {
+          account_sid?: string | null
+          ai_analysis_enabled?: boolean
+          ai_model?: string
+          ai_provider?: string
+          api_key_secret?: string | null
+          api_key_sid?: string | null
+          auth_token?: string | null
+          created_at?: string
+          fallback_number?: string | null
+          id?: string
+          max_call_duration_minutes?: number
+          max_concurrent_calls?: number
+          organization_id: string
+          primary_number?: string | null
+          provider?: string
+          recording_consent_message?: string
+          recording_consent_required?: boolean
+          recording_enabled?: boolean
+          recording_storage?: string
+          status_callback_url?: string | null
+          transcription_enabled?: boolean
+          transcription_language?: string
+          transcription_provider?: string
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Update: {
+          account_sid?: string | null
+          ai_analysis_enabled?: boolean
+          ai_model?: string
+          ai_provider?: string
+          api_key_secret?: string | null
+          api_key_sid?: string | null
+          auth_token?: string | null
+          created_at?: string
+          fallback_number?: string | null
+          id?: string
+          max_call_duration_minutes?: number
+          max_concurrent_calls?: number
+          organization_id?: string
+          primary_number?: string | null
+          provider?: string
+          recording_consent_message?: string
+          recording_consent_required?: boolean
+          recording_enabled?: boolean
+          recording_storage?: string
+          status_callback_url?: string | null
+          transcription_enabled?: boolean
+          transcription_language?: string
+          transcription_provider?: string
+          updated_at?: string
+          webhook_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voip_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "voip_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "voip_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       watch_results: {
         Row: {
           action_by: string | null
@@ -28796,6 +29190,167 @@ export type Database = {
           },
         ]
       }
+      v_voip_calls_with_contact: {
+        Row: {
+          account_id: string | null
+          ai_action_items: Json | null
+          ai_entities: Json | null
+          ai_keywords: Json | null
+          ai_processed: boolean | null
+          ai_sentiment: string | null
+          ai_sentiment_score: number | null
+          ai_summary: string | null
+          ai_topics: Json | null
+          answered_at: string | null
+          call_sid: string | null
+          caller_name: string | null
+          conference_sid: string | null
+          contact_email: string | null
+          contact_id: string | null
+          contact_name: string | null
+          created_at: string | null
+          direction: string | null
+          duration_seconds: number | null
+          ended_at: string | null
+          follow_up_date: string | null
+          follow_up_required: boolean | null
+          from_number: string | null
+          id: string | null
+          initiated_at: string | null
+          matter_id: string | null
+          metadata: Json | null
+          notes: string | null
+          organization_id: string | null
+          parent_call_sid: string | null
+          provider: string | null
+          quality_issues: Json | null
+          quality_score: number | null
+          recording_consent: boolean | null
+          recording_duration_seconds: number | null
+          recording_enabled: boolean | null
+          recording_sid: string | null
+          recording_storage_path: string | null
+          recording_url: string | null
+          ringing_at: string | null
+          status: string | null
+          to_number: string | null
+          transcription_confidence: number | null
+          transcription_language: string | null
+          transcription_segments: Json | null
+          transcription_status: string | null
+          transcription_text: string | null
+          updated_at: string | null
+          user_id: string | null
+          user_name: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      v_voip_user_stats: {
+        Row: {
+          avg_duration: number | null
+          completed_calls: number | null
+          inbound_calls: number | null
+          organization_id: string | null
+          outbound_calls: number | null
+          total_calls: number | null
+          total_duration: number | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       _crm_seed_default_email_templates: {
@@ -28961,6 +29516,17 @@ export type Database = {
         Returns: boolean
       }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      create_voip_call: {
+        Args: {
+          p_call_sid: string
+          p_direction: string
+          p_from_number: string
+          p_organization_id: string
+          p_to_number: string
+          p_user_id?: string
+        }
+        Returns: string
+      }
       crm_activate_automation_template: {
         Args: { p_organization_id: string; p_template_code: string }
         Returns: string
@@ -29224,6 +29790,7 @@ export type Database = {
         Returns: boolean
       }
       is_member_of_org: { Args: { org_id: string }; Returns: boolean }
+      is_org_admin: { Args: { org_id: string }; Returns: boolean }
       is_superadmin: { Args: never; Returns: boolean }
       provision_pack_modules: {
         Args: {
@@ -29254,6 +29821,22 @@ export type Database = {
           rank: number
           subtitle: string
           title: string
+        }[]
+      }
+      search_call_transcriptions: {
+        Args: {
+          p_limit?: number
+          p_offset?: number
+          p_organization_id: string
+          p_search_query: string
+        }
+        Returns: {
+          call_id: string
+          contact_name: string
+          duration_seconds: number
+          initiated_at: string
+          relevance: number
+          transcription_snippet: string
         }[]
       }
       search_facets: {
