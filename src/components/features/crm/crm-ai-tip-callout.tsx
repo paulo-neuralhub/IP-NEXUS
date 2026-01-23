@@ -70,19 +70,29 @@ export function CrmAiTipCallout({
   const aiTip = useQuery({
     queryKey: ['crm-ai-tip', user?.id, CRM_TIP_KEY],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke('crm-tips', {
-        body: {
-          currentPath: '/app/crm',
-          module: 'crm',
-          section: 'kanban',
-          tipKey: CRM_TIP_KEY,
-        },
-      });
-      if (error) throw error;
-      return data as { tip: string };
+      try {
+        const { data, error } = await supabase.functions.invoke('crm-tips', {
+          body: {
+            currentPath: '/app/crm',
+            module: 'crm',
+            section: 'kanban',
+            tipKey: CRM_TIP_KEY,
+          },
+        });
+
+        // The Edge Function intentionally returns 200 + fallback on rate limit.
+        if (error) {
+          return { tip: 'Configura etapas y pipelines en /app/settings (CRM) para ordenar tu Kanban.' };
+        }
+        return (data as { tip?: string }) ?? { tip: undefined };
+      } catch {
+        // Never hard-fail the page for an onboarding tip.
+        return { tip: 'Configura etapas y pipelines en /app/settings (CRM) para ordenar tu Kanban.' };
+      }
     },
     enabled: !!user?.id && !!tipRow.data?.id && !shouldHide,
     staleTime: 1000 * 60 * 60, // 1h
+    retry: false,
   });
 
   if (!user?.id) return null;
