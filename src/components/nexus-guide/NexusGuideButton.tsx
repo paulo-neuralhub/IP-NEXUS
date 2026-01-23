@@ -24,7 +24,7 @@ export function NexusGuideButton({ className }: NexusGuideButtonProps) {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         className={cn(
-          'fixed bottom-6 right-6 z-50',
+          'fixed bottom-24 right-6 z-50',
           className
         )}
       >

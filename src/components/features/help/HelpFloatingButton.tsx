@@ -69,7 +69,7 @@ export function HelpFloatingButton({
   const hasIssues = incidents && incidents.length > 0;
 
   return (
-    <div className={cn("fixed bottom-6 right-6 z-50", className)}>
+    <div className={cn("fixed bottom-24 right-6 z-50", className)}>
       {/* Menu */}
       {isOpen && (
         <div className="absolute bottom-16 right-0 w-80 bg-background border border-border rounded-xl shadow-lg overflow-hidden animate-in slide-in-from-bottom-5">

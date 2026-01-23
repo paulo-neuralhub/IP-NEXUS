@@ -186,7 +186,7 @@ export function SoftphoneWidget() {
       <button
         type="button"
         onClick={() => setIsMinimized(false)}
-        className="fixed bottom-6 left-6 z-50 flex items-center gap-3 rounded-2xl bg-primary px-4 py-3 text-primary-foreground shadow-lg"
+        className="fixed bottom-6 right-6 z-50 flex items-center gap-3 rounded-2xl bg-accent px-4 py-3 text-accent-foreground shadow-lg"
       >
         <Phone className="h-4 w-4" />
         <span className="font-mono text-sm">{formatDuration(callDuration)}</span>
@@ -201,7 +201,7 @@ export function SoftphoneWidget() {
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg transition-transform hover:scale-105"
+        className="fixed bottom-6 right-6 z-50 flex h-14 w-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground shadow-lg transition-transform hover:scale-105"
         aria-label="Abrir teléfono"
       >
         <Phone className="h-6 w-6" />
@@ -210,9 +210,9 @@ export function SoftphoneWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 left-6 z-50 w-[22rem] overflow-hidden rounded-2xl border bg-card shadow-xl">
+    <div className="fixed bottom-6 right-6 z-50 w-[22rem] overflow-hidden rounded-2xl border bg-card shadow-xl">
       {/* Header */}
-      <div className="flex items-center justify-between gap-2 bg-primary px-4 py-3 text-primary-foreground">
+      <div className="flex items-center justify-between gap-2 bg-accent px-4 py-3 text-accent-foreground">
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">
             {callState === 'idle'
@@ -227,7 +227,7 @@ export function SoftphoneWidget() {
                       ? `En espera · ${formatDuration(callDuration)}`
                       : formatDuration(callDuration)}
           </p>
-          <p className="truncate text-xs text-primary-foreground/80">
+          <p className="truncate text-xs text-accent-foreground/80">
             {contactInfo?.name ? `${contactInfo.name} · ${phoneNumber}` : phoneNumber || 'Listo para marcar'}
           </p>
         </div>
@@ -237,7 +237,7 @@ export function SoftphoneWidget() {
             <button
               type="button"
               onClick={() => setIsMinimized(true)}
-              className="rounded-lg p-1.5 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+              className="rounded-lg p-1.5 text-accent-foreground/80 hover:bg-accent-foreground/10 hover:text-accent-foreground"
               aria-label="Minimizar"
             >
               <Minimize2 className="h-4 w-4" />
@@ -246,7 +246,7 @@ export function SoftphoneWidget() {
           <button
             type="button"
             onClick={() => setIsOpen(false)}
-            className="rounded-lg p-1.5 text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-primary-foreground"
+            className="rounded-lg p-1.5 text-accent-foreground/80 hover:bg-accent-foreground/10 hover:text-accent-foreground"
             aria-label="Cerrar"
           >
             <X className="h-4 w-4" />
@@ -297,7 +297,7 @@ export function SoftphoneWidget() {
                   acceptIncoming();
                   setCallState('in_call');
                 }}
-                className="rounded-xl bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
+                className="rounded-xl bg-accent px-3 py-2 text-sm font-medium text-accent-foreground hover:opacity-90"
               >
                 Aceptar
               </button>
@@ -319,7 +319,7 @@ export function SoftphoneWidget() {
                 onClick={handleToggleMute}
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-medium',
-                  isMuted ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'
+                  isMuted ? 'bg-accent text-accent-foreground' : 'bg-card text-foreground hover:bg-muted'
                 )}
               >
                 {isMuted ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
@@ -330,7 +330,7 @@ export function SoftphoneWidget() {
                 onClick={handleToggleHold}
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-medium',
-                  isOnHold ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'
+                  isOnHold ? 'bg-accent text-accent-foreground' : 'bg-card text-foreground hover:bg-muted'
                 )}
               >
                 {isOnHold ? <Play className="h-5 w-5" /> : <Pause className="h-5 w-5" />}
@@ -341,7 +341,7 @@ export function SoftphoneWidget() {
                 onClick={() => setShowDialpad((v) => !v)}
                 className={cn(
                   'flex flex-col items-center justify-center gap-1 rounded-xl border px-2 py-3 text-xs font-medium',
-                  showDialpad ? 'bg-primary text-primary-foreground' : 'bg-card text-foreground hover:bg-muted'
+                  showDialpad ? 'bg-accent text-accent-foreground' : 'bg-card text-foreground hover:bg-muted'
                 )}
               >
                 <Grid3X3 className="h-5 w-5" />
@@ -411,7 +411,7 @@ export function SoftphoneWidget() {
                 type="button"
                 onClick={handleMakeCall}
                 disabled={!phoneNumber.trim() || !isReady || !!deviceError || !voipAvailable}
-                className="flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:opacity-90 disabled:opacity-50"
+                className="flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-accent-foreground hover:opacity-90 disabled:opacity-50"
               >
                 <Phone className="h-4 w-4" />
                 Llamar
