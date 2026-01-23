@@ -184,6 +184,8 @@ import KnowledgeBasesPage from "./pages/backoffice/knowledge-bases";
 import DemoDataPage from "./pages/backoffice/demo-data";
 import VoipManagementPage from "./pages/backoffice/voip/VoipManagementPage";
 import EventLogPage from "./pages/backoffice/events/EventLogPage";
+import SystemLogsPage from "./pages/backoffice/logs";
+import BackofficeAlertsPage from "./pages/backoffice/alerts/BackofficeAlertsPage";
 
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
@@ -426,6 +428,8 @@ const App = () => (
                 <Route path="demo-data" element={<DemoDataPage />} />
                 <Route path="voip" element={<VoipManagementPage />} />
                 <Route path="events" element={<EventLogPage />} />
+                <Route path="logs" element={<SystemLogsPage />} />
+                <Route path="alerts" element={<BackofficeAlertsPage />} />
                 <Route path="kill-switch" element={<KillSwitchPage />} />
               </Route>
               
