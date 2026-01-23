@@ -24,6 +24,7 @@ import {
   MessageSquare,
   Power,
   Database,
+  PhoneCall,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -55,6 +56,7 @@ const sidebarSections = [
     items: [
       { label: 'Calendar', path: '/backoffice/calendar', icon: Calendar },
       { label: 'Comunicaciones', path: '/backoffice/communications/whatsapp', icon: MessageSquare },
+      { label: 'VoIP', path: '/backoffice/voip', icon: PhoneCall },
       { label: 'Feature Flags', path: '/backoffice/feature-flags', icon: Flag },
       { label: 'Integraciones', path: '/backoffice/integrations', icon: Plug },
       { label: 'Announcements', path: '/backoffice/announcements', icon: Megaphone },

@@ -15,6 +15,9 @@ import { useTwilioDevice } from '@/hooks/useTwilioDevice';
 import { useVoipCall } from '@/hooks/useVoipCall';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
+import { toast } from 'sonner';
+import { TransferModal } from '@/components/voip/TransferModal';
+import { Button } from '@/components/ui/button';
 
 type CallState = 'idle' | 'connecting' | 'ringing' | 'in_call' | 'on_hold' | 'incoming';
 
@@ -45,6 +48,7 @@ export function SoftphoneWidget() {
   const [isOnHold, setIsOnHold] = useState(false);
   const [callDuration, setCallDuration] = useState(0);
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
+  const [transferOpen, setTransferOpen] = useState(false);
 
   const { device, isReady, error: deviceError } = useTwilioDevice();
   const { makeCall, hangUp, toggleMute, toggleHold, currentCall, acceptIncoming, rejectIncoming } = useVoipCall(device);
@@ -180,6 +184,38 @@ export function SoftphoneWidget() {
     [callState, currentCall]
   );
 
+  const handleTransfer = useCallback(
+    async (targetNumber: string) => {
+      if (!currentOrganization?.id) return;
+      if (!currentCall) return;
+
+      const callSid = (currentCall as any)?.parameters?.CallSid as string | undefined;
+      if (!callSid) {
+        toast.error('No se pudo detectar el CallSid para transferir.');
+        return;
+      }
+
+      try {
+        await supabase.functions.invoke('twilio-transfer-call', {
+          body: {
+            organization_id: currentOrganization.id,
+            callSid,
+            targetNumber,
+          },
+        });
+
+        setTransferOpen(false);
+        setIsOpen(false);
+        setIsMinimized(false);
+        resetCallUi();
+        toast.success('Llamada transferida.');
+      } catch (e) {
+        toast.error(e instanceof Error ? e.message : 'Error al transferir la llamada');
+      }
+    },
+    [currentCall, currentOrganization?.id, resetCallUi]
+  );
+
   // Minimized pill (solo en llamada)
   if (isMinimized && callState !== 'idle') {
     return (
@@ -211,6 +247,11 @@ export function SoftphoneWidget() {
 
   return (
     <div className="fixed bottom-6 right-6 z-50 w-[22rem] overflow-hidden rounded-2xl border bg-card shadow-xl">
+      <TransferModal
+        isOpen={transferOpen}
+        onClose={() => setTransferOpen(false)}
+        onTransfer={handleTransfer}
+      />
       {/* Header */}
       <div className="flex items-center justify-between gap-2 bg-accent px-4 py-3 text-accent-foreground">
         <div className="min-w-0">
@@ -348,6 +389,15 @@ export function SoftphoneWidget() {
                 Teclado
               </button>
             </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setTransferOpen(true)}
+              className="w-full"
+            >
+              Transferir
+            </Button>
 
             {showDialpad && (
               <div className="grid grid-cols-3 gap-2">
