@@ -3,6 +3,7 @@
  * PROMPT 50 Phase 4: Sidebar that adapts based on module licenses
  */
 
+import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
@@ -26,6 +27,13 @@ import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GlobalTimer } from "@/components/timetracking";
+
+interface DynamicSidebarProps {
+  variant?: "desktop" | "mobile";
+  collapsed?: boolean;
+  onToggleCollapsed?: () => void;
+  onNavigate?: () => void;
+}
 
 // Icon mapping
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -213,7 +221,12 @@ const UTILITY_NAV: NavItem[] = [
   },
 ];
 
-export function DynamicSidebar() {
+export function DynamicSidebar({
+  variant = "desktop",
+  collapsed = false,
+  onToggleCollapsed,
+  onNavigate,
+}: DynamicSidebarProps) {
   const location = useLocation();
   const { profile, signOut } = useAuth();
   const { currentOrganization, memberships, setCurrentOrganization } = useOrganization();
@@ -262,13 +275,16 @@ export function DynamicSidebar() {
       <Link
         key={item.path}
         to={hasAccess ? item.path : `/pricing?upgrade=${item.moduleCode}`}
+        onClick={onNavigate}
+        title={collapsed ? item.label : undefined}
         className={cn(
-          "flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors relative group",
+          "flex items-center gap-3 rounded-xl text-sm transition-colors relative group",
+          collapsed ? "px-3 py-3 justify-center" : "px-4 py-3",
           isActive
-            ? "bg-white/15 text-white"
+            ? "bg-sidebar-accent/15 text-sidebar-foreground"
             : hasAccess
-            ? "text-white/70 hover:bg-white/10 hover:text-white"
-            : "text-white/40 hover:bg-white/5"
+              ? "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+              : "text-sidebar-foreground/40 hover:bg-sidebar-accent/5"
         )}
         style={isActive ? { borderLeft: `3px solid ${item.color}` } : undefined}
       >
@@ -283,14 +299,14 @@ export function DynamicSidebar() {
           )}
           style={{ color: iconColor }}
         />
-        <span className="flex-1 truncate">{item.label}</span>
+        {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
         
-        {!hasAccess && (
+        {!collapsed && !hasAccess && (
           <Lock className="h-4 w-4 shrink-0" />
         )}
         
         {/* Dynamic badge count (e.g., pending signatures) */}
-        {hasAccess && badgeCount > 0 && (
+        {!collapsed && hasAccess && badgeCount > 0 && (
           <Badge 
             variant="destructive" 
             className="text-[10px] px-1.5 py-0 min-w-[20px] h-5 flex items-center justify-center"
@@ -299,7 +315,7 @@ export function DynamicSidebar() {
           </Badge>
         )}
         
-        {hasAccess && isTrialing && (
+        {!collapsed && hasAccess && isTrialing && (
           <Badge 
             variant="outline" 
             className="text-[10px] px-1.5 py-0 border-yellow-500/50 text-yellow-400"
@@ -308,7 +324,7 @@ export function DynamicSidebar() {
           </Badge>
         )}
         
-        {hasAccess && license?.tier_code === 'pro' && !isTrialing && (
+        {!collapsed && hasAccess && license?.tier_code === 'pro' && !isTrialing && (
           <Badge 
             variant="secondary" 
             className="text-[10px] px-1.5 py-0"
@@ -331,19 +347,27 @@ export function DynamicSidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar flex flex-col z-50">
+    <aside
+      className={cn(
+        "flex flex-col",
+        variant === "desktop" ? "fixed left-0 top-0 z-50 h-screen" : "h-full",
+        collapsed ? "w-16" : "w-64",
+        "ip-sidebar-gradient text-sidebar-foreground",
+      )}
+    >
       {/* Logo */}
-      <div className="p-6">
-        <Link to="/app" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
+      <div className={cn(collapsed ? "p-4" : "p-6")}>
+        <Link to="/app" onClick={onNavigate} className="flex items-center gap-2">
+          <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center ip-sidebar-accent")}
+          >
             <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
-          <span className="text-xl font-bold text-white">IP-NEXUS</span>
+          {!collapsed && <span className="text-lg font-bold tracking-tight">IP-NEXUS</span>}
         </Link>
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 overflow-y-auto">
+      <nav className={cn("flex-1 overflow-y-auto", collapsed ? "px-2" : "px-3")}>
         {isLoading ? (
           // Loading skeleton
           <div className="space-y-2">
@@ -372,26 +396,50 @@ export function DynamicSidebar() {
       </nav>
 
       {/* Timer (placed below Help and above Settings to avoid overlapping floating widgets) */}
-      <div className="px-3 py-3">
-        <GlobalTimer placement="sidebar" />
-      </div>
+      {!collapsed && (
+        <div className="px-3 py-3">
+          <GlobalTimer placement="sidebar" />
+        </div>
+      )}
 
       {/* Settings */}
-      <div className="px-3 py-2 border-t border-white/10">
+      <div className={cn("py-2 border-t border-sidebar-border", collapsed ? "px-2" : "px-3")}>
         <Link
           to="/app/settings"
+          onClick={onNavigate}
           className={cn(
-            "flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white",
-            location.pathname.startsWith("/app/settings") && "bg-white/15 text-white"
+            "flex items-center gap-3 rounded-xl text-sm hover:bg-sidebar-accent/10",
+            collapsed ? "px-3 py-3 justify-center" : "px-4 py-3",
+            location.pathname.startsWith("/app/settings")
+              ? "bg-sidebar-accent/15 text-sidebar-foreground"
+              : "text-sidebar-foreground/70 hover:text-sidebar-foreground"
           )}
         >
           <Settings className="h-5 w-5" />
-          Configuración
+          {!collapsed && "Configuración"}
         </Link>
       </div>
 
+      {/* Collapse Button (desktop only) */}
+      {variant === "desktop" && onToggleCollapsed && (
+        <div className={cn("border-t border-sidebar-border", collapsed ? "px-2" : "px-3", "py-2")}
+        >
+          <button
+            type="button"
+            onClick={onToggleCollapsed}
+            className={cn(
+              "w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm",
+              "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/10",
+            )}
+          >
+            <ChevronDown className={cn("h-4 w-4 transition-transform", collapsed && "-rotate-90")} />
+            {!collapsed && "Colapsar"}
+          </button>
+        </div>
+      )}
+
       {/* User Menu */}
-      <div className="p-4 border-t border-white/10">
+      <div className={cn("border-t border-sidebar-border", collapsed ? "p-2" : "p-4")}>
         <DropdownMenu>
           <DropdownMenuTrigger className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors">
             <Avatar className="h-8 w-8">
@@ -400,11 +448,15 @@ export function DynamicSidebar() {
                 {getInitials(profile?.full_name || profile?.email || "U")}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 text-left min-w-0">
-              <p className="text-sm text-white truncate">{profile?.full_name || "Usuario"}</p>
-              <p className="text-xs text-white/60 truncate">{currentOrganization?.name}</p>
-            </div>
-            <ChevronDown className="h-4 w-4 text-white/60" />
+            {!collapsed && (
+              <>
+                <div className="flex-1 text-left min-w-0">
+                  <p className="text-sm truncate">{profile?.full_name || "Usuario"}</p>
+                  <p className="text-xs text-sidebar-foreground/60 truncate">{currentOrganization?.name}</p>
+                </div>
+                <ChevronDown className="h-4 w-4 text-sidebar-foreground/60" />
+              </>
+            )}
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuItem asChild>
@@ -438,3 +490,4 @@ export function DynamicSidebar() {
     </aside>
   );
 }
+
