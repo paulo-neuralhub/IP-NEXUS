@@ -297,12 +297,15 @@ export function ComplianceChecksDashboard() {
       {/* Framework Filter */}
       <div className="flex items-center gap-4">
         <Filter className="h-4 w-4 text-muted-foreground" />
-        <Select value={frameworkFilter} onValueChange={setFrameworkFilter}>
+        <Select
+          value={frameworkFilter || '__all__'}
+          onValueChange={(v) => setFrameworkFilter(v === '__all__' ? '' : v)}
+        >
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder={t('compliance.filter.framework', 'All Frameworks')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">{t('compliance.filter.all', 'All Frameworks')}</SelectItem>
+            <SelectItem value="__all__">{t('compliance.filter.all', 'All Frameworks')}</SelectItem>
             {FRAMEWORKS.map((fw) => (
               <SelectItem key={fw.value} value={fw.value}>
                 {fw.label}

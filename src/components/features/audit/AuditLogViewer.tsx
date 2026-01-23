@@ -134,12 +134,15 @@ export function AuditLogViewer() {
                 className="pl-10"
               />
             </div>
-            <Select value={resourceFilter} onValueChange={setResourceFilter}>
+             <Select
+               value={resourceFilter || '__all__'}
+               onValueChange={(v) => setResourceFilter(v === '__all__' ? '' : v)}
+             >
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder={t('audit.logs.resource', 'Resource Type')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Resources</SelectItem>
+                 <SelectItem value="__all__">All Resources</SelectItem>
                 <SelectItem value="matter">Matters</SelectItem>
                 <SelectItem value="contact">Contacts</SelectItem>
                 <SelectItem value="document">Documents</SelectItem>
@@ -147,12 +150,15 @@ export function AuditLogViewer() {
                 <SelectItem value="user">Users</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={actionFilter} onValueChange={setActionFilter}>
+             <Select
+               value={actionFilter || '__all__'}
+               onValueChange={(v) => setActionFilter(v === '__all__' ? '' : v)}
+             >
               <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder={t('audit.logs.action', 'Action')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Actions</SelectItem>
+                 <SelectItem value="__all__">All Actions</SelectItem>
                 <SelectItem value="create">Create</SelectItem>
                 <SelectItem value="update">Update</SelectItem>
                 <SelectItem value="delete">Delete</SelectItem>
