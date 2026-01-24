@@ -58,6 +58,7 @@ import WatchlistDetailPage from "./pages/app/spider/watchlists/[id]";
 import AnalyzePage from "./pages/app/spider/analyze";
 import SpiderLandingPage from "./pages/spider-landing";
 import PricingPage from "./pages/pricing";
+import ProductLanding from "./pages/products/ProductLanding";
 import MatterList from "./pages/app/docket";
 import MatterDetail from "./pages/app/docket/MatterDetail";
 import MatterForm from "./pages/app/docket/MatterForm";
@@ -231,6 +232,7 @@ const App = () => (
                 <Route path="/market" element={<MarketLandingPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/spider-pro" element={<SpiderLandingPage />} />
+                <Route path="/products/:slug" element={<ProductLanding />} />
               
               {/* Auth - Public */}
               <Route path="/login" element={<Login />} />

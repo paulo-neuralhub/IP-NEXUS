@@ -17170,6 +17170,90 @@ export type Database = {
           },
         ]
       }
+      landing_pages: {
+        Row: {
+          created_at: string | null
+          faqs: Json | null
+          features: Json | null
+          final_cta_config: Json | null
+          final_cta_subtitle: string | null
+          final_cta_title: string | null
+          final_cta_type: string | null
+          hero_cta_text: string | null
+          hero_cta_url: string | null
+          hero_image_url: string | null
+          hero_secondary_cta_text: string | null
+          hero_secondary_cta_url: string | null
+          hero_subtitle: string | null
+          hero_title: string
+          hero_video_url: string | null
+          id: string
+          is_published: boolean | null
+          meta_description: string | null
+          module_code: string
+          pricing_plans: Json | null
+          published_at: string | null
+          slug: string
+          testimonials: Json | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          faqs?: Json | null
+          features?: Json | null
+          final_cta_config?: Json | null
+          final_cta_subtitle?: string | null
+          final_cta_title?: string | null
+          final_cta_type?: string | null
+          hero_cta_text?: string | null
+          hero_cta_url?: string | null
+          hero_image_url?: string | null
+          hero_secondary_cta_text?: string | null
+          hero_secondary_cta_url?: string | null
+          hero_subtitle?: string | null
+          hero_title: string
+          hero_video_url?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          module_code: string
+          pricing_plans?: Json | null
+          published_at?: string | null
+          slug: string
+          testimonials?: Json | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          faqs?: Json | null
+          features?: Json | null
+          final_cta_config?: Json | null
+          final_cta_subtitle?: string | null
+          final_cta_title?: string | null
+          final_cta_type?: string | null
+          hero_cta_text?: string | null
+          hero_cta_url?: string | null
+          hero_image_url?: string | null
+          hero_secondary_cta_text?: string | null
+          hero_secondary_cta_url?: string | null
+          hero_subtitle?: string | null
+          hero_title?: string
+          hero_video_url?: string | null
+          id?: string
+          is_published?: boolean | null
+          meta_description?: string | null
+          module_code?: string
+          pricing_plans?: Json | null
+          published_at?: string | null
+          slug?: string
+          testimonials?: Json | null
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       legal_acceptances: {
         Row: {
           acceptance_method: string
