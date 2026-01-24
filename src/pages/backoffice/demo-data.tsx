@@ -24,6 +24,7 @@ import {
   useSeedDemoClientCommunications,
   useSeedDemoData,
   useSeedDemoDeadlinesCoverage,
+  useSeedDemoFinanceFull,
   useSeedDemoTenantsClients,
   useSeedDemoMattersCoverage,
   useSeedDemoUsers,
@@ -43,6 +44,7 @@ export default function DemoDataPage() {
   const seedMattersCoverageMutation = useSeedDemoMattersCoverage();
   const seedDeadlinesCoverageMutation = useSeedDemoDeadlinesCoverage();
   const seedClientCommsMutation = useSeedDemoClientCommunications();
+  const seedFinanceFullMutation = useSeedDemoFinanceFull();
 
   const canRun = !!organizationId;
 
@@ -166,6 +168,20 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedFinanceFull = async () => {
+    try {
+      const res = await seedFinanceFullMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      const summary = res.results.map((r) => `${r.slug} (run ${r.run_id})`).join(" · ");
+      toast.success(`Datos financieros demo creados. ${summary}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando datos financieros demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -203,6 +219,25 @@ export default function DemoDataPage() {
             <Button onClick={handleSeed} disabled={!canRun || seedMutation.isPending} className="w-full">
               <Wand2 className="h-4 w-4 mr-2" />
               {seedMutation.isPending ? "Creando…" : "Seed demo data"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Crear datos financieros (full)
+            </CardTitle>
+            <CardDescription>
+              Genera 100 facturas (paid/sent/overdue/draft), 30 presupuestos (accepted/sent/rejected) y 50 gastos
+              (matter_costs) con PDFs simulados en todos los tenants demo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={handleSeedFinanceFull} disabled={seedFinanceFullMutation.isPending} className="w-full">
+              <Database className="h-4 w-4 mr-2" />
+              {seedFinanceFullMutation.isPending ? "Creando…" : "Seed finance full (all tenants)"}
             </Button>
           </CardContent>
         </Card>
