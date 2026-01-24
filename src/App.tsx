@@ -201,6 +201,7 @@ import MarketKycPage from "./pages/app/market/kyc";
 import KycVerificationPage from "./pages/app/market/kyc/[type]";
 
 // Portal Pages (Client Portal)
+import PortalIndex from "./pages/portal/PortalIndex";
 import PortalLogin from "./pages/portal/PortalLogin";
 import PortalLayout from "./components/portal/PortalLayout";
 import PortalDashboard from "./pages/portal/PortalDashboard";
@@ -456,6 +457,7 @@ const App = () => (
               <Route path="/sign/:token" element={<SignDocumentPage />} />
               
               {/* CLIENT PORTAL - Public facing for external clients */}
+              <Route path="/portal" element={<PortalIndex />} />
               <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLogin /></PortalAuthProvider>} />
               <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLayout /></PortalAuthProvider>}>
                 <Route path="dashboard" element={<PortalDashboard />} />
