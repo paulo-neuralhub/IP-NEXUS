@@ -4,7 +4,7 @@
 // ============================================================
 
 import { useState, useRef, useEffect } from 'react';
-import { Send, Loader2, Sparkles, BookOpen, MessageSquare, Mic, MicOff } from 'lucide-react';
+import { Send, Loader2, Sparkles, BookOpen, MessageSquare, Mic, MicOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -205,9 +205,21 @@ export function NexusGuideChat({ onClose }: NexusGuideChatProps) {
                 <p className="text-xs text-primary-foreground/80">Tu asistente de IP-NEXUS</p>
               </div>
             </div>
-            <Badge variant="secondary" className="text-xs">
-              {getCurrentContext()}
-            </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="text-xs">
+                  {getCurrentContext()}
+                </Badge>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={onClose}
+                  aria-label="Cerrar NEXUS GUIDE"
+                  className="text-primary-foreground hover:bg-white/10 hover:text-primary-foreground"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
           </div>
         </CardHeader>
 
