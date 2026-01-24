@@ -13,7 +13,7 @@ export type DocumentType =
   | 'response'
   | 'other';
 
-export type EntityType = 'matter' | 'client' | 'deal';
+export type EntityType = 'matter' | 'client' | 'deal' | 'invoice' | 'quote';
 
 export interface Document {
   id: string;
@@ -109,6 +109,10 @@ export function getBucketForEntity(entityType: EntityType): string {
       return 'client-documents';
     case 'deal':
       return 'client-documents'; // Deals use client-documents bucket
+    case 'invoice':
+      return 'invoices';
+    case 'quote':
+      return 'client-documents'; // Quotes use client-documents bucket
     default:
       return 'matter-documents';
   }
