@@ -560,27 +560,104 @@ export function useCreateQuote() {
 
 export function useConvertQuoteToInvoice() {
   const queryClient = useQueryClient();
+  const { currentOrganization } = useOrganization();
   
   return useMutation({
-    mutationFn: async (quoteId: string) => {
-      // Obtener presupuesto con items
+    mutationFn: async (quoteId: string): Promise<{ success: boolean; invoiceId: string; invoiceNumber: string }> => {
+      if (!currentOrganization?.id) throw new Error('No organization selected');
+      
+      // PASO 1: Obtener presupuesto completo con items
       const { data: quote, error: quoteError } = await supabase
         .from('quotes')
         .select('*, items:quote_items(*)')
         .eq('id', quoteId)
         .single();
       if (quoteError) throw quoteError;
+      if (!quote) throw new Error('Presupuesto no encontrado');
       
-      // Actualizar presupuesto
-      await supabase
+      // PASO 2: Generar número de factura
+      const year = new Date().getFullYear();
+      const { count } = await supabase
+        .from('invoices')
+        .select('*', { count: 'exact', head: true })
+        .eq('organization_id', currentOrganization.id)
+        .gte('invoice_date', `${year}-01-01`);
+      
+      const invoiceNumber = `INV-${year}-${String((count || 0) + 1).padStart(4, '0')}`;
+      
+      // Calcular fecha de vencimiento (30 días)
+      const dueDate = new Date();
+      dueDate.setDate(dueDate.getDate() + 30);
+      
+      // PASO 3: Crear factura
+      const invoiceData = {
+        organization_id: currentOrganization.id,
+        invoice_number: invoiceNumber,
+        billing_client_id: quote.billing_client_id || quote.id, // Fallback to quote id if no client
+        client_name: quote.client_name || '',
+        invoice_date: new Date().toISOString().split('T')[0],
+        due_date: dueDate.toISOString().split('T')[0],
+        subtotal: quote.subtotal || 0,
+        tax_rate: quote.tax_rate || 21,
+        tax_amount: quote.tax_amount || 0,
+        discount_amount: quote.discount_amount || 0,
+        total: quote.total || 0,
+        currency: quote.currency || 'EUR',
+        status: 'draft',
+        notes: quote.notes || null,
+        internal_notes: `Generada desde presupuesto ${quote.quote_number}`,
+      };
+      
+      const { data: invoice, error: invoiceError } = await supabase
+        .from('invoices')
+        .insert(invoiceData)
+        .select()
+        .single();
+      if (invoiceError) throw invoiceError;
+      if (!invoice) throw new Error('Error al crear factura');
+      
+      // PASO 4: Crear invoice_items desde quote_items
+      const quoteItems = (quote as { items?: Array<{
+        description: string;
+        quantity: number;
+        unit_price: number;
+        notes?: string;
+      }> }).items || [];
+      
+      if (quoteItems.length > 0) {
+        const invoiceItems = quoteItems.map((item, index) => ({
+          invoice_id: invoice.id,
+          line_number: index + 1,
+          description: item.description,
+          quantity: item.quantity || 1,
+          unit_price: item.unit_price || 0,
+          subtotal: (item.quantity || 1) * (item.unit_price || 0),
+          discount_percent: 0,
+          notes: item.notes || null,
+        }));
+        
+        const { error: itemsError } = await supabase
+          .from('invoice_items')
+          .insert(invoiceItems);
+        if (itemsError) throw itemsError;
+      }
+      
+      // PASO 5: Actualizar quote como convertido
+      const { error: updateError } = await supabase
         .from('quotes')
         .update({ 
           status: 'converted',
+          converted_invoice_id: invoice.id,
           converted_at: new Date().toISOString(),
         })
         .eq('id', quoteId);
+      if (updateError) throw updateError;
       
-      return quote;
+      return { 
+        success: true, 
+        invoiceId: invoice.id,
+        invoiceNumber: invoice.invoice_number,
+      };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['quotes'] });

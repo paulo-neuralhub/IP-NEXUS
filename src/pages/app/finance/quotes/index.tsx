@@ -4,7 +4,7 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { QuoteForm } from '@/components/quotes';
+import { QuoteForm, QuoteDetailDialog } from '@/components/quotes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +43,7 @@ import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useQuotes } from '@/hooks/use-finance';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import type { Quote } from '@/types/finance';
 
 type QuoteStatus = 'draft' | 'sent' | 'accepted' | 'rejected' | 'expired' | 'converted';
 
@@ -60,6 +61,8 @@ export default function QuotesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all');
   const [showQuoteForm, setShowQuoteForm] = useState(false);
+  const [selectedQuote, setSelectedQuote] = useState<Quote | null>(null);
+  const [showDetail, setShowDetail] = useState(false);
 
   // Fetch real data from Supabase
   const { data: quotes, isLoading, error, refetch } = useQuotes();
@@ -152,7 +155,7 @@ export default function QuotesPage() {
             {isLoading ? (
               <Skeleton className="h-8 w-12" />
             ) : (
-              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.accepted}</div>
+              <div className="text-2xl font-bold text-primary">{stats.accepted}</div>
             )}
           </CardContent>
         </Card>
@@ -247,7 +250,10 @@ export default function QuotesPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => {
+                            setSelectedQuote(quote as Quote);
+                            setShowDetail(true);
+                          }}>
                             <Eye className="w-4 h-4 mr-2" />
                             Ver detalle
                           </DropdownMenuItem>
@@ -261,10 +267,13 @@ export default function QuotesPage() {
                               Enviar
                             </DropdownMenuItem>
                           )}
-                          {quote.status === 'accepted' && (
-                            <DropdownMenuItem>
+                          {(quote.status === 'sent' || quote.status === 'accepted') && (
+                            <DropdownMenuItem onClick={() => {
+                              setSelectedQuote(quote as Quote);
+                              setShowDetail(true);
+                            }}>
                               <FileText className="w-4 h-4 mr-2" />
-                              Crear factura
+                              Convertir a factura
                             </DropdownMenuItem>
                           )}
                         </DropdownMenuContent>
@@ -331,6 +340,14 @@ export default function QuotesPage() {
         open={showQuoteForm} 
         onOpenChange={setShowQuoteForm}
         onSuccess={() => refetch()}
+      />
+
+      {/* Quote Detail Dialog */}
+      <QuoteDetailDialog
+        quote={selectedQuote}
+        open={showDetail}
+        onOpenChange={setShowDetail}
+        onConvertSuccess={() => refetch()}
       />
     </div>
   );
