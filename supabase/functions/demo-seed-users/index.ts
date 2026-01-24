@@ -14,6 +14,8 @@ type CreateUserSpec = {
   email: string;
   full_name: string;
   preferred_language: string;
+  role: "owner" | "admin" | "manager" | "member" | "viewer" | "external";
+  title?: string;
 };
 
 function json(body: unknown, init: ResponseInit = {}) {
@@ -58,7 +60,15 @@ async function getOrgIdBySlug(svc: any, slug: DemoOrgSlug) {
 
 async function upsertPublicUserProfile(
   svc: any,
-  p: { id: string; email: string; full_name: string; preferred_language: string },
+  p: {
+    id: string;
+    email: string;
+    full_name: string;
+    preferred_language: string;
+    avatar_url?: string;
+    phone?: string;
+    settings?: Record<string, unknown>;
+  },
 ) {
   const { error } = await svc.from("users").upsert(
     {
@@ -66,6 +76,9 @@ async function upsertPublicUserProfile(
       email: p.email,
       full_name: p.full_name,
       preferred_language: p.preferred_language,
+      avatar_url: p.avatar_url,
+      phone: p.phone,
+      settings: p.settings ?? {},
       updated_at: new Date().toISOString(),
     },
     { onConflict: "id" },
@@ -96,8 +109,182 @@ function buildUserList(prefix: string, count: number, language: string): CreateU
       email: `demo+${prefix}${n}@ipnexus.dev`,
       full_name: `Demo ${prefix.toUpperCase()} ${n}`,
       preferred_language: language,
+      role: "member",
     };
   });
+}
+
+function avatarUrlFor(name: string) {
+  // No secrets required; deterministic per name.
+  const seed = encodeURIComponent(name.trim());
+  return `https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundType=gradientLinear`;
+}
+
+function buildIpnexusDemoUsers(): Array<{
+  orgSlug: DemoOrgSlug;
+  users: CreateUserSpec[];
+}> {
+  return [
+    {
+      orgSlug: "demo-starter",
+      users: [
+        {
+          email: "carlos.garcia@demo.ipnexus.com",
+          full_name: "Carlos García",
+          preferred_language: "es",
+          role: "admin",
+          title: "Admin",
+        },
+      ],
+    },
+    {
+      orgSlug: "demo-professional",
+      users: [
+        {
+          email: "ana.martinez@demo.ipnexus.com",
+          full_name: "Ana Martínez",
+          preferred_language: "es",
+          role: "admin",
+          title: "Admin",
+        },
+        {
+          email: "pedro.sanchez@demo.ipnexus.com",
+          full_name: "Pedro Sánchez",
+          preferred_language: "es",
+          role: "manager",
+          title: "Abogado",
+        },
+        {
+          email: "maria.lopez@demo.ipnexus.com",
+          full_name: "María López",
+          preferred_language: "es",
+          role: "member",
+          title: "Asistente",
+        },
+      ],
+    },
+    {
+      orgSlug: "demo-business",
+      users: [
+        {
+          email: "director@demo.ipnexus.com",
+          full_name: "Director General",
+          preferred_language: "es",
+          role: "admin",
+          title: "Admin",
+        },
+        {
+          email: "socio1@demo.ipnexus.com",
+          full_name: "Socio 1",
+          preferred_language: "es",
+          role: "manager",
+          title: "Socio",
+        },
+        {
+          email: "socio2@demo.ipnexus.com",
+          full_name: "Socio 2",
+          preferred_language: "es",
+          role: "manager",
+          title: "Socio",
+        },
+        ...Array.from({ length: 5 }).map((_, i) => {
+          const n = i + 1;
+          return {
+            email: `abogado${n}@demo.ipnexus.com`,
+            full_name: `Abogado ${n}`,
+            preferred_language: "es",
+            role: "manager" as const,
+            title: "Abogado",
+          };
+        }),
+        {
+          email: "paralegal1@demo.ipnexus.com",
+          full_name: "Paralegal 1",
+          preferred_language: "es",
+          role: "member",
+          title: "Paralegal",
+        },
+      ],
+    },
+    {
+      orgSlug: "demo-enterprise",
+      users: [
+        {
+          email: "ceo@demo.ipnexus.com",
+          full_name: "CEO",
+          preferred_language: "en",
+          role: "admin",
+          title: "Admin",
+        },
+        {
+          email: "cfo@demo.ipnexus.com",
+          full_name: "CFO",
+          preferred_language: "en",
+          role: "viewer",
+          title: "CFO",
+        },
+        ...Array.from({ length: 5 }).map((_, i) => {
+          const n = i + 1;
+          return {
+            email: `socio${n}@demo.ipnexus.com`,
+            full_name: `Socio ${n}`,
+            preferred_language: "en",
+            role: "manager" as const,
+            title: "Partner",
+          };
+        }),
+        ...Array.from({ length: 10 }).map((_, i) => {
+          const n = i + 1;
+          return {
+            email: `abogado${n}@demo.ipnexus.com`,
+            full_name: `Lawyer ${n}`,
+            preferred_language: "en",
+            role: "manager" as const,
+            title: "Lawyer",
+          };
+        }),
+        ...Array.from({ length: 5 }).map((_, i) => {
+          const n = i + 1;
+          return {
+            email: `paralegal${n}@demo.ipnexus.com`,
+            full_name: `Paralegal ${n}`,
+            preferred_language: "en",
+            role: "member" as const,
+            title: "Paralegal",
+          };
+        }),
+        ...Array.from({ length: 3 }).map((_, i) => {
+          const n = i + 1;
+          return {
+            email: `asistente${n}@demo.ipnexus.com`,
+            full_name: `Admin Assistant ${n}`,
+            preferred_language: "en",
+            role: "member" as const,
+            title: "Assistant",
+          };
+        }),
+      ],
+    },
+  ];
+}
+
+async function listAllAuthUsersByEmail(svc: any) {
+  // Collect users once (the Admin API listUsers is paginated).
+  const emailToUserId = new Map<string, string>();
+  let page = 1;
+  const perPage = 1000;
+  // Safety cap.
+  for (let i = 0; i < 20; i++) {
+    const { data, error } = await svc.auth.admin.listUsers({ page, perPage });
+    if (error) throw error;
+    const users = data?.users ?? [];
+    for (const u of users) {
+      if (u.email && u.id) emailToUserId.set(u.email.toLowerCase(), u.id);
+    }
+    if (users.length < perPage) break;
+    page += 1;
+  }
+  return emailToUserId;
 }
 
 Deno.serve(async (req) => {
@@ -141,71 +328,61 @@ Deno.serve(async (req) => {
       standalone: await getOrgIdBySlug(svc, "demo-standalone"),
     };
 
-    // Desired totals (including the existing owner already attached)
-    // starter: 1 (already)
-    // professional: 3 -> create 2
-    // business: 8 -> create 7
-    // enterprise: 25 -> create 24
-    const toCreate: Array<{ orgKey: keyof typeof orgIds; role: string; users: CreateUserSpec[] }> = [
-      {
-        orgKey: "professional",
-        role: "member",
-        users: buildUserList("pro", 2, "es"),
-      },
-      {
-        orgKey: "business",
-        role: "member",
-        users: buildUserList("biz", 7, "es"),
-      },
-      {
-        orgKey: "enterprise",
-        role: "member",
-        users: buildUserList("ent", 24, "en"),
-      },
-    ];
+    const toCreate = buildIpnexusDemoUsers();
 
     // Create users in Auth + attach membership
     const created: Array<{ email: string; user_id: string; org: string }> = [];
     const skipped: Array<{ email: string; reason: string }> = [];
 
-    // NOTE: deterministic password for demos; change anytime.
-    const password = "Demo12345!";
+    // Deterministic password for demos
+    const password = "Demo2026!";
+
+    const existingEmailMap = await listAllAuthUsersByEmail(svc);
 
     for (const batch of toCreate) {
-      const orgId = orgIds[batch.orgKey];
+      const orgId = await getOrgIdBySlug(svc, batch.orgSlug);
+
       for (const u of batch.users) {
-        // Create or fetch existing auth user by email
-        const { data: existing, error: findErr } = await svc.auth.admin.listUsers({
-          page: 1,
-          perPage: 200,
-        });
-        if (findErr) throw findErr;
+        const emailKey = u.email.toLowerCase();
+        const avatar_url = avatarUrlFor(u.full_name);
+        let userId = existingEmailMap.get(emailKey);
 
-        const already = existing.users.find((x) => x.email?.toLowerCase() === u.email.toLowerCase());
-        let userId: string;
-
-        if (already?.id) {
-          userId = already.id;
+        if (userId) {
           skipped.push({ email: u.email, reason: "already exists" });
         } else {
           const { data: createdUser, error: createErr } = await svc.auth.admin.createUser({
             email: u.email,
             password,
             email_confirm: true,
-            user_metadata: { full_name: u.full_name },
+            user_metadata: {
+              full_name: u.full_name,
+              avatar_url,
+              title: u.title,
+            },
           });
           if (createErr) throw createErr;
           userId = createdUser.user!.id;
-          created.push({ email: u.email, user_id: userId, org: batch.orgKey });
+          existingEmailMap.set(emailKey, userId);
+          created.push({ email: u.email, user_id: userId, org: batch.orgSlug });
         }
 
         await upsertPublicUserProfile(svc, {
-          id: userId,
+          id: userId!,
           email: u.email,
           full_name: u.full_name,
           preferred_language: u.preferred_language,
+          avatar_url,
+          settings: {
+            demo: true,
+            title: u.title,
+          },
         });
-        await ensureMembership(svc, { user_id: userId, organization_id: orgId, role: batch.role });
+
+        await ensureMembership(svc, {
+          user_id: userId!,
+          organization_id: orgId,
+          role: u.role,
+        });
       }
     }
 
