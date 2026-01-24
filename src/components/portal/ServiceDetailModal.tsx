@@ -46,7 +46,7 @@ export function ServiceDetailModal({
   };
 
   // Get metadata
-  const metadata: ServiceCatalogMetadata | null = service.metadata ?? null;
+  const metadata: ServiceCatalogMetadata | null = (service as { metadata?: ServiceCatalogMetadata }).metadata ?? null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

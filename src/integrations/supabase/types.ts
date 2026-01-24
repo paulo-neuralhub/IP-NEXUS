@@ -26877,10 +26877,18 @@ export type Database = {
           currency: string
           description: string | null
           display_order: number | null
+          estimated_days: number | null
+          extra_class_fee: number | null
           id: string
           is_active: boolean
+          jurisdiction: string | null
           name: string
+          nice_classes_included: number | null
+          official_fee: number | null
           organization_id: string
+          professional_fee: number | null
+          reference_code: string | null
+          service_type: string | null
           stripe_price_id: string | null
           updated_at: string
         }
@@ -26891,10 +26899,18 @@ export type Database = {
           currency?: string
           description?: string | null
           display_order?: number | null
+          estimated_days?: number | null
+          extra_class_fee?: number | null
           id?: string
           is_active?: boolean
+          jurisdiction?: string | null
           name: string
+          nice_classes_included?: number | null
+          official_fee?: number | null
           organization_id: string
+          professional_fee?: number | null
+          reference_code?: string | null
+          service_type?: string | null
           stripe_price_id?: string | null
           updated_at?: string
         }
@@ -26905,10 +26921,18 @@ export type Database = {
           currency?: string
           description?: string | null
           display_order?: number | null
+          estimated_days?: number | null
+          extra_class_fee?: number | null
           id?: string
           is_active?: boolean
+          jurisdiction?: string | null
           name?: string
+          nice_classes_included?: number | null
+          official_fee?: number | null
           organization_id?: string
+          professional_fee?: number | null
+          reference_code?: string | null
+          service_type?: string | null
           stripe_price_id?: string | null
           updated_at?: string
         }

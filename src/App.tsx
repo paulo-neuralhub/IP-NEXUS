@@ -375,6 +375,7 @@ const App = () => (
                 <Route path="settings/compliance" element={<ComplianceSettingsPage />} />
                 <Route path="settings/branding" element={<BrandingSettingsPage />} />
                 <Route path="settings/sso" element={<SSOSettingsPage />} />
+                <Route path="settings/catalogo-servicios" element={<ServiceCatalogPage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
                 <Route path="tools" element={<ToolsPage />} />
                 {/* Migrator redirect to Data Hub */}
