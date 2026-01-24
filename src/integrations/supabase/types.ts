@@ -1553,6 +1553,39 @@ export type Database = {
           },
         ]
       }
+      ai_module_config: {
+        Row: {
+          created_at: string
+          description: string | null
+          display_name: string
+          features: Json
+          included_in_plans: string[]
+          module_code: string
+          monthly_limit: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          display_name: string
+          features?: Json
+          included_in_plans?: string[]
+          module_code: string
+          monthly_limit?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          display_name?: string
+          features?: Json
+          included_in_plans?: string[]
+          module_code?: string
+          monthly_limit?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ai_prompt_templates: {
         Row: {
           agent_type: string
