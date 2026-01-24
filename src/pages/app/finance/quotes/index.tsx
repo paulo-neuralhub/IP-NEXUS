@@ -4,6 +4,7 @@
 
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { QuoteForm } from '@/components/quotes';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -58,6 +59,7 @@ export default function QuotesPage() {
   usePageTitle('Presupuestos');
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<QuoteStatus | 'all'>('all');
+  const [showQuoteForm, setShowQuoteForm] = useState(false);
 
   // Fetch real data from Supabase
   const { data: quotes, isLoading, error, refetch } = useQuotes();
@@ -116,7 +118,7 @@ export default function QuotesPage() {
             Gestiona presupuestos y propuestas para clientes
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setShowQuoteForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Nuevo presupuesto
         </Button>
@@ -323,6 +325,13 @@ export default function QuotesPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Quote Form Modal */}
+      <QuoteForm 
+        open={showQuoteForm} 
+        onOpenChange={setShowQuoteForm}
+        onSuccess={() => refetch()}
+      />
     </div>
   );
 }
