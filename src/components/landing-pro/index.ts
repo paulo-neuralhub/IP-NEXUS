@@ -1,0 +1,12 @@
+export { LandingNavbar } from './LandingNavbar';
+export { HeroSection } from './HeroSection';
+export { SocialProofBar } from './SocialProofBar';
+export { ProblemSolution } from './ProblemSolution';
+export { FeatureShowcase } from './FeatureShowcase';
+export { IntegrationsBar } from './IntegrationsBar';
+export { PricingSection } from './PricingSection';
+export { TestimonialsCarousel } from './TestimonialsCarousel';
+export { FaqAccordion } from './FaqAccordion';
+export { FinalCta } from './FinalCta';
+export { LandingFooter } from './LandingFooter';
+export { ChatbotWidget } from './ChatbotWidget';

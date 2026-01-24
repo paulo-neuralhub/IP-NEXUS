@@ -1,0 +1,175 @@
+/* Landing Pages Premium Design System */
+
+/* Module accent colors for landing pages */
+:root {
+  /* Premium Blue Palette */
+  --landing-primary: 222 47% 11%;      /* #0F172A - Deep blue for backgrounds */
+  --landing-secondary: 221 83% 53%;    /* #1E40AF - Corporate blue for CTAs */
+  --landing-accent: 217 91% 60%;       /* #3B82F6 - Electric blue for hovers */
+  
+  /* Neutral colors */
+  --landing-slate-600: 215 19% 35%;    /* #475569 - Primary text */
+  --landing-slate-400: 215 16% 62%;    /* #94A3B8 - Secondary text */
+  --landing-slate-200: 214 32% 91%;    /* #E2E8F0 - Borders */
+  --landing-gray-50: 210 40% 98%;      /* #F8FAFC - Alternate bg */
+  
+  /* Module accents */
+  --spider-landing-accent: 243 75% 59%;   /* #4338CA - Indigo */
+  --market-landing-accent: 173 80% 25%;   /* #0F766E - Petrol */
+  --docket-landing-accent: 213 57% 25%;   /* #1E3A5F - Steel */
+  --nexus-landing-accent: 221 83% 53%;    /* #1E40AF - Corporate */
+}
+
+/* Landing page base styles */
+.landing-page {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hero gradient */
+.landing-hero-gradient {
+  background: linear-gradient(135deg, hsl(222 47% 11%) 0%, hsl(215 25% 17%) 100%);
+}
+
+/* Section padding consistency */
+.landing-section {
+  @apply py-16 md:py-24 lg:py-32;
+}
+
+/* Premium card styling */
+.landing-card {
+  @apply bg-white rounded-xl border border-slate-200;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.landing-card:hover {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  transform: translateY(-2px);
+}
+
+/* Screenshot shadow */
+.landing-screenshot {
+  @apply rounded-xl;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+}
+
+/* Premium button styles */
+.landing-btn-primary {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium text-white transition-all duration-200;
+  background-color: hsl(221 83% 53%);
+}
+
+.landing-btn-primary:hover {
+  background-color: hsl(221 83% 43%);
+}
+
+.landing-btn-secondary {
+  @apply inline-flex items-center justify-center px-6 py-3 rounded-lg font-medium text-white transition-all duration-200;
+  @apply bg-transparent border border-white/20 hover:bg-white/10;
+}
+
+/* Navbar blur effect */
+.landing-navbar {
+  @apply fixed top-0 left-0 right-0 z-50 transition-all duration-300;
+  backdrop-filter: blur(12px);
+}
+
+.landing-navbar-scrolled {
+  @apply bg-white/90 shadow-sm;
+}
+
+/* Social proof logos */
+.landing-logo-gray {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+
+.landing-logo-gray:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+/* Feature animations */
+@keyframes landing-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.landing-animate-in {
+  animation: landing-fade-in-up 0.6s ease-out forwards;
+}
+
+.landing-animate-delay-1 { animation-delay: 0.1s; }
+.landing-animate-delay-2 { animation-delay: 0.2s; }
+.landing-animate-delay-3 { animation-delay: 0.3s; }
+.landing-animate-delay-4 { animation-delay: 0.4s; }
+
+/* FAQ accordion styling */
+.landing-faq-item {
+  @apply border-b border-slate-200 last:border-0;
+}
+
+.landing-faq-trigger {
+  @apply flex items-center justify-between w-full py-5 text-left font-medium text-slate-900 hover:bg-slate-50 px-4 -mx-4 rounded-lg transition-colors;
+}
+
+/* Pricing toggle */
+.landing-pricing-toggle {
+  @apply relative inline-flex items-center p-1 rounded-full bg-slate-100;
+}
+
+.landing-pricing-toggle-btn {
+  @apply px-4 py-2 text-sm font-medium rounded-full transition-all;
+}
+
+.landing-pricing-toggle-btn.active {
+  @apply bg-white shadow-sm text-slate-900;
+}
+
+/* Testimonial carousel */
+.landing-testimonial-card {
+  @apply bg-white rounded-2xl p-8 border border-slate-100;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Integration logos container */
+.landing-integration-logo {
+  @apply opacity-60 hover:opacity-100 transition-opacity duration-200;
+}
+
+/* Responsive typography */
+.landing-h1 {
+  @apply text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+}
+
+.landing-h2 {
+  @apply text-3xl md:text-4xl font-semibold tracking-tight;
+}
+
+.landing-h3 {
+  @apply text-xl md:text-2xl font-semibold;
+}
+
+.landing-body {
+  @apply text-lg text-slate-600 leading-relaxed;
+}
+
+.landing-body-sm {
+  @apply text-sm text-slate-400;
+}
+
+/* Chatbot widget */
+.landing-chatbot-btn {
+  @apply fixed bottom-6 right-6 w-14 h-14 rounded-full flex items-center justify-center text-white z-50 transition-transform duration-200 hover:scale-110;
+  background-color: hsl(221 83% 53%);
+  box-shadow: 0 10px 25px -5px rgba(30, 64, 175, 0.4);
+}

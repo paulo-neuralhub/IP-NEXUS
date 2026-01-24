@@ -58,7 +58,9 @@ import WatchResultList from "./pages/app/spider/results";
 import NewWatchlistPage from "./pages/app/spider/watchlists/new";
 import WatchlistDetailPage from "./pages/app/spider/watchlists/[id]";
 import AnalyzePage from "./pages/app/spider/analyze";
-import SpiderLandingPage from "./pages/spider-landing";
+import SpiderLandingPage from "./pages/landing/SpiderLanding";
+import DocketLandingPage from "./pages/landing/DocketLanding";
+import NexusLandingPage from "./pages/landing/NexusLanding";
 import PricingPage from "./pages/pricing";
 import ProductLanding from "./pages/products/ProductLanding";
 import MatterList from "./pages/app/docket";
@@ -234,8 +236,11 @@ const App = () => (
             <TooltipProvider delayDuration={0}>
               <AnalyticsProvider>
               <Routes>
-                {/* Landing */}
+                {/* Landing Pages */}
                 <Route path="/" element={<Landing />} />
+                <Route path="/spider" element={<SpiderLandingPage />} />
+                <Route path="/docket" element={<DocketLandingPage />} />
+                <Route path="/nexus" element={<NexusLandingPage />} />
                 <Route path="/market" element={<MarketLandingPage />} />
                 <Route path="/pricing" element={<PricingPage />} />
                 <Route path="/spider-pro" element={<SpiderLandingPage />} />
