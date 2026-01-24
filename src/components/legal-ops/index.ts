@@ -13,3 +13,5 @@ export * from './PortalAssistant';
 export * from './ClientOnboardingWizard';
 export * from './ClientRelationshipsSection';
 export * from './AddRelationshipModal';
+export * from './ClientRelationshipsV2';
+export * from './AddRelationshipModalV2';

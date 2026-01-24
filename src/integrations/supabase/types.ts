@@ -5103,13 +5103,20 @@ export type Database = {
         Row: {
           client_id: string
           created_at: string
+          created_by: string | null
+          external_company: string | null
+          external_email: string | null
+          external_name: string | null
+          external_phone: string | null
           id: string
           is_primary: boolean | null
           notes: string | null
           organization_id: string
-          related_client_id: string
+          related_client_id: string | null
+          related_entity_type: string | null
           relationship_label: string | null
           relationship_type: string
+          role_description: string | null
           updated_at: string
           valid_from: string | null
           valid_until: string | null
@@ -5117,13 +5124,20 @@ export type Database = {
         Insert: {
           client_id: string
           created_at?: string
+          created_by?: string | null
+          external_company?: string | null
+          external_email?: string | null
+          external_name?: string | null
+          external_phone?: string | null
           id?: string
           is_primary?: boolean | null
           notes?: string | null
           organization_id: string
-          related_client_id: string
+          related_client_id?: string | null
+          related_entity_type?: string | null
           relationship_label?: string | null
           relationship_type: string
+          role_description?: string | null
           updated_at?: string
           valid_from?: string | null
           valid_until?: string | null
@@ -5131,13 +5145,20 @@ export type Database = {
         Update: {
           client_id?: string
           created_at?: string
+          created_by?: string | null
+          external_company?: string | null
+          external_email?: string | null
+          external_name?: string | null
+          external_phone?: string | null
           id?: string
           is_primary?: boolean | null
           notes?: string | null
           organization_id?: string
-          related_client_id?: string
+          related_client_id?: string | null
+          related_entity_type?: string | null
           relationship_label?: string | null
           relationship_type?: string
+          role_description?: string | null
           updated_at?: string
           valid_from?: string | null
           valid_until?: string | null
@@ -25077,6 +25098,48 @@ export type Database = {
             referencedColumns: ["organization_id"]
           },
         ]
+      }
+      relationship_types: {
+        Row: {
+          category: string
+          code: string
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name_en: string
+          name_es: string
+          requires_document: boolean | null
+          sort_order: number | null
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name_en: string
+          name_es: string
+          requires_document?: boolean | null
+          sort_order?: number | null
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name_en?: string
+          name_es?: string
+          requires_document?: boolean | null
+          sort_order?: number | null
+        }
+        Relationships: []
       }
       renewal_schedule: {
         Row: {
