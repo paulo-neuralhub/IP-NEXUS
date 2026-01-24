@@ -32840,6 +32840,10 @@ export type Database = {
           total_executions: number
         }[]
       }
+      has_accepted_document: {
+        Args: { p_doc_code: string; p_user_id: string }
+        Returns: boolean
+      }
       has_feature_access: {
         Args: {
           p_feature: string
