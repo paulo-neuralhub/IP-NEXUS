@@ -16751,53 +16751,133 @@ export type Database = {
           },
         ]
       }
+      legal_acceptances: {
+        Row: {
+          acceptance_method: string
+          accepted_at: string
+          content_hash: string
+          created_at: string
+          document_id: string
+          id: string
+          ip_address: unknown
+          organization_id: string | null
+          signature_data: Json | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+          version_accepted: string
+        }
+        Insert: {
+          acceptance_method: string
+          accepted_at?: string
+          content_hash: string
+          created_at?: string
+          document_id: string
+          id?: string
+          ip_address?: unknown
+          organization_id?: string | null
+          signature_data?: Json | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id: string
+          version_accepted: string
+        }
+        Update: {
+          acceptance_method?: string
+          accepted_at?: string
+          content_hash?: string
+          created_at?: string
+          document_id?: string
+          id?: string
+          ip_address?: unknown
+          organization_id?: string | null
+          signature_data?: Json | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+          version_accepted?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_acceptances_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_documents: {
         Row: {
           changelog: string | null
+          code: string | null
           content: string
           content_hash: string
           created_at: string | null
           created_by: string | null
           doc_type: Database["public"]["Enums"]["legal_doc_type"]
+          effective_date: string | null
           effective_from: string
           effective_until: string | null
           id: string
+          is_active: boolean
           is_current: boolean | null
           language: string | null
+          organization_id: string | null
           requires_re_consent: boolean | null
+          requires_signature: boolean
+          show_on_ai_first_use: boolean
+          signature_type: string | null
           title: string
+          updated_at: string
           version: string
         }
         Insert: {
           changelog?: string | null
+          code?: string | null
           content: string
           content_hash: string
           created_at?: string | null
           created_by?: string | null
           doc_type: Database["public"]["Enums"]["legal_doc_type"]
+          effective_date?: string | null
           effective_from?: string
           effective_until?: string | null
           id?: string
+          is_active?: boolean
           is_current?: boolean | null
           language?: string | null
+          organization_id?: string | null
           requires_re_consent?: boolean | null
+          requires_signature?: boolean
+          show_on_ai_first_use?: boolean
+          signature_type?: string | null
           title: string
+          updated_at?: string
           version: string
         }
         Update: {
           changelog?: string | null
+          code?: string | null
           content?: string
           content_hash?: string
           created_at?: string | null
           created_by?: string | null
           doc_type?: Database["public"]["Enums"]["legal_doc_type"]
+          effective_date?: string | null
           effective_from?: string
           effective_until?: string | null
           id?: string
+          is_active?: boolean
           is_current?: boolean | null
           language?: string | null
+          organization_id?: string | null
           requires_re_consent?: boolean | null
+          requires_signature?: boolean
+          show_on_ai_first_use?: boolean
+          signature_type?: string | null
           title?: string
+          updated_at?: string
           version?: string
         }
         Relationships: []
