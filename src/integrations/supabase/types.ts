@@ -9690,6 +9690,122 @@ export type Database = {
           },
         ]
       }
+      deadline_notifications: {
+        Row: {
+          action_url: string | null
+          channel: string
+          created_at: string | null
+          deadline_id: string | null
+          dismissed_at: string | null
+          entity_id: string | null
+          entity_type: string
+          id: string
+          last_error: string | null
+          message: string
+          organization_id: string
+          priority: string | null
+          read_at: string | null
+          retry_count: number | null
+          scheduled_at: string | null
+          sent_at: string | null
+          status: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          action_url?: string | null
+          channel: string
+          created_at?: string | null
+          deadline_id?: string | null
+          dismissed_at?: string | null
+          entity_id?: string | null
+          entity_type: string
+          id?: string
+          last_error?: string | null
+          message: string
+          organization_id: string
+          priority?: string | null
+          read_at?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          action_url?: string | null
+          channel?: string
+          created_at?: string | null
+          deadline_id?: string | null
+          dismissed_at?: string | null
+          entity_id?: string | null
+          entity_type?: string
+          id?: string
+          last_error?: string | null
+          message?: string
+          organization_id?: string
+          priority?: string | null
+          read_at?: string | null
+          retry_count?: number | null
+          scheduled_at?: string | null
+          sent_at?: string | null
+          status?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deadline_notifications_deadline_id_fkey"
+            columns: ["deadline_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["deadline_id"]
+          },
+          {
+            foreignKeyName: "deadline_notifications_deadline_id_fkey"
+            columns: ["deadline_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadlines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "deadline_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "deadline_notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deadline_reminders: {
         Row: {
           channel: string | null
@@ -11026,6 +11142,93 @@ export type Database = {
           },
           {
             foreignKeyName: "email_ingestion_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      email_queue: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          html_body: string | null
+          id: string
+          notification_id: string | null
+          organization_id: string | null
+          retry_count: number | null
+          sent_at: string | null
+          status: string | null
+          subject: string
+          template: string | null
+          template_data: Json | null
+          text_body: string | null
+          to_email: string
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          html_body?: string | null
+          id?: string
+          notification_id?: string | null
+          organization_id?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+          subject: string
+          template?: string | null
+          template_data?: Json | null
+          text_body?: string | null
+          to_email: string
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          html_body?: string | null
+          id?: string
+          notification_id?: string | null
+          organization_id?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string
+          template?: string | null
+          template_data?: Json | null
+          text_body?: string | null
+          to_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_queue_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "deadline_notifications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "email_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_queue_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
@@ -32161,6 +32364,105 @@ export type Database = {
           },
           {
             foreignKeyName: "user_feedback_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_notification_settings: {
+        Row: {
+          created_at: string | null
+          digest_day: number | null
+          digest_frequency: string | null
+          digest_time: string | null
+          email_address: string | null
+          email_enabled: boolean | null
+          id: string
+          in_app_enabled: boolean | null
+          min_priority: string | null
+          muted_matter_ids: string[] | null
+          organization_id: string
+          push_enabled: boolean | null
+          push_token: string | null
+          quiet_hours_enabled: boolean | null
+          quiet_hours_end: string | null
+          quiet_hours_start: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          digest_day?: number | null
+          digest_frequency?: string | null
+          digest_time?: string | null
+          email_address?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          min_priority?: string | null
+          muted_matter_ids?: string[] | null
+          organization_id: string
+          push_enabled?: boolean | null
+          push_token?: string | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          digest_day?: number | null
+          digest_frequency?: string | null
+          digest_time?: string | null
+          email_address?: string | null
+          email_enabled?: boolean | null
+          id?: string
+          in_app_enabled?: boolean | null
+          min_priority?: string | null
+          muted_matter_ids?: string[] | null
+          organization_id?: string
+          push_enabled?: boolean | null
+          push_token?: string | null
+          quiet_hours_enabled?: boolean | null
+          quiet_hours_end?: string | null
+          quiet_hours_start?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notification_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_notification_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "user_notification_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_notification_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "user_notification_settings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"

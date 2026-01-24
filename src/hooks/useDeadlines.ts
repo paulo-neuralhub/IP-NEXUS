@@ -6,11 +6,39 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/auth-context';
+import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
 import type { Database } from '@/integrations/supabase/types';
 
-type MatterDeadline = Database['public']['Tables']['matter_deadlines']['Row'];
+type MatterDeadlineRow = Database['public']['Tables']['matter_deadlines']['Row'];
 type MatterDeadlineInsert = Database['public']['Tables']['matter_deadlines']['Insert'];
+
+export interface MatterDeadline extends MatterDeadlineRow {
+  matter?: {
+    id: string;
+    reference_number?: string;
+    reference?: string;
+    title: string;
+    type?: string;
+    jurisdiction?: string;
+    client?: { id: string; name: string } | null;
+  } | null;
+  deadline_type?: {
+    id: string;
+    code: string;
+    name_es: string;
+    name_en?: string;
+    category: string;
+  } | null;
+}
+
+export interface DeadlineStats {
+  overdue: number;
+  today: number;
+  thisWeek: number;
+  thisMonth: number;
+  total: number;
+}
 
 interface UseDeadlinesOptions {
   matterId?: string;
@@ -19,14 +47,6 @@ interface UseDeadlinesOptions {
   dateFrom?: string;
   dateTo?: string;
   limit?: number;
-}
-
-export interface Deadline extends MatterDeadline {
-  matter?: {
-    id: string;
-    reference: string;
-    title: string;
-  } | null;
 }
 
 export function useDeadlines(options: UseDeadlinesOptions = {}) {
@@ -40,42 +60,32 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
         .from('matter_deadlines')
         .select(`
           *,
-          matter:matters(
-            id,
-            reference,
-            title
-          )
+          matter:matters(id, reference_number, title, type, jurisdiction)
         `)
         .order('deadline_date', { ascending: true });
 
       if (options.matterId) {
         query = query.eq('matter_id', options.matterId);
       }
-
       if (options.status?.length) {
         query = query.in('status', options.status);
       }
-
       if (options.priority) {
         query = query.eq('priority', options.priority);
       }
-
       if (options.dateFrom) {
         query = query.gte('deadline_date', options.dateFrom);
       }
-
       if (options.dateTo) {
         query = query.lte('deadline_date', options.dateTo);
       }
-
       if (options.limit) {
         query = query.limit(options.limit);
       }
 
       const { data, error } = await query;
-
       if (error) throw error;
-      return data as Deadline[];
+      return data as MatterDeadline[];
     },
     enabled: !!session
   });
@@ -90,50 +100,38 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
           completed_by: session?.user?.id
         })
         .eq('id', deadlineId);
-
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deadlines'] });
-      toast.success('Deadline marcado como completado');
+      queryClient.invalidateQueries({ queryKey: ['deadline-stats'] });
+      toast.success('Plazo marcado como completado');
     },
     onError: () => {
-      toast.error('Error al actualizar deadline');
+      toast.error('Error al actualizar plazo');
     }
   });
 
   const extendDeadlineMutation = useMutation({
-    mutationFn: async ({ deadlineId, newDate, reason }: {
-      deadlineId: string;
-      newDate: string;
-      reason?: string;
-    }) => {
-      // First get current extension count
-      const { data: current } = await supabase
-        .from('matter_deadlines')
-        .select('extension_count')
-        .eq('id', deadlineId)
-        .single();
-
+    mutationFn: async ({ deadlineId, newDate, reason }: { deadlineId: string; newDate: string; reason?: string }) => {
       const { error } = await supabase
         .from('matter_deadlines')
         .update({
-          status: 'extended',
           deadline_date: newDate,
           extension_reason: reason,
-          extension_count: (current?.extension_count || 0) + 1,
-          extended_by: session?.user?.id
+          extended: true,
+          status: 'pending'
         })
         .eq('id', deadlineId);
-
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deadlines'] });
-      toast.success('Deadline extendido');
+      queryClient.invalidateQueries({ queryKey: ['deadline-stats'] });
+      toast.success('Plazo extendido');
     },
     onError: () => {
-      toast.error('Error al extender deadline');
+      toast.error('Error al extender plazo');
     }
   });
 
@@ -144,16 +142,16 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
         .insert(deadline)
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deadlines'] });
-      toast.success('Deadline creado');
+      queryClient.invalidateQueries({ queryKey: ['deadline-stats'] });
+      toast.success('Plazo creado');
     },
     onError: () => {
-      toast.error('Error al crear deadline');
+      toast.error('Error al crear plazo');
     }
   });
 
@@ -169,60 +167,54 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
   };
 }
 
-export function useDeadlineRules(jurisdiction?: string) {
-  return useQuery({
-    queryKey: ['deadline-rules', jurisdiction],
-    queryFn: async () => {
-      let query = supabase
-        .from('deadline_rules')
-        .select('*')
-        .eq('is_active', true)
-        .order('jurisdiction', { ascending: true });
-
-      if (jurisdiction) {
-        query = query.eq('jurisdiction', jurisdiction);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data;
-    }
-  });
-}
-
 export function useDeadlineStats() {
   const { session } = useAuth();
 
   return useQuery({
     queryKey: ['deadline-stats'],
-    queryFn: async () => {
+    queryFn: async (): Promise<DeadlineStats> => {
       const today = new Date().toISOString().split('T')[0];
       const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       const nextMonth = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-      const [overdue, urgent, upcoming, thisMonth] = await Promise.all([
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true })
-          .eq('status', 'overdue'),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true })
-          .in('status', ['pending', 'upcoming', 'urgent'])
-          .lte('deadline_date', nextWeek)
-          .gte('deadline_date', today),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true })
-          .in('status', ['pending', 'upcoming'])
-          .gt('deadline_date', nextWeek)
-          .lte('deadline_date', nextMonth),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true })
-          .in('status', ['pending', 'upcoming', 'urgent'])
-          .lte('deadline_date', nextMonth)
+      const [overdue, todayRes, upcoming, thisMonth, total] = await Promise.all([
+        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).lt('deadline_date', today).in('status', ['pending', 'upcoming', 'urgent', 'overdue']),
+        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).eq('deadline_date', today).in('status', ['pending', 'upcoming', 'urgent']),
+        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).gt('deadline_date', today).lte('deadline_date', nextWeek).in('status', ['pending', 'upcoming', 'urgent']),
+        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).gt('deadline_date', nextWeek).lte('deadline_date', nextMonth).in('status', ['pending', 'upcoming', 'urgent']),
+        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).in('status', ['pending', 'upcoming', 'urgent', 'overdue'])
       ]);
 
       return {
         overdue: overdue.count || 0,
-        urgent: urgent.count || 0,
-        upcoming: upcoming.count || 0,
-        thisMonth: thisMonth.count || 0
+        today: todayRes.count || 0,
+        thisWeek: upcoming.count || 0,
+        thisMonth: thisMonth.count || 0,
+        total: total.count || 0
       };
     },
     enabled: !!session
+  });
+}
+
+export function useDeadlinesCalendar(year: number, month: number) {
+  const { currentOrganization } = useOrganization();
+  const startDate = new Date(year, month, 1).toISOString().split('T')[0];
+  const endDate = new Date(year, month + 1, 0).toISOString().split('T')[0];
+
+  return useQuery({
+    queryKey: ['deadlines-calendar', currentOrganization?.id, year, month],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('matter_deadlines')
+        .select('id, title, deadline_date, priority, status, matter:matters(id, reference_number, title)')
+        .gte('deadline_date', startDate)
+        .lte('deadline_date', endDate)
+        .order('deadline_date', { ascending: true });
+
+      if (error) throw error;
+      return data as MatterDeadline[];
+    },
+    enabled: !!currentOrganization?.id,
   });
 }
