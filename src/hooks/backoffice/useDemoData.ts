@@ -19,6 +19,13 @@ export type SeedDemoUsersResponse =
     }
   | { ok: false; error: string };
 
+export type SeedDemoTenantsClientsResponse =
+  | {
+      ok: true;
+      results: Array<{ slug: string; run_id: string; companies: number }>;
+    }
+  | { ok: false; error: string };
+
 export function useSeedDemoData() {
   return useMutation({
     mutationFn: async (organizationId: string): Promise<SeedDemoDataResponse> => {
@@ -57,6 +64,18 @@ export function useSeedDemoUsers() {
       });
       if (error) throw error;
       return data as SeedDemoUsersResponse;
+    },
+  });
+}
+
+export function useSeedDemoTenantsClients() {
+  return useMutation({
+    mutationFn: async (): Promise<SeedDemoTenantsClientsResponse> => {
+      const { data, error } = await supabase.functions.invoke("seed-demo-tenants-clients", {
+        body: {},
+      });
+      if (error) throw error;
+      return data as SeedDemoTenantsClientsResponse;
     },
   });
 }

@@ -19,7 +19,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { useCleanupDemoData, useSeedDemoData, useSeedDemoUsers } from "@/hooks/backoffice/useDemoData";
+import {
+  useCleanupDemoData,
+  useSeedDemoData,
+  useSeedDemoTenantsClients,
+  useSeedDemoUsers,
+} from "@/hooks/backoffice/useDemoData";
 
 export default function DemoDataPage() {
   const { currentOrganization } = useOrganization();
@@ -31,6 +36,7 @@ export default function DemoDataPage() {
   const seedMutation = useSeedDemoData();
   const cleanupMutation = useCleanupDemoData();
   const seedUsersMutation = useSeedDemoUsers();
+  const seedTenantsClientsMutation = useSeedDemoTenantsClients();
 
   const canRun = !!organizationId;
 
@@ -94,6 +100,20 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedTenantsClients = async () => {
+    try {
+      const res = await seedTenantsClientsMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      const summary = res.results.map((r) => `${r.slug}: ${r.companies} (run ${r.run_id})`).join(" · ");
+      toast.success(`Clientes demo creados. ${summary}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando clientes demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -131,6 +151,35 @@ export default function DemoDataPage() {
             <Button onClick={handleSeed} disabled={!canRun || seedMutation.isPending} className="w-full">
               <Wand2 className="h-4 w-4 mr-2" />
               {seedMutation.isPending ? "Creando…" : "Seed demo data"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Crear clientes demo (todos los tenants)
+            </CardTitle>
+            <CardDescription>
+              Crea clientes realistas por tenant (contacts + billing + invoices + payments) y expedientes PI.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+              <div>
+                Ejecuta seed masivo para: <span className="font-medium text-foreground">starter / professional / business / enterprise</span>.
+              </div>
+              <div className="mt-1 text-xs">Incluye run_id por tenant para poder hacer cleanup quirúrgico.</div>
+            </div>
+
+            <Button
+              onClick={handleSeedTenantsClients}
+              disabled={seedTenantsClientsMutation.isPending}
+              className="w-full"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              {seedTenantsClientsMutation.isPending ? "Creando…" : "Seed demo clients (all tenants)"}
             </Button>
           </CardContent>
         </Card>
