@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { Edit2, Mail, Phone, Trash2 } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { TimelineItem } from "@/components/ui/timeline-item";
@@ -13,6 +12,7 @@ import { useCreateCRMInteraction, useCRMInteractions } from "@/hooks/crm/v2/inte
 import type { CRMPipelineStage } from "@/hooks/crm/v2/pipelines";
 import { DealTasksSection } from "./DealTasksSection";
 import { QuickActivityDialog } from "./QuickActivityDialog";
+import { StageBadge } from "./StageBadge";
 
 type Deal = {
   id: string;
@@ -32,12 +32,6 @@ type Deal = {
 function formatEUR(amount?: number | null) {
   if (amount == null) return "—";
   return new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(amount);
-}
-
-function stageBadgeVariant(stage?: CRMPipelineStage | null) {
-  if (stage?.is_won_stage) return "default";
-  if (stage?.is_lost_stage) return "destructive" as const;
-  return "secondary" as const;
 }
 
 export function DealDetailPanel({
@@ -66,9 +60,9 @@ export function DealDetailPanel({
   const stage = useMemo(() => stages.find((s) => s.id === deal?.stage_id) ?? null, [stages, deal?.stage_id]);
 
   const { data: interactions = [] } = useCRMInteractions({
-    // We filter by dealId via metadata in the hook implementation.
+    // Filtramos por dealId via metadata (ver hook).
     deal_id: deal?.id ?? undefined,
-  } as any);
+  });
 
   const top5 = useMemo(() => (interactions ?? []).slice(0, 5), [interactions]);
 
@@ -82,9 +76,8 @@ export function DealDetailPanel({
   }
 
   // Keep drafts in sync when opening / switching deals.
-  useMemo(() => {
+  useEffect(() => {
     if (open) syncDraftsFromDeal(deal);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deal?.id, open]);
 
   async function commitInline(fields: Partial<Pick<Deal, "name" | "amount" | "probability">>) {
@@ -111,7 +104,7 @@ export function DealDetailPanel({
               />
 
               <div className="mt-2 flex flex-wrap items-center gap-2">
-                <Badge variant={stageBadgeVariant(stage)}>{deal.stage ?? stage?.name ?? "—"}</Badge>
+                <StageBadge label={deal.stage ?? stage?.name ?? "—"} stage={stage} />
                 {deal.expected_close_date ? (
                   <span className="text-xs text-muted-foreground">Cierre: {deal.expected_close_date}</span>
                 ) : null}
