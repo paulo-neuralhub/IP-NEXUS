@@ -11,3 +11,4 @@ export * from './useClientOnboarding';
 export * from './useRelationshipTypes';
 export * from './useClientRelationshipsV2';
 export * from './useMatterParties';
+export * from './useActivityLog';

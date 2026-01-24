@@ -412,6 +412,190 @@ export type Database = {
           },
         ]
       }
+      activity_action_types: {
+        Row: {
+          category: string
+          code: string
+          color: string | null
+          icon: string | null
+          name_en: string
+          name_es: string
+          sort_order: number | null
+        }
+        Insert: {
+          category: string
+          code: string
+          color?: string | null
+          icon?: string | null
+          name_en: string
+          name_es: string
+          sort_order?: number | null
+        }
+        Update: {
+          category?: string
+          code?: string
+          color?: string | null
+          icon?: string | null
+          name_en?: string
+          name_es?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
+      activity_log: {
+        Row: {
+          action: string
+          action_category: string | null
+          amount: number | null
+          batch_id: string | null
+          changed_fields: Json | null
+          client_id: string | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          deal_id: string | null
+          description: string | null
+          entity_id: string
+          entity_type: string
+          id: string
+          invoice_id: string | null
+          is_internal: boolean | null
+          is_system: boolean | null
+          matter_id: string | null
+          metadata: Json | null
+          new_value: string | null
+          old_value: string | null
+          organization_id: string
+          quote_id: string | null
+          reference_id: string | null
+          reference_number: string | null
+          reference_type: string | null
+          title: string
+        }
+        Insert: {
+          action: string
+          action_category?: string | null
+          amount?: number | null
+          batch_id?: string | null
+          changed_fields?: Json | null
+          client_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          deal_id?: string | null
+          description?: string | null
+          entity_id: string
+          entity_type: string
+          id?: string
+          invoice_id?: string | null
+          is_internal?: boolean | null
+          is_system?: boolean | null
+          matter_id?: string | null
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          organization_id: string
+          quote_id?: string | null
+          reference_id?: string | null
+          reference_number?: string | null
+          reference_type?: string | null
+          title: string
+        }
+        Update: {
+          action?: string
+          action_category?: string | null
+          amount?: number | null
+          batch_id?: string | null
+          changed_fields?: Json | null
+          client_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          deal_id?: string | null
+          description?: string | null
+          entity_id?: string
+          entity_type?: string
+          id?: string
+          invoice_id?: string | null
+          is_internal?: boolean | null
+          is_system?: boolean | null
+          matter_id?: string | null
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          organization_id?: string
+          quote_id?: string | null
+          reference_id?: string | null
+          reference_number?: string | null
+          reference_type?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "activity_log_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "activity_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "activity_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       agent_badges: {
         Row: {
           agent_id: string
