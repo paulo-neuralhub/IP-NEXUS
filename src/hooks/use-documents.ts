@@ -17,18 +17,31 @@ export function useDocuments(entityType: EntityType, entityId: string) {
     queryFn: async () => {
       if (!currentOrganization?.id || !entityId) return [];
 
-      const foreignKey = entityType === 'matter' ? 'matter_id' : 'client_id';
-      
-      const { data, error } = await supabase
+      // Build query based on entity type
+      let query = supabase
         .from('documents')
         .select(`
           *,
           uploader:users!documents_uploaded_by_fkey(full_name, email)
         `)
         .eq('organization_id', currentOrganization.id)
-        .eq(foreignKey, entityId)
         .eq('is_current_version', true)
         .order('created_at', { ascending: false });
+
+      // Apply the appropriate foreign key filter
+      switch (entityType) {
+        case 'matter':
+          query = query.eq('matter_id', entityId);
+          break;
+        case 'client':
+        case 'deal':
+          query = query.eq('client_id', entityId);
+          break;
+        default:
+          query = query.eq('matter_id', entityId);
+      }
+      
+      const { data, error } = await query;
 
       if (error) throw error;
       return data as Document[];
@@ -91,14 +104,24 @@ export function useUploadDocument() {
       
       onProgress?.(70);
 
-      // Create document record
-      const foreignKey = entityType === 'matter' ? 'matter_id' : 'client_id';
+      // Create document record - determine foreign key
+      const getForeignKeyData = () => {
+        switch (entityType) {
+          case 'matter':
+            return { matter_id: entityId };
+          case 'client':
+          case 'deal':
+            return { client_id: entityId };
+          default:
+            return { matter_id: entityId };
+        }
+      };
       
       const { data: doc, error: insertError } = await supabase
         .from('documents')
         .insert({
           organization_id: currentOrganization.id,
-          [foreignKey]: entityId,
+          ...getForeignKeyData(),
           storage_bucket: bucket,
           storage_path: storagePath,
           original_filename: file.name,
