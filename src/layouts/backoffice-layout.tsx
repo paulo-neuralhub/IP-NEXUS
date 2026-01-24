@@ -80,6 +80,8 @@ const sidebarSections = [
   {
     label: 'System',
     items: [
+      { label: 'Alertas', path: '/backoffice/alerts', icon: AlertTriangle },
+      { label: 'Logs', path: '/backoffice/logs', icon: ScrollText },
       { label: 'Audit Logs', path: '/backoffice/audit', icon: FileText },
       { label: 'Event Log', path: '/backoffice/events', icon: ScrollText },
       { label: 'Feedback', path: '/backoffice/feedback', icon: MessageSquare },

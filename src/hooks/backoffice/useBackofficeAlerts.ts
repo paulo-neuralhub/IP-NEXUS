@@ -25,6 +25,20 @@ export function useActiveBackofficeAlerts(params?: { priority?: AlertPriority; l
   });
 }
 
+export function useActiveBackofficeAlertsCount() {
+  return useQuery({
+    queryKey: ["backoffice-active-alerts-count"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("v_active_alerts")
+        .select("id", { count: "exact", head: true });
+      if (error) throw error;
+      return count ?? 0;
+    },
+    refetchInterval: 30_000,
+  });
+}
+
 export function useAlertActions() {
   const qc = useQueryClient();
 
