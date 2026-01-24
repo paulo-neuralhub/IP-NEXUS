@@ -128,6 +128,7 @@ import ToolsPage from "./pages/app/tools";
 import BrandingSettingsPage from "./pages/app/settings/branding";
 import SSOSettingsPage from "./pages/app/settings/sso";
 import NotFound from "./pages/NotFound";
+import ServiceCatalogPage from "./pages/app/settings/ServiceCatalogPage";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
 // Migrator pages consolidated into Data Hub
