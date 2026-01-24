@@ -35,6 +35,8 @@ import {
   useSeedDemoUsers,
 } from "@/hooks/backoffice/useDemoData";
 
+import { DemoDataDashboard } from "@/components/backoffice/demo/DemoDataDashboard";
+
 export default function DemoDataPage() {
   const { currentOrganization } = useOrganization();
   const organizationId = currentOrganization?.id;
@@ -272,6 +274,8 @@ export default function DemoDataPage() {
           </p>
         </div>
       </div>
+
+      <DemoDataDashboard />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Card>
