@@ -11,7 +11,9 @@ import {
   Package, 
   ArrowRight,
   Bell,
-  User
+  User,
+  LayoutGrid,
+  Terminal
 } from 'lucide-react';
 import { useMarketListings, useToggleFavorite, useMarketFavorites } from '@/hooks/use-market';
 import { 
@@ -28,8 +30,17 @@ import {
   type RfqRequest,
   type RfqQuote 
 } from '@/components/features/market';
+import { 
+  MarketTicker, 
+  TopAgents, 
+  RecentRequests, 
+  MarketStats, 
+  JurisdictionGrid 
+} from '@/components/market/terminal';
+import { cn } from '@/lib/utils';
 
 export default function MarketDashboard() {
+  const [viewMode, setViewMode] = useState<'terminal' | 'classic'>('terminal');
   const [activeTab, setActiveTab] = useState('overview');
   const [searchQuery, setSearchQuery] = useState('');
   const [assetTypeFilter, setAssetTypeFilter] = useState<string>('all');
@@ -132,22 +143,80 @@ export default function MarketDashboard() {
     toggleFavorite.mutate({ listingId, isFavorite: isFav });
   };
 
+  // Terminal View
+  if (viewMode === 'terminal') {
+    return (
+      <div className="min-h-[calc(100vh-200px)] bg-[#0a0a0f] text-white -m-6 -mt-0 rounded-lg overflow-hidden">
+        {/* View Toggle */}
+        <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0d0d12]">
+          <div className="flex items-center gap-2">
+            <Terminal className="h-5 w-5 text-emerald-400" />
+            <span className="font-mono text-sm font-medium">Terminal View</span>
+            <span className="ml-2 px-2 py-0.5 bg-emerald-500/10 text-emerald-400 text-xs font-mono rounded flex items-center gap-1">
+              <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse" />
+              LIVE
+            </span>
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setViewMode('classic')}
+            className="text-white/60 hover:text-white hover:bg-white/10"
+          >
+            <LayoutGrid className="h-4 w-4 mr-2" />
+            Vista Clásica
+          </Button>
+        </div>
+
+        {/* Ticker */}
+        <MarketTicker />
+
+        {/* Stats */}
+        <div className="p-4 border-b border-white/10">
+          <MarketStats />
+        </div>
+
+        {/* Main Grid */}
+        <div className="p-4 grid grid-cols-12 gap-4">
+          <div className="col-span-12 lg:col-span-4 space-y-4">
+            <TopAgents />
+            <JurisdictionGrid />
+          </div>
+          <div className="col-span-12 lg:col-span-8">
+            <RecentRequests showBidButton />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Classic View
   return (
     <div className="space-y-6">
-      {/* Header with notifications */}
-      <div className="flex items-center justify-end gap-2">
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/app/market/alerts">
-            <Bell className="h-4 w-4 mr-1" />
-            <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">3</span>
-          </Link>
+      {/* Header with view toggle */}
+      <div className="flex items-center justify-between">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setViewMode('terminal')}
+        >
+          <Terminal className="h-4 w-4 mr-2" />
+          Vista Terminal
         </Button>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/app/market/profile">
-            <User className="h-4 w-4 mr-1" />
-            Mi Perfil
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/app/market/alerts">
+              <Bell className="h-4 w-4 mr-1" />
+              <span className="bg-primary text-primary-foreground text-xs px-1.5 py-0.5 rounded-full">3</span>
+            </Link>
+          </Button>
+          <Button variant="outline" size="sm" asChild>
+            <Link to="/app/market/profile">
+              <User className="h-4 w-4 mr-1" />
+              Mi Perfil
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Summary Cards */}
