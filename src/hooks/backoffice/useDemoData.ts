@@ -64,6 +64,10 @@ export type SeedDemoDocumentsStructureResponse =
   | { ok: true; bucket: string; results: Array<{ slug: string; run_id: string; documents: number }> }
   | { ok: false; error: string };
 
+export type SeedDemoTenantConfigsResponse =
+  | { ok: true; results: Array<{ slug: string; run_id: string }> }
+  | { ok: false; error: string };
+
 export function useSeedDemoData() {
   return useMutation({
     mutationFn: async (organizationId: string): Promise<SeedDemoDataResponse> => {
@@ -210,6 +214,18 @@ export function useSeedDemoDocumentsStructure() {
       });
       if (error) throw error;
       return data as SeedDemoDocumentsStructureResponse;
+    },
+  });
+}
+
+export function useSeedDemoTenantConfigs() {
+  return useMutation({
+    mutationFn: async (): Promise<SeedDemoTenantConfigsResponse> => {
+      const { data, error } = await supabase.functions.invoke("seed-demo-tenant-configs", {
+        body: {},
+      });
+      if (error) throw error;
+      return data as SeedDemoTenantConfigsResponse;
     },
   });
 }
