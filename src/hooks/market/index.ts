@@ -9,3 +9,4 @@ export * from './useCompliance';
 export * from './useModeration';
 export * from './useMarketUsers';
 export * from './useMarketUserReviews';
+export * from './useMarketBids';
