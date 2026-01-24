@@ -148,23 +148,25 @@ export function useCreateLandingPage() {
   
   return useMutation({
     mutationFn: async (data: Partial<LandingPage>) => {
+      const insertData = {
+        slug: data.slug!,
+        name: data.name,
+        module_code: data.module_code!,
+        title: data.title!,
+        meta_description: data.meta_description,
+        hero_title: data.hero_title || data.title!,
+        hero_subtitle: data.hero_subtitle,
+        hero_cta_text: data.hero_cta_text || 'Comenzar',
+        accent_color: data.accent_color || '#1E40AF',
+        status: data.status || 'draft',
+        features: data.features ? JSON.parse(JSON.stringify(data.features)) : [],
+        pricing_plans: data.pricing_plans ? JSON.parse(JSON.stringify(data.pricing_plans)) : [],
+        faqs: data.faqs ? JSON.parse(JSON.stringify(data.faqs)) : [],
+      };
+      
       const { data: result, error } = await supabase
         .from('landing_pages')
-        .insert([{
-          slug: data.slug,
-          name: data.name,
-          module_code: data.module_code,
-          title: data.title,
-          meta_description: data.meta_description,
-          hero_title: data.hero_title || data.title,
-          hero_subtitle: data.hero_subtitle,
-          hero_cta_text: data.hero_cta_text || 'Comenzar',
-          accent_color: data.accent_color || '#1E40AF',
-          status: data.status || 'draft',
-          features: JSON.parse(JSON.stringify(data.features || [])),
-          pricing_plans: JSON.parse(JSON.stringify(data.pricing_plans || [])),
-          faqs: JSON.parse(JSON.stringify(data.faqs || [])),
-        } as Record<string, unknown>])
+        .insert([insertData])
         .select()
         .single();
 
