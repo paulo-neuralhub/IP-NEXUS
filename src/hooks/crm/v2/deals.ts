@@ -117,6 +117,7 @@ export function useUpdateDealStage() {
       dealId: string;
       newStageId: string;
       closeReason?: string;
+      lostReason?: string;
       lostToCompetitor?: string;
     }) => {
       const { data: currentDeal, error: currentError } = await fromTable("crm_deals")
@@ -158,10 +159,22 @@ export function useUpdateDealStage() {
 
       const isWon = !!targetStage?.is_won_stage;
       const isLost = !!targetStage?.is_lost_stage;
-      if (isWon || isLost) {
+      if (isWon) {
+        updates.won = true;
+        updates.lost_reason = null;
         updates.actual_close_date = new Date().toISOString().split("T")[0];
         if (params.closeReason) updates.close_reason = params.closeReason;
+      } else if (isLost) {
+        updates.won = false;
+        updates.actual_close_date = new Date().toISOString().split("T")[0];
+        updates.lost_reason = params.lostReason ?? params.closeReason ?? null;
+        if (params.closeReason) updates.close_reason = params.closeReason;
         if (params.lostToCompetitor) updates.lost_to_competitor = params.lostToCompetitor;
+      } else {
+        // Re-open deal when moving back to non-terminal stages
+        updates.won = null;
+        updates.actual_close_date = null;
+        updates.lost_reason = null;
       }
 
       const { data, error } = await fromTable("crm_deals").update(updates).eq("id", params.dealId).select().single();

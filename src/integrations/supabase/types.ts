@@ -7002,6 +7002,7 @@ export type Database = {
           created_at: string
           expected_close_date: string | null
           id: string
+          lost_reason: string | null
           lost_to_competitor: string | null
           matter_id: string | null
           metadata: Json
@@ -7021,6 +7022,7 @@ export type Database = {
           trademark_name: string | null
           updated_at: string
           weighted_amount: number | null
+          won: boolean | null
         }
         Insert: {
           account_id?: string | null
@@ -7031,6 +7033,7 @@ export type Database = {
           created_at?: string
           expected_close_date?: string | null
           id?: string
+          lost_reason?: string | null
           lost_to_competitor?: string | null
           matter_id?: string | null
           metadata?: Json
@@ -7050,6 +7053,7 @@ export type Database = {
           trademark_name?: string | null
           updated_at?: string
           weighted_amount?: number | null
+          won?: boolean | null
         }
         Update: {
           account_id?: string | null
@@ -7060,6 +7064,7 @@ export type Database = {
           created_at?: string
           expected_close_date?: string | null
           id?: string
+          lost_reason?: string | null
           lost_to_competitor?: string | null
           matter_id?: string | null
           metadata?: Json
@@ -7079,6 +7084,7 @@ export type Database = {
           trademark_name?: string | null
           updated_at?: string
           weighted_amount?: number | null
+          won?: boolean | null
         }
         Relationships: [
           {
