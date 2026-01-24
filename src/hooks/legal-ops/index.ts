@@ -8,3 +8,6 @@ export * from './useDocumentNER';
 export * from './useAssistantChat';
 export * from './useRAGSearch';
 export * from './useClientOnboarding';
+export * from './useRelationshipTypes';
+export * from './useClientRelationshipsV2';
+export * from './useMatterParties';
