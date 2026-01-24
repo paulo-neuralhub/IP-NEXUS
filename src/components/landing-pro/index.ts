@@ -10,3 +10,4 @@ export { FaqAccordion } from './FaqAccordion';
 export { FinalCta } from './FinalCta';
 export { LandingFooter } from './LandingFooter';
 export { ChatbotWidget } from './ChatbotWidget';
+export { LandingChatbotWidget } from './LandingChatbotWidget';

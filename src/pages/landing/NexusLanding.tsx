@@ -1,4 +1,4 @@
-import { Shield, Zap, Brain, Globe, Users, FileText, Radar, DollarSign } from 'lucide-react';
+import { Zap, Brain, Globe, Users, FileText, Radar, DollarSign } from 'lucide-react';
 import '@/styles/landing.css';
 import {
   LandingNavbar,
@@ -12,7 +12,7 @@ import {
   FaqAccordion,
   FinalCta,
   LandingFooter,
-  ChatbotWidget,
+  LandingChatbotWidget,
 } from '@/components/landing-pro';
 
 export default function NexusLanding() {
@@ -92,7 +92,7 @@ export default function NexusLanding() {
 
       <FinalCta moduleCode="nexus" title="Empieza a transformar tu despacho hoy" />
       <LandingFooter moduleCode="nexus" moduleName="NEXUS" />
-      <ChatbotWidget moduleCode="nexus" />
+      <LandingChatbotWidget moduleCode="nexus" landingSlug="nexus" />
     </div>
   );
 }

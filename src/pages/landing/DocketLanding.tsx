@@ -1,4 +1,4 @@
-import { FileText, Clock, Users, Shield, Zap, Globe, Database, Bell } from 'lucide-react';
+import { FileText, Clock, Users, Database, Bell, Globe } from 'lucide-react';
 import '@/styles/landing.css';
 import {
   LandingNavbar,
@@ -12,7 +12,7 @@ import {
   FaqAccordion,
   FinalCta,
   LandingFooter,
-  ChatbotWidget,
+  LandingChatbotWidget,
 } from '@/components/landing-pro';
 
 export default function DocketLanding() {
@@ -89,7 +89,7 @@ export default function DocketLanding() {
 
       <FinalCta moduleCode="docket" />
       <LandingFooter moduleCode="docket" moduleName="Docket" />
-      <ChatbotWidget moduleCode="docket" />
+      <LandingChatbotWidget moduleCode="docket" landingSlug="docket" />
     </div>
   );
 }
