@@ -115,6 +115,10 @@ import TranslatorPage from "./pages/app/genius/translator";
 import DocumentTemplatesPage from "./pages/app/genius/templates";
 import GenerateDocumentPage from "./pages/app/genius/templates/generate";
 import DocumentViewPage from "./pages/app/genius/templates/document-view";
+import GeniusAnalysisPage from "./pages/app/genius/analysis";
+import GeniusDocumentsGenPage from "./pages/app/genius/documents-gen";
+import GeniusPredictionsPage from "./pages/app/genius/predictions";
+import GeniusValuationPage from "./pages/app/genius/valuation";
 import ToolsPage from "./pages/app/tools";
 import BrandingSettingsPage from "./pages/app/settings/branding";
 import SSOSettingsPage from "./pages/app/settings/sso";
@@ -304,6 +308,10 @@ const App = () => (
                 </Route>
                 <Route path="genius" element={<GeniusLayout />}>
                   <Route index element={<GeniusChatPage />} />
+                  <Route path="analysis" element={<GeniusAnalysisPage />} />
+                  <Route path="documents-gen" element={<GeniusDocumentsGenPage />} />
+                  <Route path="predictions" element={<GeniusPredictionsPage />} />
+                  <Route path="valuation" element={<GeniusValuationPage />} />
                   <Route path="comparator" element={<GeniusComparatorPage />} />
                   <Route path="opposition" element={<GeniusOppositionPage />} />
                   <Route path="translator" element={<TranslatorPage />} />

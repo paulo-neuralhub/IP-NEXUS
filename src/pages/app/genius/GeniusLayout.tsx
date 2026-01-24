@@ -5,8 +5,14 @@ import { usePageTitle } from '@/contexts/page-context';
 import { useEffect } from 'react';
 import { ModuleGate } from '@/components/common/ModuleGate';
 
+import { useLegalCheck } from '@/hooks/legal/useLegalCheck';
+
 const geniusNav = [
   { path: '/app/genius', label: 'Chat', icon: MessageSquare, exact: true },
+  { path: '/app/genius/analysis', label: 'Análisis', icon: Scale },
+  { path: '/app/genius/documents-gen', label: 'Documentos', icon: FileText },
+  { path: '/app/genius/predictions', label: 'Predicciones', icon: Brain },
+  { path: '/app/genius/valuation', label: 'Valoración', icon: History },
   { path: '/app/genius/comparator', label: 'Comparador', icon: Scale },
   { path: '/app/genius/opposition', label: 'Oposición', icon: FileText },
   { path: '/app/genius/translator', label: 'Traductor', icon: Languages },
@@ -17,13 +23,18 @@ const geniusNav = [
 export default function GeniusLayout() {
   const { setTitle } = usePageTitle();
   const location = useLocation();
+  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer');
 
   useEffect(() => {
     setTitle('IP-GENIUS PRO');
   }, [setTitle]);
 
+  if (isChecking) return null;
+  if (needsAcceptance) return <>{modal}</>;
+
   return (
     <ModuleGate module="genius">
+      {modal}
       <div className="space-y-6">
         {/* Header with navigation */}
         <div className="flex items-center gap-4 border-b pb-4">
