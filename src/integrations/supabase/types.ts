@@ -4899,6 +4899,7 @@ export type Database = {
           id: string
           is_active: boolean | null
           knowledge_base: Json | null
+          landing_id: string | null
           landing_slug: string
           max_messages_session: number | null
           module_context: string | null
@@ -4920,6 +4921,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           knowledge_base?: Json | null
+          landing_id?: string | null
           landing_slug: string
           max_messages_session?: number | null
           module_context?: string | null
@@ -4941,6 +4943,7 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           knowledge_base?: Json | null
+          landing_id?: string | null
           landing_slug?: string
           max_messages_session?: number | null
           module_context?: string | null
@@ -4950,7 +4953,15 @@ export type Database = {
           updated_at?: string | null
           upsell_modules?: string[] | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "chatbot_configs_landing_id_fkey"
+            columns: ["landing_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       chatbot_conversations: {
         Row: {
@@ -17633,6 +17644,7 @@ export type Database = {
       }
       landing_pages: {
         Row: {
+          accent_color: string | null
           created_at: string | null
           faqs: Json | null
           features: Json | null
@@ -17649,17 +17661,24 @@ export type Database = {
           hero_title: string
           hero_video_url: string | null
           id: string
+          integrations: Json | null
           is_published: boolean | null
           meta_description: string | null
           module_code: string
+          name: string | null
+          og_image_url: string | null
           pricing_plans: Json | null
           published_at: string | null
           slug: string
+          status: string | null
           testimonials: Json | null
           title: string
+          total_leads: number | null
+          total_visits: number | null
           updated_at: string | null
         }
         Insert: {
+          accent_color?: string | null
           created_at?: string | null
           faqs?: Json | null
           features?: Json | null
@@ -17676,17 +17695,24 @@ export type Database = {
           hero_title: string
           hero_video_url?: string | null
           id?: string
+          integrations?: Json | null
           is_published?: boolean | null
           meta_description?: string | null
           module_code: string
+          name?: string | null
+          og_image_url?: string | null
           pricing_plans?: Json | null
           published_at?: string | null
           slug: string
+          status?: string | null
           testimonials?: Json | null
           title: string
+          total_leads?: number | null
+          total_visits?: number | null
           updated_at?: string | null
         }
         Update: {
+          accent_color?: string | null
           created_at?: string | null
           faqs?: Json | null
           features?: Json | null
@@ -17703,17 +17729,112 @@ export type Database = {
           hero_title?: string
           hero_video_url?: string | null
           id?: string
+          integrations?: Json | null
           is_published?: boolean | null
           meta_description?: string | null
           module_code?: string
+          name?: string | null
+          og_image_url?: string | null
           pricing_plans?: Json | null
           published_at?: string | null
           slug?: string
+          status?: string | null
           testimonials?: Json | null
           title?: string
+          total_leads?: number | null
+          total_visits?: number | null
           updated_at?: string | null
         }
         Relationships: []
+      }
+      landing_visits: {
+        Row: {
+          browser: string | null
+          chatbot_messages: number | null
+          city: string | null
+          conversion_type: string | null
+          converted: boolean | null
+          country: string | null
+          created_at: string | null
+          device_type: string | null
+          id: string
+          landing_id: string | null
+          opened_chatbot: boolean | null
+          os: string | null
+          page_views: number | null
+          referrer: string | null
+          referrer_domain: string | null
+          scroll_depth: number | null
+          session_id: string | null
+          time_on_page: number | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          visitor_id: string | null
+        }
+        Insert: {
+          browser?: string | null
+          chatbot_messages?: number | null
+          city?: string | null
+          conversion_type?: string | null
+          converted?: boolean | null
+          country?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          landing_id?: string | null
+          opened_chatbot?: boolean | null
+          os?: string | null
+          page_views?: number | null
+          referrer?: string | null
+          referrer_domain?: string | null
+          scroll_depth?: number | null
+          session_id?: string | null
+          time_on_page?: number | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string | null
+        }
+        Update: {
+          browser?: string | null
+          chatbot_messages?: number | null
+          city?: string | null
+          conversion_type?: string | null
+          converted?: boolean | null
+          country?: string | null
+          created_at?: string | null
+          device_type?: string | null
+          id?: string
+          landing_id?: string | null
+          opened_chatbot?: boolean | null
+          os?: string | null
+          page_views?: number | null
+          referrer?: string | null
+          referrer_domain?: string | null
+          scroll_depth?: number | null
+          session_id?: string | null
+          time_on_page?: number | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          visitor_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "landing_visits_landing_id_fkey"
+            columns: ["landing_id"]
+            isOneToOne: false
+            referencedRelation: "landing_pages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       legal_acceptances: {
         Row: {

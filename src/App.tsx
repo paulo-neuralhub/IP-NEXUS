@@ -201,6 +201,12 @@ import EventLogPage from "./pages/backoffice/events/EventLogPage";
 import SystemLogsPage from "./pages/backoffice/logs";
 import BackofficeAlertsPage from "./pages/backoffice/alerts/BackofficeAlertsPage";
 
+// Landings Backoffice
+import LandingsDashboard from "./pages/backoffice/landings";
+import LandingPagesListPage from "./pages/backoffice/landings/pages";
+import LeadsListPage from "./pages/backoffice/landings/leads";
+import LeadDetailPage from "./pages/backoffice/landings/lead-detail";
+
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
 import KycVerificationPage from "./pages/app/market/kyc/[type]";
@@ -462,6 +468,11 @@ const App = () => (
                 <Route path="logs" element={<SystemLogsPage />} />
                 <Route path="alerts" element={<BackofficeAlertsPage />} />
                 <Route path="kill-switch" element={<KillSwitchPage />} />
+                {/* Landings */}
+                <Route path="landings" element={<LandingsDashboard />} />
+                <Route path="landings/paginas" element={<LandingPagesListPage />} />
+                <Route path="landings/leads" element={<LeadsListPage />} />
+                <Route path="landings/leads/:id" element={<LeadDetailPage />} />
               </Route>
               
               {/* PUBLIC SIGNATURE PAGE - No auth required */}

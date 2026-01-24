@@ -55,6 +55,12 @@ const sidebarSections = [
     ],
   },
   {
+    label: 'Marketing',
+    items: [
+      { label: 'Landings', path: '/backoffice/landings', icon: Globe },
+    ],
+  },
+  {
     label: 'Tools',
     items: [
       { label: 'Calendar', path: '/backoffice/calendar', icon: Calendar },
