@@ -1,4 +1,4 @@
-import { Radar, AlertTriangle, Shield, Bell, Search, Zap, Clock, Globe } from 'lucide-react';
+import { Radar, AlertTriangle, Shield, Bell, Search, Zap } from 'lucide-react';
 import '@/styles/landing.css';
 import {
   LandingNavbar,
@@ -12,7 +12,7 @@ import {
   FaqAccordion,
   FinalCta,
   LandingFooter,
-  ChatbotWidget,
+  LandingChatbotWidget,
 } from '@/components/landing-pro';
 
 export default function SpiderLanding() {
@@ -89,7 +89,7 @@ export default function SpiderLanding() {
 
       <FinalCta moduleCode="spider" />
       <LandingFooter moduleCode="spider" moduleName="Spider" />
-      <ChatbotWidget moduleCode="spider" />
+      <LandingChatbotWidget moduleCode="spider" landingSlug="spider" />
     </div>
   );
 }
