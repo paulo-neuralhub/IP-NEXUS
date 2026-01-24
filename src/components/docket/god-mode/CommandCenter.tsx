@@ -30,7 +30,7 @@ interface DocketStats {
   upcomingThisWeek: number;
 }
 
-export function CommandCenter() {
+export function CommandCenter({ afterStats }: { afterStats?: React.ReactNode }) {
   const [activeTab, setActiveTab] = useState('tasks');
   
   const { data: allTasks = [] } = useSmartTasks();
@@ -67,10 +67,6 @@ export function CommandCenter() {
             Control centralizado de tu cartera de PI
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setActiveTab('rules')}>
-          <Settings className="h-4 w-4 mr-2" />
-          Configurar
-        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -107,6 +103,8 @@ export function CommandCenter() {
           color="text-info"
         />
       </div>
+
+      {afterStats ? <div className="-mt-2">{afterStats}</div> : null}
 
       {/* Urgent Alerts */}
       {stats.overdueTasks > 0 && (
@@ -204,7 +202,7 @@ function StatsCard({ title, value, icon: Icon, color, highlight }: StatsCardProp
       className={
         highlight
           ? 'border-destructive/30 bg-destructive/5'
-          : 'bg-muted/20'
+          : 'bg-muted/40 border-border/60'
       }
     >
       <CardHeader className="flex flex-row items-center justify-between space-y-0 py-3">

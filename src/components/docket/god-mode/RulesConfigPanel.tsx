@@ -1,8 +1,19 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -36,15 +47,30 @@ import {
   Loader2,
   Scale
 } from 'lucide-react';
-import { useJurisdictionRules, useDeleteJurisdictionRule } from '@/hooks/docket';
+import { InfoTooltip } from '@/components/help/InfoTooltip';
+import { useCreateJurisdictionRule, useJurisdictionRules, useDeleteJurisdictionRule } from '@/hooks/docket';
 import { RULE_TYPES } from '@/lib/constants/docket-god-mode';
-import type { JurisdictionRule } from '@/types/docket-god-mode';
+import type { CreateJurisdictionRuleDTO, JurisdictionRule } from '@/types/docket-god-mode';
+import { TRIGGER_EVENTS } from '@/lib/constants/docket-god-mode';
 import { cn } from '@/lib/utils';
 
 export function RulesConfigPanel() {
   const [searchQuery, setSearchQuery] = useState('');
   const [jurisdictionFilter, setJurisdictionFilter] = useState<string>('all');
   const [ruleTypeFilter, setRuleTypeFilter] = useState<string>('all');
+  const [createOpen, setCreateOpen] = useState(false);
+
+  const [draft, setDraft] = useState({
+    jurisdiction_code: 'ES',
+    ip_type: 'trademark',
+    rule_type: 'custom',
+    rule_name: '',
+    description: '',
+    base_days: 30,
+    business_days_only: true,
+    exclude_holidays: true,
+    trigger_event: 'expiry_date',
+  });
 
   const { data: rules = [], isLoading } = useJurisdictionRules({
     jurisdiction: jurisdictionFilter === 'all' ? undefined : jurisdictionFilter,
@@ -52,6 +78,7 @@ export function RulesConfigPanel() {
   });
 
   const deleteRule = useDeleteJurisdictionRule();
+  const createRule = useCreateJurisdictionRule();
 
   const filteredRules = rules.filter(rule => 
     !searchQuery || 
@@ -68,6 +95,10 @@ export function RulesConfigPanel() {
   // Get unique jurisdictions for filter
   const jurisdictions = [...new Set(rules.map(r => r.jurisdiction_code))].sort();
 
+  const canCreate = useMemo(() => {
+    return draft.rule_name.trim().length > 1 && Number.isFinite(draft.base_days) && draft.base_days > 0;
+  }, [draft.base_days, draft.rule_name]);
+
   return (
     <Card>
       <CardHeader>
@@ -75,8 +106,14 @@ export function RulesConfigPanel() {
           <CardTitle className="text-lg flex items-center gap-2">
             <Settings2 className="h-5 w-5 text-primary" />
             Reglas de Jurisdicción
+            <InfoTooltip
+              content={
+                'Las reglas de jurisdicción definen plazos (días, hábiles, festivos) y acciones para generar tareas automáticas según país/jurisdicción. Crea una regla con “Nueva Regla”, define jurisdicción, tipo y días, y se aplicará al motor de plazos.'
+              }
+              className="translate-y-[1px]"
+            />
           </CardTitle>
-          <Button size="sm">
+          <Button size="sm" onClick={() => setCreateOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
             Nueva Regla
           </Button>
@@ -165,6 +202,165 @@ export function RulesConfigPanel() {
           <span>Sistema: {filteredRules.filter(r => r.is_system).length} | Personalizadas: {filteredRules.filter(r => !r.is_system).length}</span>
         </div>
       </CardContent>
+
+      <Dialog open={createOpen} onOpenChange={setCreateOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Crear nueva regla</DialogTitle>
+            <DialogDescription>
+              Define una regla para automatizar plazos y generación de tareas.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label>Nombre</Label>
+              <Input
+                value={draft.rule_name}
+                onChange={(e) => setDraft((d) => ({ ...d, rule_name: e.target.value }))}
+                placeholder="Ej: Plazo oposición marca ES"
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Descripción (opcional)</Label>
+              <Textarea
+                value={draft.description}
+                onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                placeholder="Qué hace esta regla y cuándo aplica..."
+              />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid gap-2">
+                <Label>Jurisdicción</Label>
+                <Input
+                  value={draft.jurisdiction_code}
+                  onChange={(e) => setDraft((d) => ({ ...d, jurisdiction_code: e.target.value.toUpperCase() }))}
+                  placeholder="ES, EU, US..."
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label>Tipo PI</Label>
+                <Select
+                  value={draft.ip_type}
+                  onValueChange={(v) => setDraft((d) => ({ ...d, ip_type: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="trademark">Marca</SelectItem>
+                    <SelectItem value="patent">Patente</SelectItem>
+                    <SelectItem value="design">Diseño</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="grid gap-2">
+                <Label>Tipo regla</Label>
+                <Select
+                  value={draft.rule_type}
+                  onValueChange={(v) => setDraft((d) => ({ ...d, rule_type: v }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(RULE_TYPES).map(([key, config]) => (
+                      <SelectItem key={key} value={key}>
+                        {config.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Evento base</Label>
+              <Select
+                value={draft.trigger_event}
+                onValueChange={(v) => setDraft((d) => ({ ...d, trigger_event: v }))}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(TRIGGER_EVENTS).map(([key, config]) => (
+                    <SelectItem key={key} value={key}>
+                      {config.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid gap-2">
+                <Label>Días base</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={draft.base_days}
+                  onChange={(e) => setDraft((d) => ({ ...d, base_days: Number(e.target.value) }))}
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2">
+                <Label className="text-sm">Solo hábiles</Label>
+                <Switch
+                  checked={draft.business_days_only}
+                  onCheckedChange={(v) => setDraft((d) => ({ ...d, business_days_only: v }))}
+                />
+              </div>
+              <div className="flex items-center justify-between rounded-lg border border-border bg-muted/30 px-3 py-2">
+                <Label className="text-sm">Excluir festivos</Label>
+                <Switch
+                  checked={draft.exclude_holidays}
+                  onCheckedChange={(v) => setDraft((d) => ({ ...d, exclude_holidays: v }))}
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCreateOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              disabled={!canCreate || createRule.isPending}
+              onClick={async () => {
+                const payload: CreateJurisdictionRuleDTO = {
+                  jurisdiction_code: draft.jurisdiction_code,
+                  ip_type: draft.ip_type,
+                  rule_type: draft.rule_type as CreateJurisdictionRuleDTO['rule_type'],
+                  rule_name: draft.rule_name,
+                  description: draft.description || undefined,
+                  base_days: draft.base_days,
+                  business_days_only: draft.business_days_only,
+                  exclude_holidays: draft.exclude_holidays,
+                  holiday_calendar: undefined,
+                  trigger_event: draft.trigger_event as CreateJurisdictionRuleDTO['trigger_event'],
+                  conditions: {},
+                  actions: {},
+                };
+
+                await createRule.mutateAsync(payload);
+                setCreateOpen(false);
+                setDraft((d) => ({ ...d, rule_name: '', description: '' }));
+              }}
+            >
+              {createRule.isPending ? (
+                <span className="inline-flex items-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creando…
+                </span>
+              ) : (
+                'Crear regla'
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }

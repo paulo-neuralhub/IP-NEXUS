@@ -8,7 +8,7 @@ import type { MatterFilters, MatterType, MatterStatus } from '@/types/matters';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { cn } from '@/lib/utils';
 import {
   Select,
   SelectContent,
@@ -63,28 +63,55 @@ export default function DocketPage() {
         <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
       ) : null}
 
-      {/* View Toggle */}
-      <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'command' | 'matters')}>
-        <TabsContent value="command" className="mt-0">
-          <CommandCenter />
-        </TabsContent>
-
-        {/* Tabs debajo de las cajas (Command Center) */}
-        <TabsList className="grid w-[400px] grid-cols-2 mt-3">
-          <TabsTrigger value="command" className="flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            Command Center
-          </TabsTrigger>
-          <TabsTrigger value="matters" className="flex items-center gap-2">
-            <List className="h-4 w-4" />
-            Expedientes
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="matters" className="mt-6">
+      {activeView === 'command' ? (
+        <CommandCenter
+          afterStats={<DocketViewToggle value={activeView} onChange={setActiveView} />}
+        />
+      ) : (
+        <div className="space-y-4">
+          <DocketViewToggle value={activeView} onChange={setActiveView} />
           <MatterListView />
-        </TabsContent>
-      </Tabs>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DocketViewToggle({
+  value,
+  onChange,
+}: {
+  value: 'command' | 'matters';
+  onChange: (v: 'command' | 'matters') => void;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        type="button"
+        onClick={() => onChange('command')}
+        className={cn(
+          'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm',
+          value === 'command'
+            ? 'bg-primary text-primary-foreground border-primary/30'
+            : 'bg-background-card text-foreground border-border hover:bg-muted/40',
+        )}
+      >
+        <Zap className="h-4 w-4" />
+        Command Center
+      </button>
+      <button
+        type="button"
+        onClick={() => onChange('matters')}
+        className={cn(
+          'inline-flex items-center gap-2 rounded-lg border px-3 py-2 text-sm',
+          value === 'matters'
+            ? 'bg-primary text-primary-foreground border-primary/30'
+            : 'bg-background-card text-foreground border-border hover:bg-muted/40',
+        )}
+      >
+        <List className="h-4 w-4" />
+        Expedientes
+      </button>
     </div>
   );
 }
