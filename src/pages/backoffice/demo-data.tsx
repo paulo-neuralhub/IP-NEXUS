@@ -26,6 +26,7 @@ import {
   useSeedDemoDeadlinesCoverage,
   useSeedDemoFinanceFull,
   useSeedDemoDocumentsStructure,
+  useSeedDemoTenantConfigs,
   useSeedDemoPortalConfig,
   useSeedDemoSpiderVigilance,
   useSeedDemoTasksWorkflows,
@@ -50,6 +51,7 @@ export default function DemoDataPage() {
   const seedClientCommsMutation = useSeedDemoClientCommunications();
   const seedFinanceFullMutation = useSeedDemoFinanceFull();
   const seedDocumentsStructureMutation = useSeedDemoDocumentsStructure();
+  const seedTenantConfigsMutation = useSeedDemoTenantConfigs();
   const seedSpiderVigilanceMutation = useSeedDemoSpiderVigilance();
   const seedPortalConfigMutation = useSeedDemoPortalConfig();
   const seedTasksWorkflowsMutation = useSeedDemoTasksWorkflows();
@@ -246,6 +248,20 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedTenantConfigs = async () => {
+    try {
+      const res = await seedTenantConfigsMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      const summary = res.results.map((r) => `${r.slug} (run ${r.run_id})`).join(" · ");
+      toast.success(`Configuraciones por tenant creadas. ${summary}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando configuraciones por tenant");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -258,6 +274,25 @@ export default function DemoDataPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Configuraciones específicas por tenant
+            </CardTitle>
+            <CardDescription>
+              Crea templates personalizados (factura/email/informe), campos personalizados (business/enterprise), roles
+              enterprise, integraciones (flags) y preferencias regionales por tenant (idioma/fecha/moneda/zona horaria).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={handleSeedTenantConfigs} disabled={seedTenantConfigsMutation.isPending} className="w-full">
+              <Database className="h-4 w-4 mr-2" />
+              {seedTenantConfigsMutation.isPending ? "Creando…" : "Seed tenant configs (all tenants)"}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
