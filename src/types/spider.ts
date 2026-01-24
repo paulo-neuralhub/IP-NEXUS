@@ -99,9 +99,19 @@ export interface WatchResult {
   found_url?: string;
   found_text?: string;
   screenshot_url?: string;
+  // Text similarity
   similarity_score?: number;
   similarity_type?: string;
   similarity_details?: SimilarityDetails;
+  // Visual similarity (L36)
+  visual_similarity?: number;
+  color_similarity?: number;
+  combined_score?: number;
+  comparison_image_url?: string;
+  side_by_side_url?: string;
+  result_embedding?: number[];
+  result_colors?: string[];
+  // Status
   status: WatchResultStatus;
   priority: WatchResultPriority;
   action_taken?: string;

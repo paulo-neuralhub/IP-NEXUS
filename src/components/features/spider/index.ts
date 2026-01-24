@@ -3,3 +3,4 @@ export * from './alerts-panel';
 export * from './watchlist-form';
 export * from './similarity-analyzer';
 export * from './spider-widget';
+export * from './visual-comparison-card';
