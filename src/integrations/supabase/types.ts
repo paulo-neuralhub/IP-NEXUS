@@ -19544,19 +19544,29 @@ export type Database = {
       }
       matters: {
         Row: {
+          applicant_id: string | null
           application_number: string | null
           assigned_to: string | null
           auto_renewal: boolean | null
+          client_id: string | null
+          cost_center: string | null
           created_at: string | null
           created_by: string | null
           currency: string | null
+          custom_fields: Json
+          estimated_value: number | null
           expiry_date: string | null
           family_position: Json | null
           family_root_id: string | null
           filing_date: string | null
+          filing_number: string | null
           goods_services: string | null
+          holder_id: string | null
           id: string
           images: string[] | null
+          internal_notes: string | null
+          ip_type: Database["public"]["Enums"]["ip_type_enum"] | null
+          is_archived: boolean
           jurisdiction: string | null
           jurisdiction_code: string | null
           last_rule_check_at: string | null
@@ -19571,34 +19581,52 @@ export type Database = {
           organization_id: string
           owner_name: string | null
           portfolio_id: string | null
+          priority_country: string | null
+          priority_date: string | null
+          priority_number: string | null
           professional_fees: number | null
           reference: string
           registration_date: string | null
           registration_number: string | null
           renewal_instructions: string | null
+          responsible_user_id: string | null
           risk_score: number | null
           search_vector: unknown
+          secondary_user_id: string | null
           status: string
+          status_code: Database["public"]["Enums"]["matter_status_enum"] | null
+          status_date: string | null
           tags: string[] | null
           title: string
           total_cost: number | null
           type: string
           updated_at: string | null
+          updated_by: string | null
         }
         Insert: {
+          applicant_id?: string | null
           application_number?: string | null
           assigned_to?: string | null
           auto_renewal?: boolean | null
+          client_id?: string | null
+          cost_center?: string | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
+          custom_fields?: Json
+          estimated_value?: number | null
           expiry_date?: string | null
           family_position?: Json | null
           family_root_id?: string | null
           filing_date?: string | null
+          filing_number?: string | null
           goods_services?: string | null
+          holder_id?: string | null
           id?: string
           images?: string[] | null
+          internal_notes?: string | null
+          ip_type?: Database["public"]["Enums"]["ip_type_enum"] | null
+          is_archived?: boolean
           jurisdiction?: string | null
           jurisdiction_code?: string | null
           last_rule_check_at?: string | null
@@ -19613,34 +19641,52 @@ export type Database = {
           organization_id: string
           owner_name?: string | null
           portfolio_id?: string | null
+          priority_country?: string | null
+          priority_date?: string | null
+          priority_number?: string | null
           professional_fees?: number | null
           reference: string
           registration_date?: string | null
           registration_number?: string | null
           renewal_instructions?: string | null
+          responsible_user_id?: string | null
           risk_score?: number | null
           search_vector?: unknown
+          secondary_user_id?: string | null
           status?: string
+          status_code?: Database["public"]["Enums"]["matter_status_enum"] | null
+          status_date?: string | null
           tags?: string[] | null
           title: string
           total_cost?: number | null
           type: string
           updated_at?: string | null
+          updated_by?: string | null
         }
         Update: {
+          applicant_id?: string | null
           application_number?: string | null
           assigned_to?: string | null
           auto_renewal?: boolean | null
+          client_id?: string | null
+          cost_center?: string | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
+          custom_fields?: Json
+          estimated_value?: number | null
           expiry_date?: string | null
           family_position?: Json | null
           family_root_id?: string | null
           filing_date?: string | null
+          filing_number?: string | null
           goods_services?: string | null
+          holder_id?: string | null
           id?: string
           images?: string[] | null
+          internal_notes?: string | null
+          ip_type?: Database["public"]["Enums"]["ip_type_enum"] | null
+          is_archived?: boolean
           jurisdiction?: string | null
           jurisdiction_code?: string | null
           last_rule_check_at?: string | null
@@ -19655,26 +19701,48 @@ export type Database = {
           organization_id?: string
           owner_name?: string | null
           portfolio_id?: string | null
+          priority_country?: string | null
+          priority_date?: string | null
+          priority_number?: string | null
           professional_fees?: number | null
           reference?: string
           registration_date?: string | null
           registration_number?: string | null
           renewal_instructions?: string | null
+          responsible_user_id?: string | null
           risk_score?: number | null
           search_vector?: unknown
+          secondary_user_id?: string | null
           status?: string
+          status_code?: Database["public"]["Enums"]["matter_status_enum"] | null
+          status_date?: string | null
           tags?: string[] | null
           title?: string
           total_cost?: number | null
           type?: string
           updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "matters_applicant_id_fkey"
+            columns: ["applicant_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "matters_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
             referencedColumns: ["id"]
           },
           {
@@ -19697,6 +19765,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_jurisdiction_code_fkey"
+            columns: ["jurisdiction_code"]
+            isOneToOne: false
+            referencedRelation: "jurisdictions"
+            referencedColumns: ["code"]
           },
           {
             foreignKeyName: "matters_organization_id_fkey"
@@ -19731,6 +19813,27 @@ export type Database = {
             columns: ["portfolio_id"]
             isOneToOne: false
             referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_responsible_user_id_fkey"
+            columns: ["responsible_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_secondary_user_id_fkey"
+            columns: ["secondary_user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
             referencedColumns: ["id"]
           },
         ]
@@ -33133,6 +33236,13 @@ export type Database = {
         | "expired"
         | "pending_verification"
         | "revoked"
+      ip_type_enum:
+        | "trademark"
+        | "patent"
+        | "design"
+        | "domain"
+        | "copyright"
+        | "trade_name"
       legal_doc_type:
         | "tos"
         | "dpa"
@@ -33217,6 +33327,19 @@ export type Database = {
         | "failed"
         | "expired"
         | "not_required"
+      matter_status_enum:
+        | "draft"
+        | "filed"
+        | "examination"
+        | "published"
+        | "opposition"
+        | "registered"
+        | "granted"
+        | "renewed"
+        | "rejected"
+        | "withdrawn"
+        | "expired"
+        | "abandoned"
       ner_entity_type:
         | "date_grant"
         | "date_expiry"
@@ -33408,6 +33531,14 @@ export const Constants = {
         "pending_verification",
         "revoked",
       ],
+      ip_type_enum: [
+        "trademark",
+        "patent",
+        "design",
+        "domain",
+        "copyright",
+        "trade_name",
+      ],
       legal_doc_type: [
         "tos",
         "dpa",
@@ -33499,6 +33630,20 @@ export const Constants = {
         "failed",
         "expired",
         "not_required",
+      ],
+      matter_status_enum: [
+        "draft",
+        "filed",
+        "examination",
+        "published",
+        "opposition",
+        "registered",
+        "granted",
+        "renewed",
+        "rejected",
+        "withdrawn",
+        "expired",
+        "abandoned",
       ],
       ner_entity_type: [
         "date_grant",
