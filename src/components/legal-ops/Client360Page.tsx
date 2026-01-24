@@ -20,6 +20,7 @@ import { ClientTimeline } from './ClientTimeline';
 import { ClientDocuments } from './ClientDocuments';
 import { ClientAlerts } from './ClientAlerts';
 import { DocumentValidityBadge } from './DocumentValidityBadge';
+import { ClientRelationshipsSection } from './ClientRelationshipsSection';
 import { DocValidityStatus } from '@/types/legal-ops';
 import { useNavigate } from 'react-router-dom';
 
@@ -236,6 +237,9 @@ export function Client360Page({ clientId }: Client360PageProps) {
               </div>
             </CardContent>
           </Card>
+
+          {/* Sección de Relaciones */}
+          <ClientRelationshipsSection clientId={clientId} />
         </div>
 
         {/* Panel derecho - Timeline y contenido */}
