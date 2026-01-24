@@ -19484,6 +19484,129 @@ export type Database = {
           },
         ]
       }
+      matter_patent_details: {
+        Row: {
+          abstract: string | null
+          annuities: Json[] | null
+          applicants: Json[] | null
+          claims_count: number | null
+          claims_text: string | null
+          cpc_classes: string[] | null
+          description_pages: number | null
+          designated_states: string[] | null
+          examination_request_date: string | null
+          examination_requested: boolean | null
+          family_id: string | null
+          figures_count: number | null
+          grant_date: string | null
+          grant_fee_paid: boolean | null
+          independent_claims: number | null
+          inventors: Json[] | null
+          ipc_classes: string[] | null
+          licensing_status: Database["public"]["Enums"]["patent_licensing_status_enum"]
+          matter_id: string
+          national_phase_deadline: string | null
+          national_phase_entered: boolean | null
+          next_annuity_date: string | null
+          next_annuity_year: number | null
+          patent_term_adjustment: number | null
+          patent_type: Database["public"]["Enums"]["patent_type_enum"] | null
+          pct_filing_date: string | null
+          pct_filing_number: string | null
+          pct_publication_date: string | null
+          pct_publication_number: string | null
+          search_report_date: string | null
+          spc_applied: boolean | null
+          spc_expiry: string | null
+          title_invention: string | null
+        }
+        Insert: {
+          abstract?: string | null
+          annuities?: Json[] | null
+          applicants?: Json[] | null
+          claims_count?: number | null
+          claims_text?: string | null
+          cpc_classes?: string[] | null
+          description_pages?: number | null
+          designated_states?: string[] | null
+          examination_request_date?: string | null
+          examination_requested?: boolean | null
+          family_id?: string | null
+          figures_count?: number | null
+          grant_date?: string | null
+          grant_fee_paid?: boolean | null
+          independent_claims?: number | null
+          inventors?: Json[] | null
+          ipc_classes?: string[] | null
+          licensing_status?: Database["public"]["Enums"]["patent_licensing_status_enum"]
+          matter_id: string
+          national_phase_deadline?: string | null
+          national_phase_entered?: boolean | null
+          next_annuity_date?: string | null
+          next_annuity_year?: number | null
+          patent_term_adjustment?: number | null
+          patent_type?: Database["public"]["Enums"]["patent_type_enum"] | null
+          pct_filing_date?: string | null
+          pct_filing_number?: string | null
+          pct_publication_date?: string | null
+          pct_publication_number?: string | null
+          search_report_date?: string | null
+          spc_applied?: boolean | null
+          spc_expiry?: string | null
+          title_invention?: string | null
+        }
+        Update: {
+          abstract?: string | null
+          annuities?: Json[] | null
+          applicants?: Json[] | null
+          claims_count?: number | null
+          claims_text?: string | null
+          cpc_classes?: string[] | null
+          description_pages?: number | null
+          designated_states?: string[] | null
+          examination_request_date?: string | null
+          examination_requested?: boolean | null
+          family_id?: string | null
+          figures_count?: number | null
+          grant_date?: string | null
+          grant_fee_paid?: boolean | null
+          independent_claims?: number | null
+          inventors?: Json[] | null
+          ipc_classes?: string[] | null
+          licensing_status?: Database["public"]["Enums"]["patent_licensing_status_enum"]
+          matter_id?: string
+          national_phase_deadline?: string | null
+          national_phase_entered?: boolean | null
+          next_annuity_date?: string | null
+          next_annuity_year?: number | null
+          patent_term_adjustment?: number | null
+          patent_type?: Database["public"]["Enums"]["patent_type_enum"] | null
+          pct_filing_date?: string | null
+          pct_filing_number?: string | null
+          pct_publication_date?: string | null
+          pct_publication_number?: string | null
+          search_report_date?: string | null
+          spc_applied?: boolean | null
+          spc_expiry?: string | null
+          title_invention?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_patent_details_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_patent_details_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matter_trademark_details: {
         Row: {
           acquired_distinctiveness: boolean | null
@@ -33450,6 +33573,18 @@ export type Database = {
         | "power_type"
         | "amount"
         | "other"
+      patent_licensing_status_enum:
+        | "none"
+        | "exclusive"
+        | "non_exclusive"
+        | "compulsory"
+      patent_type_enum:
+        | "invention"
+        | "utility_model"
+        | "pct"
+        | "divisional"
+        | "continuation"
+        | "cip"
       permission_action:
         | "view"
         | "create"
@@ -33768,6 +33903,20 @@ export const Constants = {
         "power_type",
         "amount",
         "other",
+      ],
+      patent_licensing_status_enum: [
+        "none",
+        "exclusive",
+        "non_exclusive",
+        "compulsory",
+      ],
+      patent_type_enum: [
+        "invention",
+        "utility_model",
+        "pct",
+        "divisional",
+        "continuation",
+        "cip",
       ],
       permission_action: [
         "view",
