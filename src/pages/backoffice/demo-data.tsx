@@ -22,6 +22,7 @@ import {
 import {
   useCleanupDemoData,
   useSeedDemoData,
+  useSeedDemoDeadlinesCoverage,
   useSeedDemoTenantsClients,
   useSeedDemoMattersCoverage,
   useSeedDemoUsers,
@@ -39,6 +40,7 @@ export default function DemoDataPage() {
   const seedUsersMutation = useSeedDemoUsers();
   const seedTenantsClientsMutation = useSeedDemoTenantsClients();
   const seedMattersCoverageMutation = useSeedDemoMattersCoverage();
+  const seedDeadlinesCoverageMutation = useSeedDemoDeadlinesCoverage();
 
   const canRun = !!organizationId;
 
@@ -132,6 +134,22 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedDeadlinesCoverage = async () => {
+    try {
+      const res = await seedDeadlinesCoverageMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      const summary = res.results
+        .map((r) => `${r.slug}: ${r.deadlines} plazos / ${r.alerts} alertas (run ${r.run_id})`)
+        .join(" · ");
+      toast.success(`Plazos demo creados. ${summary}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando plazos demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -169,6 +187,29 @@ export default function DemoDataPage() {
             <Button onClick={handleSeed} disabled={!canRun || seedMutation.isPending} className="w-full">
               <Wand2 className="h-4 w-4 mr-2" />
               {seedMutation.isPending ? "Creando…" : "Seed demo data"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Crear plazos (coverage)
+            </CardTitle>
+            <CardDescription>
+              Genera plazos críticos/urgentes/normales/vencidos/completados con alertas programadas (30/15/7/1 días)
+              en todos los tenants demo.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              onClick={handleSeedDeadlinesCoverage}
+              disabled={seedDeadlinesCoverageMutation.isPending}
+              className="w-full"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              {seedDeadlinesCoverageMutation.isPending ? "Creando…" : "Seed deadlines coverage (all tenants)"}
             </Button>
           </CardContent>
         </Card>
