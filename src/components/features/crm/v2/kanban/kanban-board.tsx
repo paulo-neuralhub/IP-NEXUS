@@ -42,16 +42,28 @@ function SortableDeal({ deal, onClick }: { deal: DealRow; onClick: () => void })
         title={deal.name}
         subtitle={deal.account?.name ?? undefined}
         amount={deal.amount}
+        probability={undefined}
+        expectedCloseDate={null}
+        ownerName={null}
         daysInStage={
           deal.stage_entered_at
             ? Math.floor((Date.now() - new Date(deal.stage_entered_at).getTime()) / (1000 * 60 * 60 * 24))
             : undefined
         }
-        isStale={
+        staleLevel={
           deal.stage_entered_at
-            ? Math.floor((Date.now() - new Date(deal.stage_entered_at).getTime()) / (1000 * 60 * 60 * 24)) > 14
-            : false
+            ? (() => {
+                const days = Math.floor((Date.now() - new Date(deal.stage_entered_at).getTime()) / (1000 * 60 * 60 * 24));
+                if (days > 14) return "danger" as const;
+                if (days > 7) return "warn" as const;
+                return "none" as const;
+              })()
+            : "none"
         }
+        isHot={false}
+        emailCount={0}
+        callCount={0}
+        attachmentCount={0}
         isDragging={isDragging}
         onClick={onClick}
       />
@@ -162,6 +174,14 @@ export function DealsKanbanBoard({ pipeline, deals, onDealClick, onAddDeal }: Pr
             title={activeDeal.name}
             subtitle={activeDeal.account?.name ?? undefined}
             amount={activeDeal.amount}
+            probability={undefined}
+            expectedCloseDate={null}
+            ownerName={null}
+            staleLevel="none"
+            isHot={false}
+            emailCount={0}
+            callCount={0}
+            attachmentCount={0}
             isDragging
           />
         ) : null}
