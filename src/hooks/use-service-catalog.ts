@@ -2,6 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { usePortalAuth } from './usePortalAuth';
 
+export interface ServiceCatalogMetadata {
+  duration_estimate?: string;
+  includes?: string[];
+  requirements?: string[];
+}
+
 export interface ServiceCatalogItem {
   id: string;
   organization_id: string;
@@ -13,6 +19,7 @@ export interface ServiceCatalogItem {
   is_active: boolean;
   stripe_price_id?: string | null;
   display_order?: number | null;
+  metadata?: ServiceCatalogMetadata | null;
   created_at: string;
 }
 
