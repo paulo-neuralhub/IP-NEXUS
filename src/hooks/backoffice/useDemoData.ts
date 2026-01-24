@@ -9,6 +9,16 @@ export type CleanupDemoDataResponse =
   | { ok: true; run_id: string; deleted: Record<string, number> }
   | { ok: false; error: string };
 
+export type SeedDemoUsersResponse =
+  | {
+      ok: true;
+      created_count: number;
+      created: Array<{ email: string; user_id: string; org: string }>;
+      skipped_count: number;
+      skipped: Array<{ email: string; reason: string }>;
+    }
+  | { ok: false; error: string };
+
 export function useSeedDemoData() {
   return useMutation({
     mutationFn: async (organizationId: string): Promise<SeedDemoDataResponse> => {
@@ -35,6 +45,18 @@ export function useCleanupDemoData() {
       });
       if (error) throw error;
       return data as CleanupDemoDataResponse;
+    },
+  });
+}
+
+export function useSeedDemoUsers() {
+  return useMutation({
+    mutationFn: async (): Promise<SeedDemoUsersResponse> => {
+      const { data, error } = await supabase.functions.invoke("demo-seed-users", {
+        body: {},
+      });
+      if (error) throw error;
+      return data as SeedDemoUsersResponse;
     },
   });
 }

@@ -19,7 +19,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { useCleanupDemoData, useSeedDemoData } from "@/hooks/backoffice/useDemoData";
+import { useCleanupDemoData, useSeedDemoData, useSeedDemoUsers } from "@/hooks/backoffice/useDemoData";
 
 export default function DemoDataPage() {
   const { currentOrganization } = useOrganization();
@@ -30,6 +30,7 @@ export default function DemoDataPage() {
 
   const seedMutation = useSeedDemoData();
   const cleanupMutation = useCleanupDemoData();
+  const seedUsersMutation = useSeedDemoUsers();
 
   const canRun = !!organizationId;
 
@@ -80,6 +81,19 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedUsers = async () => {
+    try {
+      const res = await seedUsersMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success(`Usuarios demo creados: ${res.created_count} (omitidos: ${res.skipped_count})`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando usuarios demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -117,6 +131,38 @@ export default function DemoDataPage() {
             <Button onClick={handleSeed} disabled={!canRun || seedMutation.isPending} className="w-full">
               <Wand2 className="h-4 w-4 mr-2" />
               {seedMutation.isPending ? "Creando…" : "Seed demo data"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Wand2 className="h-5 w-5" />
+              Crear usuarios demo (Auth)
+            </CardTitle>
+            <CardDescription>
+              Crea usuarios en Supabase Auth y los vincula por memberships a los tenants demo (requiere superadmin).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="rounded-lg border border-border bg-muted/30 p-3 text-sm text-muted-foreground">
+              <div>
+                Organización (contexto):{" "}
+                <span className="font-medium text-foreground">{currentOrganization?.name ?? "—"}</span>
+              </div>
+              <div className="mt-1 text-xs">
+                Nota: este seed no depende de la org seleccionada; usa los tenants demo por slug.
+              </div>
+            </div>
+
+            <Button
+              onClick={handleSeedUsers}
+              disabled={seedUsersMutation.isPending}
+              className="w-full"
+            >
+              <Wand2 className="h-4 w-4 mr-2" />
+              {seedUsersMutation.isPending ? "Creando…" : "Seed demo users"}
             </Button>
           </CardContent>
         </Card>
