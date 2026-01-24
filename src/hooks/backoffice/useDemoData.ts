@@ -52,6 +52,10 @@ export type SeedDemoSpiderVigilanceResponse =
   | { ok: true; results: Array<{ slug: string; run_id: string }> }
   | { ok: false; error: string };
 
+export type SeedDemoPortalConfigResponse =
+  | { ok: true; results: Array<{ slug: string; run_id: string }> }
+  | { ok: false; error: string };
+
 export function useSeedDemoData() {
   return useMutation({
     mutationFn: async (organizationId: string): Promise<SeedDemoDataResponse> => {
@@ -162,6 +166,18 @@ export function useSeedDemoSpiderVigilance() {
       });
       if (error) throw error;
       return data as SeedDemoSpiderVigilanceResponse;
+    },
+  });
+}
+
+export function useSeedDemoPortalConfig() {
+  return useMutation({
+    mutationFn: async (): Promise<SeedDemoPortalConfigResponse> => {
+      const { data, error } = await supabase.functions.invoke("seed-demo-portal-config", {
+        body: {},
+      });
+      if (error) throw error;
+      return data as SeedDemoPortalConfigResponse;
     },
   });
 }

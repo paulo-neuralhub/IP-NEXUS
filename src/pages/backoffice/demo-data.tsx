@@ -25,6 +25,7 @@ import {
   useSeedDemoData,
   useSeedDemoDeadlinesCoverage,
   useSeedDemoFinanceFull,
+  useSeedDemoPortalConfig,
   useSeedDemoSpiderVigilance,
   useSeedDemoTenantsClients,
   useSeedDemoMattersCoverage,
@@ -47,6 +48,7 @@ export default function DemoDataPage() {
   const seedClientCommsMutation = useSeedDemoClientCommunications();
   const seedFinanceFullMutation = useSeedDemoFinanceFull();
   const seedSpiderVigilanceMutation = useSeedDemoSpiderVigilance();
+  const seedPortalConfigMutation = useSeedDemoPortalConfig();
 
   const canRun = !!organizationId;
 
@@ -198,6 +200,20 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedPortalConfig = async () => {
+    try {
+      const res = await seedPortalConfigMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      const summary = res.results.map((r) => `${r.slug} (run ${r.run_id})`).join(" · ");
+      toast.success(`Portal configurado (demo-professional+). ${summary}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando portal demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -210,6 +226,25 @@ export default function DemoDataPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Configurar Client Portal (demo-professional+)
+            </CardTitle>
+            <CardDescription>
+              Crea portales y accesos para TechStart (2 usuarios), FarmaCorp (5 usuarios) y DistriFresh (invitado), con logo/URL,
+              permisos, expedientes visibles (settings), actividad (logins/descargas/mensajes/facturas) y notificaciones.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={handleSeedPortalConfig} disabled={seedPortalConfigMutation.isPending} className="w-full">
+              <Database className="h-4 w-4 mr-2" />
+              {seedPortalConfigMutation.isPending ? "Creando…" : "Seed portal config + access (demo-professional+)"}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
