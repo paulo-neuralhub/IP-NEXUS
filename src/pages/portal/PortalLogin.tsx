@@ -122,6 +122,57 @@ export default function PortalLogin() {
     }
   };
 
+  // Demo mode - Auto login for development
+  const handleDemoLogin = async () => {
+    setIsLoading(true);
+    setError('');
+
+    try {
+      // Find first active user for this portal
+      const { data: portalUser, error } = await supabase
+        .from('portal_users')
+        .select(`
+          id, email, name, role, permissions,
+          portal:client_portals!portal_id(
+            id, portal_slug, portal_name, branding_config, 
+            organization_id, is_active
+          )
+        `)
+        .eq('status', 'active')
+        .single();
+
+      if (error || !portalUser) {
+        throw new Error('No hay usuarios demo disponibles');
+      }
+
+      const portal = portalUser.portal as {
+        id: string;
+        portal_slug: string;
+        portal_name: string;
+        branding_config: Record<string, unknown>;
+        organization_id: string;
+        is_active: boolean;
+      };
+
+      // Create demo session directly
+      const sessionToken = crypto.randomUUID();
+      const sessionData = {
+        token: sessionToken,
+        odisplayP: portalUser.id,
+        expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
+      };
+
+      localStorage.setItem('portal_session', JSON.stringify(sessionData));
+      
+      // Reload to trigger auth check
+      window.location.href = `/portal/${slug}/dashboard`;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Error en modo demo');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Portal no encontrado
   if (portalNotFound) {
     return (
@@ -274,7 +325,18 @@ export default function PortalLogin() {
           </form>
         </CardContent>
 
-        <CardFooter className="flex-col gap-2 text-center text-xs text-muted-foreground">
+        <CardFooter className="flex-col gap-3 text-center text-xs text-muted-foreground">
+          {/* Demo Mode Button */}
+          <Button 
+            type="button" 
+            variant="outline" 
+            className="w-full border-dashed" 
+            onClick={handleDemoLogin}
+            disabled={isLoading}
+          >
+            🔓 Acceso Demo (desarrollo)
+          </Button>
+          
           <p>{t('portal.login.authorized_only')}</p>
           <p>{t('portal.login.contact_rep')}</p>
         </CardFooter>
