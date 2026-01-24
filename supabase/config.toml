@@ -132,6 +132,9 @@ verify_jwt = true
 [functions.check-legal-acceptance]
 verify_jwt = false
 
+[functions.legal-accept]
+verify_jwt = false
+
 [functions.filing-validate]
 verify_jwt = true
 
