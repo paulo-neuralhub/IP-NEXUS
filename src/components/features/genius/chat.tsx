@@ -19,6 +19,7 @@ import { AGENTS, QUICK_PROMPTS } from '@/lib/constants/genius';
 import type { AgentType, AIMessage } from '@/types/genius';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { useLegalCheck } from '@/hooks/legal/useLegalCheck';
 
 interface Props {
   agentType: AgentType;
@@ -37,6 +38,8 @@ export function GeniusChat({
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer');
   
   const [input, setInput] = useState('');
   
@@ -109,13 +112,20 @@ export function GeniusChat({
     toast({ title: 'Copiado al portapapeles' });
   };
   
+  if (isChecking) {
+    return null;
+  }
+
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <div 
-        className="px-4 py-3 border-b flex items-center gap-3"
-        style={{ borderColor: `${agent.color}30` }}
-      >
+    <>
+      {modal}
+      {needsAcceptance ? null : (
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div 
+            className="px-4 py-3 border-b flex items-center gap-3"
+            style={{ borderColor: `${agent.color}30` }}
+          >
         <div 
           className="w-10 h-10 rounded-xl flex items-center justify-center"
           style={{ backgroundColor: `${agent.color}20` }}
@@ -222,8 +232,10 @@ export function GeniusChat({
         <p className="text-xs text-muted-foreground mt-2 text-center">
           Las respuestas de IA son orientativas y no sustituyen asesoramiento profesional
         </p>
-      </form>
-    </div>
+          </form>
+        </div>
+      )}
+    </>
   );
 }
 
