@@ -14,10 +14,13 @@ import { useRAGSearch } from '@/hooks/legal-ops';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useLegalCheck } from '@/hooks/legal/useLegalCheck';
 
 export default function AssistantPage() {
   const { setTitle } = usePageTitle();
   const [searchParams] = useSearchParams();
+
+  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer');
   
   const clientId = searchParams.get('client') || undefined;
   const matterId = searchParams.get('matter') || undefined;
@@ -26,8 +29,17 @@ export default function AssistantPage() {
     setTitle('Asistente IA');
   }, [setTitle]);
 
+  if (isChecking) {
+    return null;
+  }
+
+  if (needsAcceptance) {
+    return <>{modal}</>;
+  }
+
   return (
     <div className="space-y-6">
+      {modal}
       {/* Header */}
       <div className="flex items-center gap-3">
         <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
