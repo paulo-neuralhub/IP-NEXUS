@@ -269,6 +269,7 @@ export interface PaymentLink {
   id: string;
   organization_id: string;
   invoice_id: string;
+  stripe_payment_link_id?: string | null;
   stripe_checkout_session_id?: string | null;
   stripe_url?: string | null;
   amount: number;

@@ -23017,6 +23017,7 @@ export type Database = {
           qr_code_url: string | null
           status: Database["public"]["Enums"]["payment_link_status"]
           stripe_checkout_session_id: string | null
+          stripe_payment_link_id: string | null
           stripe_url: string | null
         }
         Insert: {
@@ -23031,6 +23032,7 @@ export type Database = {
           qr_code_url?: string | null
           status?: Database["public"]["Enums"]["payment_link_status"]
           stripe_checkout_session_id?: string | null
+          stripe_payment_link_id?: string | null
           stripe_url?: string | null
         }
         Update: {
@@ -23045,6 +23047,7 @@ export type Database = {
           qr_code_url?: string | null
           status?: Database["public"]["Enums"]["payment_link_status"]
           stripe_checkout_session_id?: string | null
+          stripe_payment_link_id?: string | null
           stripe_url?: string | null
         }
         Relationships: [

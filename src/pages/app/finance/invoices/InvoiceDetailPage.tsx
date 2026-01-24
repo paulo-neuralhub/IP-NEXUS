@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
-import { useCreateInvoiceCheckout, usePaymentLinkByInvoice } from '@/hooks/use-invoice-payment-links';
+import { useCreatePaymentLink, usePaymentLinkByInvoice } from '@/hooks/use-invoice-payment-links';
 import { toast } from 'sonner';
 
 function StatusBadge({ status }: { status: keyof typeof INVOICE_STATUSES }) {
@@ -41,7 +41,7 @@ export default function InvoiceDetailPage() {
 
   const invoice = useInvoice(invoiceId);
   const paymentLink = usePaymentLinkByInvoice(invoiceId);
-  const createCheckout = useCreateInvoiceCheckout();
+  const createPaymentLink = useCreatePaymentLink();
 
   const totals = useMemo(() => {
     const items = invoice.data?.items ?? [];
@@ -194,11 +194,11 @@ export default function InvoiceDetailPage() {
             )}
 
             <Button
-              onClick={() => createCheckout.mutate({ invoiceId })}
-              disabled={createCheckout.isPending || inv.status === 'paid'}
+              onClick={() => createPaymentLink.mutate({ invoiceId })}
+              disabled={createPaymentLink.isPending || inv.status === 'paid'}
               className="w-full"
             >
-              {createCheckout.isPending ? 'Generando…' : 'Generar link de pago'}
+              {createPaymentLink.isPending ? 'Generando…' : 'Generar Link de Pago'}
             </Button>
             {inv.status === 'paid' ? (
               <p className="text-xs text-muted-foreground">La factura ya está marcada como pagada.</p>

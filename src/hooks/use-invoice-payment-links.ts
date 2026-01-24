@@ -42,12 +42,12 @@ export function usePaymentLinksForInvoices(invoiceIds: string[]) {
   });
 }
 
-export function useCreateInvoiceCheckout() {
+export function useCreatePaymentLink() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ invoiceId }: { invoiceId: string }) => {
-      const { data, error } = await supabase.functions.invoke('create-invoice-checkout', {
+      const { data, error } = await supabase.functions.invoke('create-payment-link', {
         body: { invoiceId },
       });
       if (error) throw error;

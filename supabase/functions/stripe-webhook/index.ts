@@ -133,22 +133,25 @@ async function handleCheckoutCompleted(supabase: any, session: any) {
     }, { onConflict: 'organization_id' });
   }
 
-  // L33-PAGOS: Invoice checkout flow
-  // We expect `invoice_id` in metadata, and a corresponding row in `payment_links`.
-  if (session.metadata?.invoice_id) {
-    const invoiceId = session.metadata.invoice_id.toString();
+  // L33-PAGOS: Stripe Payment Links
+  // checkout.session.completed includes `payment_link` when the session originated from a Payment Link.
+  if (session.payment_link) {
+    const stripePaymentLinkId = session.payment_link.toString();
 
-    // 1) Mark payment link as completed
+    // 1) Fetch + mark payment link completed
     const { data: pl } = await supabase
       .from('payment_links')
       .update({ status: 'completed', completed_at: new Date().toISOString() })
-      .eq('stripe_checkout_session_id', session.id)
+      .eq('stripe_payment_link_id', stripePaymentLinkId)
       .select('*')
       .maybeSingle();
 
+    const invoiceId = pl?.invoice_id;
+    const organizationId = pl?.organization_id;
     const amount = pl?.amount ?? null;
     const currency = pl?.currency ?? 'EUR';
-    const organizationId = pl?.organization_id ?? session.metadata?.organization_id;
+
+    if (!invoiceId || !organizationId) return;
 
     // 2) Mark invoice as paid
     await supabase
@@ -164,7 +167,7 @@ async function handleCheckoutCompleted(supabase: any, session: any) {
       .eq('id', invoiceId);
 
     // 3) Insert payment ledger row
-    if (organizationId && amount !== null) {
+    if (amount !== null) {
       await supabase.from('invoice_payments').insert({
         organization_id: organizationId,
         invoice_id: invoiceId,
