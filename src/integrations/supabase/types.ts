@@ -20245,6 +20245,146 @@ export type Database = {
           },
         ]
       }
+      matter_parties: {
+        Row: {
+          client_id: string | null
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          external_address: string | null
+          external_country: string | null
+          external_email: string | null
+          external_name: string | null
+          external_phone: string | null
+          id: string
+          is_primary: boolean | null
+          jurisdiction: string | null
+          matter_id: string
+          notes: string | null
+          organization_id: string
+          party_role: string
+          percentage: number | null
+          source_relationship_id: string | null
+          source_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          external_address?: string | null
+          external_country?: string | null
+          external_email?: string | null
+          external_name?: string | null
+          external_phone?: string | null
+          id?: string
+          is_primary?: boolean | null
+          jurisdiction?: string | null
+          matter_id: string
+          notes?: string | null
+          organization_id: string
+          party_role: string
+          percentage?: number | null
+          source_relationship_id?: string | null
+          source_type?: string
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          external_address?: string | null
+          external_country?: string | null
+          external_email?: string | null
+          external_name?: string | null
+          external_phone?: string | null
+          id?: string
+          is_primary?: boolean | null
+          jurisdiction?: string | null
+          matter_id?: string
+          notes?: string | null
+          organization_id?: string
+          party_role?: string
+          percentage?: number | null
+          source_relationship_id?: string | null
+          source_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_parties_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_parties_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_parties_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_parties_source_relationship_id_fkey"
+            columns: ["source_relationship_id"]
+            isOneToOne: false
+            referencedRelation: "client_relationships"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matter_patent_details: {
         Row: {
           abstract: string | null
@@ -23346,6 +23486,42 @@ export type Database = {
           },
         ]
       }
+      party_roles: {
+        Row: {
+          applies_to: string[] | null
+          category: string
+          code: string
+          created_at: string | null
+          icon: string | null
+          id: string
+          name_en: string
+          name_es: string
+          sort_order: number | null
+        }
+        Insert: {
+          applies_to?: string[] | null
+          category: string
+          code: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name_en: string
+          name_es: string
+          sort_order?: number | null
+        }
+        Update: {
+          applies_to?: string[] | null
+          category?: string
+          code?: string
+          created_at?: string | null
+          icon?: string | null
+          id?: string
+          name_en?: string
+          name_es?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       payment_links: {
         Row: {
           amount: number
@@ -25098,6 +25274,27 @@ export type Database = {
             referencedColumns: ["organization_id"]
           },
         ]
+      }
+      relationship_to_party_mapping: {
+        Row: {
+          auto_import: boolean | null
+          id: string
+          party_role: string
+          relationship_type: string
+        }
+        Insert: {
+          auto_import?: boolean | null
+          id?: string
+          party_role: string
+          relationship_type: string
+        }
+        Update: {
+          auto_import?: boolean | null
+          id?: string
+          party_role?: string
+          relationship_type?: string
+        }
+        Relationships: []
       }
       relationship_types: {
         Row: {
