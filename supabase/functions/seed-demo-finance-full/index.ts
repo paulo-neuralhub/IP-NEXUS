@@ -8,6 +8,10 @@ const corsHeaders = {
 
 type DemoOrgSlug = "demo-starter" | "demo-professional" | "demo-business" | "demo-enterprise";
 
+type SeedFinanceRequest = {
+  tenant_slug?: DemoOrgSlug | "all";
+};
+
 function json(body: unknown, init: ResponseInit = {}) {
   return new Response(JSON.stringify(body), {
     ...init,
@@ -436,7 +440,12 @@ Deno.serve(async (req) => {
     const svc = createClient(url, serviceKey);
     await assertIsSuperadmin(svc, callerId);
 
-    const targets: DemoOrgSlug[] = ["demo-starter", "demo-professional", "demo-business", "demo-enterprise"];
+    const body = (await req.json().catch(() => ({}))) as Partial<SeedFinanceRequest>;
+    const tenantSlug = body.tenant_slug ?? "all";
+
+    const allTargets: DemoOrgSlug[] = ["demo-starter", "demo-professional", "demo-business", "demo-enterprise"];
+    const targets: DemoOrgSlug[] =
+      tenantSlug === "all" ? allTargets : ([tenantSlug] as DemoOrgSlug[]);
     const results: Array<{ slug: DemoOrgSlug; run_id: string }> = [];
 
     for (const slug of targets) {

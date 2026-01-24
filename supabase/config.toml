@@ -242,3 +242,6 @@ verify_jwt = false
 
 [functions.backoffice-ai-agent]
 verify_jwt = true
+
+[functions.api-demo]
+verify_jwt = false
