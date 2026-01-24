@@ -9,7 +9,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { format, addDays } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { CalendarIcon, Plus, Trash2, Loader2, Save, Send } from 'lucide-react';
+import { CalendarIcon, Plus, Trash2, Loader2, Save, Send, BookOpen } from 'lucide-react';
 
 import {
   Dialog,
@@ -57,6 +57,8 @@ import { useContacts } from '@/hooks/use-crm';
 import { useCreateQuote } from '@/hooks/use-finance';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { ServiceSelector } from '@/components/service-catalog';
+import type { ServiceCatalogItem } from '@/types/service-catalog';
 
 // =============================================
 // SCHEMA
@@ -93,6 +95,7 @@ interface QuoteFormProps {
 export default function QuoteForm({ open, onOpenChange, onSuccess }: QuoteFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitAction, setSubmitAction] = useState<'draft' | 'sent'>('draft');
+  const [catalogOpen, setCatalogOpen] = useState(false);
 
   // Queries
   const { data: contacts = [], isLoading: loadingContacts } = useContacts({ type: 'company' });
@@ -193,6 +196,15 @@ export default function QuoteForm({ open, onOpenChange, onSuccess }: QuoteFormPr
 
   const addLine = () => {
     append({ description: '', quantity: 1, unit_price: 0 });
+  };
+
+  const handleAddFromCatalog = (service: ServiceCatalogItem) => {
+    append({
+      description: service.name + (service.description ? ` - ${service.description}` : ''),
+      quantity: 1,
+      unit_price: service.base_price,
+    });
+    toast.success(`"${service.name}" añadido`);
   };
 
   const handleClose = () => {
@@ -314,10 +326,16 @@ export default function QuoteForm({ open, onOpenChange, onSuccess }: QuoteFormPr
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <FormLabel className="text-base">Líneas del presupuesto</FormLabel>
-                <Button type="button" variant="outline" size="sm" onClick={addLine}>
-                  <Plus className="w-4 h-4 mr-1" />
-                  Añadir línea
-                </Button>
+                <div className="flex gap-2">
+                  <Button type="button" variant="outline" size="sm" onClick={() => setCatalogOpen(true)}>
+                    <BookOpen className="w-4 h-4 mr-1" />
+                    Desde catálogo
+                  </Button>
+                  <Button type="button" variant="outline" size="sm" onClick={addLine}>
+                    <Plus className="w-4 h-4 mr-1" />
+                    Línea manual
+                  </Button>
+                </div>
               </div>
 
               <div className="border rounded-lg overflow-hidden">
@@ -557,6 +575,14 @@ export default function QuoteForm({ open, onOpenChange, onSuccess }: QuoteFormPr
             Crear y enviar
           </Button>
         </DialogFooter>
+
+        {/* Service Catalog Selector */}
+        <ServiceSelector
+          open={catalogOpen}
+          onOpenChange={setCatalogOpen}
+          onSelect={handleAddFromCatalog}
+          multiSelect
+        />
       </DialogContent>
     </Dialog>
   );
