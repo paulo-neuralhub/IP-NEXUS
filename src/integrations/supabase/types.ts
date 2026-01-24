@@ -31474,6 +31474,9 @@ export type Database = {
           applicant_country: string | null
           applicant_name: string | null
           classes: number[] | null
+          color_similarity: number | null
+          combined_score: number | null
+          comparison_image_url: string | null
           description: string | null
           detected_at: string | null
           domain_name: string | null
@@ -31491,10 +31494,13 @@ export type Database = {
           registration_date: string | null
           related_deal_id: string | null
           related_matter_id: string | null
+          result_colors: string[] | null
+          result_embedding: string | null
           result_type: string
           reviewed_at: string | null
           reviewed_by: string | null
           screenshot_url: string | null
+          side_by_side_url: string | null
           similarity_details: Json | null
           similarity_score: number | null
           similarity_type: string | null
@@ -31503,6 +31509,7 @@ export type Database = {
           source_url: string | null
           status: string | null
           title: string
+          visual_similarity: number | null
           watchlist_id: string
         }
         Insert: {
@@ -31513,6 +31520,9 @@ export type Database = {
           applicant_country?: string | null
           applicant_name?: string | null
           classes?: number[] | null
+          color_similarity?: number | null
+          combined_score?: number | null
+          comparison_image_url?: string | null
           description?: string | null
           detected_at?: string | null
           domain_name?: string | null
@@ -31530,10 +31540,13 @@ export type Database = {
           registration_date?: string | null
           related_deal_id?: string | null
           related_matter_id?: string | null
+          result_colors?: string[] | null
+          result_embedding?: string | null
           result_type: string
           reviewed_at?: string | null
           reviewed_by?: string | null
           screenshot_url?: string | null
+          side_by_side_url?: string | null
           similarity_details?: Json | null
           similarity_score?: number | null
           similarity_type?: string | null
@@ -31542,6 +31555,7 @@ export type Database = {
           source_url?: string | null
           status?: string | null
           title: string
+          visual_similarity?: number | null
           watchlist_id: string
         }
         Update: {
@@ -31552,6 +31566,9 @@ export type Database = {
           applicant_country?: string | null
           applicant_name?: string | null
           classes?: number[] | null
+          color_similarity?: number | null
+          combined_score?: number | null
+          comparison_image_url?: string | null
           description?: string | null
           detected_at?: string | null
           domain_name?: string | null
@@ -31569,10 +31586,13 @@ export type Database = {
           registration_date?: string | null
           related_deal_id?: string | null
           related_matter_id?: string | null
+          result_colors?: string[] | null
+          result_embedding?: string | null
           result_type?: string
           reviewed_at?: string | null
           reviewed_by?: string | null
           screenshot_url?: string | null
+          side_by_side_url?: string | null
           similarity_details?: Json | null
           similarity_score?: number | null
           similarity_type?: string | null
@@ -31581,6 +31601,7 @@ export type Database = {
           source_url?: string | null
           status?: string | null
           title?: string
+          visual_similarity?: number | null
           watchlist_id?: string
         }
         Relationships: [
