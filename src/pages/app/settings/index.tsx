@@ -19,6 +19,7 @@ import {
   Code,
   TrendingUp,
   PhoneCall,
+  PackageSearch,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RequirePermission, RequireRole } from '@/components/auth/RequirePermission';
@@ -41,6 +42,7 @@ import ApiWebhooksSettings from './sections/ApiWebhooksSettings';
 import CrmSettings from './sections/CrmSettings';
 import EmailSettings from './sections/EmailSettings';
 import VoipSettings from './sections/VoipSettings';
+import ServiceCatalogPage from './ServiceCatalogPage';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -57,6 +59,7 @@ const ORG_TABS = [
   { id: 'team', label: 'Equipo', icon: Users, permission: 'team.view' },
   { id: 'crm', label: 'CRM', icon: TrendingUp, permission: 'settings.view' },
   { id: 'voip', label: 'Telefonía', icon: PhoneCall, permission: 'settings.view' },
+  { id: 'catalog', label: 'Catálogo Servicios', icon: PackageSearch, permission: 'settings.view' },
 ];
 
 // Tabs for user settings
@@ -218,6 +221,12 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
       {activeTab === 'voip' && (
         <RequirePermission permission="settings.view">
           <VoipSettings />
+        </RequirePermission>
+      )}
+
+      {activeTab === 'catalog' && (
+        <RequirePermission permission="settings.view">
+          <ServiceCatalogPage />
         </RequirePermission>
       )}
     </>
