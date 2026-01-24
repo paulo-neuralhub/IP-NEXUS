@@ -25,7 +25,7 @@ import {
 import { Search, TrendingUp, Plus, LayoutGrid, List } from "lucide-react";
 import { DealFormModal } from "@/components/features/crm/v2/DealFormModal";
 import { DealsKanbanBoard } from "@/components/features/crm/v2/kanban";
-import { DealDetailSheet } from "@/components/features/crm/v2/DealDetailSheet";
+import { DealDetailPanel } from "@/components/features/crm/v2/deal-panel";
 
 type DealRow = {
   id: string;
@@ -49,7 +49,7 @@ export default function CRMV2DealsList() {
   const [showDealForm, setShowDealForm] = useState(false);
   const [prefillStageId, setPrefillStageId] = useState<string | undefined>(undefined);
   const [selectedDealId, setSelectedDealId] = useState<string | null>(null);
-  const [showDealSheet, setShowDealSheet] = useState(false);
+  const [showDealPanel, setShowDealPanel] = useState(false);
 
   const { data: pipelines = [] } = useCRMPipelines();
   const { data: defaultPipeline } = useDefaultCRMPipeline();
@@ -67,11 +67,11 @@ export default function CRMV2DealsList() {
 
   function handleDealClick(dealId: string) {
     setSelectedDealId(dealId);
-    setShowDealSheet(true);
+    setShowDealPanel(true);
   }
 
-  function handleEditFromSheet(dealId: string) {
-    setShowDealSheet(false);
+  function handleEditFromPanel(dealId: string) {
+    setShowDealPanel(false);
     // TODO: Abrir modal edición con el deal cargado
     setShowDealForm(true);
   }
@@ -216,11 +216,12 @@ export default function CRMV2DealsList() {
         defaultStageId={prefillStageId}
       />
 
-      <DealDetailSheet
+      <DealDetailPanel
         deal={selectedDeal ?? null}
-        open={showDealSheet}
-        onClose={() => setShowDealSheet(false)}
-        onEdit={handleEditFromSheet}
+        open={showDealPanel}
+        onClose={() => setShowDealPanel(false)}
+        stages={(selectedPipeline?.stages ?? [])}
+        onEdit={handleEditFromPanel}
       />
     </div>
   );

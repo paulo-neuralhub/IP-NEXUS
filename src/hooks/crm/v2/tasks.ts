@@ -3,7 +3,7 @@ import { fromTable } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 
-export function useCRMTasks(filters?: { account_id?: string; status?: string | string[] }) {
+export function useCRMTasks(filters?: { account_id?: string; deal_id?: string; status?: string | string[] }) {
   const { organizationId } = useOrganization();
 
   return useQuery({
@@ -16,6 +16,7 @@ export function useCRMTasks(filters?: { account_id?: string; status?: string | s
         .order("due_date", { ascending: true, nullsFirst: false });
 
       if (filters?.account_id) query = query.eq("account_id", filters.account_id);
+      if (filters?.deal_id) query = query.eq("deal_id", filters.deal_id);
       if (filters?.status) {
         const statuses = Array.isArray(filters.status) ? filters.status : [filters.status];
         query = query.in("status", statuses);

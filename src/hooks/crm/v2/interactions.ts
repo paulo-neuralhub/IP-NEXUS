@@ -3,7 +3,7 @@ import { fromTable } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 
-export function useCRMInteractions(filters?: { account_id?: string; contact_id?: string }) {
+export function useCRMInteractions(filters?: { account_id?: string; contact_id?: string; deal_id?: string }) {
   const { organizationId } = useOrganization();
 
   return useQuery({
@@ -17,6 +17,7 @@ export function useCRMInteractions(filters?: { account_id?: string; contact_id?:
 
       if (filters?.account_id) query = query.eq("account_id", filters.account_id);
       if (filters?.contact_id) query = query.eq("contact_id", filters.contact_id);
+      if (filters?.deal_id) query = query.eq("metadata->>deal_id", filters.deal_id);
 
       const { data, error } = await query;
       if (error) throw error;

@@ -192,3 +192,24 @@ export function useUpdateDealStage() {
     },
   });
 }
+
+export function useDeleteCRMDeal() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (dealId: string) => {
+      const { error } = await fromTable("crm_deals").delete().eq("id", dealId);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["crm-deals"] });
+      queryClient.invalidateQueries({ queryKey: ["pipeline-summary"] });
+      toast({ title: "Deal eliminado" });
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Error desconocido";
+      toast({ title: "Error al eliminar deal", description: message, variant: "destructive" });
+    },
+  });
+}
