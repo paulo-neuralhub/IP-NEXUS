@@ -31658,11 +31658,14 @@ export type Database = {
       }
       watchlists: {
         Row: {
+          color_palette: string[] | null
           created_at: string | null
           created_by: string | null
           description: string | null
           filter_config: Json | null
           id: string
+          image_embedding: string | null
+          image_url: string | null
           is_active: boolean | null
           last_run_at: string | null
           matter_id: string | null
@@ -31678,16 +31681,21 @@ export type Database = {
           similarity_threshold: number | null
           type: string
           updated_at: string | null
+          visual_threshold: number | null
           watch_classes: number[] | null
           watch_jurisdictions: string[] | null
           watch_terms: string[]
+          watch_type: string | null
         }
         Insert: {
+          color_palette?: string[] | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           filter_config?: Json | null
           id?: string
+          image_embedding?: string | null
+          image_url?: string | null
           is_active?: boolean | null
           last_run_at?: string | null
           matter_id?: string | null
@@ -31703,16 +31711,21 @@ export type Database = {
           similarity_threshold?: number | null
           type: string
           updated_at?: string | null
+          visual_threshold?: number | null
           watch_classes?: number[] | null
           watch_jurisdictions?: string[] | null
           watch_terms?: string[]
+          watch_type?: string | null
         }
         Update: {
+          color_palette?: string[] | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
           filter_config?: Json | null
           id?: string
+          image_embedding?: string | null
+          image_url?: string | null
           is_active?: boolean | null
           last_run_at?: string | null
           matter_id?: string | null
@@ -31728,9 +31741,11 @@ export type Database = {
           similarity_threshold?: number | null
           type?: string
           updated_at?: string | null
+          visual_threshold?: number | null
           watch_classes?: number[] | null
           watch_jurisdictions?: string[] | null
           watch_terms?: string[]
+          watch_type?: string | null
         }
         Relationships: [
           {

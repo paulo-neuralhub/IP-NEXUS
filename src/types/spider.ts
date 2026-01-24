@@ -1,5 +1,8 @@
 import type { Matter } from './matters';
 
+// ===== WATCH TYPE =====
+export type WatchType = 'text' | 'image' | 'combined';
+
 // ===== WATCHLISTS =====
 export type WatchlistType = 
   | 'trademark' 
@@ -19,12 +22,20 @@ export interface Watchlist {
   name: string;
   description?: string;
   type: WatchlistType;
+  // Text-based watch
   watch_terms: string[];
   watch_classes: number[];
   watch_jurisdictions: string[];
   matter_id?: string;
   similarity_threshold: number;
   filter_config?: Record<string, unknown>;
+  // Image-based watch (L35)
+  watch_type: WatchType;
+  image_url?: string;
+  image_embedding?: number[];
+  color_palette?: string[];
+  visual_threshold: number;
+  // Notifications
   notify_email: boolean;
   notify_in_app: boolean;
   notify_frequency: NotifyFrequency;
