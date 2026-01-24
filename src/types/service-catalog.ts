@@ -74,12 +74,49 @@ export const SERVICE_TYPES: Record<ServiceType, { label: string; color: string }
   general: { label: 'General', color: 'bg-gray-100 text-gray-700 dark:bg-gray-900/30 dark:text-gray-400' },
 };
 
-export const JURISDICTIONS: Record<string, { label: string; flag: string }> = {
-  ES: { label: 'España', flag: '🇪🇸' },
-  EU: { label: 'Unión Europea', flag: '🇪🇺' },
-  INT: { label: 'Internacional', flag: '🌍' },
-  US: { label: 'Estados Unidos', flag: '🇺🇸' },
-  CN: { label: 'China', flag: '🇨🇳' },
-  JP: { label: 'Japón', flag: '🇯🇵' },
-  GB: { label: 'Reino Unido', flag: '🇬🇧' },
+// Extended jurisdictions for IP offices
+export const JURISDICTIONS: Record<string, { label: string; flag: string; office?: string }> = {
+  ES: { label: 'España', flag: '🇪🇸', office: 'OEPM' },
+  EU: { label: 'Unión Europea', flag: '🇪🇺', office: 'EUIPO' },
+  INT: { label: 'Internacional', flag: '🌍', office: 'WIPO/Madrid' },
+  US: { label: 'Estados Unidos', flag: '🇺🇸', office: 'USPTO' },
+  CN: { label: 'China', flag: '🇨🇳', office: 'CNIPA' },
+  JP: { label: 'Japón', flag: '🇯🇵', office: 'JPO' },
+  GB: { label: 'Reino Unido', flag: '🇬🇧', office: 'UKIPO' },
+  EP: { label: 'Patente Europea', flag: '🇪🇺', office: 'EPO' },
+  KR: { label: 'Corea del Sur', flag: '🇰🇷', office: 'KIPO' },
+  MX: { label: 'México', flag: '🇲🇽', office: 'IMPI' },
+  BR: { label: 'Brasil', flag: '🇧🇷', office: 'INPI' },
+  DE: { label: 'Alemania', flag: '🇩🇪', office: 'DPMA' },
+  FR: { label: 'Francia', flag: '🇫🇷', office: 'INPI' },
+  IT: { label: 'Italia', flag: '🇮🇹', office: 'UIBM' },
+  CA: { label: 'Canadá', flag: '🇨🇦', office: 'CIPO' },
+  AU: { label: 'Australia', flag: '🇦🇺', office: 'IP Australia' },
+  IN: { label: 'India', flag: '🇮🇳', office: 'IPO India' },
 };
+
+// Currency options
+export const CURRENCIES = ['EUR', 'USD', 'GBP', 'CHF', 'JPY', 'CNY'] as const;
+export type Currency = typeof CURRENCIES[number];
+
+// Service price by jurisdiction
+export interface ServicePrice {
+  id: string;
+  service_id: string;
+  jurisdiction: string;
+  official_fee: number;
+  professional_fee: number;
+  total_price: number;
+  currency: string;
+  classes_included: number;
+  extra_class_fee: number;
+  notes: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// Service with prices
+export interface ServiceWithPrices extends ServiceCatalogItem {
+  prices?: ServicePrice[];
+}

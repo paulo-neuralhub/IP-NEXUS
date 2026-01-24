@@ -55,13 +55,11 @@ import {
 } from 'lucide-react';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { useServiceCatalog, useDeleteService, useUpdateService } from '@/hooks/use-service-catalog';
-import { ServiceForm } from '@/components/service-catalog';
+import { ServiceForm, ExpandableServiceRow } from '@/components/service-catalog';
 import { 
   SERVICE_TYPES, 
-  JURISDICTIONS, 
   type ServiceCatalogItem, 
   type ServiceType,
-  type Jurisdiction,
 } from '@/types/service-catalog';
 import { toast } from 'sonner';
 
@@ -264,6 +262,7 @@ export default function ServiceCatalogPage() {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-8"></TableHead>
                 <TableHead className="w-28">Referencia</TableHead>
                 <TableHead>Nombre</TableHead>
                 <TableHead className="w-28">Tipo</TableHead>
@@ -294,90 +293,23 @@ export default function ServiceCatalogPage() {
                 </>
               )}
               
-              {!isLoading && filteredServices.map((service) => {
-                const typeConfig = SERVICE_TYPES[service.service_type as ServiceType] || SERVICE_TYPES.general;
-                const jurisdiction = service.jurisdiction as Jurisdiction;
-                
-                return (
-                  <TableRow key={service.id} className={!service.is_active ? 'opacity-50' : ''}>
-                    <TableCell>
-                      <code className="text-xs bg-muted px-1.5 py-0.5 rounded">
-                        {service.reference_code || '-'}
-                      </code>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <span className="font-medium">{service.name}</span>
-                        {service.description && (
-                          <p className="text-xs text-muted-foreground truncate max-w-xs">
-                            {service.description}
-                          </p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={typeConfig.color} variant="secondary">
-                        {typeConfig.label}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      {jurisdiction && JURISDICTIONS[jurisdiction] ? (
-                        <span className="flex items-center gap-1">
-                          <span>{JURISDICTIONS[jurisdiction].flag}</span>
-                          <span className="text-sm">{jurisdiction}</span>
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {service.official_fee > 0 ? `${service.official_fee.toLocaleString()}€` : '-'}
-                    </TableCell>
-                    <TableCell className="text-right tabular-nums">
-                      {service.professional_fee > 0 ? `${service.professional_fee.toLocaleString()}€` : '-'}
-                    </TableCell>
-                    <TableCell className="text-right font-medium tabular-nums">
-                      {service.base_price.toLocaleString()}€
-                    </TableCell>
-                    <TableCell>
-                      <Switch
-                        checked={service.is_active}
-                        onCheckedChange={() => handleToggleActive(service)}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleEdit(service)}>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Editar
-                          </DropdownMenuItem>
-                          <DropdownMenuItem 
-                            className="text-destructive"
-                            onClick={() => {
-                              setServiceToDelete(service);
-                              setDeleteDialogOpen(true);
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Eliminar
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
+              {!isLoading && filteredServices.map((service) => (
+                <ExpandableServiceRow
+                  key={service.id}
+                  service={service}
+                  onEdit={handleEdit}
+                  onDelete={(s) => {
+                    setServiceToDelete(s);
+                    setDeleteDialogOpen(true);
+                  }}
+                  onToggleActive={handleToggleActive}
+                />
+              ))}
 
               {/* Empty state */}
               {!isLoading && filteredServices.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-12">
+                  <TableCell colSpan={10} className="text-center py-12">
                     <div className="flex flex-col items-center gap-3">
                       <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
                         <Package className="w-6 h-6 text-muted-foreground" />

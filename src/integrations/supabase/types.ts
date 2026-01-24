@@ -27062,6 +27062,62 @@ export type Database = {
           },
         ]
       }
+      service_prices: {
+        Row: {
+          classes_included: number | null
+          created_at: string | null
+          currency: string | null
+          extra_class_fee: number | null
+          id: string
+          is_active: boolean | null
+          jurisdiction: string
+          notes: string | null
+          official_fee: number | null
+          professional_fee: number | null
+          service_id: string
+          total_price: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          classes_included?: number | null
+          created_at?: string | null
+          currency?: string | null
+          extra_class_fee?: number | null
+          id?: string
+          is_active?: boolean | null
+          jurisdiction: string
+          notes?: string | null
+          official_fee?: number | null
+          professional_fee?: number | null
+          service_id: string
+          total_price?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          classes_included?: number | null
+          created_at?: string | null
+          currency?: string | null
+          extra_class_fee?: number | null
+          id?: string
+          is_active?: boolean | null
+          jurisdiction?: string
+          notes?: string | null
+          official_fee?: number | null
+          professional_fee?: number | null
+          service_id?: string
+          total_price?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_prices_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "service_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       settings_audit_log: {
         Row: {
           action: string
