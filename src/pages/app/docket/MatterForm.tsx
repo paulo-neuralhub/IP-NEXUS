@@ -54,6 +54,17 @@ const formSchema = z.object({
   reference: z.string().min(1, 'Referencia requerida'),
   title: z.string().min(3, 'Mínimo 3 caracteres'),
   status: z.string().default('draft'),
+  // Extended base schema (matters)
+  ip_type: z.enum(['trademark', 'patent', 'design', 'domain', 'copyright', 'other']).optional(),
+  status_code: z.string().optional(),
+  status_date: z.string().optional(),
+  filing_number: z.string().optional(),
+  priority_date: z.string().optional(),
+  priority_number: z.string().optional(),
+  priority_country: z.string().optional(),
+  auto_renewal: z.boolean().optional(),
+  renewal_instructions: z.string().optional(),
+  internal_notes: z.string().optional(),
   jurisdiction_code: z.string().optional(),
   jurisdiction: z.string().optional(),
   mark_name: z.string().optional(),
@@ -94,9 +105,19 @@ export default function MatterForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       type: 'trademark',
+      ip_type: 'trademark',
       reference: '',
       title: '',
       status: 'draft',
+      status_code: '',
+      status_date: '',
+      filing_number: '',
+      priority_date: '',
+      priority_number: '',
+      priority_country: '',
+      auto_renewal: false,
+      renewal_instructions: '',
+      internal_notes: '',
       jurisdiction_code: '',
       nice_classes: [],
       tags: [],
@@ -124,6 +145,7 @@ export default function MatterForm() {
     if (!isEdit && watchedType) {
       const newRef = generateReference(watchedType);
       form.setValue('reference', newRef);
+      form.setValue('ip_type', watchedType);
     }
   }, [watchedType, isEdit, allMatters]);
   
@@ -132,9 +154,19 @@ export default function MatterForm() {
     if (isEdit && existingMatter) {
       form.reset({
         type: existingMatter.type as MatterType,
+        ip_type: (existingMatter.ip_type as MatterType) || (existingMatter.type as MatterType),
         reference: existingMatter.reference,
         title: existingMatter.title,
         status: existingMatter.status,
+        status_code: existingMatter.status_code || '',
+        status_date: existingMatter.status_date || '',
+        filing_number: existingMatter.filing_number || '',
+        priority_date: existingMatter.priority_date || '',
+        priority_number: existingMatter.priority_number || '',
+        priority_country: existingMatter.priority_country || '',
+        auto_renewal: Boolean(existingMatter.auto_renewal),
+        renewal_instructions: existingMatter.renewal_instructions || '',
+        internal_notes: existingMatter.internal_notes || '',
         jurisdiction_code: existingMatter.jurisdiction_code || '',
         jurisdiction: existingMatter.jurisdiction || '',
         mark_name: existingMatter.mark_name || '',
@@ -163,9 +195,19 @@ export default function MatterForm() {
       
       const payload = {
         type: data.type,
+        ip_type: (data.ip_type || data.type) as any,
         reference: data.reference,
         title: data.title,
         status: data.status as MatterStatus,
+        status_code: data.status_code || null,
+        status_date: data.status_date || null,
+        filing_number: data.filing_number || null,
+        priority_date: data.priority_date || null,
+        priority_number: data.priority_number || null,
+        priority_country: data.priority_country || null,
+        auto_renewal: Boolean(data.auto_renewal),
+        renewal_instructions: data.renewal_instructions || null,
+        internal_notes: data.internal_notes || null,
         jurisdiction_code: data.jurisdiction_code || null,
         jurisdiction: jurisdiction?.name || null,
         mark_name: data.mark_name || null,
@@ -345,6 +387,34 @@ export default function MatterForm() {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="ip_type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>
+                      <LabelWithTip label="Tipo PI (nuevo)" tipKey="matter.ip_type" />
+                    </FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value || watchedType}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar tipo" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="trademark">Marca</SelectItem>
+                        <SelectItem value="patent">Patente</SelectItem>
+                        <SelectItem value="design">Diseño</SelectItem>
+                        <SelectItem value="domain">Dominio</SelectItem>
+                        <SelectItem value="copyright">Copyright</SelectItem>
+                        <SelectItem value="other">Otro</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
               
               <FormField
                 control={form.control}
@@ -370,6 +440,140 @@ export default function MatterForm() {
                   </FormItem>
                 )}
               />
+            </CardContent>
+          </Card>
+
+          {/* Campos avanzados (nuevos) */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Campos avanzados</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="status_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Código de estado" tipKey="matter.status_code" />
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="ej: filed / granted / refused" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Fecha de estado" tipKey="matter.status_date" />
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="filing_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Nº presentación" tipKey="matter.filing_number" />
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="ej: ES2026XXXX" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <FormField
+                  control={form.control}
+                  name="priority_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Fecha prioridad" tipKey="matter.priority_date" />
+                      </FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priority_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Nº prioridad" tipKey="matter.priority_number" />
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="ej: ES2026YYYY" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="priority_country"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="País prioridad" tipKey="matter.priority_country" />
+                      </FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="ej: ES" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="renewal_instructions"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Instrucciones de renovación" tipKey="matter.renewal_instructions" />
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={3} placeholder="Instrucciones internas para renovación…" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="internal_notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>
+                        <LabelWithTip label="Notas internas" tipKey="matter.internal_notes" />
+                      </FormLabel>
+                      <FormControl>
+                        <Textarea {...field} rows={3} placeholder="Notas no visibles al cliente…" />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
             </CardContent>
           </Card>
           

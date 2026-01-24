@@ -15,6 +15,20 @@ export interface Matter {
   title: string;
   type: MatterType;
   status: MatterStatus;
+  // NEW (extended base schema)
+  ip_type?: MatterType | null;
+  status_code?: string | null;
+  status_date?: string | null;
+  filing_number?: string | null;
+  priority_date?: string | null;
+  priority_number?: string | null;
+  priority_country?: string | null;
+  auto_renewal?: boolean | null;
+  renewal_instructions?: string | null;
+  internal_notes?: string | null;
+  estimated_value?: number | null;
+  cost_center?: string | null;
+  is_archived?: boolean | null;
   jurisdiction?: string | null;
   jurisdiction_code?: string | null;
   application_number?: string | null;
