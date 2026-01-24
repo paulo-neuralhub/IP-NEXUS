@@ -25,6 +25,7 @@ import {
   useSeedDemoData,
   useSeedDemoDeadlinesCoverage,
   useSeedDemoFinanceFull,
+  useSeedDemoDocumentsStructure,
   useSeedDemoPortalConfig,
   useSeedDemoSpiderVigilance,
   useSeedDemoTasksWorkflows,
@@ -48,6 +49,7 @@ export default function DemoDataPage() {
   const seedDeadlinesCoverageMutation = useSeedDemoDeadlinesCoverage();
   const seedClientCommsMutation = useSeedDemoClientCommunications();
   const seedFinanceFullMutation = useSeedDemoFinanceFull();
+  const seedDocumentsStructureMutation = useSeedDemoDocumentsStructure();
   const seedSpiderVigilanceMutation = useSeedDemoSpiderVigilance();
   const seedPortalConfigMutation = useSeedDemoPortalConfig();
   const seedTasksWorkflowsMutation = useSeedDemoTasksWorkflows();
@@ -230,6 +232,20 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedDocumentsStructure = async () => {
+    try {
+      const res = await seedDocumentsStructureMutation.mutateAsync();
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      const summary = res.results.map((r) => `${r.slug}: ${r.documents} docs (run ${r.run_id})`).join(" · ");
+      toast.success(`Documentos demo creados en bucket "${res.bucket}". ${summary}`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando documentos demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -242,6 +258,29 @@ export default function DemoDataPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Crear estructura de documentos (Storage)
+            </CardTitle>
+            <CardDescription>
+              Sube ~500 documentos placeholder a Supabase Storage con estructura /expediente/… (/solicitud, /oficina,
+              /cliente, /interno) y registra las rutas en matter_documents (sin guardar binarios en la DB).
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button
+              onClick={handleSeedDocumentsStructure}
+              disabled={seedDocumentsStructureMutation.isPending}
+              className="w-full"
+            >
+              <Database className="h-4 w-4 mr-2" />
+              {seedDocumentsStructureMutation.isPending ? "Creando…" : "Seed documents structure (all tenants)"}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
