@@ -3,10 +3,10 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { GeniusChatEnhanced, ConversationSidebar, AgentSelector } from '@/components/features/genius';
 import type { AgentType, AIConversation } from '@/types/genius';
 import { usePageTitle } from '@/contexts/page-context';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { FeatureGuide, HelpBox } from '@/components/help';
+import { FeatureGuide, InlineHelp } from '@/components/help';
 import { useContextualHelp } from '@/hooks/useContextualHelp';
 
 export default function GeniusPage() {
@@ -74,16 +74,6 @@ export default function GeniusPage() {
       {currentGuide && shouldShowGuide(featureKey) ? (
         <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
       ) : null}
-
-      <HelpBox
-        title="Tip rápido"
-        variant="info"
-        dismissible
-        dismissKey="genius_agents_tip"
-      >
-        Cambia de agente según la tarea (LEGAL/OPS/WATCH…). Si quieres mantener el contexto, abre una conversación existente
-        en la barra lateral.
-      </HelpBox>
 
       <div className="h-[calc(100vh-10rem)] flex rounded-xl border bg-card overflow-hidden shadow-sm">
       {/* Mobile sidebar toggle */}

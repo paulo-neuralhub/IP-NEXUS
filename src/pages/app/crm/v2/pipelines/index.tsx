@@ -257,7 +257,6 @@ export default function CRMPipelinesPage() {
             )}
 
             <Separator className="my-4" />
-            <div className="text-xs text-muted-foreground">Tip: el orden de estas etapas define el orden del Kanban.</div>
           </CardContent>
         </Card>
       </div>

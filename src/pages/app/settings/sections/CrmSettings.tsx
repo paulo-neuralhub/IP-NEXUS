@@ -271,9 +271,6 @@ export default function CrmSettings() {
             )}
 
             <Separator className="my-4" />
-            <div className="text-xs text-muted-foreground">
-              Tip: el orden de estas etapas es el orden de columnas en el Kanban.
-            </div>
           </CardContent>
         </Card>
       </div>
