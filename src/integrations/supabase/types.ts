@@ -9875,10 +9875,12 @@ export type Database = {
           event_type: string
           id: string
           is_active: boolean | null
+          is_system: boolean | null
           jurisdiction: string
           matter_type: string
           name: string
           notes: string | null
+          organization_id: string | null
           priority: string | null
           source: string | null
           task_template_id: string | null
@@ -9898,10 +9900,12 @@ export type Database = {
           event_type: string
           id?: string
           is_active?: boolean | null
+          is_system?: boolean | null
           jurisdiction: string
           matter_type: string
           name: string
           notes?: string | null
+          organization_id?: string | null
           priority?: string | null
           source?: string | null
           task_template_id?: string | null
@@ -9921,16 +9925,47 @@ export type Database = {
           event_type?: string
           id?: string
           is_active?: boolean | null
+          is_system?: boolean | null
           jurisdiction?: string
           matter_type?: string
           name?: string
           notes?: string | null
+          organization_id?: string | null
           priority?: string | null
           source?: string | null
           task_template_id?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "deadline_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "deadline_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_rules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
       }
       deadline_types: {
         Row: {
@@ -9944,6 +9979,7 @@ export type Database = {
           matter_types: string[]
           name_en: string | null
           name_es: string
+          organization_id: string | null
           sort_order: number | null
         }
         Insert: {
@@ -9957,6 +9993,7 @@ export type Database = {
           matter_types?: string[]
           name_en?: string | null
           name_es: string
+          organization_id?: string | null
           sort_order?: number | null
         }
         Update: {
@@ -9970,9 +10007,39 @@ export type Database = {
           matter_types?: string[]
           name_en?: string | null
           name_es?: string
+          organization_id?: string | null
           sort_order?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "deadline_types_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_types_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "deadline_types_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deadline_types_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
       }
       deals: {
         Row: {
@@ -14310,8 +14377,10 @@ export type Database = {
           created_at: string | null
           date: string
           id: string
+          is_active: boolean | null
           is_national: boolean | null
           name: string | null
+          organization_id: string | null
           region: string | null
           year: number
         }
@@ -14320,8 +14389,10 @@ export type Database = {
           created_at?: string | null
           date: string
           id?: string
+          is_active?: boolean | null
           is_national?: boolean | null
           name?: string | null
+          organization_id?: string | null
           region?: string | null
           year: number
         }
@@ -14330,12 +14401,43 @@ export type Database = {
           created_at?: string | null
           date?: string
           id?: string
+          is_active?: boolean | null
           is_national?: boolean | null
           name?: string | null
+          organization_id?: string | null
           region?: string | null
           year?: number
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "holiday_calendars_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "holiday_calendars_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "holiday_calendars_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "holiday_calendars_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
       }
       holidays: {
         Row: {
