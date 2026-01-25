@@ -10945,6 +10945,45 @@ export type Database = {
           },
         ]
       }
+      document_template_variables: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          document_type: string
+          example_value: string | null
+          id: string
+          is_required: boolean | null
+          sort_order: number | null
+          variable_code: string
+          variable_group: string | null
+          variable_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          document_type: string
+          example_value?: string | null
+          id?: string
+          is_required?: boolean | null
+          sort_order?: number | null
+          variable_code: string
+          variable_group?: string | null
+          variable_name: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          document_type?: string
+          example_value?: string | null
+          id?: string
+          is_required?: boolean | null
+          sort_order?: number | null
+          variable_code?: string
+          variable_group?: string | null
+          variable_name?: string
+        }
+        Relationships: []
+      }
       document_templates: {
         Row: {
           ai_max_tokens: number | null
@@ -10953,19 +10992,38 @@ export type Database = {
           ai_temperature: number | null
           ai_user_prompt_template: string | null
           average_rating: number | null
+          based_on_template_id: string | null
+          body_sections: Json | null
           category: string
+          code: string | null
           created_at: string | null
           created_by: string | null
+          custom_colors: Json | null
+          custom_texts: Json | null
           description: string | null
+          document_type: string | null
+          footer_content: Json | null
+          header_content: Json | null
           id: string
           is_active: boolean | null
+          is_default: boolean | null
           is_public: boolean | null
+          is_system_template: boolean | null
+          layout: string | null
           name: string
+          numbering_digits: number | null
+          numbering_prefix: string | null
+          numbering_suffix: string | null
           organization_id: string | null
           output_format: string | null
+          show_footer: boolean | null
+          show_header: boolean | null
+          show_logo: boolean | null
           tags: string[] | null
           template_content: string
           template_type: string | null
+          times_used: number | null
+          type_config: Json | null
           updated_at: string | null
           usage_count: number | null
           variables: Json | null
@@ -10977,19 +11035,38 @@ export type Database = {
           ai_temperature?: number | null
           ai_user_prompt_template?: string | null
           average_rating?: number | null
+          based_on_template_id?: string | null
+          body_sections?: Json | null
           category: string
+          code?: string | null
           created_at?: string | null
           created_by?: string | null
+          custom_colors?: Json | null
+          custom_texts?: Json | null
           description?: string | null
+          document_type?: string | null
+          footer_content?: Json | null
+          header_content?: Json | null
           id?: string
           is_active?: boolean | null
+          is_default?: boolean | null
           is_public?: boolean | null
+          is_system_template?: boolean | null
+          layout?: string | null
           name: string
+          numbering_digits?: number | null
+          numbering_prefix?: string | null
+          numbering_suffix?: string | null
           organization_id?: string | null
           output_format?: string | null
+          show_footer?: boolean | null
+          show_header?: boolean | null
+          show_logo?: boolean | null
           tags?: string[] | null
           template_content: string
           template_type?: string | null
+          times_used?: number | null
+          type_config?: Json | null
           updated_at?: string | null
           usage_count?: number | null
           variables?: Json | null
@@ -11001,24 +11078,50 @@ export type Database = {
           ai_temperature?: number | null
           ai_user_prompt_template?: string | null
           average_rating?: number | null
+          based_on_template_id?: string | null
+          body_sections?: Json | null
           category?: string
+          code?: string | null
           created_at?: string | null
           created_by?: string | null
+          custom_colors?: Json | null
+          custom_texts?: Json | null
           description?: string | null
+          document_type?: string | null
+          footer_content?: Json | null
+          header_content?: Json | null
           id?: string
           is_active?: boolean | null
+          is_default?: boolean | null
           is_public?: boolean | null
+          is_system_template?: boolean | null
+          layout?: string | null
           name?: string
+          numbering_digits?: number | null
+          numbering_prefix?: string | null
+          numbering_suffix?: string | null
           organization_id?: string | null
           output_format?: string | null
+          show_footer?: boolean | null
+          show_header?: boolean | null
+          show_logo?: boolean | null
           tags?: string[] | null
           template_content?: string
           template_type?: string | null
+          times_used?: number | null
+          type_config?: Json | null
           updated_at?: string | null
           usage_count?: number | null
           variables?: Json | null
         }
         Relationships: [
+          {
+            foreignKeyName: "document_templates_based_on_template_id_fkey"
+            columns: ["based_on_template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "document_templates_created_by_fkey"
             columns: ["created_by"]
@@ -33938,6 +34041,131 @@ export type Database = {
           {
             foreignKeyName: "tenant_ai_config_organization_id_fkey"
             columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_branding: {
+        Row: {
+          accent_color: string | null
+          bank_iban: string | null
+          bank_name: string | null
+          bank_swift: string | null
+          company_address: string | null
+          company_city: string | null
+          company_country: string | null
+          company_email: string | null
+          company_legal_name: string | null
+          company_phone: string | null
+          company_postal_code: string | null
+          company_tax_id: string | null
+          company_website: string | null
+          created_at: string | null
+          font_family: string | null
+          font_size_base: number | null
+          footer_text: string | null
+          heading_font: string | null
+          id: string
+          logo_position: string | null
+          logo_url: string | null
+          logo_width: number | null
+          muted_color: string | null
+          primary_color: string | null
+          registry_info: string | null
+          secondary_color: string | null
+          tenant_id: string
+          text_color: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          accent_color?: string | null
+          bank_iban?: string | null
+          bank_name?: string | null
+          bank_swift?: string | null
+          company_address?: string | null
+          company_city?: string | null
+          company_country?: string | null
+          company_email?: string | null
+          company_legal_name?: string | null
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_tax_id?: string | null
+          company_website?: string | null
+          created_at?: string | null
+          font_family?: string | null
+          font_size_base?: number | null
+          footer_text?: string | null
+          heading_font?: string | null
+          id?: string
+          logo_position?: string | null
+          logo_url?: string | null
+          logo_width?: number | null
+          muted_color?: string | null
+          primary_color?: string | null
+          registry_info?: string | null
+          secondary_color?: string | null
+          tenant_id: string
+          text_color?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          accent_color?: string | null
+          bank_iban?: string | null
+          bank_name?: string | null
+          bank_swift?: string | null
+          company_address?: string | null
+          company_city?: string | null
+          company_country?: string | null
+          company_email?: string | null
+          company_legal_name?: string | null
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_tax_id?: string | null
+          company_website?: string | null
+          created_at?: string | null
+          font_family?: string | null
+          font_size_base?: number | null
+          footer_text?: string | null
+          heading_font?: string | null
+          id?: string
+          logo_position?: string | null
+          logo_url?: string | null
+          logo_width?: number | null
+          muted_color?: string | null
+          primary_color?: string | null
+          registry_info?: string | null
+          secondary_color?: string | null
+          tenant_id?: string
+          text_color?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_branding_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_branding_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_branding_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_branding_tenant_id_fkey"
+            columns: ["tenant_id"]
             isOneToOne: true
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
