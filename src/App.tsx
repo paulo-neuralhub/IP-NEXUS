@@ -133,6 +133,7 @@ import BrandingSettingsPage from "./pages/app/settings/branding";
 import SSOSettingsPage from "./pages/app/settings/sso";
 import NotFound from "./pages/NotFound";
 import ServiceCatalogPage from "./pages/app/settings/ServiceCatalogPage";
+import DeadlineConfigPage from "./pages/app/settings/deadlines";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
 // Migrator pages consolidated into Data Hub
@@ -393,6 +394,7 @@ const App = () => (
                 <Route path="settings/branding" element={<BrandingSettingsPage />} />
                 <Route path="settings/sso" element={<SSOSettingsPage />} />
                 <Route path="settings/catalogo-servicios" element={<ServiceCatalogPage />} />
+                <Route path="settings/deadlines" element={<DeadlineConfigPage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
                 <Route path="tools" element={<ToolsPage />} />
                 {/* Migrator redirect to Data Hub */}

@@ -23,7 +23,7 @@ export function useSmartTasks(filters?: SmartTaskFilters) {
         .from('smart_tasks')
         .select(`
           *,
-          matter:matters(id, title, reference_number, ip_type, jurisdiction),
+          matter:matters(id, title, reference, ip_type, jurisdiction),
           assigned_user:users!smart_tasks_assigned_to_fkey(id, full_name, avatar_url)
         `)
         .eq('organization_id', currentOrganization.id)
@@ -90,7 +90,7 @@ export function useSmartTask(id: string) {
         .from('smart_tasks')
         .select(`
           *,
-          matter:matters(id, title, reference_number, ip_type, jurisdiction, status),
+          matter:matters(id, title, reference, ip_type, jurisdiction, status),
           assigned_user:users!smart_tasks_assigned_to_fkey(id, full_name, avatar_url, email),
           rule:jurisdiction_rules(*)
         `)

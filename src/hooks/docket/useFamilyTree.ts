@@ -116,7 +116,7 @@ export function useFamilyTreeGraph(matterId: string) {
       y: index * 100 
     },
     data: {
-      label: node.title || node.reference_number || 'Sin título',
+      label: node.title || node.reference || 'Sin título',
       ...node,
     },
   })) || [];

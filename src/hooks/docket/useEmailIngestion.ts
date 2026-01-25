@@ -46,7 +46,7 @@ export function useEmailIngestionItem(id: string) {
         .from('email_ingestion_queue')
         .select(`
           *,
-          matched_matter:matters(id, title, reference_number)
+          matched_matter:matters(id, title, reference)
         `)
         .eq('id', id)
         .single();

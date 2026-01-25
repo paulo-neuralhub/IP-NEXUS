@@ -231,7 +231,7 @@ function TaskRow({ task, onStatusChange, onDelete }: TaskRowProps) {
       <TableCell>
         {task.matter ? (
           <div className="text-sm">
-            <div className="font-medium">{task.matter.reference_number}</div>
+            <div className="font-medium">{task.matter.reference}</div>
             <div className="text-xs text-muted-foreground truncate max-w-[150px]">
               {task.matter.title}
             </div>

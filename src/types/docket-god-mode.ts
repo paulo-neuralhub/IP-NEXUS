@@ -90,7 +90,7 @@ export interface SmartTask {
   matter?: {
     id: string;
     title: string;
-    reference_number?: string;
+    reference?: string;
     ip_type: string;
     jurisdiction: string;
   };
@@ -189,7 +189,7 @@ export interface FamilyTreeNode {
   parent_id?: string;
   relation_type: string;
   title: string;
-  reference_number?: string;
+  reference?: string;
   ip_type: string;
   status: string;
   jurisdiction: string;

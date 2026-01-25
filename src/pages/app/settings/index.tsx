@@ -20,6 +20,7 @@ import {
   TrendingUp,
   PhoneCall,
   PackageSearch,
+  CalendarClock,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RequirePermission, RequireRole } from '@/components/auth/RequirePermission';
@@ -43,6 +44,7 @@ import CrmSettings from './sections/CrmSettings';
 import EmailSettings from './sections/EmailSettings';
 import VoipSettings from './sections/VoipSettings';
 import ServiceCatalogPage from './ServiceCatalogPage';
+import DeadlineConfigPage from './deadlines';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -60,6 +62,7 @@ const ORG_TABS = [
   { id: 'crm', label: 'CRM', icon: TrendingUp, permission: 'settings.view' },
   { id: 'voip', label: 'Telefonía', icon: PhoneCall, permission: 'settings.view' },
   { id: 'catalog', label: 'Catálogo Servicios', icon: PackageSearch, permission: 'settings.view' },
+  { id: 'deadlines', label: 'Reglas de Plazos', icon: CalendarClock, permission: 'settings.update' },
 ];
 
 // Tabs for user settings
@@ -227,6 +230,12 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
       {activeTab === 'catalog' && (
         <RequirePermission permission="settings.view">
           <ServiceCatalogPage />
+        </RequirePermission>
+      )}
+
+      {activeTab === 'deadlines' && (
+        <RequirePermission permission="settings.update">
+          <DeadlineConfigPage />
         </RequirePermission>
       )}
     </>

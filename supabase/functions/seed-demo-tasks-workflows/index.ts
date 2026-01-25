@@ -302,14 +302,14 @@ async function seedTasksAndWorkflowsForOrg(params: {
 
   const { data: matters, error: matErr } = await svc
     .from("matters")
-    .select("id, title, reference_number, ip_type, jurisdiction")
+    .select("id, title, reference, ip_type, jurisdiction")
     .eq("organization_id", organizationId)
     .limit(1000);
   if (matErr) throw matErr;
   const matterRows = (matters ?? []) as Array<{
     id: string;
     title: string | null;
-    reference_number: string | null;
+    reference: string | null;
     ip_type: string | null;
     jurisdiction: string | null;
   }>;
@@ -385,7 +385,7 @@ async function seedTasksAndWorkflowsForOrg(params: {
         organization_id: organizationId,
         matter_id: matter.id,
         portfolio_id: null,
-        title: `${label} — ${matter.reference_number ?? matter.id.slice(0, 8)}`,
+        title: `${label} — ${matter.reference ?? matter.id.slice(0, 8)}`,
         description: `(DEMO) ${label} para expediente “${matter.title ?? "Sin título"}” (${matter.jurisdiction ?? "—"}).`,
         task_type,
         priority,
