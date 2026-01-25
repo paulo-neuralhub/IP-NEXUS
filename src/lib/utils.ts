@@ -59,3 +59,21 @@ export function formatFileSize(bytes: number): string {
 export function generateUniqueId(): string {
   return `${Date.now()}-${Math.random().toString(36).substring(2, 11)}`;
 }
+
+export function formatRelativeTime(date: string | Date): string {
+  const now = new Date();
+  const then = new Date(date);
+  const diffMs = now.getTime() - then.getTime();
+  const diffSeconds = Math.floor(diffMs / 1000);
+  const diffMinutes = Math.floor(diffSeconds / 60);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffSeconds < 60) return 'Justo ahora';
+  if (diffMinutes < 60) return `hace ${diffMinutes} min`;
+  if (diffHours < 24) return `hace ${diffHours}h`;
+  if (diffDays === 1) return 'Ayer';
+  if (diffDays < 7) return `hace ${diffDays} días`;
+  
+  return formatDate(date);
+}

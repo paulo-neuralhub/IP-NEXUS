@@ -3,13 +3,14 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Copy, 
   Calendar, DollarSign, User, Tag, FileText, History,
-  Upload, Download, File, X, Clock, MessageSquare, Users
+  Upload, Download, File, X, Clock, MessageSquare, Users, Building2
 } from 'lucide-react';
 import { useMatter, useMatterDocuments, useMatterEvents, useDeleteMatter } from '@/hooks/use-matters';
 import { MatterTimeWidget } from '@/components/timetracking';
 import { useOrganization } from '@/contexts/organization-context';
 import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator, DocumentList } from '@/components/features/docket';
 import { MatterPresence, MatterComments, MatterActivityFeed } from '@/components/collaboration';
+import { MatterOfficialTab, MatterOfficeWidget } from '@/components/matters';
 import { MATTER_TYPES, MATTER_STATUSES, MARK_TYPES, JURISDICTIONS } from '@/lib/constants/matters';
 import type { MatterType, MatterStatus, MarkType, Matter } from '@/types/matters';
 import { formatDate, formatCurrency } from '@/lib/utils';
@@ -193,6 +194,10 @@ export default function MatterDetail() {
                 <FileText className="h-4 w-4 mr-2" />
                 Información
               </TabsTrigger>
+              <TabsTrigger value="official">
+                <Building2 className="h-4 w-4 mr-2" />
+                Oficial
+              </TabsTrigger>
               <TabsTrigger value="documents">
                 <Upload className="h-4 w-4 mr-2" />
                 Documentos ({documents?.length || 0})
@@ -321,6 +326,10 @@ export default function MatterDetail() {
               )}
             </TabsContent>
             
+            <TabsContent value="official" className="mt-4">
+              <MatterOfficialTab matterId={id!} />
+            </TabsContent>
+            
             <TabsContent value="documents" className="mt-4">
               <Card>
                 <CardContent className="pt-6">
@@ -438,6 +447,12 @@ export default function MatterDetail() {
               </div>
             </CardContent>
           </Card>
+          
+          {/* Office Status Widget */}
+          <MatterOfficeWidget 
+            matterId={id!} 
+            onViewDetail={() => setActiveTab('official')}
+          />
           
           {/* Tags */}
           {matter.tags && matter.tags.length > 0 && (

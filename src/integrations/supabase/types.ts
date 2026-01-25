@@ -22092,6 +22092,20 @@ export type Database = {
           next_renewal_date: string | null
           nice_classes: number[] | null
           notes: string | null
+          office_application_number: string | null
+          office_code: string | null
+          office_expiry_date: string | null
+          office_filing_date: string | null
+          office_last_sync_at: string | null
+          office_last_sync_status: string | null
+          office_metadata: Json | null
+          office_priority_date: string | null
+          office_publication_date: string | null
+          office_registration_date: string | null
+          office_registration_number: string | null
+          office_status: string | null
+          office_status_date: string | null
+          office_status_normalized: string | null
           official_fees: number | null
           organization_id: string
           owner_name: string | null
@@ -22152,6 +22166,20 @@ export type Database = {
           next_renewal_date?: string | null
           nice_classes?: number[] | null
           notes?: string | null
+          office_application_number?: string | null
+          office_code?: string | null
+          office_expiry_date?: string | null
+          office_filing_date?: string | null
+          office_last_sync_at?: string | null
+          office_last_sync_status?: string | null
+          office_metadata?: Json | null
+          office_priority_date?: string | null
+          office_publication_date?: string | null
+          office_registration_date?: string | null
+          office_registration_number?: string | null
+          office_status?: string | null
+          office_status_date?: string | null
+          office_status_normalized?: string | null
           official_fees?: number | null
           organization_id: string
           owner_name?: string | null
@@ -22212,6 +22240,20 @@ export type Database = {
           next_renewal_date?: string | null
           nice_classes?: number[] | null
           notes?: string | null
+          office_application_number?: string | null
+          office_code?: string | null
+          office_expiry_date?: string | null
+          office_filing_date?: string | null
+          office_last_sync_at?: string | null
+          office_last_sync_status?: string | null
+          office_metadata?: Json | null
+          office_priority_date?: string | null
+          office_publication_date?: string | null
+          office_registration_date?: string | null
+          office_registration_number?: string | null
+          office_status?: string | null
+          office_status_date?: string | null
+          office_status_normalized?: string | null
           official_fees?: number | null
           organization_id?: string
           owner_name?: string | null
