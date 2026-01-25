@@ -11777,7 +11777,7 @@ export type Database = {
           json_content: Json | null
           language: string | null
           name: string
-          organization_id: string
+          organization_id: string | null
           owner_type: string
           plain_text: string | null
           preview_text: string | null
@@ -11805,7 +11805,7 @@ export type Database = {
           json_content?: Json | null
           language?: string | null
           name: string
-          organization_id: string
+          organization_id?: string | null
           owner_type?: string
           plain_text?: string | null
           preview_text?: string | null
@@ -11833,7 +11833,7 @@ export type Database = {
           json_content?: Json | null
           language?: string | null
           name?: string
-          organization_id?: string
+          organization_id?: string | null
           owner_type?: string
           plain_text?: string | null
           preview_text?: string | null
