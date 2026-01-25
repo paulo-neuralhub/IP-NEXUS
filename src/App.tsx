@@ -492,6 +492,13 @@ const App = () => (
                 <Route path="alerts" element={<BackofficeAlertsPage />} />
                 <Route path="products" element={<BackofficeProductsPage />} />
                 <Route path="kill-switch" element={<KillSwitchPage />} />
+                {/* Stripe */}
+                <Route path="stripe" element={<StripeDashboard />} />
+                <Route path="stripe/config" element={<StripeConfigPage />} />
+                <Route path="stripe/products" element={<StripeProductsPage />} />
+                <Route path="stripe/subscriptions" element={<StripeSubscriptionsPage />} />
+                <Route path="stripe/invoices" element={<StripeInvoicesPage />} />
+                <Route path="stripe/webhooks" element={<StripeWebhooksPage />} />
                 {/* Landings */}
                 <Route path="landings" element={<LandingsDashboard />} />
                 <Route path="landings/paginas" element={<LandingPagesListPage />} />

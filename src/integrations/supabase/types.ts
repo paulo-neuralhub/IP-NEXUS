@@ -27324,6 +27324,7 @@ export type Database = {
           product_id: string
           stripe_price_id: string | null
           stripe_product_id: string | null
+          stripe_synced_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -27337,6 +27338,7 @@ export type Database = {
           product_id: string
           stripe_price_id?: string | null
           stripe_product_id?: string | null
+          stripe_synced_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -27350,6 +27352,7 @@ export type Database = {
           product_id?: string
           stripe_price_id?: string | null
           stripe_product_id?: string | null
+          stripe_synced_at?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -27379,6 +27382,8 @@ export type Database = {
           name: string
           product_type: string
           sort_order: number | null
+          stripe_product_id: string | null
+          stripe_synced_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -27397,6 +27402,8 @@ export type Database = {
           name: string
           product_type: string
           sort_order?: number | null
+          stripe_product_id?: string | null
+          stripe_synced_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -27415,6 +27422,8 @@ export type Database = {
           name?: string
           product_type?: string
           sort_order?: number | null
+          stripe_product_id?: string | null
+          stripe_synced_at?: string | null
           updated_at?: string | null
         }
         Relationships: []
@@ -31494,6 +31503,66 @@ export type Database = {
           },
         ]
       }
+      stripe_config: {
+        Row: {
+          cancel_url: string | null
+          created_at: string | null
+          customer_portal_url: string | null
+          default_currency: string | null
+          has_secret_key: boolean | null
+          has_webhook_secret: boolean | null
+          id: string
+          is_configured: boolean | null
+          last_sync_at: string | null
+          last_webhook_at: string | null
+          mode: string | null
+          publishable_key: string | null
+          success_url: string | null
+          tax_rate_id: string | null
+          trial_days: number | null
+          updated_at: string | null
+          webhook_url: string | null
+        }
+        Insert: {
+          cancel_url?: string | null
+          created_at?: string | null
+          customer_portal_url?: string | null
+          default_currency?: string | null
+          has_secret_key?: boolean | null
+          has_webhook_secret?: boolean | null
+          id?: string
+          is_configured?: boolean | null
+          last_sync_at?: string | null
+          last_webhook_at?: string | null
+          mode?: string | null
+          publishable_key?: string | null
+          success_url?: string | null
+          tax_rate_id?: string | null
+          trial_days?: number | null
+          updated_at?: string | null
+          webhook_url?: string | null
+        }
+        Update: {
+          cancel_url?: string | null
+          created_at?: string | null
+          customer_portal_url?: string | null
+          default_currency?: string | null
+          has_secret_key?: boolean | null
+          has_webhook_secret?: boolean | null
+          id?: string
+          is_configured?: boolean | null
+          last_sync_at?: string | null
+          last_webhook_at?: string | null
+          mode?: string | null
+          publishable_key?: string | null
+          success_url?: string | null
+          tax_rate_id?: string | null
+          trial_days?: number | null
+          updated_at?: string | null
+          webhook_url?: string | null
+        }
+        Relationships: []
+      }
       stripe_customers: {
         Row: {
           balance: number | null
@@ -31992,6 +32061,39 @@ export type Database = {
           },
         ]
       }
+      stripe_webhook_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          status: string | null
+          stripe_event_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string | null
+          stripe_event_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          status?: string | null
+          stripe_event_id?: string | null
+        }
+        Relationships: []
+      }
       subscription_history: {
         Row: {
           amount: number | null
@@ -32077,6 +32179,64 @@ export type Database = {
             columns: ["subscription_id"]
             isOneToOne: false
             referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          price_id: string | null
+          product_id: string | null
+          quantity: number | null
+          status: string | null
+          stripe_subscription_item_id: string | null
+          subscription_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          price_id?: string | null
+          product_id?: string | null
+          quantity?: number | null
+          status?: string | null
+          stripe_subscription_item_id?: string | null
+          subscription_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          price_id?: string | null
+          product_id?: string | null
+          quantity?: number | null
+          status?: string | null
+          stripe_subscription_item_id?: string | null
+          subscription_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_items_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "product_prices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_items_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_subscriptions"
             referencedColumns: ["id"]
           },
         ]
@@ -33509,6 +33669,112 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_subscriptions: {
+        Row: {
+          billing_cycle: string | null
+          cancel_at_period_end: boolean | null
+          canceled_at: string | null
+          created_at: string | null
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          next_invoice_date: string | null
+          organization_id: string | null
+          price_id: string | null
+          product_id: string | null
+          status: string | null
+          stripe_customer_id: string | null
+          stripe_metadata: Json | null
+          stripe_subscription_id: string | null
+          trial_end: string | null
+          trial_start: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          billing_cycle?: string | null
+          cancel_at_period_end?: boolean | null
+          canceled_at?: string | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          next_invoice_date?: string | null
+          organization_id?: string | null
+          price_id?: string | null
+          product_id?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_metadata?: Json | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          trial_start?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          billing_cycle?: string | null
+          cancel_at_period_end?: boolean | null
+          canceled_at?: string | null
+          created_at?: string | null
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          next_invoice_date?: string | null
+          organization_id?: string | null
+          price_id?: string | null
+          product_id?: string | null
+          status?: string | null
+          stripe_customer_id?: string | null
+          stripe_metadata?: Json | null
+          stripe_subscription_id?: string | null
+          trial_end?: string | null
+          trial_start?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_subscriptions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_subscriptions_price_id_fkey"
+            columns: ["price_id"]
+            isOneToOne: false
+            referencedRelation: "product_prices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_subscriptions_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
           },
         ]
       }

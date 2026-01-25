@@ -50,6 +50,17 @@ const sidebarSections = [
     ],
   },
   {
+    label: 'Stripe',
+    items: [
+      { label: 'Dashboard', path: '/backoffice/stripe', icon: CreditCard },
+      { label: 'Configuración', path: '/backoffice/stripe/config', icon: Settings },
+      { label: 'Productos', path: '/backoffice/stripe/products', icon: BarChart3 },
+      { label: 'Suscripciones', path: '/backoffice/stripe/subscriptions', icon: Users },
+      { label: 'Facturas', path: '/backoffice/stripe/invoices', icon: FileText },
+      { label: 'Webhooks', path: '/backoffice/stripe/webhooks', icon: Activity },
+    ],
+  },
+  {
     label: 'Oficinas PI',
     items: [
       { label: 'Dashboard', path: '/backoffice/ipo', icon: LayoutDashboard },
