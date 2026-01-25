@@ -53,16 +53,16 @@ export function useAnalyticsKPIs(period: number = 30) {
       // Get current period metrics
       const { data: currentData } = await fromTable('analytics_daily_metrics')
         .select('*')
-        .gte('date', format(periodStart, 'yyyy-MM-dd'))
-        .order('date', { ascending: false })
+        .gte('metric_date', format(periodStart, 'yyyy-MM-dd'))
+        .order('metric_date', { ascending: false })
         .limit(1);
 
       // Get previous period metrics for comparison
       const { data: previousData } = await fromTable('analytics_daily_metrics')
         .select('*')
-        .gte('date', format(previousPeriodStart, 'yyyy-MM-dd'))
-        .lt('date', format(periodStart, 'yyyy-MM-dd'))
-        .order('date', { ascending: false })
+        .gte('metric_date', format(previousPeriodStart, 'yyyy-MM-dd'))
+        .lt('metric_date', format(periodStart, 'yyyy-MM-dd'))
+        .order('metric_date', { ascending: false })
         .limit(1);
 
       const current = currentData?.[0] as any;
@@ -106,9 +106,9 @@ export function useMRREvolution(months: number = 12) {
       const startDate = subDays(endDate, months * 30);
 
       const { data, error } = await fromTable('analytics_daily_metrics')
-        .select('date, mrr_enterprise, mrr_professional, mrr_starter, mrr_addons, mrr_total')
-        .gte('date', format(startDate, 'yyyy-MM-dd'))
-        .order('date', { ascending: true });
+        .select('metric_date, mrr_enterprise, mrr_professional, mrr_starter, mrr_addons, mrr_total')
+        .gte('metric_date', format(startDate, 'yyyy-MM-dd'))
+        .order('metric_date', { ascending: true });
 
       if (error) throw error;
 
@@ -116,7 +116,7 @@ export function useMRREvolution(months: number = 12) {
       const monthlyData: Record<string, MRRData> = {};
       
       (data as any[] || []).forEach(d => {
-        const monthKey = format(new Date(d.date), 'MMM yyyy');
+        const monthKey = format(new Date(d.metric_date), 'MMM yyyy');
         monthlyData[monthKey] = {
           date: monthKey,
           enterprise: Number(d.mrr_enterprise || 0),
@@ -139,7 +139,7 @@ export function useSubscriptionDistribution() {
     queryFn: async () => {
       const { data, error } = await fromTable('analytics_daily_metrics')
         .select('subscribers_starter, subscribers_professional, subscribers_enterprise')
-        .order('date', { ascending: false })
+        .order('metric_date', { ascending: false })
         .limit(1);
 
       if (error) throw error;
@@ -220,14 +220,14 @@ export function useUserActivityMetrics(days: number = 7) {
       const startDate = subDays(endDate, days);
 
       const { data, error } = await fromTable('analytics_daily_metrics')
-        .select('date, active_users_day, total_users')
-        .gte('date', format(startDate, 'yyyy-MM-dd'))
-        .order('date', { ascending: true });
+        .select('metric_date, active_users_day, total_users')
+        .gte('metric_date', format(startDate, 'yyyy-MM-dd'))
+        .order('metric_date', { ascending: true });
 
       if (error) throw error;
 
       return ((data as any[]) || []).map(d => ({
-        date: format(new Date(d.date), 'EEE'),
+        date: format(new Date(d.metric_date), 'EEE'),
         dau: d.active_users_day || 0,
         mau: d.total_users || 0,
       }));

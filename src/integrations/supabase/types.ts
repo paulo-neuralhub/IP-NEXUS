@@ -3046,6 +3046,39 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_cohorts: {
+        Row: {
+          cohort_month: string
+          id: string
+          initial_count: number | null
+          initial_mrr: number | null
+          ltv_average: number | null
+          retention_counts: Json | null
+          retention_mrr: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          cohort_month: string
+          id?: string
+          initial_count?: number | null
+          initial_mrr?: number | null
+          ltv_average?: number | null
+          retention_counts?: Json | null
+          retention_mrr?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          cohort_month?: string
+          id?: string
+          initial_count?: number | null
+          initial_mrr?: number | null
+          ltv_average?: number | null
+          retention_counts?: Json | null
+          retention_mrr?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       analytics_daily_metrics: {
         Row: {
           ai_queries: number | null
@@ -3310,6 +3343,160 @@ export type Database = {
           {
             foreignKeyName: "analytics_feature_usage_organization_id_fkey"
             columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      analytics_subscription_events: {
+        Row: {
+          created_at: string | null
+          event_type: string
+          from_mrr: number | null
+          from_plan: string | null
+          id: string
+          metadata: Json | null
+          mrr_change: number | null
+          reason: string | null
+          tenant_id: string | null
+          to_mrr: number | null
+          to_plan: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_type: string
+          from_mrr?: number | null
+          from_plan?: string | null
+          id?: string
+          metadata?: Json | null
+          mrr_change?: number | null
+          reason?: string | null
+          tenant_id?: string | null
+          to_mrr?: number | null
+          to_plan?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_type?: string
+          from_mrr?: number | null
+          from_plan?: string | null
+          id?: string
+          metadata?: Json | null
+          mrr_change?: number | null
+          reason?: string | null
+          tenant_id?: string | null
+          to_mrr?: number | null
+          to_plan?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_subscription_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_subscription_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "analytics_subscription_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_subscription_events_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      analytics_tenant_metrics: {
+        Row: {
+          active_users: number | null
+          api_calls: number | null
+          clients_count: number | null
+          created_at: string | null
+          documents_uploaded: number | null
+          id: string
+          logins: number | null
+          matters_count: number | null
+          matters_created: number | null
+          metric_date: string
+          mrr: number | null
+          office_syncs: number | null
+          plan_code: string | null
+          tenant_id: string | null
+          users_count: number | null
+        }
+        Insert: {
+          active_users?: number | null
+          api_calls?: number | null
+          clients_count?: number | null
+          created_at?: string | null
+          documents_uploaded?: number | null
+          id?: string
+          logins?: number | null
+          matters_count?: number | null
+          matters_created?: number | null
+          metric_date: string
+          mrr?: number | null
+          office_syncs?: number | null
+          plan_code?: string | null
+          tenant_id?: string | null
+          users_count?: number | null
+        }
+        Update: {
+          active_users?: number | null
+          api_calls?: number | null
+          clients_count?: number | null
+          created_at?: string | null
+          documents_uploaded?: number | null
+          id?: string
+          logins?: number | null
+          matters_count?: number | null
+          matters_created?: number | null
+          metric_date?: string
+          mrr?: number | null
+          office_syncs?: number | null
+          plan_code?: string | null
+          tenant_id?: string | null
+          users_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "analytics_tenant_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_tenant_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "analytics_tenant_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "analytics_tenant_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
@@ -4072,6 +4259,200 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backoffice_chatbot_actions: {
+        Row: {
+          action_params: Json | null
+          action_type: string
+          completed_at: string | null
+          conversation_id: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          message_id: string | null
+          result: Json | null
+          status: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action_params?: Json | null
+          action_type: string
+          completed_at?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          result?: Json | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action_params?: Json | null
+          action_type?: string
+          completed_at?: string | null
+          conversation_id?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          message_id?: string | null
+          result?: Json | null
+          status?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backoffice_chatbot_actions_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_chatbot_conversations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backoffice_chatbot_actions_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_chatbot_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "backoffice_chatbot_actions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backoffice_chatbot_config: {
+        Row: {
+          allowed_actions: string[] | null
+          can_execute_actions: boolean | null
+          can_search_tenants: boolean | null
+          can_view_metrics: boolean | null
+          can_view_subscriptions: boolean | null
+          created_at: string | null
+          id: string
+          max_tokens: number | null
+          model: string | null
+          system_prompt: string | null
+          temperature: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          allowed_actions?: string[] | null
+          can_execute_actions?: boolean | null
+          can_search_tenants?: boolean | null
+          can_view_metrics?: boolean | null
+          can_view_subscriptions?: boolean | null
+          created_at?: string | null
+          id?: string
+          max_tokens?: number | null
+          model?: string | null
+          system_prompt?: string | null
+          temperature?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          allowed_actions?: string[] | null
+          can_execute_actions?: boolean | null
+          can_search_tenants?: boolean | null
+          can_view_metrics?: boolean | null
+          can_view_subscriptions?: boolean | null
+          created_at?: string | null
+          id?: string
+          max_tokens?: number | null
+          model?: string | null
+          system_prompt?: string | null
+          temperature?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      backoffice_chatbot_conversations: {
+        Row: {
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          messages_count: number | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          messages_count?: number | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          messages_count?: number | null
+          status?: string | null
+          title?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backoffice_chatbot_conversations_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      backoffice_chatbot_messages: {
+        Row: {
+          content: string
+          conversation_id: string | null
+          created_at: string | null
+          id: string
+          latency_ms: number | null
+          role: string
+          tokens_used: number | null
+          tool_calls: Json | null
+          tool_results: Json | null
+        }
+        Insert: {
+          content: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          latency_ms?: number | null
+          role: string
+          tokens_used?: number | null
+          tool_calls?: Json | null
+          tool_results?: Json | null
+        }
+        Update: {
+          content?: string
+          conversation_id?: string | null
+          created_at?: string | null
+          id?: string
+          latency_ms?: number | null
+          role?: string
+          tokens_used?: number | null
+          tool_calls?: Json | null
+          tool_results?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "backoffice_chatbot_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_chatbot_conversations"
             referencedColumns: ["id"]
           },
         ]
