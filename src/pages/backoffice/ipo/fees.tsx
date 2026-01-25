@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,20 +10,22 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Plus, Pencil, RefreshCw, History, ExternalLink } from 'lucide-react';
+import { Plus, Pencil, RefreshCw, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 import { format } from 'date-fns';
 
+// Use the actual database schema
 interface OfficialFee {
   id: string;
-  office_code: string;
+  office: string;
+  office_id?: string;
   code: string;
   name: string;
   description?: string;
   fee_type: string;
-  ip_type?: string;
+  ip_type: string;
   amount: number;
-  currency: string;
+  currency?: string;
   per_class?: boolean;
   base_classes?: number;
   extra_class_fee?: number;
@@ -31,6 +33,7 @@ interface OfficialFee {
   effective_until?: string;
   is_current?: boolean;
   source_url?: string;
+  notes?: string;
 }
 
 const FEE_CATEGORIES = ['filing', 'class', 'renewal', 'opposition', 'appeal', 'restoration', 'other'];
@@ -51,7 +54,7 @@ export default function OfficeFeesPage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('ipo_offices')
-        .select('code, name_official, currency')
+        .select('id, code, name_official, currency')
         .eq('is_active', true)
         .order('name_official');
       if (error) throw error;
@@ -66,12 +69,12 @@ export default function OfficeFeesPage() {
       let query = supabase
         .from('official_fees')
         .select('*')
-        .order('office_code')
+        .order('office')
         .order('fee_type')
         .order('code');
       
       if (selectedOffice !== 'all') {
-        query = query.eq('office_code', selectedOffice);
+        query = query.eq('office', selectedOffice);
       }
       if (selectedType !== 'all') {
         query = query.eq('ip_type', selectedType);
@@ -90,22 +93,25 @@ export default function OfficeFeesPage() {
   const saveMutation = useMutation({
     mutationFn: async (fee: Partial<OfficialFee>) => {
       const payload = {
-        office_code: fee.office_code,
-        code: fee.code,
-        name: fee.name,
+        office: fee.office!,
+        office_id: fee.office_id,
+        code: fee.code!,
+        name: fee.name!,
         description: fee.description,
-        fee_type: fee.fee_type,
-        ip_type: fee.ip_type,
-        amount: fee.amount,
-        currency: fee.currency,
+        fee_type: fee.fee_type!,
+        ip_type: fee.ip_type!,
+        amount: fee.amount!,
+        currency: fee.currency || 'EUR',
         per_class: fee.per_class,
         base_classes: fee.base_classes,
         extra_class_fee: fee.extra_class_fee,
-        effective_from: fee.effective_from,
+        effective_from: fee.effective_from!,
         effective_until: fee.effective_until,
         source_url: fee.source_url,
         is_current: true,
+        notes: fee.notes,
       };
+      
       if (fee.id) {
         const { error } = await supabase
           .from('official_fees')
@@ -131,22 +137,25 @@ export default function OfficeFeesPage() {
   });
 
   const handleSave = (formData: FormData) => {
+    const selectedOfficeData = offices.find(o => o.code === formData.get('office'));
     const fee: Partial<OfficialFee> = {
       id: editingFee?.id,
-      office_code: formData.get('office_code') as string,
-      code: formData.get('fee_code') as string,
-      name: formData.get('fee_name_es') as string,
-      description: formData.get('fee_name_en') as string || undefined,
-      fee_type: formData.get('fee_category') as string,
+      office: formData.get('office') as string,
+      office_id: selectedOfficeData?.id,
+      code: formData.get('code') as string,
+      name: formData.get('name') as string,
+      description: formData.get('description') as string || undefined,
+      fee_type: formData.get('fee_type') as string,
       ip_type: formData.get('ip_type') as string,
       amount: parseFloat(formData.get('amount') as string),
       currency: formData.get('currency') as string,
       per_class: formData.get('per_class') === 'true',
       base_classes: parseInt(formData.get('base_classes') as string) || 1,
-      extra_class_fee: parseInt(formData.get('extra_class_fee') as string) || undefined,
+      extra_class_fee: parseFloat(formData.get('extra_class_fee') as string) || undefined,
       effective_from: formData.get('effective_from') as string,
       effective_until: formData.get('effective_until') as string || undefined,
       source_url: formData.get('source_url') as string || undefined,
+      notes: formData.get('notes') as string || undefined,
     };
     saveMutation.mutate(fee);
   };
@@ -190,7 +199,7 @@ export default function OfficeFeesPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label>Oficina *</Label>
-                      <Select name="office_code" defaultValue={editingFee?.office_code}>
+                      <Select name="office" defaultValue={editingFee?.office}>
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccionar" />
                         </SelectTrigger>
@@ -204,8 +213,8 @@ export default function OfficeFeesPage() {
                     <div className="space-y-2">
                       <Label>Código *</Label>
                       <Input 
-                        name="fee_code" 
-                        defaultValue={editingFee?.fee_code}
+                        name="code" 
+                        defaultValue={editingFee?.code}
                         placeholder="TM_FILING_ONLINE"
                         required
                       />
@@ -213,28 +222,28 @@ export default function OfficeFeesPage() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Nombre (ES) *</Label>
+                    <Label>Nombre *</Label>
                     <Input 
-                      name="fee_name_es" 
-                      defaultValue={editingFee?.fee_name_es}
+                      name="name" 
+                      defaultValue={editingFee?.name}
                       placeholder="Solicitud marca online (1 clase)"
                       required
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Nombre (EN)</Label>
+                    <Label>Descripción</Label>
                     <Input 
-                      name="fee_name_en" 
-                      defaultValue={editingFee?.fee_name_en}
-                      placeholder="Online TM application (1 class)"
+                      name="description" 
+                      defaultValue={editingFee?.description}
+                      placeholder="Descripción adicional..."
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Categoría *</Label>
-                      <Select name="fee_category" defaultValue={editingFee?.fee_category || 'filing'}>
+                      <Label>Tipo de Tasa *</Label>
+                      <Select name="fee_type" defaultValue={editingFee?.fee_type || 'filing'}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
@@ -246,7 +255,7 @@ export default function OfficeFeesPage() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label>Tipo IP</Label>
+                      <Label>Tipo IP *</Label>
                       <Select name="ip_type" defaultValue={editingFee?.ip_type || 'trademark'}>
                         <SelectTrigger>
                           <SelectValue />
@@ -300,8 +309,10 @@ export default function OfficeFeesPage() {
                       <Label>Tasa clase extra</Label>
                       <Input 
                         name="extra_class_fee" 
+                        type="number"
+                        step="0.01"
                         defaultValue={editingFee?.extra_class_fee}
-                        placeholder="TM_CLASS_2"
+                        placeholder="50"
                       />
                     </div>
                   </div>
@@ -333,6 +344,15 @@ export default function OfficeFeesPage() {
                       type="url"
                       defaultValue={editingFee?.source_url}
                       placeholder="https://..."
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Notas</Label>
+                    <Input 
+                      name="notes" 
+                      defaultValue={editingFee?.notes}
+                      placeholder="Notas adicionales..."
                     />
                   </div>
                 </div>
@@ -405,7 +425,7 @@ export default function OfficeFeesPage() {
                   <TableHead>Oficina</TableHead>
                   <TableHead>Código</TableHead>
                   <TableHead>Concepto</TableHead>
-                  <TableHead>Categoría</TableHead>
+                  <TableHead>Tipo</TableHead>
                   <TableHead className="text-right">Importe</TableHead>
                   <TableHead>Vigente desde</TableHead>
                   <TableHead className="w-[100px]">Acciones</TableHead>
@@ -414,7 +434,7 @@ export default function OfficeFeesPage() {
               <TableBody>
                 {fees.map((fee) => (
                   <TableRow key={fee.id}>
-                    <TableCell className="font-medium">{fee.office_code}</TableCell>
+                    <TableCell className="font-medium">{fee.office}</TableCell>
                     <TableCell>
                       <code className="text-xs bg-muted px-1 py-0.5 rounded">{fee.code}</code>
                     </TableCell>

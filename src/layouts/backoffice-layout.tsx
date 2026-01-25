@@ -26,6 +26,9 @@ import {
   Database,
   PhoneCall,
   ScrollText,
+  GitBranch,
+  DollarSign,
+  Activity,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -47,9 +50,19 @@ const sidebarSections = [
     ],
   },
   {
-    label: 'Registry',
+    label: 'Oficinas PI',
     items: [
-      { label: 'IPO Registry', path: '/backoffice/ipo', icon: Globe },
+      { label: 'Dashboard', path: '/backoffice/ipo', icon: LayoutDashboard },
+      { label: 'Lista', path: '/backoffice/ipo/lista', icon: Globe },
+      { label: 'Mappings', path: '/backoffice/ipo/mappings', icon: GitBranch },
+      { label: 'Tasas', path: '/backoffice/ipo/fees', icon: DollarSign },
+      { label: 'Monitor', path: '/backoffice/ipo/monitor', icon: Activity },
+      { label: 'Logs', path: '/backoffice/ipo/logs', icon: FileText },
+    ],
+  },
+  {
+    label: 'AI & Knowledge',
+    items: [
       { label: 'AI Brain', path: '/backoffice/ai', icon: Brain },
       { label: 'Knowledge Bases', path: '/backoffice/knowledge-bases', icon: Library },
     ],

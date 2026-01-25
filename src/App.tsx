@@ -181,6 +181,11 @@ import IPORegistryPage from "./pages/backoffice/ipo";
 import IPOOfficeDetailPage from "./pages/backoffice/ipo/[officeId]";
 import NewIPOOfficePage from "./pages/backoffice/ipo/new";
 import EditIPOOfficePage from "./pages/backoffice/ipo/edit";
+import IPOListPage from "./pages/backoffice/ipo/lista";
+import IPOMappingsPage from "./pages/backoffice/ipo/mappings";
+import IPOFeesPage from "./pages/backoffice/ipo/fees";
+import IPOMonitorPage from "./pages/backoffice/ipo/monitor";
+import IPOLogsPage from "./pages/backoffice/ipo/logs";
 import FeatureFlagsPage from "./pages/backoffice/feature-flags";
 import BackofficeApiKeysPage from "./pages/backoffice/api-keys";
 import BackofficeIntegrationsPage from "./pages/backoffice/integrations";
@@ -444,9 +449,14 @@ const App = () => (
                 <Route path="communications/email" element={<BackofficeEmailCommunicationsPage />} />
                 {/* IPO Registry */}
                 <Route path="ipo" element={<IPORegistryPage />} />
+                <Route path="ipo/lista" element={<IPOListPage />} />
                 <Route path="ipo/new" element={<NewIPOOfficePage />} />
                 <Route path="ipo/:officeId" element={<IPOOfficeDetailPage />} />
                 <Route path="ipo/:officeId/edit" element={<EditIPOOfficePage />} />
+                <Route path="ipo/mappings" element={<IPOMappingsPage />} />
+                <Route path="ipo/fees" element={<IPOFeesPage />} />
+                <Route path="ipo/monitor" element={<IPOMonitorPage />} />
+                <Route path="ipo/logs" element={<IPOLogsPage />} />
                 {/* AI Brain */}
                 <Route path="ai" element={<AIBrainPage />} />
                 {/* Tools */}
