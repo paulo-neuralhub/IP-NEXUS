@@ -250,7 +250,8 @@ interface NetworkStatus {
 
 export function useNetworkStatus(): NetworkStatus {
   const [status, setStatus] = useState<NetworkStatus>({
-    isOnline: typeof navigator !== 'undefined' ? navigator.onLine : true,
+    // Default to true to avoid false "offline" banners in iframes/preview
+    isOnline: true,
     connectionType: null,
     effectiveType: null,
     downlink: null,
@@ -258,8 +259,38 @@ export function useNetworkStatus(): NetworkStatus {
   });
 
   useEffect(() => {
+    // Only trust navigator.onLine after initial render to avoid iframe issues
+    const checkOnline = async () => {
+      // If browser says offline, verify with a real ping
+      if (!navigator.onLine) {
+        try {
+          // Try to fetch a tiny resource to confirm offline status
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000);
+          await fetch('/favicon.ico', { 
+            method: 'HEAD', 
+            cache: 'no-store',
+            signal: controller.signal 
+          });
+          clearTimeout(timeoutId);
+          // If fetch succeeds, we're actually online
+          setStatus(s => ({ ...s, isOnline: true }));
+        } catch {
+          // Actually offline
+          setStatus(s => ({ ...s, isOnline: false }));
+        }
+      } else {
+        setStatus(s => ({ ...s, isOnline: true }));
+      }
+    };
+
+    checkOnline();
+
     const handleOnline = () => setStatus(s => ({ ...s, isOnline: true }));
-    const handleOffline = () => setStatus(s => ({ ...s, isOnline: false }));
+    const handleOffline = () => {
+      // Verify offline status before showing banner
+      checkOnline();
+    };
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
