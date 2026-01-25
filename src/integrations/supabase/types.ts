@@ -30457,6 +30457,7 @@ export type Database = {
       }
       service_catalog: {
         Row: {
+          applicable_offices: string[] | null
           base_price: number
           category: string | null
           created_at: string
@@ -30467,22 +30468,29 @@ export type Database = {
           description: string | null
           display_order: number | null
           estimated_days: number | null
+          estimated_duration: string | null
           extra_class_fee: number | null
           generates_matter: boolean | null
           id: string
+          includes_official_fees: boolean | null
           is_active: boolean
+          is_preconfigured: boolean | null
           jurisdiction: string | null
           name: string
           nice_classes_included: number | null
           official_fee: number | null
-          organization_id: string
+          official_fees_note: string | null
+          organization_id: string | null
+          preconfigured_code: string | null
           professional_fee: number | null
           reference_code: string | null
           service_type: string | null
           stripe_price_id: string | null
+          subcategory: string | null
           updated_at: string
         }
         Insert: {
+          applicable_offices?: string[] | null
           base_price?: number
           category?: string | null
           created_at?: string
@@ -30493,22 +30501,29 @@ export type Database = {
           description?: string | null
           display_order?: number | null
           estimated_days?: number | null
+          estimated_duration?: string | null
           extra_class_fee?: number | null
           generates_matter?: boolean | null
           id?: string
+          includes_official_fees?: boolean | null
           is_active?: boolean
+          is_preconfigured?: boolean | null
           jurisdiction?: string | null
           name: string
           nice_classes_included?: number | null
           official_fee?: number | null
-          organization_id: string
+          official_fees_note?: string | null
+          organization_id?: string | null
+          preconfigured_code?: string | null
           professional_fee?: number | null
           reference_code?: string | null
           service_type?: string | null
           stripe_price_id?: string | null
+          subcategory?: string | null
           updated_at?: string
         }
         Update: {
+          applicable_offices?: string[] | null
           base_price?: number
           category?: string | null
           created_at?: string
@@ -30519,19 +30534,25 @@ export type Database = {
           description?: string | null
           display_order?: number | null
           estimated_days?: number | null
+          estimated_duration?: string | null
           extra_class_fee?: number | null
           generates_matter?: boolean | null
           id?: string
+          includes_official_fees?: boolean | null
           is_active?: boolean
+          is_preconfigured?: boolean | null
           jurisdiction?: string | null
           name?: string
           nice_classes_included?: number | null
           official_fee?: number | null
-          organization_id?: string
+          official_fees_note?: string | null
+          organization_id?: string | null
+          preconfigured_code?: string | null
           professional_fee?: number | null
           reference_code?: string | null
           service_type?: string | null
           stripe_price_id?: string | null
+          subcategory?: string | null
           updated_at?: string
         }
         Relationships: [
