@@ -1,5 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/contexts/organization-context";
+import { useAuth } from "@/contexts/auth-context";
 import { toast } from "sonner";
 
 export interface ReviewItem {
@@ -23,74 +25,83 @@ export interface ReviewItemDetail extends ReviewItem {
 
 export function useImportReview() {
   const { currentOrganization } = useOrganization();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Get review queue - mock data for now until table exists
+  // Get review queue from database
   const { data: reviewQueue = [], isLoading } = useQuery({
     queryKey: ['import-review-queue', currentOrganization?.id],
     queryFn: async (): Promise<ReviewItem[]> => {
       if (!currentOrganization?.id) return [];
 
-      // TODO: Replace with actual query when import_review_queue table exists
-      // For now return demo data
-      return [
-        {
-          id: 'review-1',
-          import_id: 'demo-1',
-          matter_id: undefined,
-          matter_ref: 'UK00003456789',
-          office_code: 'UKIPO',
-          extracted_data: {
-            status: 'Registered',
-            registration_date: '2025-01-15',
-            applicant: 'ACME Corp',
-          },
-          current_data: {
-            status: 'Published',
-            registration_date: null,
-            applicant: 'ACME Corporation',
-          },
-          confidence_score: 72,
-          fields_to_review: ['status', 'applicant'],
-          status: 'pending',
-          created_at: new Date(Date.now() - 300000).toISOString(),
-          import_file_name: 'boletín-ukipo-enero-2025.xlsx',
-        },
-        {
-          id: 'review-2',
-          import_id: 'demo-1',
-          matter_id: undefined,
-          matter_ref: 'UK00003456790',
-          office_code: 'UKIPO',
-          extracted_data: {
-            application_number: 'UK000345???',
-            status: 'Reg???ered',
-            applicant: 'A?ME Co?p',
-          },
-          current_data: {},
-          confidence_score: 45,
-          fields_to_review: ['application_number', 'status', 'applicant'],
-          status: 'pending',
-          created_at: new Date(Date.now() - 300000).toISOString(),
-          import_file_name: 'boletín-ukipo-enero-2025.xlsx',
-        },
-      ];
+      const { data, error } = await (supabase as any)
+        .from('import_review_queue')
+        .select('*, file_imports(office_code, file_name)')
+        .eq('organization_id', currentOrganization.id)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+
+      return (data || []).map((item: any) => ({
+        id: item.id,
+        import_id: item.import_id,
+        matter_id: item.matter_id,
+        matter_ref: item.extracted_data?.application_number || item.extracted_data?.reference,
+        office_code: item.file_imports?.office_code || 'Unknown',
+        extracted_data: item.extracted_data || {},
+        current_data: item.current_data || {},
+        confidence_score: item.confidence_score || 0,
+        fields_to_review: item.fields_to_review || [],
+        status: item.status,
+        created_at: item.created_at,
+        import_file_name: item.file_imports?.file_name,
+      }));
     },
     enabled: !!currentOrganization?.id,
   });
 
   // Get single review item detail
   const getReviewItem = async (id: string): Promise<ReviewItemDetail | null> => {
-    const item = reviewQueue.find(r => r.id === id);
-    if (!item) return null;
-    return { ...item, document_url: undefined };
+    const { data, error } = await (supabase as any)
+      .from('import_review_queue')
+      .select('*, file_imports(office_code, file_name)')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) return null;
+
+    return {
+      id: data.id,
+      import_id: data.import_id,
+      matter_id: data.matter_id,
+      matter_ref: data.extracted_data?.application_number || data.extracted_data?.reference,
+      office_code: data.file_imports?.office_code || 'Unknown',
+      extracted_data: data.extracted_data || {},
+      current_data: data.current_data || {},
+      confidence_score: data.confidence_score || 0,
+      fields_to_review: data.fields_to_review || [],
+      status: data.status,
+      created_at: data.created_at,
+      import_file_name: data.file_imports?.file_name,
+      document_url: undefined,
+    };
   };
 
   // Approve item
   const approveMutation = useMutation({
     mutationFn: async ({ id, finalData }: { id: string; finalData?: Record<string, unknown> }) => {
-      // TODO: Implement actual approval when table exists
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await (supabase as any)
+        .from('import_review_queue')
+        .update({
+          status: 'approved',
+          final_data: finalData || {},
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['import-review-queue'] });
@@ -105,8 +116,17 @@ export function useImportReview() {
   // Reject item
   const rejectMutation = useMutation({
     mutationFn: async ({ id, reason }: { id: string; reason?: string }) => {
-      // TODO: Implement actual rejection when table exists
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase
+        .from('import_review_queue')
+        .update({
+          status: 'rejected',
+          review_notes: reason,
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .eq('id', id);
+
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['import-review-queue'] });
@@ -120,8 +140,16 @@ export function useImportReview() {
   // Bulk approve
   const bulkApproveMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      // TODO: Implement actual bulk approval when table exists
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase
+        .from('import_review_queue')
+        .update({
+          status: 'approved',
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .in('id', ids);
+
+      if (error) throw error;
     },
     onSuccess: (_, ids) => {
       queryClient.invalidateQueries({ queryKey: ['import-review-queue'] });
@@ -136,8 +164,16 @@ export function useImportReview() {
   // Bulk reject
   const bulkRejectMutation = useMutation({
     mutationFn: async (ids: string[]) => {
-      // TODO: Implement actual bulk rejection when table exists
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabase
+        .from('import_review_queue')
+        .update({
+          status: 'rejected',
+          reviewed_by: user?.id,
+          reviewed_at: new Date().toISOString(),
+        })
+        .in('id', ids);
+
+      if (error) throw error;
     },
     onSuccess: (_, ids) => {
       queryClient.invalidateQueries({ queryKey: ['import-review-queue'] });

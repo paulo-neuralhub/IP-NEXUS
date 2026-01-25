@@ -62,10 +62,10 @@ export function useSyncHistory(filters?: { period?: string }) {
     queryFn: async () => {
       if (!currentOrganization?.id) return [];
 
-      let query = supabase
+      let query = (supabase as any)
         .from('sync_history')
         .select('*')
-        .eq('tenant_id', currentOrganization.id)
+        .eq('organization_id', currentOrganization.id)
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -128,7 +128,7 @@ export function useSyncHistory(filters?: { period?: string }) {
       if (!currentOrganization?.id) throw new Error('No organization');
 
       const response = await supabase.functions.invoke('run-manual-sync', {
-        body: { tenantId: currentOrganization.id },
+        body: { organizationId: currentOrganization.id },
       });
 
       if (response.error) throw new Error(response.error.message);

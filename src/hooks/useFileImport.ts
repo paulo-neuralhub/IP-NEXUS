@@ -81,33 +81,38 @@ export function useFileImport() {
     },
   });
 
-  // Get import history - mock data for now until table exists
+  // Get import history from database
   const { data: importHistory = [], isLoading: loadingHistory } = useQuery({
     queryKey: ['import-history', currentOrganization?.id],
     queryFn: async (): Promise<ImportRecord[]> => {
       if (!currentOrganization?.id) return [];
 
-      // TODO: Replace with actual query when file_imports table exists
-      // For now return demo data
-      return [
-        {
-          id: 'demo-1',
-          office_code: 'UKIPO',
-          office_name: 'UK Intellectual Property Office',
-          file_name: 'boletín-ukipo-enero-2025.xlsx',
-          file_type: 'xlsx',
-          file_size: 245000,
-          import_status: 'completed',
-          records_found: 55,
-          records_imported: 45,
-          records_updated: 8,
-          records_failed: 2,
-          requires_review: true,
-          review_count: 8,
-          created_at: new Date(Date.now() - 3600000).toISOString(),
-          processed_at: new Date(Date.now() - 3500000).toISOString(),
-        },
-      ];
+      const { data, error } = await supabase
+        .from('file_imports')
+        .select('*')
+        .eq('organization_id', currentOrganization.id)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (error) throw error;
+
+      return (data || []).map((item: any) => ({
+        id: item.id,
+        office_code: item.office_code || 'Unknown',
+        office_name: undefined,
+        file_name: item.file_name,
+        file_type: item.file_type,
+        file_size: item.file_size,
+        import_status: item.import_status,
+        records_found: item.records_found || 0,
+        records_imported: item.records_imported || 0,
+        records_updated: item.records_updated || 0,
+        records_failed: item.records_failed || 0,
+        requires_review: (item.requires_review || 0) > 0,
+        review_count: item.requires_review || 0,
+        created_at: item.created_at,
+        processed_at: item.processed_at,
+      }));
     },
     enabled: !!currentOrganization?.id,
   });

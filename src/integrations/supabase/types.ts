@@ -11733,6 +11733,112 @@ export type Database = {
         }
         Relationships: []
       }
+      file_imports: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          error_log: Json | null
+          error_records: number | null
+          file_name: string
+          file_path: string | null
+          file_size: number | null
+          file_type: string
+          id: string
+          imported_records: number | null
+          office_id: string | null
+          organization_id: string
+          pending_review: number | null
+          processing_completed_at: string | null
+          processing_started_at: string | null
+          status: string
+          total_records: number | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          error_log?: Json | null
+          error_records?: number | null
+          file_name: string
+          file_path?: string | null
+          file_size?: number | null
+          file_type: string
+          id?: string
+          imported_records?: number | null
+          office_id?: string | null
+          organization_id: string
+          pending_review?: number | null
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          status?: string
+          total_records?: number | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          error_log?: Json | null
+          error_records?: number | null
+          file_name?: string
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          imported_records?: number | null
+          office_id?: string | null
+          organization_id?: string
+          pending_review?: number | null
+          processing_completed_at?: string | null
+          processing_started_at?: string | null
+          status?: string
+          total_records?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "file_imports_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "file_imports_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ip_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "file_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "file_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "file_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "file_imports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       filing_applications: {
         Row: {
           applicant_data: Json
@@ -14760,6 +14866,123 @@ export type Database = {
           },
         ]
       }
+      import_review_queue: {
+        Row: {
+          conflicting_fields: Json | null
+          created_at: string
+          current_data: Json | null
+          extracted_data: Json
+          final_data: Json | null
+          id: string
+          import_id: string
+          match_confidence: number | null
+          match_type: string | null
+          matched_fields: Json | null
+          matter_id: string | null
+          organization_id: string
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          conflicting_fields?: Json | null
+          created_at?: string
+          current_data?: Json | null
+          extracted_data?: Json
+          final_data?: Json | null
+          id?: string
+          import_id: string
+          match_confidence?: number | null
+          match_type?: string | null
+          matched_fields?: Json | null
+          matter_id?: string | null
+          organization_id: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          conflicting_fields?: Json | null
+          created_at?: string
+          current_data?: Json | null
+          extracted_data?: Json
+          final_data?: Json | null
+          id?: string
+          import_id?: string
+          match_confidence?: number | null
+          match_type?: string | null
+          matched_fields?: Json | null
+          matter_id?: string | null
+          organization_id?: string
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_review_queue_import_id_fkey"
+            columns: ["import_id"]
+            isOneToOne: false
+            referencedRelation: "file_imports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       import_scraping_rules: {
         Row: {
           created_at: string | null
@@ -15679,6 +15902,120 @@ export type Database = {
             referencedColumns: ["organization_id"]
           },
         ]
+      }
+      ip_offices: {
+        Row: {
+          accepted_formats: string[] | null
+          addon_price_monthly: number | null
+          api_base_url: string | null
+          api_credentials_encrypted: string | null
+          api_version: string | null
+          auth_type: string | null
+          code: string
+          country_code: string | null
+          created_at: string
+          data_source: string
+          fees_url: string | null
+          flag_emoji: string | null
+          id: string
+          import_template_url: string | null
+          included_in_plans: string[] | null
+          is_active: boolean
+          last_health_check_at: string | null
+          last_response_time_ms: number | null
+          name: string
+          name_local: string | null
+          office_type: string
+          operational_status: string | null
+          product_id: string | null
+          rate_limit_per_day: number | null
+          rate_limit_per_minute: number | null
+          region: string | null
+          search_url: string | null
+          supports_documents: boolean | null
+          supports_fees_api: boolean | null
+          supports_history: boolean | null
+          supports_search: boolean | null
+          supports_status: boolean | null
+          updated_at: string
+          uptime_percent: number | null
+          website_url: string | null
+        }
+        Insert: {
+          accepted_formats?: string[] | null
+          addon_price_monthly?: number | null
+          api_base_url?: string | null
+          api_credentials_encrypted?: string | null
+          api_version?: string | null
+          auth_type?: string | null
+          code: string
+          country_code?: string | null
+          created_at?: string
+          data_source?: string
+          fees_url?: string | null
+          flag_emoji?: string | null
+          id?: string
+          import_template_url?: string | null
+          included_in_plans?: string[] | null
+          is_active?: boolean
+          last_health_check_at?: string | null
+          last_response_time_ms?: number | null
+          name: string
+          name_local?: string | null
+          office_type?: string
+          operational_status?: string | null
+          product_id?: string | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          region?: string | null
+          search_url?: string | null
+          supports_documents?: boolean | null
+          supports_fees_api?: boolean | null
+          supports_history?: boolean | null
+          supports_search?: boolean | null
+          supports_status?: boolean | null
+          updated_at?: string
+          uptime_percent?: number | null
+          website_url?: string | null
+        }
+        Update: {
+          accepted_formats?: string[] | null
+          addon_price_monthly?: number | null
+          api_base_url?: string | null
+          api_credentials_encrypted?: string | null
+          api_version?: string | null
+          auth_type?: string | null
+          code?: string
+          country_code?: string | null
+          created_at?: string
+          data_source?: string
+          fees_url?: string | null
+          flag_emoji?: string | null
+          id?: string
+          import_template_url?: string | null
+          included_in_plans?: string[] | null
+          is_active?: boolean
+          last_health_check_at?: string | null
+          last_response_time_ms?: number | null
+          name?: string
+          name_local?: string | null
+          office_type?: string
+          operational_status?: string | null
+          product_id?: string | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          region?: string | null
+          search_url?: string | null
+          supports_documents?: boolean | null
+          supports_fees_api?: boolean | null
+          supports_history?: boolean | null
+          supports_search?: boolean | null
+          supports_status?: boolean | null
+          updated_at?: string
+          uptime_percent?: number | null
+          website_url?: string | null
+        }
+        Relationships: []
       }
       ipo_alert_configs: {
         Row: {
@@ -23567,6 +23904,57 @@ export type Database = {
           },
         ]
       }
+      office_addon_pricing: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          is_available: boolean
+          office_id: string
+          price_monthly: number
+          price_yearly: number | null
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          id?: string
+          is_available?: boolean
+          office_id: string
+          price_monthly: number
+          price_yearly?: number | null
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          is_available?: boolean
+          office_id?: string
+          price_monthly?: number
+          price_yearly?: number | null
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_addon_pricing_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: true
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_addon_pricing_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: true
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       office_documents: {
         Row: {
           created_at: string | null
@@ -23979,6 +24367,42 @@ export type Database = {
           validations?: Json | null
         }
         Relationships: []
+      }
+      office_plan_inclusions: {
+        Row: {
+          created_at: string
+          id: string
+          office_id: string
+          plan: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          office_id: string
+          plan: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          office_id?: string
+          plan?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_plan_inclusions_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_plan_inclusions_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       office_pricing: {
         Row: {
@@ -32887,6 +33311,87 @@ export type Database = {
           },
           {
             foreignKeyName: "tenant_consents_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_office_addons: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string
+          currency: string
+          ends_at: string | null
+          id: string
+          office_id: string
+          organization_id: string
+          price_monthly: number
+          started_at: string
+          status: string
+          stripe_subscription_item_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string
+          currency?: string
+          ends_at?: string | null
+          id?: string
+          office_id: string
+          organization_id: string
+          price_monthly?: number
+          started_at?: string
+          status?: string
+          stripe_subscription_item_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string
+          currency?: string
+          ends_at?: string | null
+          id?: string
+          office_id?: string
+          organization_id?: string
+          price_monthly?: number
+          started_at?: string
+          status?: string
+          stripe_subscription_item_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_office_addons_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ip_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_office_addons_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_office_addons_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_office_addons_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_office_addons_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"

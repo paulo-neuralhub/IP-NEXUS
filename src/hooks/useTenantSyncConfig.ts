@@ -37,10 +37,10 @@ export function useTenantSyncConfig() {
     queryFn: async () => {
       if (!currentOrganization?.id) return defaultConfig;
 
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('tenant_sync_config')
         .select('*')
-        .eq('tenant_id', currentOrganization.id)
+        .eq('organization_id', currentOrganization.id)
         .maybeSingle();
 
       if (error) throw error;
@@ -68,7 +68,7 @@ export function useTenantSyncConfig() {
       if (!currentOrganization?.id) throw new Error('No organization');
 
       const payload = {
-        tenant_id: currentOrganization.id,
+        organization_id: currentOrganization.id,
         sync_status: newConfig.sync_status ?? config.sync_status,
         sync_documents: newConfig.sync_documents ?? config.sync_documents,
         auto_create_deadlines: newConfig.auto_create_deadlines ?? config.auto_create_deadlines,
@@ -80,13 +80,13 @@ export function useTenantSyncConfig() {
       };
 
       if (config.id) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('tenant_sync_config')
           .update(payload)
           .eq('id', config.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from('tenant_sync_config')
           .insert(payload);
         if (error) throw error;
