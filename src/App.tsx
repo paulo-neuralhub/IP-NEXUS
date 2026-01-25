@@ -213,6 +213,14 @@ import SystemLogsPage from "./pages/backoffice/logs";
 import BackofficeAlertsPage from "./pages/backoffice/alerts/BackofficeAlertsPage";
 import BackofficeProductsPage from "./pages/backoffice/products";
 
+// Stripe Backoffice
+import StripeDashboard from "./pages/backoffice/stripe";
+import StripeConfigPage from "./pages/backoffice/stripe/config";
+import StripeProductsPage from "./pages/backoffice/stripe/products";
+import StripeSubscriptionsPage from "./pages/backoffice/stripe/subscriptions";
+import StripeInvoicesPage from "./pages/backoffice/stripe/invoices";
+import StripeWebhooksPage from "./pages/backoffice/stripe/webhooks";
+
 // Landings Backoffice
 import LandingsDashboard from "./pages/backoffice/landings";
 import LandingPagesListPage from "./pages/backoffice/landings/pages";
