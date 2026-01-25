@@ -22122,6 +22122,8 @@ export type Database = {
           risk_score: number | null
           search_vector: unknown
           secondary_user_id: string | null
+          source_quote_id: string | null
+          source_type: string | null
           status: string
           status_code: Database["public"]["Enums"]["matter_status_enum"] | null
           status_date: string | null
@@ -22196,6 +22198,8 @@ export type Database = {
           risk_score?: number | null
           search_vector?: unknown
           secondary_user_id?: string | null
+          source_quote_id?: string | null
+          source_type?: string | null
           status?: string
           status_code?: Database["public"]["Enums"]["matter_status_enum"] | null
           status_date?: string | null
@@ -22270,6 +22274,8 @@ export type Database = {
           risk_score?: number | null
           search_vector?: unknown
           secondary_user_id?: string | null
+          source_quote_id?: string | null
+          source_type?: string | null
           status?: string
           status_code?: Database["public"]["Enums"]["matter_status_enum"] | null
           status_date?: string | null
@@ -22384,6 +22390,13 @@ export type Database = {
             columns: ["secondary_user_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_source_quote_id_fkey"
+            columns: ["source_quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
             referencedColumns: ["id"]
           },
           {
@@ -27458,8 +27471,13 @@ export type Database = {
           created_at: string | null
           description: string
           discount_percent: number | null
+          generated_matter_id: string | null
+          generates_matter: boolean | null
           id: string
           line_number: number
+          matter_jurisdiction: string | null
+          matter_subtype: string | null
+          matter_type: string | null
           notes: string | null
           official_fee_id: string | null
           quantity: number | null
@@ -27472,8 +27490,13 @@ export type Database = {
           created_at?: string | null
           description: string
           discount_percent?: number | null
+          generated_matter_id?: string | null
+          generates_matter?: boolean | null
           id?: string
           line_number: number
+          matter_jurisdiction?: string | null
+          matter_subtype?: string | null
+          matter_type?: string | null
           notes?: string | null
           official_fee_id?: string | null
           quantity?: number | null
@@ -27486,8 +27509,13 @@ export type Database = {
           created_at?: string | null
           description?: string
           discount_percent?: number | null
+          generated_matter_id?: string | null
+          generates_matter?: boolean | null
           id?: string
           line_number?: number
+          matter_jurisdiction?: string | null
+          matter_subtype?: string | null
+          matter_type?: string | null
           notes?: string | null
           official_fee_id?: string | null
           quantity?: number | null
@@ -27497,6 +27525,20 @@ export type Database = {
           unit_price?: number
         }
         Relationships: [
+          {
+            foreignKeyName: "quote_items_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "quote_items_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "quote_items_official_fee_id_fkey"
             columns: ["official_fee_id"]
@@ -27534,6 +27576,7 @@ export type Database = {
           currency: string | null
           deal_id: string | null
           discount_amount: number | null
+          generated_matter_id: string | null
           id: string
           introduction: string | null
           notes: string | null
@@ -27564,6 +27607,7 @@ export type Database = {
           currency?: string | null
           deal_id?: string | null
           discount_amount?: number | null
+          generated_matter_id?: string | null
           id?: string
           introduction?: string | null
           notes?: string | null
@@ -27594,6 +27638,7 @@ export type Database = {
           currency?: string | null
           deal_id?: string | null
           discount_amount?: number | null
+          generated_matter_id?: string | null
           id?: string
           introduction?: string | null
           notes?: string | null
@@ -27645,6 +27690,20 @@ export type Database = {
             columns: ["deal_id"]
             isOneToOne: false
             referencedRelation: "deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "quotes_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
             referencedColumns: ["id"]
           },
           {
@@ -29835,10 +29894,14 @@ export type Database = {
           category: string | null
           created_at: string
           currency: string
+          default_jurisdiction: string | null
+          default_matter_subtype: string | null
+          default_matter_type: string | null
           description: string | null
           display_order: number | null
           estimated_days: number | null
           extra_class_fee: number | null
+          generates_matter: boolean | null
           id: string
           is_active: boolean
           jurisdiction: string | null
@@ -29857,10 +29920,14 @@ export type Database = {
           category?: string | null
           created_at?: string
           currency?: string
+          default_jurisdiction?: string | null
+          default_matter_subtype?: string | null
+          default_matter_type?: string | null
           description?: string | null
           display_order?: number | null
           estimated_days?: number | null
           extra_class_fee?: number | null
+          generates_matter?: boolean | null
           id?: string
           is_active?: boolean
           jurisdiction?: string | null
@@ -29879,10 +29946,14 @@ export type Database = {
           category?: string | null
           created_at?: string
           currency?: string
+          default_jurisdiction?: string | null
+          default_matter_subtype?: string | null
+          default_matter_type?: string | null
           description?: string | null
           display_order?: number | null
           estimated_days?: number | null
           extra_class_fee?: number | null
+          generates_matter?: boolean | null
           id?: string
           is_active?: boolean
           jurisdiction?: string | null

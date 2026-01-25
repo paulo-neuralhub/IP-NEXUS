@@ -13,3 +13,6 @@ export { MatterOfficeWidget } from './MatterOfficeWidget';
 export { MatterOfficeLinkForm } from './MatterOfficeLinkForm';
 export { MatterOfficeManualUpdate } from './MatterOfficeManualUpdate';
 export { MatterOfficeCheckModal } from './MatterOfficeCheckModal';
+
+// Matter source info
+export { MatterSourceInfo } from './MatterSourceInfo';
