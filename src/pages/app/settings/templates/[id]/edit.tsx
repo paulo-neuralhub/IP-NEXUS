@@ -394,9 +394,9 @@ export default function TemplateEditorPage() {
               </div>
             </CardHeader>
             <CardContent className="flex-1 overflow-hidden p-4">
-              <div className="h-full bg-gray-100 rounded-lg overflow-auto p-4">
+              <div className="h-full bg-muted rounded-lg overflow-auto p-4">
                 <div 
-                  className="bg-white shadow-lg mx-auto max-w-[210mm] min-h-[297mm] p-8"
+                  className="bg-background shadow-lg mx-auto max-w-[210mm] min-h-[297mm] p-8"
                   dangerouslySetInnerHTML={{ __html: previewHtml }}
                 />
               </div>

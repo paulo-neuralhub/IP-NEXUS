@@ -135,14 +135,14 @@ export function DeadlineRulesTab() {
         <CardContent className="pt-4">
           <div className="flex flex-wrap gap-4 items-center">
             <Select
-              value={filters.matterType}
-              onValueChange={(v) => setFilters(f => ({ ...f, matterType: v }))}
+              value={filters.matterType || '__all__'}
+              onValueChange={(v) => setFilters(f => ({ ...f, matterType: v === '__all__' ? '' : v }))}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Todos los tipos" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos los tipos</SelectItem>
+                <SelectItem value="__all__">Todos los tipos</SelectItem>
                 {MATTER_TYPES.map(t => (
                   <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
                 ))}
@@ -150,14 +150,14 @@ export function DeadlineRulesTab() {
             </Select>
 
             <Select
-              value={filters.jurisdiction}
-              onValueChange={(v) => setFilters(f => ({ ...f, jurisdiction: v }))}
+              value={filters.jurisdiction || '__all__'}
+              onValueChange={(v) => setFilters(f => ({ ...f, jurisdiction: v === '__all__' ? '' : v }))}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Todas jurisdicciones" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas jurisdicciones</SelectItem>
+                <SelectItem value="__all__">Todas jurisdicciones</SelectItem>
                 {JURISDICTIONS.map(j => (
                   <SelectItem key={j.value} value={j.value}>{j.label}</SelectItem>
                 ))}

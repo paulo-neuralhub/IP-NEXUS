@@ -15,35 +15,35 @@ const TEMPLATE_TYPES: { type: DocumentType; label: string; icon: React.ElementTy
     type: 'invoice', 
     label: 'Facturas', 
     icon: Receipt, 
-    color: 'text-emerald-600 bg-emerald-50',
+    color: 'text-finance bg-finance/10',
     description: 'Plantillas para facturas comerciales'
   },
   { 
     type: 'quote', 
     label: 'Presupuestos', 
     icon: FileText, 
-    color: 'text-blue-600 bg-blue-50',
+    color: 'text-primary bg-primary/10',
     description: 'Plantillas para presupuestos y propuestas'
   },
   { 
     type: 'certificate', 
     label: 'Certificados', 
     icon: FileCheck, 
-    color: 'text-amber-600 bg-amber-50',
+    color: 'text-warning bg-warning/10',
     description: 'Certificados de registro y presentación'
   },
   { 
     type: 'letter', 
     label: 'Cartas', 
     icon: Mail, 
-    color: 'text-purple-600 bg-purple-50',
+    color: 'text-genius bg-genius/10',
     description: 'Cartas formales y notificaciones'
   },
   { 
     type: 'report', 
     label: 'Informes', 
     icon: BarChart3, 
-    color: 'text-rose-600 bg-rose-50',
+    color: 'text-crm bg-crm/10',
     description: 'Informes de vigilancia y análisis'
   },
 ];
@@ -116,7 +116,7 @@ export default function TemplatesDashboardPage() {
               <CardContent>
                 {defaultsByType[type] && (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Star className="w-3 h-3 text-amber-500 fill-amber-500" />
+                    <Star className="w-3 h-3 text-warning fill-warning" />
                     <span className="truncate">{defaultsByType[type]}</span>
                   </div>
                 )}
@@ -142,19 +142,19 @@ export default function TemplatesDashboardPage() {
               <div className="text-sm text-muted-foreground">Total plantillas</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-emerald-600">
+              <div className="text-2xl font-bold text-finance">
                 {templates.filter(t => t.is_system_template).length}
               </div>
               <div className="text-sm text-muted-foreground">Del sistema</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-blue-600">
+              <div className="text-2xl font-bold text-primary">
                 {templates.filter(t => !t.is_system_template).length}
               </div>
               <div className="text-sm text-muted-foreground">Personalizadas</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-amber-600">
+              <div className="text-2xl font-bold text-warning">
                 {templates.filter(t => t.is_default).length}
               </div>
               <div className="text-sm text-muted-foreground">Por defecto</div>

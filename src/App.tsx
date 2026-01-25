@@ -125,6 +125,10 @@ import SubscriptionPlansPage from "./pages/app/settings/subscription/plans";
 import IPChainPage from "./pages/app/ip-chain";
 import TranslatorPage from "./pages/app/genius/translator";
 import DocumentTemplatesPage from "./pages/app/genius/templates";
+import DocumentTemplatesDashboard from "./pages/app/settings/templates";
+import DocumentTemplateBrandingPage from "./pages/app/settings/templates/branding";
+import DocumentTemplateListPage from "./pages/app/settings/templates/[type]";
+import DocumentTemplateEditPage from "./pages/app/settings/templates/[id]/edit";
 import GenerateDocumentPage from "./pages/app/genius/templates/generate";
 import DocumentViewPage from "./pages/app/genius/templates/document-view";
 import GeniusAnalysisPage from "./pages/app/genius/analysis";
@@ -431,6 +435,11 @@ const App = () => (
                 <Route path="settings/subscription" element={<SubscriptionPage />} />
                 <Route path="settings/subscription/invoices" element={<SubscriptionInvoicesPage />} />
                 <Route path="settings/subscription/plans" element={<SubscriptionPlansPage />} />
+                {/* Document Templates */}
+                <Route path="settings/templates" element={<DocumentTemplatesDashboard />} />
+                <Route path="settings/templates/branding" element={<DocumentTemplateBrandingPage />} />
+                <Route path="settings/templates/:type" element={<DocumentTemplateListPage />} />
+                <Route path="settings/templates/:id/edit" element={<DocumentTemplateEditPage />} />
                 <Route path="expedientes/importar" element={<ImportDataPage />} />
                 <Route path="expedientes/revision" element={<ReviewQueuePage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />

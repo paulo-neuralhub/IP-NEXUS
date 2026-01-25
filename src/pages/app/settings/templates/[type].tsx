@@ -15,11 +15,11 @@ import {
 } from 'lucide-react';
 
 const TYPE_CONFIG: Record<DocumentType, { label: string; icon: React.ElementType; color: string }> = {
-  invoice: { label: 'Facturas', icon: Receipt, color: 'text-emerald-600' },
-  quote: { label: 'Presupuestos', icon: FileText, color: 'text-blue-600' },
-  certificate: { label: 'Certificados', icon: FileCheck, color: 'text-amber-600' },
-  letter: { label: 'Cartas', icon: Mail, color: 'text-purple-600' },
-  report: { label: 'Informes', icon: BarChart3, color: 'text-rose-600' },
+  invoice: { label: 'Facturas', icon: Receipt, color: 'text-finance' },
+  quote: { label: 'Presupuestos', icon: FileText, color: 'text-primary' },
+  certificate: { label: 'Certificados', icon: FileCheck, color: 'text-warning' },
+  letter: { label: 'Cartas', icon: Mail, color: 'text-genius' },
+  report: { label: 'Informes', icon: BarChart3, color: 'text-crm' },
 };
 
 export default function TemplateListPage() {
@@ -144,7 +144,7 @@ export default function TemplateListPage() {
                     <h3 className="font-medium truncate">{template.name}</h3>
                     {template.is_default && (
                       <Badge variant="secondary" className="gap-1">
-                        <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                        <Star className="w-3 h-3 fill-warning text-warning" />
                         Por defecto
                       </Badge>
                     )}
@@ -229,7 +229,7 @@ export default function TemplateListPage() {
             <DialogTitle>Vista previa: {previewTitle}</DialogTitle>
           </DialogHeader>
           <div 
-            className="bg-white border rounded-lg p-8 shadow-inner min-h-[600px]"
+            className="bg-background border rounded-lg p-8 shadow-inner min-h-[600px]"
             dangerouslySetInnerHTML={{ __html: previewContent }}
           />
         </DialogContent>
