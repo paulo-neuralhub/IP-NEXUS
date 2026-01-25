@@ -13,28 +13,33 @@ import type { Database } from '@/integrations/supabase/types';
 type MatterDeadlineRow = Database['public']['Tables']['matter_deadlines']['Row'];
 type MatterDeadlineInsert = Database['public']['Tables']['matter_deadlines']['Insert'];
 
-export interface MatterDeadline extends MatterDeadlineRow {
+export interface MatterDeadline extends Omit<MatterDeadlineRow, 'deadline_type'> {
   matter?: {
     id: string;
-    reference_number?: string;
-    reference?: string;
+    reference: string;
     title: string;
     type?: string;
     jurisdiction?: string;
     client?: { id: string; name: string } | null;
   } | null;
-  deadline_type?: {
+  deadline_type_info?: {
     id: string;
     code: string;
     name_es: string;
     name_en?: string;
     category: string;
   } | null;
+  deadline_type: string;
 }
+
+// Alias for backward compatibility
+export type Deadline = MatterDeadline;
 
 export interface DeadlineStats {
   overdue: number;
   today: number;
+  urgent: number;      // 1-7 days
+  upcoming: number;    // 8-30 days
   thisWeek: number;
   thisMonth: number;
   total: number;
@@ -51,17 +56,21 @@ interface UseDeadlinesOptions {
 
 export function useDeadlines(options: UseDeadlinesOptions = {}) {
   const { session } = useAuth();
+  const { currentOrganization } = useOrganization();
   const queryClient = useQueryClient();
 
   const { data: deadlines, isLoading, error } = useQuery({
-    queryKey: ['deadlines', options],
+    queryKey: ['deadlines', currentOrganization?.id, options],
     queryFn: async () => {
+      if (!currentOrganization?.id) return [];
+
       let query = supabase
         .from('matter_deadlines')
         .select(`
           *,
-          matter:matters(id, reference_number, title, type, jurisdiction)
+          matter:matters(id, reference, title, type, jurisdiction)
         `)
+        .eq('organization_id', currentOrganization.id)
         .order('deadline_date', { ascending: true });
 
       if (options.matterId) {
@@ -85,9 +94,9 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
 
       const { data, error } = await query;
       if (error) throw error;
-      return data as MatterDeadline[];
+      return data as unknown as MatterDeadline[];
     },
-    enabled: !!session
+    enabled: !!session && !!currentOrganization?.id
   });
 
   const markAsCompletedMutation = useMutation({
@@ -114,12 +123,24 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
 
   const extendDeadlineMutation = useMutation({
     mutationFn: async ({ deadlineId, newDate, reason }: { deadlineId: string; newDate: string; reason?: string }) => {
+      // First get current deadline to preserve original
+      const { data: current } = await supabase
+        .from('matter_deadlines')
+        .select('deadline_date, original_deadline, extension_count')
+        .eq('id', deadlineId)
+        .single();
+
+      const originalDeadline = current?.original_deadline || current?.deadline_date;
+      const extensionCount = (current?.extension_count || 0) + 1;
+
       const { error } = await supabase
         .from('matter_deadlines')
         .update({
           deadline_date: newDate,
+          original_deadline: originalDeadline,
           extension_reason: reason,
-          extended: true,
+          extension_count: extensionCount,
+          extended_by: session?.user?.id,
           status: 'pending'
         })
         .eq('id', deadlineId);
@@ -169,31 +190,66 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
 
 export function useDeadlineStats() {
   const { session } = useAuth();
+  const { currentOrganization } = useOrganization();
 
   return useQuery({
-    queryKey: ['deadline-stats'],
+    queryKey: ['deadline-stats', currentOrganization?.id],
     queryFn: async (): Promise<DeadlineStats> => {
+      if (!currentOrganization?.id) {
+        return { overdue: 0, today: 0, urgent: 0, upcoming: 0, thisWeek: 0, thisMonth: 0, total: 0 };
+      }
+
       const today = new Date().toISOString().split('T')[0];
       const nextWeek = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
       const nextMonth = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-      const [overdue, todayRes, upcoming, thisMonth, total] = await Promise.all([
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).lt('deadline_date', today).in('status', ['pending', 'upcoming', 'urgent', 'overdue']),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).eq('deadline_date', today).in('status', ['pending', 'upcoming', 'urgent']),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).gt('deadline_date', today).lte('deadline_date', nextWeek).in('status', ['pending', 'upcoming', 'urgent']),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).gt('deadline_date', nextWeek).lte('deadline_date', nextMonth).in('status', ['pending', 'upcoming', 'urgent']),
-        supabase.from('matter_deadlines').select('id', { count: 'exact', head: true }).in('status', ['pending', 'upcoming', 'urgent', 'overdue'])
+      const activeStatuses = ['pending', 'upcoming', 'urgent', 'overdue'];
+
+      const [overdue, todayRes, urgent, upcoming, total] = await Promise.all([
+        supabase.from('matter_deadlines')
+          .select('id', { count: 'exact', head: true })
+          .eq('organization_id', currentOrganization.id)
+          .lt('deadline_date', today)
+          .in('status', activeStatuses),
+        supabase.from('matter_deadlines')
+          .select('id', { count: 'exact', head: true })
+          .eq('organization_id', currentOrganization.id)
+          .eq('deadline_date', today)
+          .in('status', activeStatuses),
+        supabase.from('matter_deadlines')
+          .select('id', { count: 'exact', head: true })
+          .eq('organization_id', currentOrganization.id)
+          .gt('deadline_date', today)
+          .lte('deadline_date', nextWeek)
+          .in('status', activeStatuses),
+        supabase.from('matter_deadlines')
+          .select('id', { count: 'exact', head: true })
+          .eq('organization_id', currentOrganization.id)
+          .gt('deadline_date', nextWeek)
+          .lte('deadline_date', nextMonth)
+          .in('status', activeStatuses),
+        supabase.from('matter_deadlines')
+          .select('id', { count: 'exact', head: true })
+          .eq('organization_id', currentOrganization.id)
+          .in('status', activeStatuses)
       ]);
 
+      const overdueCount = overdue.count || 0;
+      const todayCount = todayRes.count || 0;
+      const urgentCount = urgent.count || 0;
+      const upcomingCount = upcoming.count || 0;
+
       return {
-        overdue: overdue.count || 0,
-        today: todayRes.count || 0,
-        thisWeek: upcoming.count || 0,
-        thisMonth: thisMonth.count || 0,
+        overdue: overdueCount,
+        today: todayCount,
+        urgent: urgentCount,
+        upcoming: upcomingCount,
+        thisWeek: urgentCount,
+        thisMonth: upcomingCount,
         total: total.count || 0
       };
     },
-    enabled: !!session
+    enabled: !!session && !!currentOrganization?.id
   });
 }
 
@@ -205,15 +261,26 @@ export function useDeadlinesCalendar(year: number, month: number) {
   return useQuery({
     queryKey: ['deadlines-calendar', currentOrganization?.id, year, month],
     queryFn: async () => {
+      if (!currentOrganization?.id) return [];
+
       const { data, error } = await supabase
         .from('matter_deadlines')
-        .select('id, title, deadline_date, priority, status, matter:matters(id, reference_number, title)')
+        .select(`
+          id, 
+          title, 
+          deadline_date, 
+          priority, 
+          status,
+          deadline_type,
+          matter:matters(id, reference, title)
+        `)
+        .eq('organization_id', currentOrganization.id)
         .gte('deadline_date', startDate)
         .lte('deadline_date', endDate)
         .order('deadline_date', { ascending: true });
 
       if (error) throw error;
-      return data as MatterDeadline[];
+      return data as unknown as MatterDeadline[];
     },
     enabled: !!currentOrganization?.id,
   });

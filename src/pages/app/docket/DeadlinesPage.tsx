@@ -5,7 +5,7 @@
 
 import { useState } from 'react';
 import { Calendar, List, AlertTriangle, Clock, CheckCircle2, CalendarDays } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { DeadlineList } from '@/components/docket/DeadlineList';

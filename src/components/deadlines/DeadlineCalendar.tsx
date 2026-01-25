@@ -165,7 +165,7 @@ export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
                               </Badge>
                             </div>
                             <p className="text-xs text-muted-foreground mt-1 truncate">
-                              {deadline.matter?.reference_number} - {deadline.matter?.title}
+                              {deadline.matter?.reference} - {deadline.matter?.title}
                             </p>
                           </Link>
                         ))}

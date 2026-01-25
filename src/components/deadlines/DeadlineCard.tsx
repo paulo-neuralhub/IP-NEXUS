@@ -94,7 +94,7 @@ export function DeadlineCard({ deadline, onComplete, onExtend, variant = 'defaul
           <div className="min-w-0 flex-1">
             <p className="font-medium truncate">{deadline.title}</p>
             <p className="text-xs text-muted-foreground truncate">
-              {deadline.matter?.reference_number} - {deadline.matter?.title}
+              {deadline.matter?.reference} - {deadline.matter?.title}
             </p>
           </div>
         </div>
@@ -120,7 +120,7 @@ export function DeadlineCard({ deadline, onComplete, onExtend, variant = 'defaul
             <div>
               <h3 className="font-semibold text-lg">{deadline.title}</h3>
               <p className="text-sm text-muted-foreground">
-                {deadline.matter?.client?.name || 'Sin cliente'} - {deadline.matter?.reference_number}
+                {deadline.matter?.client?.name || 'Sin cliente'} - {deadline.matter?.reference}
               </p>
             </div>
           </div>
@@ -149,10 +149,10 @@ export function DeadlineCard({ deadline, onComplete, onExtend, variant = 'defaul
         </div>
 
         {/* Extended info */}
-        {deadline.extended && (
+        {(deadline.extension_count || 0) > 0 && (
           <div className="mt-3 flex items-center gap-2 text-sm text-orange-600 bg-orange-50 dark:bg-orange-950/20 px-3 py-2 rounded-md">
             <RefreshCw className="h-4 w-4" />
-            <span>Plazo extendido desde {deadline.extension_date ? format(new Date(deadline.extension_date), 'dd/MM/yyyy') : 'fecha original'}</span>
+            <span>Plazo extendido {deadline.extension_count}x {deadline.original_deadline ? `desde ${format(new Date(deadline.original_deadline), 'dd/MM/yyyy')}` : ''}</span>
           </div>
         )}
 

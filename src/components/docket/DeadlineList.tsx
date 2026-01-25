@@ -27,7 +27,7 @@ import {
   SelectTrigger,
   SelectValue 
 } from '@/components/ui/select';
-import { useDeadlines, Deadline } from '@/hooks/useDeadlines';
+import { useDeadlines, MatterDeadline } from '@/hooks/useDeadlines';
 import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
@@ -53,7 +53,7 @@ export function DeadlineList({ matterId, limit, showFilters = true, compact = fa
 
   const getDaysUntil = (date: string) => differenceInDays(new Date(date), new Date());
 
-  const getStatusBadge = (status: string, daysUntil: number) => {
+  const getStatusBadge = (status: string | null, daysUntil: number) => {
     if (status === 'completed') {
       return <Badge variant="outline" className="bg-green-50 text-green-700">Completado</Badge>;
     }
@@ -75,7 +75,7 @@ export function DeadlineList({ matterId, limit, showFilters = true, compact = fa
     return <Badge variant="outline">En {daysUntil} días</Badge>;
   };
 
-  const getPriorityIcon = (priority: string) => {
+  const getPriorityIcon = (priority: string | null) => {
     switch (priority) {
       case 'critical':
         return <AlertTriangle className="h-4 w-4 text-red-500" />;
@@ -144,7 +144,7 @@ export function DeadlineList({ matterId, limit, showFilters = true, compact = fa
           </div>
         ) : (
           <div className="space-y-2">
-            {deadlines.map((deadline: Deadline) => {
+            {deadlines.map((deadline: MatterDeadline) => {
               const daysUntil = getDaysUntil(deadline.deadline_date);
 
               return (
