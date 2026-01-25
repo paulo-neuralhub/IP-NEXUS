@@ -23,10 +23,15 @@ interface CheckResponse {
   document?: LegalCheckDocument;
 }
 
+interface UseLegalCheckOptions {
+  /** Called when user declines the legal acceptance */
+  onDecline?: () => void;
+}
+
 /**
  * Hook to block gated features until the user accepts a legal document (e.g., AI disclaimer).
  */
-export function useLegalCheck(documentCode: string) {
+export function useLegalCheck(documentCode: string, options?: UseLegalCheckOptions) {
   const [needsAcceptance, setNeedsAcceptance] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [document, setDocument] = useState<LegalCheckDocument | null>(null);
@@ -76,13 +81,18 @@ export function useLegalCheck(documentCode: string) {
   }, [refetch]);
 
   const handleDecline = useCallback(() => {
-    // If the feature is gated, keep it open (blocking). Consumer can also navigate away.
+    // If a decline callback is provided, call it (e.g., navigate away)
+    if (options?.onDecline) {
+      options.onDecline();
+      return;
+    }
+    // If the feature is gated and no callback, keep it open (blocking)
     if (needsAcceptance) {
       setIsOpen(true);
       return;
     }
     setIsOpen(false);
-  }, [needsAcceptance]);
+  }, [needsAcceptance, options]);
 
   const modal =
     (needsAcceptance || isOpen) && documentCode === 'ai_disclaimer' ? (

@@ -1,8 +1,8 @@
-import { Outlet, NavLink, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { Brain, MessageSquare, Scale, FileText, Languages, History, FileStack } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePageTitle } from '@/contexts/page-context';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 import { ModuleGate } from '@/components/common/ModuleGate';
 
 import { useLegalCheck } from '@/hooks/legal/useLegalCheck';
@@ -23,7 +23,15 @@ const geniusNav = [
 export default function GeniusLayout() {
   const { setTitle } = usePageTitle();
   const location = useLocation();
-  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer');
+  const navigate = useNavigate();
+  
+  const handleDeclineLegal = useCallback(() => {
+    navigate('/app/dashboard');
+  }, [navigate]);
+  
+  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer', {
+    onDecline: handleDeclineLegal,
+  });
 
   useEffect(() => {
     setTitle('IP-GENIUS PRO');
