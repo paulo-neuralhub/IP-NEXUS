@@ -52,7 +52,7 @@ export default function TemplateListPage() {
 
   const handlePreview = async (template: DocumentTemplate) => {
     setPreviewTitle(template.name);
-    const html = await generatePreview(template.template_content);
+    const html = await generatePreview(template.template_content, undefined, template.layout);
     setPreviewContent(html);
     setPreviewOpen(true);
   };
@@ -224,14 +224,17 @@ export default function TemplateListPage() {
 
       {/* Preview Dialog */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle>Vista previa: {previewTitle}</DialogTitle>
+            <DialogTitle className="px-6 py-4 border-b">Vista previa: {previewTitle}</DialogTitle>
           </DialogHeader>
-          <div 
-            className="bg-background border rounded-lg p-8 shadow-inner min-h-[600px]"
-            dangerouslySetInnerHTML={{ __html: previewContent }}
-          />
+          <div className="flex-1 overflow-auto bg-muted/30 p-8">
+            <div 
+              className="bg-background shadow-xl rounded-lg overflow-hidden"
+              style={{ minHeight: '800px' }}
+              dangerouslySetInnerHTML={{ __html: previewContent }}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </div>
