@@ -162,7 +162,7 @@ export function useNRR() {
     queryFn: async () => {
       const { data } = await fromTable('analytics_daily_metrics')
         .select('mrr_total, mrr_expansion, mrr_contraction, mrr_churned')
-        .order('date', { ascending: false })
+        .order('metric_date', { ascending: false })
         .limit(30);
 
       const dataArray = (data as any[]) || [];

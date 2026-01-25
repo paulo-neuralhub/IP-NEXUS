@@ -75,7 +75,7 @@ export function useHealthScores() {
     queryFn: async (): Promise<HealthScore> => {
       const { data, error } = await fromTable('analytics_tenant_metrics')
         .select('tenant_id, active_users, logins, matters_created')
-        .order('date', { ascending: false });
+        .order('metric_date', { ascending: false });
 
       if (error) throw error;
 
@@ -122,10 +122,10 @@ export function useAtRiskTenants(limit: number = 10) {
           tenant_id,
           active_users,
           logins,
-          date,
+          metric_date,
           tenant:organizations(id, name)
         `)
-        .order('date', { ascending: false });
+        .order('metric_date', { ascending: false });
 
       if (error) throw error;
 
@@ -143,7 +143,7 @@ export function useAtRiskTenants(limit: number = 10) {
 
           tenantData[metric.tenant_id] = {
             score,
-            lastActivity: metric.date,
+            lastActivity: metric.metric_date,
             name: metric.tenant?.name || 'Unknown',
             reason,
           };
@@ -172,7 +172,7 @@ export function useTenantSegmentation() {
     queryFn: async (): Promise<Segmentation> => {
       const { data } = await fromTable('analytics_tenant_metrics')
         .select('tenant_id, mrr, matters_count')
-        .order('date', { ascending: false });
+        .order('metric_date', { ascending: false });
 
       const tenants: Record<string, { mrr: number; matters: number }> = {};
       ((data as any[]) || []).forEach(d => {
