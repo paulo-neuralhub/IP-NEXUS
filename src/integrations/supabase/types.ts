@@ -11762,7 +11762,11 @@ export type Database = {
       email_templates: {
         Row: {
           available_variables: string[] | null
+          avg_open_rate: number | null
+          body_html: string | null
+          body_text: string | null
           category: string | null
+          code: string | null
           created_at: string | null
           created_by: string | null
           description: string | null
@@ -11771,6 +11775,7 @@ export type Database = {
           is_active: boolean | null
           is_system: boolean | null
           json_content: Json | null
+          language: string | null
           name: string
           organization_id: string
           owner_type: string
@@ -11779,11 +11784,17 @@ export type Database = {
           slug: string | null
           subject: string
           thumbnail_url: string | null
+          times_used: number | null
           updated_at: string | null
+          variables: Json | null
         }
         Insert: {
           available_variables?: string[] | null
+          avg_open_rate?: number | null
+          body_html?: string | null
+          body_text?: string | null
           category?: string | null
+          code?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -11792,6 +11803,7 @@ export type Database = {
           is_active?: boolean | null
           is_system?: boolean | null
           json_content?: Json | null
+          language?: string | null
           name: string
           organization_id: string
           owner_type?: string
@@ -11800,11 +11812,17 @@ export type Database = {
           slug?: string | null
           subject: string
           thumbnail_url?: string | null
+          times_used?: number | null
           updated_at?: string | null
+          variables?: Json | null
         }
         Update: {
           available_variables?: string[] | null
+          avg_open_rate?: number | null
+          body_html?: string | null
+          body_text?: string | null
           category?: string | null
+          code?: string | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
@@ -11813,6 +11831,7 @@ export type Database = {
           is_active?: boolean | null
           is_system?: boolean | null
           json_content?: Json | null
+          language?: string | null
           name?: string
           organization_id?: string
           owner_type?: string
@@ -11821,7 +11840,9 @@ export type Database = {
           slug?: string | null
           subject?: string
           thumbnail_url?: string | null
+          times_used?: number | null
           updated_at?: string | null
+          variables?: Json | null
         }
         Relationships: [
           {
@@ -36889,22 +36910,68 @@ export type Database = {
           },
         ]
       }
+      workflow_template_emails: {
+        Row: {
+          created_at: string | null
+          email_template_id: string | null
+          id: string
+          step_index: number | null
+          workflow_template_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email_template_id?: string | null
+          id?: string
+          step_index?: number | null
+          workflow_template_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email_template_id?: string | null
+          id?: string
+          step_index?: number | null
+          workflow_template_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_template_emails_email_template_id_fkey"
+            columns: ["email_template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_template_emails_workflow_template_id_fkey"
+            columns: ["workflow_template_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_templates: {
         Row: {
           actions: Json | null
           category: string
           code: string
+          color: string | null
           conditions: Json | null
           created_at: string | null
           created_by: string | null
           description: string | null
+          estimated_duration: string | null
           execution_count: number | null
+          icon: string | null
           id: string
           is_active: boolean | null
+          is_premium: boolean | null
           is_system: boolean | null
           last_executed_at: string | null
           name: string
           organization_id: string | null
+          steps: Json | null
+          tags: string[] | null
+          times_used: number | null
           trigger_config: Json | null
           trigger_type: string
           updated_at: string | null
@@ -36913,17 +36980,24 @@ export type Database = {
           actions?: Json | null
           category?: string
           code: string
+          color?: string | null
           conditions?: Json | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
+          estimated_duration?: string | null
           execution_count?: number | null
+          icon?: string | null
           id?: string
           is_active?: boolean | null
+          is_premium?: boolean | null
           is_system?: boolean | null
           last_executed_at?: string | null
           name: string
           organization_id?: string | null
+          steps?: Json | null
+          tags?: string[] | null
+          times_used?: number | null
           trigger_config?: Json | null
           trigger_type: string
           updated_at?: string | null
@@ -36932,17 +37006,24 @@ export type Database = {
           actions?: Json | null
           category?: string
           code?: string
+          color?: string | null
           conditions?: Json | null
           created_at?: string | null
           created_by?: string | null
           description?: string | null
+          estimated_duration?: string | null
           execution_count?: number | null
+          icon?: string | null
           id?: string
           is_active?: boolean | null
+          is_premium?: boolean | null
           is_system?: boolean | null
           last_executed_at?: string | null
           name?: string
           organization_id?: string | null
+          steps?: Json | null
+          tags?: string[] | null
+          times_used?: number | null
           trigger_config?: Json | null
           trigger_type?: string
           updated_at?: string | null
