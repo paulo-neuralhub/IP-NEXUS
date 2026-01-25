@@ -17210,23 +17210,42 @@ export type Database = {
       ipo_offices: {
         Row: {
           address: string | null
+          api_base_url: string | null
+          api_credentials: Json | null
+          api_version: string | null
+          auth_type: string | null
+          avg_response_time_ms: number | null
           code: string
           code_alt: string | null
           country_code: string | null
           created_at: string | null
           currency: string | null
+          data_source_config: Json | null
+          data_source_type: string | null
           email_general: string | null
+          fees_url: string | null
           id: string
           ip_types: string[] | null
+          is_active: boolean | null
           languages: string[] | null
+          last_health_check: string | null
           name_official: string
           name_short: string | null
           notes: string | null
           office_type: string
+          operational_status: string | null
           phone_general: string | null
           priority_score: number | null
+          product_id: string | null
+          rate_limit_per_day: number | null
+          rate_limit_per_minute: number | null
           region: string | null
           status: string | null
+          supports_documents: boolean | null
+          supports_events: boolean | null
+          supports_fees: boolean | null
+          supports_search: boolean | null
+          supports_status: boolean | null
           tier: number | null
           timezone: string
           updated_at: string | null
@@ -17235,23 +17254,42 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          api_base_url?: string | null
+          api_credentials?: Json | null
+          api_version?: string | null
+          auth_type?: string | null
+          avg_response_time_ms?: number | null
           code: string
           code_alt?: string | null
           country_code?: string | null
           created_at?: string | null
           currency?: string | null
+          data_source_config?: Json | null
+          data_source_type?: string | null
           email_general?: string | null
+          fees_url?: string | null
           id?: string
           ip_types?: string[] | null
+          is_active?: boolean | null
           languages?: string[] | null
+          last_health_check?: string | null
           name_official: string
           name_short?: string | null
           notes?: string | null
           office_type: string
+          operational_status?: string | null
           phone_general?: string | null
           priority_score?: number | null
+          product_id?: string | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
           region?: string | null
           status?: string | null
+          supports_documents?: boolean | null
+          supports_events?: boolean | null
+          supports_fees?: boolean | null
+          supports_search?: boolean | null
+          supports_status?: boolean | null
           tier?: number | null
           timezone: string
           updated_at?: string | null
@@ -17260,23 +17298,42 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          api_base_url?: string | null
+          api_credentials?: Json | null
+          api_version?: string | null
+          auth_type?: string | null
+          avg_response_time_ms?: number | null
           code?: string
           code_alt?: string | null
           country_code?: string | null
           created_at?: string | null
           currency?: string | null
+          data_source_config?: Json | null
+          data_source_type?: string | null
           email_general?: string | null
+          fees_url?: string | null
           id?: string
           ip_types?: string[] | null
+          is_active?: boolean | null
           languages?: string[] | null
+          last_health_check?: string | null
           name_official?: string
           name_short?: string | null
           notes?: string | null
           office_type?: string
+          operational_status?: string | null
           phone_general?: string | null
           priority_score?: number | null
+          product_id?: string | null
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
           region?: string | null
           status?: string | null
+          supports_documents?: boolean | null
+          supports_events?: boolean | null
+          supports_fees?: boolean | null
+          supports_search?: boolean | null
+          supports_status?: boolean | null
           tier?: number | null
           timezone?: string
           updated_at?: string | null
@@ -23510,6 +23567,227 @@ export type Database = {
           },
         ]
       }
+      office_documents: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          download_status: string | null
+          downloaded_at: string | null
+          error_message: string | null
+          file_name: string | null
+          file_path: string | null
+          file_size: number | null
+          id: string
+          matter_id: string
+          mime_type: string | null
+          office_code: string
+          office_doc_date: string | null
+          office_doc_id: string | null
+          office_doc_type: string | null
+          office_metadata: Json | null
+          tenant_id: string
+          title: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          download_status?: string | null
+          downloaded_at?: string | null
+          error_message?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          matter_id: string
+          mime_type?: string | null
+          office_code: string
+          office_doc_date?: string | null
+          office_doc_id?: string | null
+          office_doc_type?: string | null
+          office_metadata?: Json | null
+          tenant_id: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          download_status?: string | null
+          downloaded_at?: string | null
+          error_message?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          id?: string
+          matter_id?: string
+          mime_type?: string | null
+          office_code?: string
+          office_doc_date?: string | null
+          office_doc_id?: string | null
+          office_doc_type?: string | null
+          office_metadata?: Json | null
+          tenant_id?: string
+          title?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "office_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "office_documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_documents_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      office_file_imports: {
+        Row: {
+          created_at: string | null
+          errors: Json | null
+          file_name: string | null
+          file_path: string | null
+          file_size: number | null
+          file_type: string | null
+          id: string
+          import_status: string | null
+          office_code: string
+          processed_at: string | null
+          processing_method: string | null
+          records_failed: number | null
+          records_found: number | null
+          records_imported: number | null
+          records_updated: number | null
+          requires_review: boolean | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          tenant_id: string
+          uploaded_by: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          errors?: Json | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          import_status?: string | null
+          office_code: string
+          processed_at?: string | null
+          processing_method?: string | null
+          records_failed?: number | null
+          records_found?: number | null
+          records_imported?: number | null
+          records_updated?: number | null
+          requires_review?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          tenant_id: string
+          uploaded_by?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          errors?: Json | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          import_status?: string | null
+          office_code?: string
+          processed_at?: string | null
+          processing_method?: string | null
+          records_failed?: number | null
+          records_found?: number | null
+          records_imported?: number | null
+          records_updated?: number | null
+          requires_review?: boolean | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          tenant_id?: string
+          uploaded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_file_imports_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_file_imports_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_file_imports_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "office_file_imports_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_file_imports_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "office_file_imports_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       office_holidays: {
         Row: {
           created_at: string | null
@@ -23546,6 +23824,159 @@ export type Database = {
           name?: string
           office_code?: string | null
           recurrence_pattern?: string | null
+        }
+        Relationships: []
+      }
+      office_import_review_queue: {
+        Row: {
+          confidence_score: number | null
+          created_at: string | null
+          current_data: Json | null
+          extracted_data: Json | null
+          fields_to_review: string[] | null
+          final_data: Json | null
+          id: string
+          import_id: string
+          matter_id: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          tenant_id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string | null
+          current_data?: Json | null
+          extracted_data?: Json | null
+          fields_to_review?: string[] | null
+          final_data?: Json | null
+          id?: string
+          import_id: string
+          matter_id?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          tenant_id: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string | null
+          current_data?: Json | null
+          extracted_data?: Json | null
+          fields_to_review?: string[] | null
+          final_data?: Json | null
+          id?: string
+          import_id?: string
+          matter_id?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_import_review_queue_import_id_fkey"
+            columns: ["import_id"]
+            isOneToOne: false
+            referencedRelation: "office_file_imports"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      office_import_templates: {
+        Row: {
+          column_mappings: Json | null
+          created_at: string | null
+          description: string | null
+          file_type: string | null
+          id: string
+          instructions: string | null
+          is_active: boolean | null
+          office_code: string
+          template_file_url: string | null
+          template_name: string | null
+          updated_at: string | null
+          validations: Json | null
+        }
+        Insert: {
+          column_mappings?: Json | null
+          created_at?: string | null
+          description?: string | null
+          file_type?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          office_code: string
+          template_file_url?: string | null
+          template_name?: string | null
+          updated_at?: string | null
+          validations?: Json | null
+        }
+        Update: {
+          column_mappings?: Json | null
+          created_at?: string | null
+          description?: string | null
+          file_type?: string | null
+          id?: string
+          instructions?: string | null
+          is_active?: boolean | null
+          office_code?: string
+          template_file_url?: string | null
+          template_name?: string | null
+          updated_at?: string | null
+          validations?: Json | null
         }
         Relationships: []
       }
@@ -23596,6 +24027,178 @@ export type Database = {
           },
         ]
       }
+      office_query_cache: {
+        Row: {
+          cached_at: string | null
+          expires_at: string | null
+          id: string
+          office_code: string
+          query_key: string
+          query_params: Json | null
+          query_type: string | null
+          response_data: Json | null
+        }
+        Insert: {
+          cached_at?: string | null
+          expires_at?: string | null
+          id?: string
+          office_code: string
+          query_key: string
+          query_params?: Json | null
+          query_type?: string | null
+          response_data?: Json | null
+        }
+        Update: {
+          cached_at?: string | null
+          expires_at?: string | null
+          id?: string
+          office_code?: string
+          query_key?: string
+          query_params?: Json | null
+          query_type?: string | null
+          response_data?: Json | null
+        }
+        Relationships: []
+      }
+      office_request_logs: {
+        Row: {
+          billable: boolean | null
+          completed_at: string | null
+          created_at: string | null
+          duration_ms: number | null
+          endpoint: string | null
+          error_message: string | null
+          id: string
+          matter_id: string | null
+          method: string | null
+          office_code: string
+          request_params: Json | null
+          response_size_bytes: number | null
+          response_summary: Json | null
+          started_at: string | null
+          status_code: number | null
+          tenant_id: string | null
+        }
+        Insert: {
+          billable?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          endpoint?: string | null
+          error_message?: string | null
+          id?: string
+          matter_id?: string | null
+          method?: string | null
+          office_code: string
+          request_params?: Json | null
+          response_size_bytes?: number | null
+          response_summary?: Json | null
+          started_at?: string | null
+          status_code?: number | null
+          tenant_id?: string | null
+        }
+        Update: {
+          billable?: boolean | null
+          completed_at?: string | null
+          created_at?: string | null
+          duration_ms?: number | null
+          endpoint?: string | null
+          error_message?: string | null
+          id?: string
+          matter_id?: string | null
+          method?: string | null
+          office_code?: string
+          request_params?: Json | null
+          response_size_bytes?: number | null
+          response_summary?: Json | null
+          started_at?: string | null
+          status_code?: number | null
+          tenant_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "office_request_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      office_status_mappings: {
+        Row: {
+          created_at: string | null
+          creates_deadline: boolean | null
+          deadline_type_code: string | null
+          description_en: string | null
+          description_es: string | null
+          id: string
+          normalized_status: string
+          office_code: string
+          office_status: string
+          status_category: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          creates_deadline?: boolean | null
+          deadline_type_code?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          id?: string
+          normalized_status: string
+          office_code: string
+          office_status: string
+          status_category?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          creates_deadline?: boolean | null
+          deadline_type_code?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          id?: string
+          normalized_status?: string
+          office_code?: string
+          office_status?: string
+          status_category?: string | null
+        }
+        Relationships: []
+      }
       official_fees: {
         Row: {
           amount: number
@@ -23614,6 +24217,7 @@ export type Database = {
           name: string
           notes: string | null
           office: string
+          office_id: string | null
           per_class: boolean | null
           source_url: string | null
           updated_at: string | null
@@ -23635,6 +24239,7 @@ export type Database = {
           name: string
           notes?: string | null
           office: string
+          office_id?: string | null
           per_class?: boolean | null
           source_url?: string | null
           updated_at?: string | null
@@ -23656,11 +24261,50 @@ export type Database = {
           name?: string
           notes?: string | null
           office?: string
+          office_id?: string | null
           per_class?: boolean | null
           source_url?: string | null
           updated_at?: string | null
         }
         Relationships: []
+      }
+      official_fees_history: {
+        Row: {
+          change_reason: string | null
+          changed_at: string | null
+          changed_by: string | null
+          fee_id: string
+          id: string
+          new_amount: number | null
+          previous_amount: number | null
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_at?: string | null
+          changed_by?: string | null
+          fee_id: string
+          id?: string
+          new_amount?: number | null
+          previous_amount?: number | null
+        }
+        Update: {
+          change_reason?: string | null
+          changed_at?: string | null
+          changed_by?: string | null
+          fee_id?: string
+          id?: string
+          new_amount?: number | null
+          previous_amount?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "official_fees_history_fee_id_fkey"
+            columns: ["fee_id"]
+            isOneToOne: false
+            referencedRelation: "official_fees"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       onboarding_progress: {
         Row: {
@@ -31340,6 +31984,89 @@ export type Database = {
           },
         ]
       }
+      sync_history: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          deadlines_created: number | null
+          details: Json | null
+          documents_downloaded: number | null
+          errors: Json | null
+          errors_count: number | null
+          id: string
+          matters_checked: number | null
+          matters_updated: number | null
+          started_at: string | null
+          status: string | null
+          sync_type: string | null
+          tenant_id: string
+          triggered_by: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          deadlines_created?: number | null
+          details?: Json | null
+          documents_downloaded?: number | null
+          errors?: Json | null
+          errors_count?: number | null
+          id?: string
+          matters_checked?: number | null
+          matters_updated?: number | null
+          started_at?: string | null
+          status?: string | null
+          sync_type?: string | null
+          tenant_id: string
+          triggered_by?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          deadlines_created?: number | null
+          details?: Json | null
+          documents_downloaded?: number | null
+          errors?: Json | null
+          errors_count?: number | null
+          id?: string
+          matters_checked?: number | null
+          matters_updated?: number | null
+          started_at?: string | null
+          status?: string | null
+          sync_type?: string | null
+          tenant_id?: string
+          triggered_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sync_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "sync_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "sync_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       sync_jobs: {
         Row: {
           completed_at: string | null
@@ -32162,6 +32889,80 @@ export type Database = {
             foreignKeyName: "tenant_consents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_sync_config: {
+        Row: {
+          auto_create_deadlines: boolean | null
+          created_at: string | null
+          id: string
+          notification_email: string | null
+          notify_on_new_document: boolean | null
+          notify_on_status_change: boolean | null
+          sync_documents: boolean | null
+          sync_matter_statuses: string[] | null
+          sync_matter_types: string[] | null
+          sync_status: boolean | null
+          tenant_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          auto_create_deadlines?: boolean | null
+          created_at?: string | null
+          id?: string
+          notification_email?: string | null
+          notify_on_new_document?: boolean | null
+          notify_on_status_change?: boolean | null
+          sync_documents?: boolean | null
+          sync_matter_statuses?: string[] | null
+          sync_matter_types?: string[] | null
+          sync_status?: boolean | null
+          tenant_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          auto_create_deadlines?: boolean | null
+          created_at?: string | null
+          id?: string
+          notification_email?: string | null
+          notify_on_new_document?: boolean | null
+          notify_on_status_change?: boolean | null
+          sync_documents?: boolean | null
+          sync_matter_statuses?: string[] | null
+          sync_matter_types?: string[] | null
+          sync_status?: boolean | null
+          tenant_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_sync_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_sync_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_sync_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_sync_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
           },
