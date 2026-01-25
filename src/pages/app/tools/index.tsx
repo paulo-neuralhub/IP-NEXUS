@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { OCRProcessor } from '@/components/features/ocr/ocr-processor';
 import { TrademarkComparator } from '@/components/features/vision/trademark-comparator';
 import { cn } from '@/lib/utils';
+import { InlineHelp } from '@/components/help';
 
 interface Tool {
   id: string;
@@ -59,6 +60,7 @@ export default function ToolsPage() {
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <Sparkles className="w-7 h-7 text-primary" />
           Herramientas Avanzadas
+          <InlineHelp text="Herramientas especializadas: IP-CHAIN para timestamping blockchain, OCR para extraer texto de documentos, y comparador visual para análisis de similitud de marcas." />
         </h1>
         <p className="text-muted-foreground">
           Potencia tu gestión de PI con tecnologías avanzadas

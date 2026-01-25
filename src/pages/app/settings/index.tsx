@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RequirePermission, RequireRole } from '@/components/auth/RequirePermission';
+import { InlineHelp } from '@/components/help';
 
 // Settings Section Components
 import GeneralSettings from './sections/GeneralSettings';
@@ -89,7 +90,10 @@ export default function SettingsPage() {
     <div className="container max-w-6xl py-6">
       {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Configuración</h1>
+        <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          Configuración
+          <InlineHelp text="Gestiona la configuración de tu organización (marca, seguridad, integraciones, facturación, equipo) y tus preferencias personales (perfil, notificaciones, pantalla)." />
+        </h1>
         <p className="text-muted-foreground">
           Gestiona la configuración de tu organización y preferencias personales
         </p>

@@ -21,6 +21,7 @@ import {
 import { REPORT_TYPES, REPORT_STATUSES } from '@/lib/constants/reports';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { InlineHelp } from '@/components/help';
 
 export default function ReportsPage() {
   const [activeTab, setActiveTab] = useState<'generated' | 'scheduled'>('generated');
@@ -43,7 +44,10 @@ export default function ReportsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Informes</h1>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            Informes
+            <InlineHelp text="Genera informes personalizados de tu cartera de PI. Programa envíos automáticos y exporta en múltiples formatos (PDF, Excel)." />
+          </h1>
           <p className="text-muted-foreground">Genera y programa informes de tu cartera</p>
         </div>
         <Link

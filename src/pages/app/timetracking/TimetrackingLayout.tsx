@@ -6,6 +6,7 @@
 import { Outlet, NavLink } from 'react-router-dom';
 import { Clock, BarChart3, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { InlineHelp } from '@/components/help';
 
 const navItems = [
   { to: '/app/timetracking', icon: Clock, label: 'Timesheet', end: true },
@@ -19,7 +20,10 @@ export default function TimetrackingLayout() {
       {/* Sidebar de navegación */}
       <div className="w-56 border-r bg-muted/30 flex-shrink-0">
         <div className="p-4">
-          <h2 className="text-lg font-semibold text-foreground mb-4">Tiempo</h2>
+          <div className="flex items-center gap-2 mb-4">
+            <h2 className="text-lg font-semibold text-foreground">Tiempo</h2>
+            <InlineHelp text="Control de tiempo trabajado por expediente/cliente. Registra horas, genera reportes y configura tarifas para facturación." />
+          </div>
           <nav className="space-y-1">
             {navItems.map((item) => (
               <NavLink

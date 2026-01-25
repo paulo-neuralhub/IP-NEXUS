@@ -21,6 +21,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { BLOCKCHAIN_CONFIG, type TimestampStatus, type ResourceType } from '@/types/advanced';
+import { InlineHelp } from '@/components/help';
 
 const STATUS_CONFIG: Record<TimestampStatus, { label: string; icon: typeof Clock; color: string }> = {
   pending: { label: 'Pendiente', icon: Clock, color: '#6B7280' },
@@ -59,6 +60,7 @@ export default function IPChainPage() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Shield className="w-7 h-7 text-primary" />
             IP-CHAIN
+            <InlineHelp text="Timestamping blockchain para crear pruebas inmutables de existencia y autoría de tus documentos. Genera certificados verificables con fecha exacta." />
           </h1>
           <p className="text-muted-foreground">
             Timestamping blockchain para prueba de existencia y autoría

@@ -51,6 +51,7 @@ import {
 } from '@/hooks/workflow/useWorkflows';
 import { WORKFLOW_TRIGGER_TYPES } from '@/types/workflow.types';
 import type { WorkflowTemplate, WorkflowExecution } from '@/types/workflow.types';
+import { InlineHelp } from '@/components/help';
 
 export function WorkflowDashboard() {
   const navigate = useNavigate();
@@ -107,7 +108,10 @@ export function WorkflowDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Workflows</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            Workflows
+            <InlineHelp text="Motor de automatización para crear flujos de trabajo. Configura triggers (plazos, eventos, fechas) y acciones automáticas (emails, tareas, cambios de estado)." />
+          </h1>
           <p className="text-muted-foreground">Automatiza procesos con flujos de trabajo inteligentes</p>
         </div>
         <div className="flex gap-2">

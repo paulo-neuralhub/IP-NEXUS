@@ -23,6 +23,7 @@ import { AlertsPanel } from '@/components/features/spider/alerts-panel';
 import { WatchResultCard } from '@/components/features/spider/watch-result-card';
 import { WATCHLIST_TYPES } from '@/lib/constants/spider';
 import type { WatchlistType } from '@/types/spider';
+import { InlineHelp } from '@/components/help';
 
 const iconMap: Record<string, React.ElementType> = {
   Stamp: Stamp,
@@ -48,6 +49,7 @@ export default function SpiderDashboard() {
           <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
             <Radar className="w-7 h-7 text-purple-500" />
             IP-SPIDER
+            <InlineHelp text="Sistema de vigilancia y monitorización de PI. Crea vigilancias para detectar marcas similares, publicaciones de patentes, cambios de estado en oficinas y amenazas potenciales." />
           </h1>
           <p className="text-muted-foreground">Vigilancia y monitorización de PI</p>
         </div>

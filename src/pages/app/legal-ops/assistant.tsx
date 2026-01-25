@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useLegalCheck } from '@/hooks/legal/useLegalCheck';
+import { InlineHelp } from '@/components/help';
 
 export default function AssistantPage() {
   const { setTitle } = usePageTitle();
@@ -53,7 +54,10 @@ export default function AssistantPage() {
           <Bot className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold">Asistente Legal IA</h1>
+          <h1 className="text-2xl font-bold flex items-center gap-2">
+            Asistente Legal IA
+            <InlineHelp text="Asistente inteligente para búsqueda RAG, análisis de documentos y consultas legales. Utiliza IA para responder preguntas basándose en tu base de conocimiento." />
+          </h1>
           <p className="text-sm text-muted-foreground">
             Búsqueda inteligente y asistencia con documentos
           </p>

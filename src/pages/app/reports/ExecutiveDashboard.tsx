@@ -18,6 +18,7 @@ import {
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { PieChart, LineChart, StatCard } from '@/components/ui/charts';
+import { InlineHelp } from '@/components/help';
 
 export default function ExecutiveDashboard() {
   const { data: metrics, isLoading } = useDashboardMetrics();
@@ -49,7 +50,10 @@ export default function ExecutiveDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            Dashboard
+            <InlineHelp text="Panel ejecutivo con métricas clave de tu cartera de PI: total de expedientes, costes, renovaciones próximas y distribución por tipo y estado." />
+          </h1>
           <p className="text-muted-foreground">Resumen de tu cartera de propiedad intelectual</p>
         </div>
         <div className="flex gap-2">

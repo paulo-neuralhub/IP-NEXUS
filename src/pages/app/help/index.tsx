@@ -20,6 +20,7 @@ import {
 } from '@/hooks/help';
 import { useDebounce } from '@/hooks/use-debounce';
 import { EmptyState } from '@/components/ui/empty-state';
+import { InlineHelp } from '@/components/help';
 
 export default function HelpCenterIndex() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -41,7 +42,10 @@ export default function HelpCenterIndex() {
     <div className="space-y-8">
       {/* Search Section */}
       <div className="bg-gradient-to-r from-primary/10 to-primary/5 rounded-xl p-8 text-center">
-        <h2 className="text-2xl font-bold mb-2">¿En qué podemos ayudarte?</h2>
+        <h2 className="text-2xl font-bold mb-2 flex items-center gap-2 justify-center">
+          ¿En qué podemos ayudarte?
+          <InlineHelp text="Centro de ayuda con artículos, guías, FAQs y tutoriales. Busca respuestas o crea tickets de soporte si necesitas asistencia personalizada." />
+        </h2>
         <p className="text-muted-foreground mb-6">
           Busca en nuestra base de conocimiento o explora las categorías
         </p>

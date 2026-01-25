@@ -41,6 +41,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Link } from 'react-router-dom';
+import { InlineHelp } from '@/components/help';
 
 const entityConfig = {
   matter: {
@@ -154,7 +155,10 @@ export default function SearchPage() {
       <div className="container max-w-6xl py-6 space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Búsqueda Avanzada</h1>
+          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
+            Búsqueda Avanzada
+            <InlineHelp text="Busca de forma global en expedientes, contactos y deals. Guarda búsquedas frecuentes y accede al historial de búsquedas recientes." />
+          </h1>
           <p className="text-muted-foreground">
             Busca en expedientes, contactos y deals
           </p>

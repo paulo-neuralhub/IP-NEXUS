@@ -13,20 +13,20 @@ import {
   Trophy
 } from 'lucide-react';
 import { ModuleGate } from '@/components/common/ModuleGate';
-import { FeatureGuide } from '@/components/help';
+import { FeatureGuide, InlineHelp } from '@/components/help';
 import { useContextualHelp } from '@/hooks/useContextualHelp';
 
 const navItems = [
-  { to: '/app/market', label: 'Explorar', icon: LayoutGrid, exact: true },
-  { to: '/app/market/listings', label: 'Listings', icon: Store },
-  { to: '/app/market/rfq', label: 'Presupuestos', icon: FileQuestion },
-  { to: '/app/market/agents', label: 'Agentes', icon: Users },
-  { to: '/app/market/rankings', label: 'Rankings', icon: Trophy },
-  { to: '/app/market/assets', label: 'Mis Activos', icon: Package },
-  { to: '/app/market/transactions', label: 'Transacciones', icon: TrendingUp },
-  { to: '/app/market/favorites', label: 'Favoritos', icon: Heart },
-  { to: '/app/market/alerts', label: 'Alertas', icon: Bell },
-  { to: '/app/market/profile', label: 'Mi Perfil', icon: User },
+  { to: '/app/market', label: 'Explorar', icon: LayoutGrid, exact: true, help: 'Explora activos de PI disponibles en el marketplace' },
+  { to: '/app/market/listings', label: 'Listings', icon: Store, help: 'Publica tus activos para venta o licenciamiento' },
+  { to: '/app/market/rfq', label: 'Presupuestos', icon: FileQuestion, help: 'Solicita y gestiona presupuestos (RFQ)' },
+  { to: '/app/market/agents', label: 'Agentes', icon: Users, help: 'Directorio de agentes de PI verificados' },
+  { to: '/app/market/rankings', label: 'Rankings', icon: Trophy, help: 'Rankings de agentes por reputación y rendimiento' },
+  { to: '/app/market/assets', label: 'Mis Activos', icon: Package, help: 'Gestiona tus activos de PI listados' },
+  { to: '/app/market/transactions', label: 'Transacciones', icon: TrendingUp, help: 'Historial de compras, ventas y licencias' },
+  { to: '/app/market/favorites', label: 'Favoritos', icon: Heart, help: 'Activos guardados para seguimiento' },
+  { to: '/app/market/alerts', label: 'Alertas', icon: Bell, help: 'Notificaciones de nuevos listings y cambios' },
+  { to: '/app/market/profile', label: 'Mi Perfil', icon: User, help: 'Tu perfil público en el marketplace' },
 ];
 
 export default function MarketLayout() {
@@ -46,6 +46,7 @@ export default function MarketLayout() {
             <h1 className="text-2xl font-bold flex items-center gap-2">
               <Store className="h-6 w-6 text-market" />
               IP Market
+              <InlineHelp text="Marketplace para compra, venta y licenciamiento de activos de Propiedad Intelectual. Publica listings, solicita presupuestos (RFQ), encuentra agentes y gestiona transacciones." />
             </h1>
             <p className="text-muted-foreground text-sm mt-1">
               Marketplace para compra, venta y licenciamiento de Propiedad Intelectual
@@ -73,6 +74,7 @@ export default function MarketLayout() {
                 >
                   <item.icon className="w-4 h-4" />
                   {item.label}
+                  <InlineHelp text={item.help} />
                 </NavLink>
               );
             })}

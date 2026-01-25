@@ -20,6 +20,7 @@ import { MigratorTab } from './migrator-tab';
 import { UniversalTab } from './universal-tab';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
+import { InlineHelp } from '@/components/help';
 
 export default function DataHubPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,6 +53,7 @@ export default function DataHubPage() {
           <h1 className="text-3xl font-bold flex items-center gap-2">
             <Database className="h-8 w-8 text-slate-600" />
             Data Hub
+            <InlineHelp text="Centro de datos para importar, exportar, migrar y sincronizar información desde múltiples fuentes. Conecta con oficinas de PI, archivos Excel/CSV o sistemas externos." />
           </h1>
           <p className="text-muted-foreground mt-1">
             Centraliza, importa, migra y sincroniza todos tus datos

@@ -21,6 +21,7 @@ import { PortfoliosPanel } from './PortfoliosPanel';
 import { EmailIngestionPanel } from './EmailIngestionPanel';
 import { RulesConfigPanel } from './RulesConfigPanel';
 import { FeatureHelp, FEATURE_HELP_CONTENT } from '@/components/ui/feature-help';
+import { InlineHelp } from '@/components/help';
 
 interface DocketStats {
   totalTasks: number;
@@ -62,6 +63,7 @@ export function CommandCenter({ afterStats }: { afterStats?: React.ReactNode }) 
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-2">
             <Zap className="h-6 w-6 text-warning" />
             Command Center
+            <InlineHelp text="Centro de control centralizado para gestionar tareas, plazos, portfolios y automatizaciones de tu cartera de PI. Visualiza vencimientos, tareas pendientes y configura reglas automáticas." />
           </h1>
           <p className="text-muted-foreground">
             Control centralizado de tu cartera de PI

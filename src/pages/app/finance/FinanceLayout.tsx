@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ModuleGate } from '@/components/common/ModuleGate';
+import { InlineHelp } from '@/components/help';
 
 const financeNavItems = [
   { to: '/app/finance', icon: LayoutDashboard, label: 'Dashboard', end: true },
@@ -29,7 +30,10 @@ export default function FinanceLayout() {
         {/* Sidebar de navegación */}
         <div className="w-56 border-r bg-muted/30 flex-shrink-0">
           <div className="p-4">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Finance</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <h2 className="text-lg font-semibold text-foreground">Finance</h2>
+              <InlineHelp text="Gestión financiera completa: control de costes, facturación, presupuestos, renovaciones y valoración de tu cartera de PI." />
+            </div>
             <nav className="space-y-1">
               {financeNavItems.map((item) => (
                 <NavLink
