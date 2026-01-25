@@ -33,6 +33,7 @@ import { ServiceForm } from '@/components/service-catalog/ServiceForm';
 import {
   useServiceStats,
   useOrganizationServices,
+  usePreconfiguredServices,
   CATEGORY_CONFIG,
   SUBCATEGORY_LABELS,
 } from '@/hooks/useServiceCatalogManagement';
@@ -41,12 +42,25 @@ export function ServicesDashboard() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showAvailable, setShowAvailable] = useState(false);
   
   const stats = useServiceStats();
   const { data: services = [], isLoading } = useOrganizationServices(true);
+  const { data: preconfigured = [], isLoading: loadingPreconfigured } = usePreconfiguredServices();
+  const activatedCodes = new Set(services.filter(s => s.preconfigured_code).map(s => s.preconfigured_code));
   
   // Filter services
   const filteredServices = services.filter(service => {
+    const matchesSearch = !search || 
+      service.name.toLowerCase().includes(search.toLowerCase()) ||
+      service.description?.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
+    return matchesSearch && matchesCategory;
+  });
+  
+  // Filter available services (not yet activated)
+  const filteredAvailable = preconfigured.filter(service => {
+    if (activatedCodes.has(service.preconfigured_code)) return false;
     const matchesSearch = !search || 
       service.name.toLowerCase().includes(search.toLowerCase()) ||
       service.description?.toLowerCase().includes(search.toLowerCase());
@@ -58,6 +72,26 @@ export function ServicesDashboard() {
   const groupedServices = Object.entries(CATEGORY_CONFIG)
     .map(([key, config]) => {
       const categoryServices = filteredServices.filter(s => s.category === key);
+      const subcategories = [...new Set(categoryServices.map(s => s.subcategory))];
+      
+      return {
+        category: key,
+        label: config.label,
+        icon: config.icon,
+        services: categoryServices,
+        subcategories: subcategories.map(sub => ({
+          key: sub || 'general',
+          label: SUBCATEGORY_LABELS[sub || 'general'] || sub || 'General',
+          services: categoryServices.filter(s => s.subcategory === sub),
+        })),
+      };
+    })
+    .filter(g => g.services.length > 0);
+  
+  // Group available services by category
+  const groupedAvailable = Object.entries(CATEGORY_CONFIG)
+    .map(([key, config]) => {
+      const categoryServices = filteredAvailable.filter(s => s.category === key);
       const subcategories = [...new Set(categoryServices.map(s => s.subcategory))];
       
       return {
@@ -147,11 +181,25 @@ export function ServicesDashboard() {
       
       {/* Action Bar */}
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Servicios activos</h2>
-        <Button variant="outline" asChild>
+        <div className="flex gap-2">
+          <Button 
+            variant={!showAvailable ? "default" : "outline"}
+            size="sm"
+            onClick={() => setShowAvailable(false)}
+          >
+            Activos ({services.length})
+          </Button>
+          <Button 
+            variant={showAvailable ? "default" : "outline"}
+            size="sm"
+            onClick={() => setShowAvailable(true)}
+          >
+            Disponibles ({filteredAvailable.length})
+          </Button>
+        </div>
+        <Button variant="outline" size="sm" asChild>
           <Link to="/app/settings/servicios/catalogo">
-            Ver disponibles
-            <ArrowRight className="ml-2 h-4 w-4" />
+            Catálogo completo <ArrowRight className="ml-2 h-4 w-4" />
           </Link>
         </Button>
       </div>
@@ -185,16 +233,17 @@ export function ServicesDashboard() {
       </div>
       
       {/* Services List by Category */}
-      {isLoading ? (
+      {(isLoading || loadingPreconfigured) ? (
         <div className="text-center py-8 text-muted-foreground">
           Cargando servicios...
         </div>
-      ) : groupedServices.length === 0 ? (
+      ) : showAvailable ? (
+        groupedAvailable.length === 0 ? (
         <Card className="p-8 text-center">
           <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
-          <h3 className="mt-4 text-lg font-semibold">No hay servicios activos</h3>
+          <h3 className="mt-4 text-lg font-semibold">No hay servicios disponibles</h3>
           <p className="mt-2 text-muted-foreground">
-            Activa servicios del catálogo preconfigurado o crea uno nuevo.
+            Todos los servicios del catálogo ya están activados.
           </p>
           <div className="mt-4 flex justify-center gap-4">
             <Button variant="outline" asChild>
@@ -202,13 +251,41 @@ export function ServicesDashboard() {
                 Ver catálogo
               </Link>
             </Button>
-            <Button onClick={() => setShowCreateForm(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Crear nuevo
-            </Button>
           </div>
         </Card>
+        ) : (
+          <div className="space-y-4">
+            {groupedAvailable.map((group) => (
+              <ServiceCategoryAccordion
+                key={group.category}
+                category={group.category}
+                label={group.label}
+                icon={group.icon}
+                subcategories={group.subcategories}
+                readOnly={true}
+              />
+            ))}
+          </div>
+        )
       ) : (
+        groupedServices.length === 0 ? (
+          <Card className="p-8 text-center">
+            <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <h3 className="mt-4 text-lg font-semibold">No hay servicios activos</h3>
+            <p className="mt-2 text-muted-foreground">
+              Activa servicios del catálogo o crea uno nuevo.
+            </p>
+            <div className="mt-4 flex justify-center gap-4">
+              <Button variant="outline" onClick={() => setShowAvailable(true)}>
+                Ver disponibles
+              </Button>
+              <Button onClick={() => setShowCreateForm(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                Crear nuevo
+              </Button>
+            </div>
+          </Card>
+        ) : (
         <div className="space-y-4">
           {groupedServices.map((group) => (
             <ServiceCategoryAccordion
@@ -220,6 +297,7 @@ export function ServicesDashboard() {
             />
           ))}
         </div>
+        )
       )}
       
       {/* Create Service Modal */}
