@@ -116,6 +116,7 @@ const sidebarSections = [
       { label: 'KYC Review', path: '/backoffice/kyc-review', icon: ShieldCheck },
       { label: 'Moderation', path: '/backoffice/moderation', icon: AlertTriangle },
       { label: 'Compliance', path: '/backoffice/compliance', icon: Scale },
+      { label: 'Textos Legales', path: '/backoffice/legal-documents', icon: ScrollText },
     ],
   },
   {

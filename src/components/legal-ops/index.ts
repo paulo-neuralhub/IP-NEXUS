@@ -15,3 +15,4 @@ export * from './ClientRelationshipsSection';
 export * from './AddRelationshipModal';
 export * from './ClientRelationshipsV2';
 export * from './AddRelationshipModalV2';
+export * from './FullLegalTextModal';

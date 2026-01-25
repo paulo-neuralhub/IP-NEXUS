@@ -19101,6 +19101,59 @@ export type Database = {
           },
         ]
       }
+      legal_document_contents: {
+        Row: {
+          checkbox_text: string
+          code: string
+          created_at: string | null
+          full_content: string
+          id: string
+          is_active: boolean | null
+          link_text: string | null
+          short_summary: string
+          title: string
+          updated_at: string | null
+          updated_by: string | null
+          version: string
+        }
+        Insert: {
+          checkbox_text: string
+          code: string
+          created_at?: string | null
+          full_content: string
+          id?: string
+          is_active?: boolean | null
+          link_text?: string | null
+          short_summary: string
+          title: string
+          updated_at?: string | null
+          updated_by?: string | null
+          version?: string
+        }
+        Update: {
+          checkbox_text?: string
+          code?: string
+          created_at?: string | null
+          full_content?: string
+          id?: string
+          is_active?: boolean | null
+          link_text?: string | null
+          short_summary?: string
+          title?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_document_contents_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       legal_documents: {
         Row: {
           changelog: string | null
