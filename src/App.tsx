@@ -140,6 +140,8 @@ import BrandingSettingsPage from "./pages/app/settings/branding";
 import SSOSettingsPage from "./pages/app/settings/sso";
 import NotFound from "./pages/NotFound";
 import ServiceCatalogPage from "./pages/app/settings/ServiceCatalogPage";
+import ServicesPage from "./pages/app/settings/services";
+import ServicesCatalogoPage from "./pages/app/settings/services/catalogo";
 import DeadlineConfigPage from "./pages/app/settings/deadlines";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
@@ -428,6 +430,8 @@ const App = () => (
                 <Route path="settings/branding" element={<BrandingSettingsPage />} />
                 <Route path="settings/sso" element={<SSOSettingsPage />} />
                 <Route path="settings/catalogo-servicios" element={<ServiceCatalogPage />} />
+                <Route path="settings/servicios" element={<ServicesPage />} />
+                <Route path="settings/servicios/catalogo" element={<ServicesCatalogoPage />} />
                 <Route path="settings/deadlines" element={<DeadlineConfigPage />} />
                 <Route path="settings/offices" element={<MyOfficesPage />} />
                 <Route path="settings/offices/sync" element={<SyncPreferencesPage />} />
