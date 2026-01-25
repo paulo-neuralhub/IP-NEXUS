@@ -32,7 +32,7 @@ export function AiAgentFloatingButton() {
         type="button"
         onClick={() => setOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 z-40 h-14 w-14 rounded-2xl p-0 shadow-lg",
+          "fixed bottom-6 right-24 z-40 h-14 w-14 rounded-2xl p-0 shadow-lg",
           "bg-gradient-to-br from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70",
           "transition-all duration-200 hover:scale-105 active:scale-95"
         )}
