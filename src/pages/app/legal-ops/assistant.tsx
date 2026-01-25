@@ -3,8 +3,8 @@
 // AI Assistant Page
 // ============================================
 
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { usePageTitle } from '@/contexts/page-context';
 import { AssistantChat } from '@/components/legal-ops';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,8 +19,15 @@ import { useLegalCheck } from '@/hooks/legal/useLegalCheck';
 export default function AssistantPage() {
   const { setTitle } = usePageTitle();
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
-  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer');
+  const handleDeclineLegal = useCallback(() => {
+    navigate('/app/dashboard');
+  }, [navigate]);
+
+  const { needsAcceptance, modal, isChecking } = useLegalCheck('ai_disclaimer', {
+    onDecline: handleDeclineLegal,
+  });
   
   const clientId = searchParams.get('client') || undefined;
   const matterId = searchParams.get('matter') || undefined;

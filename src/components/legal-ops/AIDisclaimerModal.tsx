@@ -22,6 +22,7 @@ async function sha256Hex(text: string): Promise<string> {
 }
 
 export function AIDisclaimerModal({ onAccept, onDecline }: Props) {
+  const [isOpen, setIsOpen] = useState(true);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [signatureType, setSignatureType] = useState<SignatureType>('checkbox');
@@ -105,9 +106,14 @@ export function AIDisclaimerModal({ onAccept, onDecline }: Props) {
     }
   };
 
+  const handleClose = () => {
+    setIsOpen(false);
+    onDecline();
+  };
+
   return (
-    <Dialog open onOpenChange={(open) => (!open ? onDecline() : undefined)}>
-      <DialogContent className="max-w-2xl">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="max-w-2xl" onPointerDownOutside={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Aviso Legal - Funcionalidades de IA</DialogTitle>
         </DialogHeader>
