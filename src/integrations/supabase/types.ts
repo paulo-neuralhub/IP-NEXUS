@@ -26876,24 +26876,42 @@ export type Database = {
           category: string
           code: string
           color: string | null
+          color_secondary: string | null
           created_at: string | null
+          default_limits: Json | null
           description: string | null
           docs_url: string | null
           icon: string | null
+          icon_lucide: string | null
           id: string
           is_active: boolean | null
           is_addon_available: boolean | null
           is_beta: boolean | null
+          is_coming_soon: boolean | null
           is_core: boolean | null
+          is_popular: boolean | null
           is_standalone_available: boolean | null
           landing_url: string | null
           launch_date: string | null
+          menu_items: Json | null
           name: string
+          price_addon_monthly: number | null
+          price_addon_yearly: number | null
+          price_standalone_monthly: number | null
+          price_standalone_yearly: number | null
           pricing_model: string | null
           recommended_modules: string[] | null
           required_modules: string[] | null
+          requires_modules: string[] | null
+          short_name: string | null
           show_in_sidebar: boolean | null
+          sidebar_expanded_default: boolean | null
+          sidebar_icon: string | null
+          sidebar_order: number | null
+          sidebar_section: string | null
           sort_order: number | null
+          stripe_price_monthly_id: string | null
+          stripe_price_yearly_id: string | null
           tagline: string | null
           tiers: Json | null
           updated_at: string | null
@@ -26905,24 +26923,42 @@ export type Database = {
           category: string
           code: string
           color?: string | null
+          color_secondary?: string | null
           created_at?: string | null
+          default_limits?: Json | null
           description?: string | null
           docs_url?: string | null
           icon?: string | null
+          icon_lucide?: string | null
           id?: string
           is_active?: boolean | null
           is_addon_available?: boolean | null
           is_beta?: boolean | null
+          is_coming_soon?: boolean | null
           is_core?: boolean | null
+          is_popular?: boolean | null
           is_standalone_available?: boolean | null
           landing_url?: string | null
           launch_date?: string | null
+          menu_items?: Json | null
           name: string
+          price_addon_monthly?: number | null
+          price_addon_yearly?: number | null
+          price_standalone_monthly?: number | null
+          price_standalone_yearly?: number | null
           pricing_model?: string | null
           recommended_modules?: string[] | null
           required_modules?: string[] | null
+          requires_modules?: string[] | null
+          short_name?: string | null
           show_in_sidebar?: boolean | null
+          sidebar_expanded_default?: boolean | null
+          sidebar_icon?: string | null
+          sidebar_order?: number | null
+          sidebar_section?: string | null
           sort_order?: number | null
+          stripe_price_monthly_id?: string | null
+          stripe_price_yearly_id?: string | null
           tagline?: string | null
           tiers?: Json | null
           updated_at?: string | null
@@ -26934,29 +26970,62 @@ export type Database = {
           category?: string
           code?: string
           color?: string | null
+          color_secondary?: string | null
           created_at?: string | null
+          default_limits?: Json | null
           description?: string | null
           docs_url?: string | null
           icon?: string | null
+          icon_lucide?: string | null
           id?: string
           is_active?: boolean | null
           is_addon_available?: boolean | null
           is_beta?: boolean | null
+          is_coming_soon?: boolean | null
           is_core?: boolean | null
+          is_popular?: boolean | null
           is_standalone_available?: boolean | null
           landing_url?: string | null
           launch_date?: string | null
+          menu_items?: Json | null
           name?: string
+          price_addon_monthly?: number | null
+          price_addon_yearly?: number | null
+          price_standalone_monthly?: number | null
+          price_standalone_yearly?: number | null
           pricing_model?: string | null
           recommended_modules?: string[] | null
           required_modules?: string[] | null
+          requires_modules?: string[] | null
+          short_name?: string | null
           show_in_sidebar?: boolean | null
+          sidebar_expanded_default?: boolean | null
+          sidebar_icon?: string | null
+          sidebar_order?: number | null
+          sidebar_section?: string | null
           sort_order?: number | null
+          stripe_price_monthly_id?: string | null
+          stripe_price_yearly_id?: string | null
           tagline?: string | null
           tiers?: Json | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "platform_modules_sidebar_section_fkey"
+            columns: ["sidebar_section"]
+            isOneToOne: false
+            referencedRelation: "sidebar_menu_view"
+            referencedColumns: ["section_code"]
+          },
+          {
+            foreignKeyName: "platform_modules_sidebar_section_fkey"
+            columns: ["sidebar_section"]
+            isOneToOne: false
+            referencedRelation: "sidebar_sections"
+            referencedColumns: ["code"]
+          },
+        ]
       }
       portal_activity_log: {
         Row: {
@@ -30980,6 +31049,45 @@ export type Database = {
             referencedColumns: ["organization_id"]
           },
         ]
+      }
+      sidebar_sections: {
+        Row: {
+          code: string
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_always_visible: boolean | null
+          name: string
+          name_short: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_always_visible?: boolean | null
+          name: string
+          name_short?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_always_visible?: boolean | null
+          name?: string
+          name_short?: string | null
+        }
+        Relationships: []
       }
       signature_audit_log: {
         Row: {
@@ -38395,6 +38503,30 @@ export type Database = {
         }
         Relationships: []
       }
+      sidebar_menu_view: {
+        Row: {
+          module_category: string | null
+          module_code: string | null
+          module_color: string | null
+          module_coming_soon: boolean | null
+          module_expanded: boolean | null
+          module_icon: string | null
+          module_icon_lucide: string | null
+          module_menu_items: Json | null
+          module_name: string | null
+          module_order: number | null
+          module_popular: boolean | null
+          module_requires: string[] | null
+          module_short_name: string | null
+          section_always_visible: boolean | null
+          section_code: string | null
+          section_icon: string | null
+          section_label: string | null
+          section_name: string | null
+          section_order: number | null
+        }
+        Relationships: []
+      }
       signature_stats: {
         Row: {
           completed_count: number | null
@@ -39340,6 +39472,33 @@ export type Database = {
       get_organization_jurisdictions: {
         Args: { p_organization_id: string }
         Returns: Json
+      }
+      get_tenant_sidebar_menu: {
+        Args: { p_organization_id: string }
+        Returns: {
+          is_licensed: boolean
+          is_trial: boolean
+          module_category: string
+          module_code: string
+          module_color: string
+          module_coming_soon: boolean
+          module_expanded: boolean
+          module_icon: string
+          module_icon_lucide: string
+          module_menu_items: Json
+          module_name: string
+          module_order: number
+          module_popular: boolean
+          module_requires: string[]
+          module_short_name: string
+          section_always_visible: boolean
+          section_code: string
+          section_icon: string
+          section_label: string
+          section_name: string
+          section_order: number
+          trial_ends_at: string
+        }[]
       }
       get_ui_config: { Args: { p_organization_id: string }; Returns: Json }
       get_user_org_ids: { Args: never; Returns: string[] }
