@@ -641,7 +641,8 @@ serve(async (req) => {
         .from("market_assets")
         .insert({
           owner_id: sellerId,
-          asset_type: "trademark",
+          // market_asset_type is an enum; "trademark" is NOT a valid value.
+          asset_type: "trademark_word",
           // market_asset_category enum: industrial_property | intellectual_property | intangible_assets
           asset_category: "industrial_property",
           title: `Marca DEMO ${i + 1}`,
