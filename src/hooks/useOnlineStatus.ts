@@ -1,23 +1,50 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
+
+// Real network check to avoid false positives in iframe environments
+async function checkRealConnectivity(): Promise<boolean> {
+  try {
+    // Try to fetch a small resource to verify actual connectivity
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const response = await fetch('https://www.google.com/favicon.ico', {
+      method: 'HEAD',
+      mode: 'no-cors',
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+    
+    clearTimeout(timeoutId);
+    return true;
+  } catch {
+    // If fetch fails, fall back to navigator.onLine
+    return navigator.onLine;
+  }
+}
 
 export function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== 'undefined' ? navigator.onLine : true
-  );
+  const [isOnline, setIsOnline] = useState(true); // Assume online initially
   const [wasOffline, setWasOffline] = useState(false);
 
   useEffect(() => {
-    const handleOnline = () => {
-      setIsOnline(true);
-      if (wasOffline) {
-        // Trigger data refresh after coming back online
+    // Initial check
+    checkRealConnectivity().then(setIsOnline);
+
+    const handleOnline = async () => {
+      const reallyOnline = await checkRealConnectivity();
+      setIsOnline(reallyOnline);
+      if (reallyOnline && wasOffline) {
         window.dispatchEvent(new CustomEvent('app:back-online'));
       }
     };
 
-    const handleOffline = () => {
-      setIsOnline(false);
-      setWasOffline(true);
+    const handleOffline = async () => {
+      // Double-check with real connectivity test
+      const reallyOffline = !(await checkRealConnectivity());
+      if (reallyOffline) {
+        setIsOnline(false);
+        setWasOffline(true);
+      }
     };
 
     window.addEventListener('online', handleOnline);
@@ -40,7 +67,6 @@ export function useOfflineIndicator() {
     if (!isOnline) {
       setShowIndicator(true);
     } else {
-      // Delay hiding to show "back online" message
       const timeout = setTimeout(() => {
         setShowIndicator(false);
       }, 3000);
