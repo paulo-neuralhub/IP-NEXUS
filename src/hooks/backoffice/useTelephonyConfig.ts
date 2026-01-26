@@ -33,11 +33,12 @@ export interface TelephonyConfig {
     number: string;
     country: string;
     capabilities: string[];
-  }>;
+  }> | null;
   markup_percentage: number;
   alert_low_balance_threshold: number;
   alert_email: string | null;
   test_mode: boolean;
+  voip_enabled: boolean;
   created_at: string;
   updated_at: string | null;
 }

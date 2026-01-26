@@ -11,7 +11,7 @@ interface TwilioDeviceState {
   reinitialize: () => void;
 }
 
-export function useTwilioDevice(): TwilioDeviceState {
+export function useTwilioDevice(enabled: boolean = true): TwilioDeviceState {
   const { currentOrganization } = useOrganization();
   const orgId = currentOrganization?.id;
 
@@ -49,6 +49,15 @@ export function useTwilioDevice(): TwilioDeviceState {
           setDevice(null);
           setIsReady(false);
         }
+      }
+
+      // Skip initialization if disabled
+      if (!enabled) {
+        if (mountedRef.current) {
+          setError(null);
+          setIsConfigured(false);
+        }
+        return;
       }
 
       if (!orgId) {
@@ -161,7 +170,7 @@ export function useTwilioDevice(): TwilioDeviceState {
     return () => {
       cancelled = true;
     };
-  }, [orgId, initTrigger]);
+  }, [orgId, initTrigger, enabled]);
 
   const reinitialize = useCallback(() => {
     setInitTrigger((n) => n + 1);

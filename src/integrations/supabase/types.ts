@@ -34263,6 +34263,7 @@ export type Database = {
           phone_numbers: Json | null
           test_mode: boolean | null
           updated_at: string | null
+          voip_enabled: boolean
         }
         Insert: {
           active_provider_id?: string | null
@@ -34275,6 +34276,7 @@ export type Database = {
           phone_numbers?: Json | null
           test_mode?: boolean | null
           updated_at?: string | null
+          voip_enabled?: boolean
         }
         Update: {
           active_provider_id?: string | null
@@ -34287,6 +34289,7 @@ export type Database = {
           phone_numbers?: Json | null
           test_mode?: boolean | null
           updated_at?: string | null
+          voip_enabled?: boolean
         }
         Relationships: [
           {

@@ -18,6 +18,7 @@ import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
 import { TransferModal } from '@/components/voip/TransferModal';
 import { Button } from '@/components/ui/button';
+import { useVoipEnabled } from '@/hooks/useVoipEnabled';
 
 type CallState = 'idle' | 'connecting' | 'ringing' | 'in_call' | 'on_hold' | 'incoming';
 
@@ -39,6 +40,7 @@ function formatDuration(seconds: number) {
 
 export function SoftphoneWidget() {
   const { currentOrganization } = useOrganization();
+  const { data: voipGloballyEnabled, isLoading: voipLoading } = useVoipEnabled();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showDialpad, setShowDialpad] = useState(true);
@@ -50,7 +52,9 @@ export function SoftphoneWidget() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [transferOpen, setTransferOpen] = useState(false);
 
-  const { device, isReady, error: deviceError, isConfigured } = useTwilioDevice();
+  // Only initialize Twilio if VoIP is globally enabled
+  const shouldInitTwilio = voipGloballyEnabled === true;
+  const { device, isReady, error: deviceError, isConfigured } = useTwilioDevice(shouldInitTwilio);
   const { makeCall, hangUp, toggleMute, toggleHold, currentCall, acceptIncoming, rejectIncoming } = useVoipCall(device);
 
   const voipAvailable = useMemo(() => !!currentOrganization?.id, [currentOrganization?.id]);
@@ -215,6 +219,11 @@ export function SoftphoneWidget() {
     },
     [currentCall, currentOrganization?.id, resetCallUi]
   );
+
+  // Don't render anything if VoIP is globally disabled
+  if (!voipLoading && !voipGloballyEnabled) {
+    return null;
+  }
 
   // Minimized pill (solo en llamada)
   if (isMinimized && callState !== 'idle') {
