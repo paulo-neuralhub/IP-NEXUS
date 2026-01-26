@@ -16,7 +16,7 @@ import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
   Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, 
   Lock, Shield, ArrowRightLeft, Store, BarChart3, Scale, Sparkles,
-  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell, MessageSquare
+  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell, MessageSquare, Calendar
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -59,6 +59,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   PenTool,
   Clock,
   MessageSquare,
+  Calendar,
 };
 
 interface NavItem {
@@ -91,6 +92,14 @@ const MODULE_NAV: NavItem[] = [
     icon: Briefcase,
     moduleCode: "docket",
     color: MODULE_REGISTRY.docket.color,
+    requiresLicense: true,
+  },
+  {
+    path: "/app/docket/deadlines",
+    label: "Plazos",
+    icon: Calendar,
+    moduleCode: "docket",
+    color: "#F59E0B", // Amber for urgency
     requiresLicense: true,
   },
   {
