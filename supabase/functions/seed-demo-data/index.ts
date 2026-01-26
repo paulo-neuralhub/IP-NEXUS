@@ -189,7 +189,7 @@ serve(async (req) => {
 
     // Matters (3 per contact = 24)
     const matterTypes = ["trademark", "patent", "design"];
-    const jurisdictions = ["ES", "EU", "WO"];
+    const jurisdictions = ["ES", "EU", "WIPO"];
     const matterIds: string[] = [];
     let matterCounter = 1;
     for (let cIdx = 0; cIdx < contactIds.length; cIdx++) {
