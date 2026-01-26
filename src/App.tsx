@@ -104,6 +104,8 @@ import InvoiceListPage from "./pages/app/finance/invoices";
 import InvoiceDetailPage from "./pages/app/finance/invoices/InvoiceDetailPage";
 import InvoiceEditorPage from "./pages/app/finance/invoices/InvoiceEditorPage";
 import ExpensesPage from "./pages/app/finance/ExpensesPage";
+import ProvisionsPage from "./pages/app/finance/provisions";
+import ProvisionDetailPage from "./pages/app/finance/provisions/ProvisionDetailPage";
 import RenewalSchedulePage from "./pages/app/finance/renewals";
 import CostsPage from "./pages/app/finance/costs";
 import QuotesPage from "./pages/app/finance/quotes";
@@ -419,6 +421,8 @@ const App = () => (
                   <Route path="invoices/:id" element={<InvoiceDetailPage />} />
                   <Route path="invoices/:id/edit" element={<InvoiceEditorPage />} />
                   <Route path="expenses" element={<ExpensesPage />} />
+                  <Route path="provisions" element={<ProvisionsPage />} />
+                  <Route path="provisions/:id" element={<ProvisionDetailPage />} />
                   <Route path="clients" element={<BillingClientsPage />} />
                   <Route path="renewals" element={<RenewalSchedulePage />} />
                   <Route path="valuation" element={<ValuationDashboardPage />} />

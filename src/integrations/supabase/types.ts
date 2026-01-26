@@ -29117,6 +29117,202 @@ export type Database = {
         }
         Relationships: []
       }
+      provision_movements: {
+        Row: {
+          amount: number
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          document_url: string | null
+          id: string
+          movement_date: string
+          movement_type: string
+          provision_id: string
+          reference: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_url?: string | null
+          id?: string
+          movement_date: string
+          movement_type: string
+          provision_id: string
+          reference?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          document_url?: string | null
+          id?: string
+          movement_date?: string
+          movement_type?: string
+          provision_id?: string
+          reference?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provision_movements_provision_id_fkey"
+            columns: ["provision_id"]
+            isOneToOne: false
+            referencedRelation: "provisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      provisions: {
+        Row: {
+          amount: number
+          client_id: string | null
+          concept: string
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          description: string | null
+          id: string
+          invoice_id: string | null
+          matter_id: string | null
+          organization_id: string
+          payment_date: string | null
+          payment_reference: string | null
+          quote_id: string | null
+          quote_line_id: string | null
+          received_at: string | null
+          requested_at: string | null
+          returned_amount: number | null
+          returned_at: string | null
+          status: string | null
+          updated_at: string | null
+          used_amount: number | null
+          used_for: string | null
+        }
+        Insert: {
+          amount: number
+          client_id?: string | null
+          concept: string
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          invoice_id?: string | null
+          matter_id?: string | null
+          organization_id: string
+          payment_date?: string | null
+          payment_reference?: string | null
+          quote_id?: string | null
+          quote_line_id?: string | null
+          received_at?: string | null
+          requested_at?: string | null
+          returned_amount?: number | null
+          returned_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          used_amount?: number | null
+          used_for?: string | null
+        }
+        Update: {
+          amount?: number
+          client_id?: string | null
+          concept?: string
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          description?: string | null
+          id?: string
+          invoice_id?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          payment_date?: string | null
+          payment_reference?: string | null
+          quote_id?: string | null
+          quote_line_id?: string | null
+          received_at?: string | null
+          requested_at?: string | null
+          returned_amount?: number | null
+          returned_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          used_amount?: number | null
+          used_for?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "provisions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "provisions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "provisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "provisions_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "provisions_quote_line_id_fkey"
+            columns: ["quote_line_id"]
+            isOneToOne: false
+            referencedRelation: "quote_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth_key: string

@@ -20,6 +20,7 @@ const financeNavItems = [
   { to: '/app/finance/invoices', icon: FileText, label: 'Facturas' },
   { to: '/app/finance/quotes', icon: FileText, label: 'Presupuestos' },
   { to: '/app/finance/expenses', icon: Wallet, label: 'Gastos' },
+  { to: '/app/finance/provisions', icon: Wallet, label: 'Provisiones' },
   { to: '/app/finance/clients', icon: Users, label: 'Clientes' },
   { to: '/app/finance/renewals', icon: Calendar, label: 'Renovaciones' },
   { to: '/app/finance/valuation', icon: TrendingUp, label: 'Valoración' },
