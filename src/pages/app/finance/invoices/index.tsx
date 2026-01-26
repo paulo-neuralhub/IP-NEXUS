@@ -10,12 +10,20 @@ import {
   MoreVertical,
   CheckCircle,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  FileWarning,
+  Copy,
+  FileCode,
+  Check,
+  X,
+  AlertCircle,
+  Minus,
 } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useInvoices, useSendInvoice, useMarkInvoicePaid } from '@/hooks/use-finance';
 import { usePaymentLinksForInvoices } from '@/hooks/use-invoice-payment-links';
+import { useDownloadFacturae } from '@/hooks/finance/useRegulatorySubmissions';
 import { INVOICE_STATUSES, formatCurrency } from '@/lib/constants/finance';
 import type { Invoice, InvoiceStatus } from '@/types/finance';
 import { cn } from '@/lib/utils';
@@ -33,8 +41,15 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { SendInvoiceDialog, RectifyInvoiceDialog } from '@/components/features/finance/invoices';
 import { toast } from 'sonner';
 
 function StatCard({ label, value, icon: Icon, color }: { 
@@ -61,11 +76,80 @@ function StatCard({ label, value, icon: Icon, color }: {
   );
 }
 
-function InvoiceRow({ invoice, paymentLabel, onSend, onMarkPaid }: {
+// SII/TicketBAI status indicator
+function RegulatoryStatusCell({ invoice }: { invoice: Invoice }) {
+  const siiStatus = invoice.sii_status;
+  const tbaiStatus = invoice.tbai_status;
+  const verifactuStatus = invoice.verifactu_status;
+
+  // Determine overall status
+  const hasAny = siiStatus || tbaiStatus || verifactuStatus;
+  
+  if (!hasAny) {
+    return (
+      <span className="text-muted-foreground">—</span>
+    );
+  }
+
+  const getStatusIcon = (status?: string) => {
+    switch (status) {
+      case 'accepted':
+        return <Check className="h-3 w-3 text-green-500" />;
+      case 'sent':
+        return <Clock className="h-3 w-3 text-blue-500" />;
+      case 'pending':
+        return <AlertCircle className="h-3 w-3 text-yellow-500" />;
+      case 'rejected':
+      case 'error':
+        return <X className="h-3 w-3 text-red-500" />;
+      default:
+        return <Minus className="h-3 w-3 text-muted-foreground" />;
+    }
+  };
+
+  return (
+    <div className="flex items-center justify-center gap-1">
+      {siiStatus && (
+        <Tooltip>
+          <TooltipTrigger>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-muted">
+              {getStatusIcon(siiStatus)}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>SII: {siiStatus}</TooltipContent>
+        </Tooltip>
+      )}
+      {tbaiStatus && (
+        <Tooltip>
+          <TooltipTrigger>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-muted">
+              {getStatusIcon(tbaiStatus)}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>TicketBAI: {tbaiStatus}</TooltipContent>
+        </Tooltip>
+      )}
+      {verifactuStatus && (
+        <Tooltip>
+          <TooltipTrigger>
+            <span className="inline-flex items-center justify-center w-5 h-5 rounded bg-muted">
+              {getStatusIcon(verifactuStatus)}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>VERI*FACTU: {verifactuStatus}</TooltipContent>
+        </Tooltip>
+      )}
+    </div>
+  );
+}
+
+function InvoiceRow({ invoice, paymentLabel, onSend, onMarkPaid, onRectify, onDownloadXml }: {
   invoice: Invoice;
   paymentLabel?: string;
   onSend: () => void;
   onMarkPaid: (payment: { amount: number; date: string }) => void;
+  onRectify: () => void;
+  onDownloadXml: () => void;
 }) {
   const statusConfig = INVOICE_STATUSES[invoice.status];
   
@@ -82,6 +166,9 @@ function InvoiceRow({ invoice, paymentLabel, onSend, onMarkPaid }: {
         >
           {invoice.invoice_number}
         </Link>
+        {invoice.invoice_type === 'FR' && (
+          <span className="ml-1 text-xs text-orange-500">(Rect.)</span>
+        )}
       </TableCell>
       <TableCell>
         <p className="text-sm font-medium text-foreground">{invoice.client_name}</p>
@@ -119,6 +206,9 @@ function InvoiceRow({ invoice, paymentLabel, onSend, onMarkPaid }: {
         </span>
       </TableCell>
       <TableCell className="text-center">
+        <RegulatoryStatusCell invoice={invoice} />
+      </TableCell>
+      <TableCell className="text-center">
         <span className="text-xs text-muted-foreground">{paymentLabel || '—'}</span>
       </TableCell>
       <TableCell>
@@ -150,9 +240,26 @@ function InvoiceRow({ invoice, paymentLabel, onSend, onMarkPaid }: {
                 <CheckCircle className="w-4 h-4" /> Marcar pagada
               </DropdownMenuItem>
             )}
+            <DropdownMenuSeparator />
             <DropdownMenuItem className="flex items-center gap-2">
               <Download className="w-4 h-4" /> Descargar PDF
             </DropdownMenuItem>
+            <DropdownMenuItem onClick={onDownloadXml} className="flex items-center gap-2">
+              <FileCode className="w-4 h-4" /> Descargar XML
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to={`/app/finance/invoices/new?duplicate=${invoice.id}`} className="flex items-center gap-2">
+                <Copy className="w-4 h-4" /> Duplicar
+              </Link>
+            </DropdownMenuItem>
+            {invoice.status !== 'rectified' && invoice.invoice_type !== 'FR' && (
+              <>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={onRectify} className="flex items-center gap-2 text-orange-600">
+                  <FileWarning className="w-4 h-4" /> Rectificar
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </TableCell>
@@ -163,6 +270,8 @@ function InvoiceRow({ invoice, paymentLabel, onSend, onMarkPaid }: {
 export default function InvoiceListPage() {
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all');
   const [search, setSearch] = useState('');
+  const [sendInvoice, setSendInvoice] = useState<Invoice | null>(null);
+  const [rectifyInvoice, setRectifyInvoice] = useState<Invoice | null>(null);
   
   const { data: invoices = [], isLoading } = useInvoices(
     statusFilter !== 'all' ? { status: statusFilter } : undefined
@@ -170,6 +279,7 @@ export default function InvoiceListPage() {
   
   const sendMutation = useSendInvoice();
   const markPaidMutation = useMarkInvoicePaid();
+  const { downloadXml } = useDownloadFacturae();
   
   const filteredInvoices = invoices.filter(inv =>
     !search || 
@@ -331,6 +441,8 @@ export default function InvoiceListPage() {
                   paymentLabel={paymentLabel}
                   onSend={() => handleSend(invoice.id)}
                   onMarkPaid={(payment) => handleMarkPaid(invoice.id, payment)}
+                  onRectify={() => setRectifyInvoice(invoice)}
+                  onDownloadXml={() => downloadXml(invoice.id, invoice.invoice_number)}
                 />
               );
             })}
@@ -344,6 +456,24 @@ export default function InvoiceListPage() {
           </div>
         )}
       </div>
+
+      {/* Dialogs */}
+      {sendInvoice && (
+        <SendInvoiceDialog
+          open={!!sendInvoice}
+          onOpenChange={(open) => !open && setSendInvoice(null)}
+          invoice={sendInvoice}
+          onSuccess={() => setSendInvoice(null)}
+        />
+      )}
+
+      {rectifyInvoice && (
+        <RectifyInvoiceDialog
+          open={!!rectifyInvoice}
+          onOpenChange={(open) => !open && setRectifyInvoice(null)}
+          invoice={rectifyInvoice}
+        />
+      )}
     </div>
   );
 }
