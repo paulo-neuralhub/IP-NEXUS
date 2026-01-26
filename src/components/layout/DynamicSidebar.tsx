@@ -1,22 +1,25 @@
 /**
  * DYNAMIC SIDEBAR
- * PROMPT 50 Phase 4: Sidebar that adapts based on module licenses
+ * Sidebar dinámico que consume get_tenant_sidebar_menu()
+ * Organiza módulos en secciones colapsables
  */
 
 import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
-import { useOrganizationLicenses } from "@/hooks/use-module-access";
+import { useSidebarMenu, type SidebarModule, type SidebarSection } from "@/hooks/use-sidebar-menu";
 import { usePendingSignaturesCount } from "@/hooks/signatures";
 import { useAlertStats } from "@/hooks/usePredictiveAlerts";
-import { MODULE_REGISTRY, type ModuleCode } from "@/lib/modules/module-registry";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
-  Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, 
+  Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, ChevronRight,
   Lock, Shield, ArrowRightLeft, Store, BarChart3, Scale, Sparkles,
-  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell, MessageSquare, Calendar
+  Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell, MessageSquare, 
+  Calendar, Folder, FolderKanban, CheckSquare, Phone, Receipt, CreditCard, Coins,
+  Eye, FileBarChart, Bot, History, Building2, Handshake, Activity, Cog, ShoppingBag,
+  Search, Package, Circle, Puzzle
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -27,6 +30,11 @@ import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { GlobalTimer } from "@/components/timetracking";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
 
 interface DynamicSidebarProps {
   variant?: "desktop" | "mobile";
@@ -35,8 +43,8 @@ interface DynamicSidebarProps {
   onNavigate?: () => void;
 }
 
-// Icon mapping
-const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+// Icon mapping - extensible
+const ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   LayoutDashboard,
   Briefcase,
   FileText,
@@ -60,175 +68,36 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Clock,
   MessageSquare,
   Calendar,
+  Folder,
+  FolderKanban,
+  CheckSquare,
+  Phone,
+  Receipt,
+  CreditCard,
+  Coins,
+  Eye,
+  FileBarChart,
+  Bot,
+  History,
+  Building2,
+  Handshake,
+  Activity,
+  Cog,
+  ShoppingBag,
+  Search,
+  Package,
+  Circle,
+  Puzzle,
+  Bell,
+  Settings,
+  GitBranch,
+  Lock,
+  Shield,
 };
 
-interface NavItem {
-  path: string;
-  label: string;
-  icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>;
-  moduleCode: ModuleCode;
-  color: string;
-  requiresLicense: boolean;
-  badgeKey?: string; // Key for dynamic badge count
+function getIcon(iconName: string): React.ComponentType<{ className?: string; style?: React.CSSProperties }> {
+  return ICON_MAP[iconName] || Package;
 }
-
-// Core navigation items (always visible)
-const CORE_NAV: NavItem[] = [
-  {
-    path: "/app/dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    moduleCode: "core",
-    color: "#3B82F6",
-    requiresLicense: false,
-  },
-];
-
-// Module-based navigation items
-const MODULE_NAV: NavItem[] = [
-  {
-    path: "/app/docket",
-    label: "Docket",
-    icon: Briefcase,
-    moduleCode: "docket",
-    color: MODULE_REGISTRY.docket.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/docket/deadlines",
-    label: "Plazos",
-    icon: Calendar,
-    moduleCode: "docket",
-    color: "#F59E0B", // Amber for urgency
-    requiresLicense: true,
-  },
-  {
-    path: "/app/data-hub",
-    label: "Data Hub",
-    icon: Database,
-    moduleCode: "datahub",
-    color: MODULE_REGISTRY.datahub.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/spider",
-    label: "Spider",
-    icon: Radar,
-    moduleCode: "spider",
-    color: MODULE_REGISTRY.spider.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/crm",
-    label: "CRM",
-    icon: Users,
-    moduleCode: "crm",
-    color: MODULE_REGISTRY.crm.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/marketing",
-    label: "Marketing",
-    icon: Megaphone,
-    moduleCode: "marketing",
-    color: MODULE_REGISTRY.marketing.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/market",
-    label: "Market",
-    icon: Store,
-    moduleCode: "market",
-    color: MODULE_REGISTRY.market.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/genius",
-    label: "Genius",
-    icon: Sparkles,
-    moduleCode: "genius",
-    color: MODULE_REGISTRY.genius.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/finance",
-    label: "Finance",
-    icon: Wallet,
-    moduleCode: "finance",
-    color: MODULE_REGISTRY.finance.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/timetracking",
-    label: "Tiempo",
-    icon: Clock,
-    moduleCode: "finance", // Uses finance module access
-    color: "#06B6D4",
-    requiresLicense: true,
-  },
-  {
-    path: "/app/legal-ops",
-    label: "Legal Ops",
-    icon: Scale,
-    moduleCode: "legalops",
-    color: MODULE_REGISTRY.legalops.color,
-    requiresLicense: true,
-  },
-  {
-    path: "/app/legal-ops/signatures",
-    label: "Firmas",
-    icon: PenTool,
-    moduleCode: "legalops",
-    color: "#10B981",
-    requiresLicense: true,
-    badgeKey: "pendingSignatures",
-  },
-  {
-    path: "/app/communications",
-    label: "Comunicaciones",
-    icon: MessageSquare,
-    moduleCode: "core",
-    color: MODULE_REGISTRY.communications.color,
-    requiresLicense: false,
-  },
-  {
-    path: "/app/workflow",
-    label: "Workflow",
-    icon: GitBranch,
-    moduleCode: "core",
-    color: "#06B6D4",
-    requiresLicense: false,
-  },
-];
-
-// Utility items (always visible)
-const UTILITY_NAV: NavItem[] = [
-  {
-    path: "/app/alerts",
-    label: "Alertas IA",
-    icon: Bell,
-    moduleCode: "core",
-    color: "#EF4444",
-    requiresLicense: false,
-    badgeKey: "predictiveAlerts",
-  },
-  {
-    path: "/app/migrator",
-    label: "Migrator",
-    icon: ArrowRightLeft,
-    moduleCode: "migrator",
-    color: MODULE_REGISTRY.migrator.color,
-    requiresLicense: false,
-  },
-  {
-    path: "/app/help",
-    label: "Ayuda",
-    icon: HelpCircle,
-    moduleCode: "core",
-    color: "#6B7280",
-    requiresLicense: false,
-  },
-];
 
 export function DynamicSidebar({
   variant = "desktop",
@@ -239,14 +108,21 @@ export function DynamicSidebar({
   const location = useLocation();
   const { profile, signOut } = useAuth();
   const { currentOrganization, memberships, setCurrentOrganization } = useOrganization();
-  const { data: licenses, isLoading } = useOrganizationLicenses();
+  const { data: sections, isLoading } = useSidebarMenu();
   const { data: pendingSignaturesCount = 0 } = usePendingSignaturesCount();
   const { data: alertStats } = useAlertStats();
 
+  // Expandir/contraer secciones
+  const [expandedSections, setExpandedSections] = React.useState<Set<string>>(new Set(["dashboard", "gestion"]));
+  // Expandir/contraer módulos con sub-items
+  const [expandedModules, setExpandedModules] = React.useState<Set<string>>(new Set(["docket"]));
+
   // Badge counts map
   const badgeCounts: Record<string, number> = {
-    pendingSignatures: pendingSignaturesCount,
-    predictiveAlerts: (alertStats?.critical || 0) + (alertStats?.high || 0),
+    signatures: pendingSignaturesCount,
+    alerts: (alertStats?.critical || 0) + (alertStats?.high || 0),
+    deadlines: 0, // Se puede conectar a un hook de deadlines próximos
+    tasks: 0,
   };
 
   const otherOrgs = memberships.filter(m => m.organization_id !== currentOrganization?.id);
@@ -258,100 +134,245 @@ export function DynamicSidebar({
     }
   };
 
-  // Check if user has access to a module
-  const hasModuleAccess = (moduleCode: ModuleCode): boolean => {
-    if (!licenses) return false;
-    return licenses.some(l => l.module_code === moduleCode);
+  const toggleSection = (sectionCode: string) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(sectionCode)) {
+        next.delete(sectionCode);
+      } else {
+        next.add(sectionCode);
+      }
+      return next;
+    });
   };
 
-  // Get license info for a module
-  const getModuleLicense = (moduleCode: ModuleCode) => {
-    return licenses?.find(l => l.module_code === moduleCode);
+  const toggleModule = (moduleCode: string) => {
+    setExpandedModules(prev => {
+      const next = new Set(prev);
+      if (next.has(moduleCode)) {
+        next.delete(moduleCode);
+      } else {
+        next.add(moduleCode);
+      }
+      return next;
+    });
   };
 
-  // Render a navigation item
-  const renderNavItem = (item: NavItem, idx: number) => {
-    const isActive = location.pathname === item.path || location.pathname.startsWith(item.path + "/");
-    const hasAccess = !item.requiresLicense || hasModuleAccess(item.moduleCode);
-    const license = getModuleLicense(item.moduleCode);
-    const isTrialing = license?.trial_ends_at !== null && license?.trial_ends_at !== undefined;
-    const Icon = item.icon;
-    const badgeCount = item.badgeKey ? badgeCounts[item.badgeKey] : 0;
+  // Verificar si un path está activo
+  const isPathActive = (path: string) => {
+    return location.pathname === path || location.pathname.startsWith(path + "/");
+  };
 
-    const iconColor = hasAccess ? item.color : "hsl(var(--sidebar-foreground) / 0.35)";
+  // Renderizar un item de menú de módulo
+  const renderMenuItem = (item: { label: string; path: string; icon: string; badge?: string }, moduleColor: string) => {
+    const isActive = isPathActive(item.path);
+    const Icon = getIcon(item.icon);
+    const badgeCount = item.badge ? badgeCounts[item.badge] || 0 : 0;
 
     return (
       <Link
         key={item.path}
-        to={hasAccess ? item.path : `/pricing?upgrade=${item.moduleCode}`}
+        to={item.path}
         onClick={onNavigate}
-        title={collapsed ? item.label : undefined}
         className={cn(
-          "flex items-center gap-3 rounded-xl text-sm transition-colors relative group",
-          collapsed ? "px-3 py-3 justify-center" : "px-4 py-3",
+          "flex items-center gap-2 rounded-lg text-xs transition-colors",
+          collapsed ? "px-2 py-2 justify-center" : "px-3 py-2 ml-6",
           isActive
-            ? "bg-sidebar-accent/15 text-sidebar-foreground"
-            : hasAccess
-              ? "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
-              : "text-sidebar-foreground/40 hover:bg-sidebar-accent/5"
+            ? "bg-sidebar-accent/20 text-sidebar-foreground"
+            : "text-sidebar-foreground/60 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
         )}
-        style={isActive ? { borderLeft: `3px solid ${item.color}` } : undefined}
       >
-        <Icon 
-          className={cn(
-            "h-5 w-5 shrink-0 transition-opacity",
-            hasAccess
-              ? isActive
-                ? "opacity-100"
-                : "opacity-90 group-hover:opacity-100"
-              : "opacity-70"
-          )}
-          style={{ color: iconColor }}
-        />
+        <Icon className="h-4 w-4 shrink-0" style={{ color: isActive ? moduleColor : undefined }} />
         {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
-        
-        {!collapsed && !hasAccess && (
-          <Lock className="h-4 w-4 shrink-0" />
-        )}
-        
-        {/* Dynamic badge count (e.g., pending signatures) */}
-        {!collapsed && hasAccess && badgeCount > 0 && (
-          <Badge 
-            variant="destructive" 
-            className="text-[10px] px-1.5 py-0 min-w-[20px] h-5 flex items-center justify-center"
-          >
+        {!collapsed && badgeCount > 0 && (
+          <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4">
             {badgeCount}
           </Badge>
         )}
-        
-        {!collapsed && hasAccess && isTrialing && (
-          <Badge 
-            variant="outline" 
-            className="text-[10px] px-1.5 py-0 border-yellow-500/50 text-yellow-400"
-          >
-            TRIAL
-          </Badge>
-        )}
-        
-        {!collapsed && hasAccess && license?.tier_code === 'pro' && !isTrialing && (
-          <Badge 
-            variant="secondary" 
-            className="text-[10px] px-1.5 py-0"
-          >
-            PRO
-          </Badge>
-        )}
-        
-        {/* Removed ENT badge to reduce visual noise */}
+      </Link>
+    );
+  };
 
-        {/* Tooltip on hover for locked modules */}
-        {!hasAccess && (
-          <div className="absolute left-full ml-2 px-3 py-2 bg-popover border rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-50">
-            <p className="text-sm font-medium">{item.label}</p>
-            <p className="text-xs text-muted-foreground">Click para desbloquear</p>
-          </div>
+  // Renderizar un módulo
+  const renderModule = (mod: SidebarModule) => {
+    const Icon = getIcon(mod.moduleIconLucide || mod.moduleIcon);
+    const hasSubItems = mod.moduleMenuItems.length > 0;
+    const isExpanded = expandedModules.has(mod.moduleCode);
+    const mainPath = mod.moduleMenuItems[0]?.path || `/app/${mod.moduleCode}`;
+    const isActive = isPathActive(mainPath) || mod.moduleMenuItems.some(item => isPathActive(item.path));
+    const iconColor = mod.isLicensed ? mod.moduleColor : "hsl(var(--sidebar-foreground) / 0.35)";
+
+    // Si está bloqueado
+    if (!mod.isLicensed) {
+      return (
+        <Link
+          key={mod.moduleCode}
+          to={`/pricing?upgrade=${mod.moduleCode}`}
+          onClick={onNavigate}
+          title={collapsed ? mod.moduleName : undefined}
+          className={cn(
+            "flex items-center gap-3 rounded-xl text-sm transition-colors relative group",
+            collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
+            "text-sidebar-foreground/40 hover:bg-sidebar-accent/5"
+          )}
+        >
+          <Icon className="h-5 w-5 shrink-0 opacity-60" style={{ color: iconColor }} />
+          {!collapsed && (
+            <>
+              <span className="flex-1 truncate">{mod.moduleShortName || mod.moduleName}</span>
+              <Lock className="h-4 w-4 shrink-0" />
+            </>
+          )}
+        </Link>
+      );
+    }
+
+    // Módulo con sub-items
+    if (hasSubItems && !collapsed) {
+      return (
+        <Collapsible
+          key={mod.moduleCode}
+          open={isExpanded}
+          onOpenChange={() => toggleModule(mod.moduleCode)}
+        >
+          <CollapsibleTrigger asChild>
+            <button
+              type="button"
+              className={cn(
+                "w-full flex items-center gap-3 rounded-xl text-sm transition-colors",
+                "px-4 py-2.5",
+                isActive
+                  ? "bg-sidebar-accent/15 text-sidebar-foreground"
+                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+              )}
+              style={isActive ? { borderLeft: `3px solid ${mod.moduleColor}` } : undefined}
+            >
+              <Icon 
+                className="h-5 w-5 shrink-0" 
+                style={{ color: isActive ? mod.moduleColor : iconColor }} 
+              />
+              <span className="flex-1 truncate text-left">{mod.moduleShortName || mod.moduleName}</span>
+              {mod.isTrial && (
+                <Badge variant="outline" className="text-[9px] px-1 py-0 border-yellow-500/50 text-yellow-400">
+                  TRIAL
+                </Badge>
+              )}
+              <ChevronRight 
+                className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-90")} 
+              />
+            </button>
+          </CollapsibleTrigger>
+          <CollapsibleContent className="space-y-0.5 py-1">
+            {mod.moduleMenuItems.map(item => renderMenuItem(item, mod.moduleColor))}
+          </CollapsibleContent>
+        </Collapsible>
+      );
+    }
+
+    // Módulo simple (sin sub-items o collapsed)
+    return (
+      <Link
+        key={mod.moduleCode}
+        to={mainPath}
+        onClick={onNavigate}
+        title={collapsed ? mod.moduleName : undefined}
+        className={cn(
+          "flex items-center gap-3 rounded-xl text-sm transition-colors",
+          collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
+          isActive
+            ? "bg-sidebar-accent/15 text-sidebar-foreground"
+            : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+        )}
+        style={isActive ? { borderLeft: `3px solid ${mod.moduleColor}` } : undefined}
+      >
+        <Icon 
+          className="h-5 w-5 shrink-0" 
+          style={{ color: isActive ? mod.moduleColor : iconColor }} 
+        />
+        {!collapsed && (
+          <>
+            <span className="flex-1 truncate">{mod.moduleShortName || mod.moduleName}</span>
+            {mod.isTrial && (
+              <Badge variant="outline" className="text-[9px] px-1 py-0 border-yellow-500/50 text-yellow-400">
+                TRIAL
+              </Badge>
+            )}
+            {mod.modulePopular && !mod.isTrial && (
+              <Badge variant="secondary" className="text-[9px] px-1 py-0">
+                HOT
+              </Badge>
+            )}
+          </>
         )}
       </Link>
+    );
+  };
+
+  // Renderizar una sección
+  const renderSection = (section: SidebarSection) => {
+    const isExpanded = expandedSections.has(section.sectionCode);
+    const Icon = getIcon(section.sectionIcon);
+    const hasModules = section.modules.length > 0;
+
+    // Dashboard section (special case - no header)
+    if (section.sectionCode === "dashboard") {
+      return (
+        <div key={section.sectionCode} className="mb-2">
+          {/* Dashboard link directo */}
+          <Link
+            to="/app/dashboard"
+            onClick={onNavigate}
+            title={collapsed ? "Dashboard" : undefined}
+            className={cn(
+              "flex items-center gap-3 rounded-xl text-sm transition-colors",
+              collapsed ? "px-3 py-3 justify-center" : "px-4 py-3",
+              isPathActive("/app/dashboard")
+                ? "bg-sidebar-accent/15 text-sidebar-foreground"
+                : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+            )}
+            style={isPathActive("/app/dashboard") ? { borderLeft: "3px solid #3B82F6" } : undefined}
+          >
+            <LayoutDashboard className="h-5 w-5 shrink-0" style={{ color: "#3B82F6" }} />
+            {!collapsed && <span className="flex-1">Dashboard</span>}
+          </Link>
+        </div>
+      );
+    }
+
+    // Sección colapsable con módulos
+    return (
+      <div key={section.sectionCode} className="mb-1">
+        {!collapsed && (
+          <Collapsible open={isExpanded} onOpenChange={() => toggleSection(section.sectionCode)}>
+            <CollapsibleTrigger asChild>
+              <button
+                type="button"
+                className={cn(
+                  "w-full flex items-center gap-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider",
+                  "text-sidebar-foreground/50 hover:text-sidebar-foreground/70 transition-colors"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span className="flex-1 text-left">{section.sectionLabel || section.sectionName}</span>
+                <ChevronDown 
+                  className={cn("h-3.5 w-3.5 transition-transform", !isExpanded && "-rotate-90")} 
+                />
+              </button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="space-y-0.5">
+              {hasModules ? section.modules.map(renderModule) : (
+                <p className="text-xs text-sidebar-foreground/40 px-4 py-2">Sin módulos</p>
+              )}
+            </CollapsibleContent>
+          </Collapsible>
+        )}
+
+        {collapsed && hasModules && (
+          <div className="space-y-1">
+            {section.modules.map(renderModule)}
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -367,8 +388,7 @@ export function DynamicSidebar({
       {/* Logo */}
       <div className={cn(collapsed ? "p-4" : "p-6")}>
         <Link to="/app" onClick={onNavigate} className="flex items-center gap-2">
-          <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center ip-sidebar-accent")}
-          >
+          <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center ip-sidebar-accent")}>
             <Shield className="h-5 w-5 text-primary-foreground" />
           </div>
           {!collapsed && <span className="text-lg font-bold tracking-tight">IP-NEXUS</span>}
@@ -378,7 +398,6 @@ export function DynamicSidebar({
       {/* Navigation */}
       <nav className={cn("flex-1 overflow-y-auto", collapsed ? "px-2" : "px-3")}>
         {isLoading ? (
-          // Loading skeleton
           <div className="space-y-2">
             {Array.from({ length: 8 }).map((_, i) => (
               <Skeleton key={i} className="h-11 bg-white/5" />
@@ -386,25 +405,57 @@ export function DynamicSidebar({
           </div>
         ) : (
           <>
-            {/* Core navigation */}
-            {CORE_NAV.map(renderNavItem)}
+            {sections?.map(renderSection)}
             
-            {/* Separator */}
+            {/* Separator antes de sistema */}
             <div className="my-3 border-t border-white/10" />
             
-            {/* Module navigation */}
-            {MODULE_NAV.map(renderNavItem)}
-            
-            {/* Separator */}
-            <div className="my-3 border-t border-white/10" />
-            
-            {/* Utility navigation */}
-            {UTILITY_NAV.map(renderNavItem)}
+            {/* Enlaces de utilidad fijos */}
+            <Link
+              to="/app/alerts"
+              onClick={onNavigate}
+              title={collapsed ? "Alertas IA" : undefined}
+              className={cn(
+                "flex items-center gap-3 rounded-xl text-sm transition-colors",
+                collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
+                isPathActive("/app/alerts")
+                  ? "bg-sidebar-accent/15 text-sidebar-foreground"
+                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+              )}
+            >
+              <Bell className="h-5 w-5 shrink-0" style={{ color: "#EF4444" }} />
+              {!collapsed && (
+                <>
+                  <span className="flex-1">Alertas IA</span>
+                  {badgeCounts.alerts > 0 && (
+                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
+                      {badgeCounts.alerts}
+                    </Badge>
+                  )}
+                </>
+              )}
+            </Link>
+
+            <Link
+              to="/app/help"
+              onClick={onNavigate}
+              title={collapsed ? "Ayuda" : undefined}
+              className={cn(
+                "flex items-center gap-3 rounded-xl text-sm transition-colors",
+                collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
+                isPathActive("/app/help")
+                  ? "bg-sidebar-accent/15 text-sidebar-foreground"
+                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+              )}
+            >
+              <HelpCircle className="h-5 w-5 shrink-0" style={{ color: "#6B7280" }} />
+              {!collapsed && <span className="flex-1">Ayuda</span>}
+            </Link>
           </>
         )}
       </nav>
 
-      {/* Timer (placed below Help and above Settings to avoid overlapping floating widgets) */}
+      {/* Timer */}
       {!collapsed && (
         <div className="px-3 py-3">
           <GlobalTimer placement="sidebar" />
@@ -429,10 +480,9 @@ export function DynamicSidebar({
         </Link>
       </div>
 
-      {/* Collapse Button (desktop only) */}
+      {/* Collapse Button */}
       {variant === "desktop" && onToggleCollapsed && (
-        <div className={cn("border-t border-sidebar-border", collapsed ? "px-2" : "px-3", "py-2")}
-        >
+        <div className={cn("border-t border-sidebar-border", collapsed ? "px-2" : "px-3", "py-2")}>
           <button
             type="button"
             onClick={onToggleCollapsed}
@@ -499,4 +549,3 @@ export function DynamicSidebar({
     </aside>
   );
 }
-
