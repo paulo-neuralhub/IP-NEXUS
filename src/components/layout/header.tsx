@@ -9,7 +9,7 @@ import { getInitials } from "@/lib/utils";
 import { LanguageSwitcher } from "@/components/ui/language-switcher";
 import { GlobalSearchTrigger } from "@/components/search";
 import { NotificationBell } from "@/components/notifications";
-
+import { WorkflowApprovalBadge } from "@/components/workflows/WorkflowApprovalBadge";
 interface HeaderProps {
   breadcrumbs?: { label: string; href?: string }[];
   onMenuClick?: () => void;
@@ -78,6 +78,11 @@ export function Header({ breadcrumbs, onMenuClick }: HeaderProps) {
           {/* Language Switcher */}
           <div className="hidden sm:block">
             <LanguageSwitcher />
+          </div>
+
+          {/* Workflow Approvals */}
+          <div className="hidden sm:block">
+            <WorkflowApprovalBadge />
           </div>
 
           {/* Notifications */}

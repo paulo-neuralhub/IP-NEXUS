@@ -11,7 +11,8 @@ import {
   ChevronUp,
   Settings,
   Zap,
-  AlertCircle
+  AlertCircle,
+  ShieldCheck
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -72,6 +73,8 @@ interface WorkflowFormData {
   conditions: WorkflowCondition[];
   actions: WorkflowAction[];
   is_active: boolean;
+  requires_approval: boolean;
+  approval_message: string;
 }
 
 export function WorkflowBuilder() {
@@ -93,7 +96,9 @@ export function WorkflowBuilder() {
     trigger_config: {},
     conditions: [],
     actions: [],
-    is_active: false
+    is_active: false,
+    requires_approval: false,
+    approval_message: ''
   });
 
   const [expandedActions, setExpandedActions] = useState<Set<string>>(new Set());
@@ -110,7 +115,9 @@ export function WorkflowBuilder() {
         trigger_config: existingWorkflow.trigger_config || {},
         conditions: existingWorkflow.conditions || [],
         actions: existingWorkflow.actions || [],
-        is_active: existingWorkflow.is_active
+        is_active: existingWorkflow.is_active,
+        requires_approval: existingWorkflow.requires_approval || false,
+        approval_message: existingWorkflow.approval_message || ''
       });
       // Expand all actions by default in edit mode
       setExpandedActions(new Set((existingWorkflow.actions || []).map((a: WorkflowAction) => a.id)));
@@ -321,6 +328,41 @@ export function WorkflowBuilder() {
                 onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
               />
             </div>
+          </div>
+
+          {/* Approval Section */}
+          <div className="border-t pt-4 mt-4 space-y-4">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <ShieldCheck className="h-4 w-4" />
+              <span className="text-sm font-medium">Control de Aprobación</span>
+            </div>
+            
+            <div className="flex items-center justify-between space-x-2">
+              <div className="space-y-0.5">
+                <Label htmlFor="requires_approval">Requiere aprobación</Label>
+                <p className="text-xs text-muted-foreground">
+                  Si está activo, el workflow esperará aprobación antes de ejecutarse
+                </p>
+              </div>
+              <Switch
+                id="requires_approval"
+                checked={formData.requires_approval}
+                onCheckedChange={(checked) => setFormData(prev => ({ ...prev, requires_approval: checked }))}
+              />
+            </div>
+
+            {formData.requires_approval && (
+              <div className="space-y-2">
+                <Label htmlFor="approval_message">Mensaje de aprobación (opcional)</Label>
+                <Textarea
+                  id="approval_message"
+                  value={formData.approval_message}
+                  onChange={(e) => setFormData(prev => ({ ...prev, approval_message: e.target.value }))}
+                  placeholder="Mensaje que verán los aprobadores. Ej: Por favor revise los datos antes de aprobar..."
+                  rows={2}
+                />
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
