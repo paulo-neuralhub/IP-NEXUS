@@ -672,7 +672,7 @@ serve(async (req) => {
       const { data: listing, error: listingErr } = await adminClient
         .from("market_listings")
         .insert({
-          listing_number: `LIST-DEMO-${String(i + 1).padStart(4, "0")}`,
+          listing_number: `LIST-${runId.slice(0, 8)}-${String(i + 1).padStart(4, "0")}`,
           asset_id: asset.id,
           seller_id: authUserId,
           status: "active",
