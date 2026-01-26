@@ -74,7 +74,7 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
         trialEndsAt: null,
       },
       {
-        moduleCode: "datahub",
+        moduleCode: "data-hub",
         moduleName: "Data Hub",
         moduleShortName: "Conectores",
         moduleIcon: "Database",
@@ -83,7 +83,10 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
         moduleOrder: 3,
         moduleCategory: "core",
         moduleExpanded: false,
-        moduleMenuItems: [],
+        moduleMenuItems: [
+          { label: "Vista General", path: "/app/data-hub", icon: "LayoutDashboard" },
+          { label: "Import/Export", path: "/app/data-hub/import-export", icon: "ArrowRightLeft" },
+        ],
         moduleRequires: [],
         modulePopular: false,
         moduleComingSoon: false,
