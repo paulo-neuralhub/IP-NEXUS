@@ -240,6 +240,15 @@ verify_jwt = false
 [functions.twilio-transfer-call]
 verify_jwt = false
 
+[functions.send-whatsapp]
+verify_jwt = false
+
+[functions.whatsapp-webhook]
+verify_jwt = false
+
+[functions.send-sms]
+verify_jwt = false
+
 [functions.backoffice-ai-agent]
 verify_jwt = true
 
