@@ -62,8 +62,11 @@ export default function CRMLayout() {
   return (
     <ModuleGate module="crm">
       <div className="space-y-4">
-        {/* Title */}
-        <h1 className="text-2xl font-bold">CRM</h1>
+        {/* Header */}
+        <div>
+          <p className="text-muted-foreground">Visión global (Accounts · Contacts · Deals · Interactions · Tasks)</p>
+          <h1 className="text-2xl font-bold">CRM</h1>
+        </div>
         
         {/* Sub-navigation */}
         <div className="border-b">
