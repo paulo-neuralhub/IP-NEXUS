@@ -230,12 +230,16 @@ function PlanCard({ plan, billingCycle, isCurrent }: {
       </div>
       
       <ul className="mt-4 space-y-2">
-        {(plan.features as string[]).slice(0, 6).map((feature: string) => {
-          const featureConfig = PLAN_FEATURES[feature as keyof typeof PLAN_FEATURES];
+        {(plan.features as Array<string | { text: string; included: boolean }>).slice(0, 6).map((feature, idx) => {
+          // Handle both string features and object features {text, included}
+          const featureKey = typeof feature === 'string' ? feature : `feature-${idx}`;
+          const featureLabel = typeof feature === 'string' 
+            ? (PLAN_FEATURES[feature as keyof typeof PLAN_FEATURES]?.label || feature)
+            : feature.text;
           return (
-            <li key={feature} className="flex items-center gap-2 text-sm">
+            <li key={featureKey} className="flex items-center gap-2 text-sm">
               <Check className="w-4 h-4 text-success" />
-              <span>{featureConfig?.label || feature}</span>
+              <span>{featureLabel}</span>
             </li>
           );
         })}
