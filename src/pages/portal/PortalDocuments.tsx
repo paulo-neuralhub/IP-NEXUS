@@ -1,15 +1,17 @@
 /**
  * Portal Documents
- * Lista de documentos compartidos con el cliente
+ * Lista de documentos compartidos con el cliente - DATOS REALES
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { usePortalDocuments, useDownloadDocument, useViewDocument } from '@/hooks/use-portal-documents';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -25,72 +27,12 @@ import {
   Filter,
   File,
   FileImage,
-  FileSpreadsheet
+  FileSpreadsheet,
+  FilePen,
+  CheckCircle2
 } from 'lucide-react';
-
-// Mock data
-const mockDocuments = [
-  {
-    id: '1',
-    name: 'Solicitud de registro marca NEXUS',
-    matter: 'TM-2025-001',
-    matterTitle: 'Marca NEXUS',
-    type: 'pdf',
-    size: '245 KB',
-    date: '2025-01-15',
-    category: 'application',
-  },
-  {
-    id: '2',
-    name: 'Poder de representación firmado',
-    matter: 'TM-2025-001',
-    matterTitle: 'Marca NEXUS',
-    type: 'pdf',
-    size: '156 KB',
-    date: '2025-01-14',
-    category: 'power',
-  },
-  {
-    id: '3',
-    name: 'Acuse de recibo OEPM',
-    matter: 'TM-2025-001',
-    matterTitle: 'Marca NEXUS',
-    type: 'pdf',
-    size: '89 KB',
-    date: '2025-01-16',
-    category: 'receipt',
-  },
-  {
-    id: '4',
-    name: 'Memoria descriptiva patente',
-    matter: 'PT-2025-003',
-    matterTitle: 'Patente IoT Device',
-    type: 'pdf',
-    size: '1.2 MB',
-    date: '2025-02-20',
-    category: 'application',
-  },
-  {
-    id: '5',
-    name: 'Dibujos técnicos',
-    matter: 'PT-2025-003',
-    matterTitle: 'Patente IoT Device',
-    type: 'image',
-    size: '3.4 MB',
-    date: '2025-02-18',
-    category: 'drawings',
-  },
-  {
-    id: '6',
-    name: 'Informe de costes Q1 2025',
-    matter: null,
-    matterTitle: null,
-    type: 'xlsx',
-    size: '67 KB',
-    date: '2025-04-01',
-    category: 'report',
-  },
-];
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default function PortalDocuments() {
   const { slug } = useParams<{ slug: string }>();
@@ -98,36 +40,69 @@ export default function PortalDocuments() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
 
-  const filteredDocs = mockDocuments.filter((doc) => {
-    const matchesSearch = doc.name.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || doc.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const { data: documents, isLoading, error } = usePortalDocuments(categoryFilter);
+  const downloadMutation = useDownloadDocument();
+  const viewMutation = useViewDocument();
 
-  const getFileIcon = (type: string) => {
-    switch (type) {
-      case 'pdf':
-        return <FileText className="w-5 h-5 text-red-500" />;
-      case 'image':
-        return <FileImage className="w-5 h-5 text-blue-500" />;
-      case 'xlsx':
-        return <FileSpreadsheet className="w-5 h-5 text-green-500" />;
-      default:
-        return <File className="w-5 h-5 text-muted-foreground" />;
+  const filteredDocs = useMemo(() => {
+    if (!documents) return [];
+    return documents.filter((doc) => {
+      return doc.name.toLowerCase().includes(search.toLowerCase());
+    });
+  }, [documents, search]);
+
+  const getFileIcon = (mimeType: string) => {
+    if (mimeType.includes('pdf')) {
+      return <FileText className="w-5 h-5 text-red-500" />;
     }
+    if (mimeType.includes('image')) {
+      return <FileImage className="w-5 h-5 text-blue-500" />;
+    }
+    if (mimeType.includes('spreadsheet') || mimeType.includes('excel')) {
+      return <FileSpreadsheet className="w-5 h-5 text-green-500" />;
+    }
+    if (mimeType.includes('word') || mimeType.includes('document')) {
+      return <FilePen className="w-5 h-5 text-blue-600" />;
+    }
+    return <File className="w-5 h-5 text-muted-foreground" />;
   };
 
-  const categoryLabels: Record<string, string> = {
-    application: t('portal.documents.filter_pending'),
-    power: 'Poder',
-    receipt: 'Acuse',
-    drawings: 'Dibujos',
-    report: 'Informe',
+  const handleDownload = (doc: typeof filteredDocs[0]) => {
+    downloadMutation.mutate({
+      sharedContentId: doc.id,
+      filePath: doc.file_path,
+      fileName: doc.name,
+    });
   };
 
-  const getCategoryLabel = (category: string) => {
-    return categoryLabels[category] || category;
+  const handleView = (doc: typeof filteredDocs[0]) => {
+    viewMutation.mutate(doc.id);
+    // Aquí se podría abrir un modal de preview
   };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64 mt-2" />
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton key={i} className="h-16 mb-3" />
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -137,6 +112,32 @@ export default function PortalDocuments() {
         <p className="text-muted-foreground">
           {t('portal.documents.subtitle')}
         </p>
+      </div>
+
+      {/* Stats */}
+      <div className="grid grid-cols-3 gap-4">
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <p className="text-sm text-muted-foreground">Total documentos</p>
+            <p className="text-2xl font-bold mt-1">{documents?.length || 0}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <p className="text-sm text-muted-foreground">Sin ver</p>
+            <p className="text-2xl font-bold mt-1 text-amber-600">
+              {documents?.filter(d => !d.viewed_at).length || 0}
+            </p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 pb-4">
+            <p className="text-sm text-muted-foreground">Descargados</p>
+            <p className="text-2xl font-bold mt-1 text-green-600">
+              {documents?.filter(d => d.download_count > 0).length || 0}
+            </p>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
@@ -162,7 +163,7 @@ export default function PortalDocuments() {
                 <SelectItem value="application">Solicitudes</SelectItem>
                 <SelectItem value="power">Poderes</SelectItem>
                 <SelectItem value="receipt">Acuses</SelectItem>
-                <SelectItem value="drawings">Dibujos</SelectItem>
+                <SelectItem value="official">Oficiales</SelectItem>
                 <SelectItem value="report">Informes</SelectItem>
               </SelectContent>
             </Select>
@@ -173,7 +174,9 @@ export default function PortalDocuments() {
           <div className="space-y-3">
             {filteredDocs.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                {t('portal.documents.no_documents')}
+                <FileText className="w-12 h-12 mx-auto opacity-30 mb-4" />
+                <p className="font-medium">{t('portal.documents.no_documents')}</p>
+                <p className="text-sm">No hay documentos compartidos contigo</p>
               </div>
             ) : (
               filteredDocs.map((doc) => (
@@ -183,31 +186,54 @@ export default function PortalDocuments() {
                 >
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                      {getFileIcon(doc.type)}
+                      {getFileIcon(doc.mime_type)}
                     </div>
                     <div className="space-y-1 min-w-0">
-                      <p className="font-medium truncate">{doc.name}</p>
+                      <div className="flex items-center gap-2">
+                        <p className="font-medium truncate">{doc.name}</p>
+                        {!doc.viewed_at && (
+                          <Badge className="bg-amber-100 text-amber-700 border-amber-200 shrink-0">
+                            Nuevo
+                          </Badge>
+                        )}
+                      </div>
                       <div className="flex items-center gap-2 flex-wrap text-sm text-muted-foreground">
-                        {doc.matterTitle && (
+                        {doc.matter_title && (
                           <>
-                            <span>{doc.matterTitle}</span>
+                            <span className="truncate max-w-[200px]">{doc.matter_title}</span>
                             <span>•</span>
                           </>
                         )}
-                        <span>{doc.size}</span>
+                        <span>{formatFileSize(doc.file_size)}</span>
                         <span>•</span>
-                        <span>{new Date(doc.date).toLocaleDateString('es')}</span>
+                        <span>{format(new Date(doc.shared_at), 'd MMM yyyy', { locale: es })}</span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 sm:ml-auto">
-                    <Badge variant="outline">{getCategoryLabel(doc.category)}</Badge>
-                    <Button size="sm" variant="ghost">
+                    {doc.category && (
+                      <Badge variant="outline">{doc.category}</Badge>
+                    )}
+                    {doc.viewed_at && (
+                      <CheckCircle2 className="w-4 h-4 text-green-500" />
+                    )}
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => handleView(doc)}
+                    >
                       <Eye className="w-4 h-4" />
                     </Button>
-                    <Button size="sm" variant="ghost">
-                      <Download className="w-4 h-4" />
-                    </Button>
+                    {doc.can_download && (
+                      <Button 
+                        size="sm" 
+                        variant="ghost"
+                        onClick={() => handleDownload(doc)}
+                        disabled={downloadMutation.isPending}
+                      >
+                        <Download className="w-4 h-4" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               ))
