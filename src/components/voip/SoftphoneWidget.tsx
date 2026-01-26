@@ -50,7 +50,7 @@ export function SoftphoneWidget() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [transferOpen, setTransferOpen] = useState(false);
 
-  const { device, isReady, error: deviceError } = useTwilioDevice();
+  const { device, isReady, error: deviceError, isConfigured } = useTwilioDevice();
   const { makeCall, hangUp, toggleMute, toggleHold, currentCall, acceptIncoming, rejectIncoming } = useVoipCall(device);
 
   const voipAvailable = useMemo(() => !!currentOrganization?.id, [currentOrganization?.id]);
@@ -303,13 +303,20 @@ export function SoftphoneWidget() {
           </div>
         )}
 
-        {deviceError && (
-          <div className="rounded-xl border bg-muted p-3 text-sm text-muted-foreground">
-            VoIP no configurado o no disponible: {deviceError}
+        {!isConfigured && (
+          <div className="rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning-foreground">
+            <p className="font-medium">VoIP no configurado</p>
+            <p className="text-xs mt-1 opacity-80">Configura Twilio en Backoffice → Integraciones para habilitar llamadas.</p>
           </div>
         )}
 
-        {!deviceError && !isReady && (
+        {isConfigured && deviceError && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            Error VoIP: {deviceError}
+          </div>
+        )}
+
+        {isConfigured && !deviceError && !isReady && (
           <div className="rounded-xl border bg-muted p-3 text-sm text-muted-foreground">Conectando teléfono…</div>
         )}
 
