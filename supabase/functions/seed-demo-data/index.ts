@@ -66,7 +66,7 @@ function formatError(e: unknown): string {
 }
 
 // Bump this string to confirm which deployed version is running
-const SEED_DEMO_DATA_VERSION = "2026-01-26-market-asset-type-fix";
+const SEED_DEMO_DATA_VERSION = "2026-01-26-market-transaction-type-fix";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -662,6 +662,12 @@ serve(async (req) => {
       if (assetErr) throw assetErr;
       await register("market_assets", asset.id);
 
+      const transactionTypes = ["full_sale"] as const;
+      console.info(
+        "seed-demo-data market_listings.transaction_types",
+        JSON.stringify(transactionTypes),
+      );
+
       const { data: listing, error: listingErr } = await adminClient
         .from("market_listings")
         .insert({
@@ -669,7 +675,7 @@ serve(async (req) => {
           asset_id: asset.id,
           seller_id: sellerMarketUserId,
           status: "active",
-          transaction_types: ["full_sale"],
+          transaction_types: transactionTypes,
           asking_price: 15000 + i * 5000,
           currency: "EUR",
           title: `Venta: ${pick(["NEXAL", "SOLARIA", "VELA"])} (${pick(["ES", "EU"])})`,
