@@ -26939,6 +26939,7 @@ export type Database = {
           category: string
           code: string
           color: string | null
+          color_primary: string | null
           color_secondary: string | null
           created_at: string | null
           default_limits: Json | null
@@ -26992,6 +26993,7 @@ export type Database = {
           category: string
           code: string
           color?: string | null
+          color_primary?: string | null
           color_secondary?: string | null
           created_at?: string | null
           default_limits?: Json | null
@@ -27045,6 +27047,7 @@ export type Database = {
           category?: string
           code?: string
           color?: string | null
+          color_primary?: string | null
           color_secondary?: string | null
           created_at?: string | null
           default_limits?: Json | null
@@ -33435,6 +33438,7 @@ export type Database = {
           metadata: Json | null
           organization_id: string
           plan_id: string
+          selected_modules: string[] | null
           status: string
           stripe_customer_id: string | null
           stripe_subscription_id: string | null
@@ -33454,6 +33458,7 @@ export type Database = {
           metadata?: Json | null
           organization_id: string
           plan_id: string
+          selected_modules?: string[] | null
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -33473,6 +33478,7 @@ export type Database = {
           metadata?: Json | null
           organization_id?: string
           plan_id?: string
+          selected_modules?: string[] | null
           status?: string
           stripe_customer_id?: string | null
           stripe_subscription_id?: string | null
@@ -39945,6 +39951,14 @@ export type Database = {
           similarity: number
           title: string
         }[]
+      }
+      org_has_addon: {
+        Args: { p_addon_code: string; p_org_id: string }
+        Returns: boolean
+      }
+      org_has_module: {
+        Args: { p_module_code: string; p_org_id: string }
+        Returns: boolean
       }
       provision_pack_modules: {
         Args: {
