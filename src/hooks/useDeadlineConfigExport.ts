@@ -1,6 +1,6 @@
 // ============================================================
 // IP-NEXUS - DEADLINE CONFIG EXPORT/IMPORT HOOK
-// Export and import deadline configuration
+// Export and import deadline configuration via automation_rules
 // ============================================================
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -68,17 +68,17 @@ export function useExportConfig() {
       if (!currentOrganization?.id) throw new Error('No organization');
 
       const exportData: Record<string, unknown> = {
-        version: '1.0',
+        version: '2.0',
         exportedAt: new Date().toISOString(),
         organizationId: currentOrganization.id,
       };
 
-      // Export custom rules
+      // Export custom automation rules
       if (options.includeRules) {
         const { data: rules } = await supabase
-          .from('deadline_rules')
+          .from('automation_rules')
           .select('*')
-          .eq('organization_id', currentOrganization.id);
+          .eq('tenant_id', currentOrganization.id);
 
         exportData.rules = rules || [];
       }
@@ -107,7 +107,6 @@ export function useExportConfig() {
       return exportData;
     },
     onSuccess: (data) => {
-      // Download as JSON file
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -138,7 +137,6 @@ export function useImportConfig() {
       const text = await file.text();
       const data = JSON.parse(text);
 
-      // Validate file format
       if (!data.version) {
         throw new Error('Formato de archivo inválido');
       }
@@ -152,9 +150,9 @@ export function useImportConfig() {
       // If replace mode, delete existing custom data
       if (mode === 'replace') {
         await supabase
-          .from('deadline_rules')
+          .from('automation_rules')
           .delete()
-          .eq('organization_id', currentOrganization.id);
+          .eq('tenant_id', currentOrganization.id);
 
         await supabase
           .from('deadline_types')
@@ -168,31 +166,68 @@ export function useImportConfig() {
           .eq('organization_id', currentOrganization.id);
       }
 
-      // Import rules
+      // Import rules (support both old and new format)
       if (data.rules && Array.isArray(data.rules)) {
-        const rulesToInsert = data.rules.map((r: Record<string, unknown>) => ({
-          jurisdiction: r.jurisdiction,
-          matter_type: r.matter_type,
-          event_type: r.event_type,
-          code: r.code,
-          name: r.name,
-          description: r.description,
-          days_from_event: r.days_from_event,
-          calendar_type: r.calendar_type,
-          priority: r.priority,
-          alert_days: r.alert_days,
-          auto_create_task: r.auto_create_task,
-          is_active: true,
-          is_system: false,
-          source: 'custom',
-          creates_deadline: r.creates_deadline,
-          notes: r.notes,
-          organization_id: currentOrganization.id,
-        }));
+        const rulesToInsert = data.rules.map((r: Record<string, unknown>) => {
+          // Check if it's new format (automation_rules) or old format (deadline_rules)
+          if (r.rule_type) {
+            // New format
+            return {
+              tenant_id: currentOrganization.id,
+              code: r.code,
+              name: r.name,
+              description: r.description,
+              rule_type: r.rule_type,
+              category: r.category || 'general',
+              subcategory: r.subcategory,
+              trigger_type: r.trigger_type || 'event',
+              trigger_event: r.trigger_event,
+              trigger_config: r.trigger_config || {},
+              conditions: r.conditions || {},
+              deadline_config: r.deadline_config,
+              notification_config: r.notification_config,
+              task_config: r.task_config,
+              email_config: r.email_config,
+              is_system_rule: false,
+              is_active: true,
+              is_customized: true,
+              display_order: r.display_order || 1000,
+            };
+          } else {
+            // Old format - convert to new
+            return {
+              tenant_id: currentOrganization.id,
+              code: r.code,
+              name: r.name,
+              description: r.description,
+              rule_type: 'deadline',
+              category: (r.matter_type as string) === 'patent' ? 'patents' : 'trademarks',
+              subcategory: null,
+              trigger_type: 'event',
+              trigger_event: r.event_type || 'matter_status_changed',
+              trigger_config: {},
+              conditions: {
+                matter_types: r.matter_type ? [r.matter_type] : [],
+                offices: r.jurisdiction ? [r.jurisdiction] : [],
+              },
+              deadline_config: {
+                priority: r.priority || 'medium',
+                notify_before_days: r.alert_days || [30, 15, 7, 1],
+                auto_create_task: r.auto_create_task ?? false,
+                calendar_type: r.calendar_type || 'calendar',
+                days_from_event: r.days_from_event,
+              },
+              is_system_rule: false,
+              is_active: true,
+              is_customized: true,
+              display_order: 1000,
+            };
+          }
+        });
 
         if (rulesToInsert.length > 0) {
           const { data: inserted } = await supabase
-            .from('deadline_rules')
+            .from('automation_rules')
             .insert(rulesToInsert)
             .select();
 
@@ -252,6 +287,7 @@ export function useImportConfig() {
     },
     onSuccess: (results) => {
       queryClient.invalidateQueries({ queryKey: ['deadline-rule-configs'] });
+      queryClient.invalidateQueries({ queryKey: ['automation-rules'] });
       queryClient.invalidateQueries({ queryKey: ['deadline-types-config'] });
       queryClient.invalidateQueries({ queryKey: ['holiday-calendar'] });
 
@@ -274,8 +310,6 @@ export function useLoadTemplate() {
     mutationFn: async (templateId: string) => {
       if (!currentOrganization?.id) throw new Error('No organization');
 
-      // In a real implementation, this would load from a predefined set
-      // For now, we'll just return a success message
       const template = TEMPLATES.find(t => t.id === templateId);
       if (!template) throw new Error('Template no encontrado');
 
@@ -292,6 +326,7 @@ export function useLoadTemplate() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deadline-rule-configs'] });
+      queryClient.invalidateQueries({ queryKey: ['automation-rules'] });
       queryClient.invalidateQueries({ queryKey: ['holiday-calendar'] });
       toast.success('Plantilla cargada correctamente');
     },

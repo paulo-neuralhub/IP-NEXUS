@@ -4020,6 +4020,126 @@ export type Database = {
           },
         ]
       }
+      automation_rules: {
+        Row: {
+          category: string
+          code: string
+          conditions: Json | null
+          created_at: string | null
+          deadline_config: Json | null
+          description: string | null
+          display_order: number | null
+          email_config: Json | null
+          execution_count: number | null
+          id: string
+          is_active: boolean | null
+          is_customized: boolean | null
+          is_system_rule: boolean | null
+          last_executed_at: string | null
+          legal_deadline_id: string | null
+          name: string
+          notification_config: Json | null
+          rule_type: string
+          subcategory: string | null
+          task_config: Json | null
+          tenant_id: string | null
+          trigger_config: Json | null
+          trigger_event: string | null
+          trigger_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          code: string
+          conditions?: Json | null
+          created_at?: string | null
+          deadline_config?: Json | null
+          description?: string | null
+          display_order?: number | null
+          email_config?: Json | null
+          execution_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_customized?: boolean | null
+          is_system_rule?: boolean | null
+          last_executed_at?: string | null
+          legal_deadline_id?: string | null
+          name: string
+          notification_config?: Json | null
+          rule_type: string
+          subcategory?: string | null
+          task_config?: Json | null
+          tenant_id?: string | null
+          trigger_config?: Json | null
+          trigger_event?: string | null
+          trigger_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          code?: string
+          conditions?: Json | null
+          created_at?: string | null
+          deadline_config?: Json | null
+          description?: string | null
+          display_order?: number | null
+          email_config?: Json | null
+          execution_count?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_customized?: boolean | null
+          is_system_rule?: boolean | null
+          last_executed_at?: string | null
+          legal_deadline_id?: string | null
+          name?: string
+          notification_config?: Json | null
+          rule_type?: string
+          subcategory?: string | null
+          task_config?: Json | null
+          tenant_id?: string | null
+          trigger_config?: Json | null
+          trigger_event?: string | null
+          trigger_type?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_rules_legal_deadline_id_fkey"
+            columns: ["legal_deadline_id"]
+            isOneToOne: false
+            referencedRelation: "legal_deadlines"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "automation_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_rules_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       automations: {
         Row: {
           actions: Json
@@ -10238,113 +10358,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matter_deadlines"
             referencedColumns: ["id"]
-          },
-        ]
-      }
-      deadline_rules: {
-        Row: {
-          alert_days: number[] | null
-          auto_create_task: boolean | null
-          calendar_type: string | null
-          code: string
-          conditions: Json | null
-          created_at: string | null
-          creates_deadline: boolean | null
-          days_from_event: number
-          deadline_type: string | null
-          description: string | null
-          event_type: string
-          id: string
-          is_active: boolean | null
-          is_system: boolean | null
-          jurisdiction: string
-          matter_type: string
-          name: string
-          notes: string | null
-          organization_id: string | null
-          priority: string | null
-          source: string | null
-          task_template_id: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          alert_days?: number[] | null
-          auto_create_task?: boolean | null
-          calendar_type?: string | null
-          code: string
-          conditions?: Json | null
-          created_at?: string | null
-          creates_deadline?: boolean | null
-          days_from_event: number
-          deadline_type?: string | null
-          description?: string | null
-          event_type: string
-          id?: string
-          is_active?: boolean | null
-          is_system?: boolean | null
-          jurisdiction: string
-          matter_type: string
-          name: string
-          notes?: string | null
-          organization_id?: string | null
-          priority?: string | null
-          source?: string | null
-          task_template_id?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          alert_days?: number[] | null
-          auto_create_task?: boolean | null
-          calendar_type?: string | null
-          code?: string
-          conditions?: Json | null
-          created_at?: string | null
-          creates_deadline?: boolean | null
-          days_from_event?: number
-          deadline_type?: string | null
-          description?: string | null
-          event_type?: string
-          id?: string
-          is_active?: boolean | null
-          is_system?: boolean | null
-          jurisdiction?: string
-          matter_type?: string
-          name?: string
-          notes?: string | null
-          organization_id?: string | null
-          priority?: string | null
-          source?: string | null
-          task_template_id?: string | null
-          updated_at?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "deadline_rules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "backoffice_tenant_crm"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deadline_rules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organization_usage_stats"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "deadline_rules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deadline_rules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -21766,13 +21779,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "matter_deadlines_rule_id_fkey"
-            columns: ["rule_id"]
-            isOneToOne: false
-            referencedRelation: "deadline_rules"
-            referencedColumns: ["id"]
           },
         ]
       }
