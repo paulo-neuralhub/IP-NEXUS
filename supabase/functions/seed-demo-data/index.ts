@@ -447,13 +447,13 @@ serve(async (req) => {
       },
       {
         name: "Alerta de vencimiento",
-        category: "alerts",
+        category: "reminder",
         subject: "Vencimiento próximo: acción requerida",
         preview: "Revisa el expediente y confirma instrucciones.",
       },
       {
         name: "Propuesta comercial",
-        category: "sales",
+        category: "notification",
         subject: "Propuesta para gestión integral de PI",
         preview: "Adjuntamos propuesta y próximos pasos.",
       },
