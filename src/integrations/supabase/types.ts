@@ -27463,6 +27463,109 @@ export type Database = {
           },
         ]
       }
+      portal_messages: {
+        Row: {
+          attachments: Json | null
+          body: string
+          contact_id: string | null
+          created_at: string | null
+          direction: string
+          id: string
+          matter_id: string | null
+          parent_id: string | null
+          portal_id: string
+          portal_user_id: string | null
+          read_at: string | null
+          replied_at: string | null
+          replied_by: string | null
+          status: string | null
+          subject: string | null
+          thread_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          body: string
+          contact_id?: string | null
+          created_at?: string | null
+          direction: string
+          id?: string
+          matter_id?: string | null
+          parent_id?: string | null
+          portal_id: string
+          portal_user_id?: string | null
+          read_at?: string | null
+          replied_at?: string | null
+          replied_by?: string | null
+          status?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          body?: string
+          contact_id?: string | null
+          created_at?: string | null
+          direction?: string
+          id?: string
+          matter_id?: string | null
+          parent_id?: string | null
+          portal_id?: string
+          portal_user_id?: string | null
+          read_at?: string | null
+          replied_at?: string | null
+          replied_by?: string | null
+          status?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_messages_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "portal_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_messages_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "portal_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_messages_portal_id_fkey"
+            columns: ["portal_id"]
+            isOneToOne: false
+            referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_messages_portal_user_id_fkey"
+            columns: ["portal_user_id"]
+            isOneToOne: false
+            referencedRelation: "portal_users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portal_notifications: {
         Row: {
           created_at: string | null
@@ -27576,6 +27679,86 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "portal_users"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_settings: {
+        Row: {
+          created_at: string | null
+          custom_domain: string | null
+          default_logo_url: string | null
+          default_portal_name: string | null
+          default_primary_color: string | null
+          features: Json | null
+          id: string
+          is_enabled: boolean | null
+          notify_email: string | null
+          notify_on_document_shared: boolean | null
+          notify_on_new_message: boolean | null
+          organization_id: string
+          updated_at: string | null
+          welcome_message: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          custom_domain?: string | null
+          default_logo_url?: string | null
+          default_portal_name?: string | null
+          default_primary_color?: string | null
+          features?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          notify_email?: string | null
+          notify_on_document_shared?: boolean | null
+          notify_on_new_message?: boolean | null
+          organization_id: string
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          custom_domain?: string | null
+          default_logo_url?: string | null
+          default_portal_name?: string | null
+          default_primary_color?: string | null
+          features?: Json | null
+          id?: string
+          is_enabled?: boolean | null
+          notify_email?: string | null
+          notify_on_document_shared?: boolean | null
+          notify_on_new_message?: boolean | null
+          organization_id?: string
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "portal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -39879,6 +40062,35 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: Json
       }
+      get_portal_user_matters: {
+        Args: { p_portal_user_id: string }
+        Returns: {
+          created_at: string
+          deadline_count: number
+          id: string
+          ip_type: string
+          jurisdiction: string
+          reference: string
+          status: string
+          title: string
+        }[]
+      }
+      get_portal_user_messages: {
+        Args: { p_portal_user_id: string }
+        Returns: {
+          body: string
+          created_at: string
+          direction: string
+          id: string
+          matter_id: string
+          matter_reference: string
+          read_at: string
+          sender_name: string
+          status: string
+          subject: string
+          thread_id: string
+        }[]
+      }
       get_tenant_modules_summary: {
         Args: { p_tenant_id: string }
         Returns: Json
@@ -40023,6 +40235,10 @@ export type Database = {
       }
       org_has_module: {
         Args: { p_module_code: string; p_org_id: string }
+        Returns: boolean
+      }
+      portal_user_can_access_matter: {
+        Args: { p_matter_id: string; p_portal_user_id: string }
         Returns: boolean
       }
       provision_pack_modules: {
