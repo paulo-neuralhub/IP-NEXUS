@@ -66,7 +66,7 @@ function formatError(e: unknown): string {
 }
 
 // Bump this string to confirm which deployed version is running
-const SEED_DEMO_DATA_VERSION = "2026-01-26-agent-type-check-fix";
+const SEED_DEMO_DATA_VERSION = "2026-01-26-market-asset-type-fix";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
