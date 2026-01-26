@@ -272,3 +272,6 @@ verify_jwt = false
 
 [functions.telephony-get-recording]
 verify_jwt = false
+
+[functions.portal-auth]
+verify_jwt = false

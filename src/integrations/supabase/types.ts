@@ -27919,6 +27919,7 @@ export type Database = {
           activated_at: string | null
           created_at: string | null
           email: string
+          email_verified: boolean | null
           id: string
           invited_at: string | null
           invited_by: string | null
@@ -27933,6 +27934,8 @@ export type Database = {
           permissions: Json | null
           phone: string | null
           portal_id: string
+          reset_token: string | null
+          reset_token_expires_at: string | null
           role: string | null
           status: string | null
           two_factor_enabled: boolean | null
@@ -27943,6 +27946,7 @@ export type Database = {
           activated_at?: string | null
           created_at?: string | null
           email: string
+          email_verified?: boolean | null
           id?: string
           invited_at?: string | null
           invited_by?: string | null
@@ -27957,6 +27961,8 @@ export type Database = {
           permissions?: Json | null
           phone?: string | null
           portal_id: string
+          reset_token?: string | null
+          reset_token_expires_at?: string | null
           role?: string | null
           status?: string | null
           two_factor_enabled?: boolean | null
@@ -27967,6 +27973,7 @@ export type Database = {
           activated_at?: string | null
           created_at?: string | null
           email?: string
+          email_verified?: boolean | null
           id?: string
           invited_at?: string | null
           invited_by?: string | null
@@ -27981,6 +27988,8 @@ export type Database = {
           permissions?: Json | null
           phone?: string | null
           portal_id?: string
+          reset_token?: string | null
+          reset_token_expires_at?: string | null
           role?: string | null
           status?: string | null
           two_factor_enabled?: boolean | null
