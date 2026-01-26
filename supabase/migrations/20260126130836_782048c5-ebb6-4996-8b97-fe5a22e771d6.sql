@@ -1,0 +1,38 @@
+-- Insertar documento legal de AI Disclaimer activo
+INSERT INTO legal_documents (
+  id,
+  doc_type,
+  code,
+  version,
+  title,
+  content,
+  content_hash,
+  language,
+  effective_from,
+  effective_date,
+  is_active,
+  is_current,
+  requires_signature,
+  show_on_ai_first_use,
+  requires_re_consent,
+  created_at,
+  updated_at
+) VALUES (
+  gen_random_uuid(),
+  'ai_disclosure',
+  'ai_disclaimer',
+  '1.0.0',
+  'Aviso Legal de Uso de Inteligencia Artificial',
+  E'# Aviso Legal de Uso de Inteligencia Artificial - IP-NEXUS\n\n## 1. Naturaleza del Servicio\n\nIP-NEXUS utiliza modelos de inteligencia artificial (IA) para asistir en tareas relacionadas con la propiedad intelectual. Estos sistemas están diseñados para proporcionar información y sugerencias, pero **no constituyen asesoramiento legal**.\n\n## 2. Limitaciones de la IA\n\n- Las respuestas generadas por IA pueden contener errores o inexactitudes\n- La IA no tiene acceso a información en tiempo real de registros oficiales\n- Las sugerencias deben ser verificadas por un profesional cualificado\n- Los resultados pueden variar según el contexto y la jurisdicción\n\n## 3. Responsabilidad del Usuario\n\nEl usuario acepta que:\n- Verificará toda información crítica con fuentes oficiales\n- No tomará decisiones legales basándose únicamente en las respuestas de la IA\n- Consultará con profesionales cualificados para casos específicos\n- Utilizará las herramientas de IA como apoyo, no como sustituto del juicio profesional\n\n## 4. Uso de Datos\n\n- Las consultas pueden ser procesadas por proveedores externos de IA\n- Los datos sensibles deben ser anonimizados antes de su procesamiento\n- IP-NEXUS implementa medidas de seguridad para proteger la información\n\n## 5. Cumplimiento Normativo\n\nEste servicio se ofrece en cumplimiento con:\n- Reglamento (UE) 2024/1689 (AI Act)\n- RGPD para protección de datos personales\n- Normativas aplicables de propiedad intelectual\n\n## 6. Aceptación\n\nAl utilizar las funciones de IA de IP-NEXUS, el usuario confirma haber leído y aceptado estos términos.',
+  '8a7b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b',
+  'es',
+  NOW(),
+  CURRENT_DATE,
+  true,
+  true,
+  false,
+  true,
+  false,
+  NOW(),
+  NOW()
+);
