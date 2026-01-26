@@ -264,6 +264,9 @@ verify_jwt = false
 [functions.telephony-check-balance]
 verify_jwt = false
 
+[functions.workflow-scheduler]
+verify_jwt = false
+
 [functions.telephony-make-call]
 verify_jwt = false
 

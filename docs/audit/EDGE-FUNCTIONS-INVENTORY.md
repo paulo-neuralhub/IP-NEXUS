@@ -93,3 +93,4 @@
 - `wipo-madrid-search` → `/wipo-madrid-search`
 - `workflow-execute` → `/workflow-execute`
 - `workflow-process-queue` → `/workflow-process-queue`
+- `workflow-scheduler` → `/workflow-scheduler`
