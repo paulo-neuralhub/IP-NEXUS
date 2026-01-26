@@ -33970,6 +33970,382 @@ export type Database = {
           },
         ]
       }
+      telephony_config: {
+        Row: {
+          active_provider_id: string | null
+          alert_email: string | null
+          alert_low_balance_threshold: number | null
+          created_at: string | null
+          credentials_encrypted: Json | null
+          id: string
+          markup_percentage: number | null
+          phone_numbers: Json | null
+          test_mode: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          active_provider_id?: string | null
+          alert_email?: string | null
+          alert_low_balance_threshold?: number | null
+          created_at?: string | null
+          credentials_encrypted?: Json | null
+          id?: string
+          markup_percentage?: number | null
+          phone_numbers?: Json | null
+          test_mode?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          active_provider_id?: string | null
+          alert_email?: string | null
+          alert_low_balance_threshold?: number | null
+          created_at?: string | null
+          credentials_encrypted?: Json | null
+          id?: string
+          markup_percentage?: number | null
+          phone_numbers?: Json | null
+          test_mode?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telephony_config_active_provider_id_fkey"
+            columns: ["active_provider_id"]
+            isOneToOne: false
+            referencedRelation: "telephony_providers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      telephony_daily_metrics: {
+        Row: {
+          calls_avg_duration: number | null
+          calls_inbound: number | null
+          calls_outbound: number | null
+          calls_total_minutes: number | null
+          created_at: string | null
+          date: string
+          id: string
+          margin: number | null
+          provider_cost: number | null
+          revenue: number | null
+          sms_inbound: number | null
+          sms_outbound: number | null
+          tenant_id: string | null
+          usage_by_country: Json | null
+        }
+        Insert: {
+          calls_avg_duration?: number | null
+          calls_inbound?: number | null
+          calls_outbound?: number | null
+          calls_total_minutes?: number | null
+          created_at?: string | null
+          date: string
+          id?: string
+          margin?: number | null
+          provider_cost?: number | null
+          revenue?: number | null
+          sms_inbound?: number | null
+          sms_outbound?: number | null
+          tenant_id?: string | null
+          usage_by_country?: Json | null
+        }
+        Update: {
+          calls_avg_duration?: number | null
+          calls_inbound?: number | null
+          calls_outbound?: number | null
+          calls_total_minutes?: number | null
+          created_at?: string | null
+          date?: string
+          id?: string
+          margin?: number | null
+          provider_cost?: number | null
+          revenue?: number | null
+          sms_inbound?: number | null
+          sms_outbound?: number | null
+          tenant_id?: string | null
+          usage_by_country?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telephony_daily_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telephony_daily_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "telephony_daily_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telephony_daily_metrics_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      telephony_packs: {
+        Row: {
+          badge_text: string | null
+          code: string
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          display_order: number | null
+          id: string
+          is_active: boolean | null
+          is_featured: boolean | null
+          min_plan: string | null
+          minutes_included: number
+          name: string
+          price: number
+          savings_percentage: number | null
+          sms_included: number | null
+          updated_at: string | null
+          validity_days: number | null
+        }
+        Insert: {
+          badge_text?: string | null
+          code: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          min_plan?: string | null
+          minutes_included: number
+          name: string
+          price: number
+          savings_percentage?: number | null
+          sms_included?: number | null
+          updated_at?: string | null
+          validity_days?: number | null
+        }
+        Update: {
+          badge_text?: string | null
+          code?: string
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          display_order?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_featured?: boolean | null
+          min_plan?: string | null
+          minutes_included?: number
+          name?: string
+          price?: number
+          savings_percentage?: number | null
+          sms_included?: number | null
+          updated_at?: string | null
+          validity_days?: number | null
+        }
+        Relationships: []
+      }
+      telephony_providers: {
+        Row: {
+          api_docs_url: string | null
+          base_rates: Json | null
+          code: string
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          logo_url: string | null
+          name: string
+          required_credentials: Json | null
+          setup_instructions: string | null
+          supports_recording: boolean | null
+          supports_sms: boolean | null
+          supports_voice: boolean | null
+          supports_whatsapp: boolean | null
+          updated_at: string | null
+          website_url: string | null
+        }
+        Insert: {
+          api_docs_url?: string | null
+          base_rates?: Json | null
+          code: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          logo_url?: string | null
+          name: string
+          required_credentials?: Json | null
+          setup_instructions?: string | null
+          supports_recording?: boolean | null
+          supports_sms?: boolean | null
+          supports_voice?: boolean | null
+          supports_whatsapp?: boolean | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Update: {
+          api_docs_url?: string | null
+          base_rates?: Json | null
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          logo_url?: string | null
+          name?: string
+          required_credentials?: Json | null
+          setup_instructions?: string | null
+          supports_recording?: boolean | null
+          supports_sms?: boolean | null
+          supports_voice?: boolean | null
+          supports_whatsapp?: boolean | null
+          updated_at?: string | null
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      telephony_usage_logs: {
+        Row: {
+          charged_cost: number | null
+          contact_id: string | null
+          country_code: string | null
+          created_at: string | null
+          duration_minutes: number | null
+          duration_seconds: number | null
+          error_message: string | null
+          from_number: string | null
+          id: string
+          matter_id: string | null
+          minutes_deducted: number | null
+          provider_call_sid: string | null
+          provider_cost: number | null
+          recording_duration: number | null
+          recording_url: string | null
+          status: string | null
+          tenant_id: string
+          to_number: string | null
+          usage_type: string
+          user_id: string | null
+        }
+        Insert: {
+          charged_cost?: number | null
+          contact_id?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          duration_seconds?: number | null
+          error_message?: string | null
+          from_number?: string | null
+          id?: string
+          matter_id?: string | null
+          minutes_deducted?: number | null
+          provider_call_sid?: string | null
+          provider_cost?: number | null
+          recording_duration?: number | null
+          recording_url?: string | null
+          status?: string | null
+          tenant_id: string
+          to_number?: string | null
+          usage_type: string
+          user_id?: string | null
+        }
+        Update: {
+          charged_cost?: number | null
+          contact_id?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          duration_minutes?: number | null
+          duration_seconds?: number | null
+          error_message?: string | null
+          from_number?: string | null
+          id?: string
+          matter_id?: string | null
+          minutes_deducted?: number | null
+          provider_call_sid?: string | null
+          provider_cost?: number | null
+          recording_duration?: number | null
+          recording_url?: string | null
+          status?: string | null
+          tenant_id?: string
+          to_number?: string | null
+          usage_type?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telephony_usage_logs_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       tenant_ai_config: {
         Row: {
           ai_assistant_accepted_at: string | null
@@ -34551,6 +34927,179 @@ export type Database = {
             foreignKeyName: "tenant_sync_config_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_telephony_balance: {
+        Row: {
+          created_at: string | null
+          credit_balance: number | null
+          id: string
+          is_enabled: boolean | null
+          low_balance_alert_sent: boolean | null
+          low_balance_threshold: number | null
+          minutes_balance: number | null
+          outbound_caller_id: string | null
+          sms_balance: number | null
+          tenant_id: string
+          total_minutes_used: number | null
+          total_sms_sent: number | null
+          total_spent: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          credit_balance?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          low_balance_alert_sent?: boolean | null
+          low_balance_threshold?: number | null
+          minutes_balance?: number | null
+          outbound_caller_id?: string | null
+          sms_balance?: number | null
+          tenant_id: string
+          total_minutes_used?: number | null
+          total_sms_sent?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          credit_balance?: number | null
+          id?: string
+          is_enabled?: boolean | null
+          low_balance_alert_sent?: boolean | null
+          low_balance_threshold?: number | null
+          minutes_balance?: number | null
+          outbound_caller_id?: string | null
+          sms_balance?: number | null
+          tenant_id?: string
+          total_minutes_used?: number | null
+          total_sms_sent?: number | null
+          total_spent?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_telephony_balance_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_balance_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_balance_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_balance_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_telephony_purchases: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          expires_at: string | null
+          id: string
+          invoice_id: string | null
+          minutes_purchased: number
+          minutes_remaining: number | null
+          pack_id: string | null
+          payment_method: string | null
+          price_paid: number
+          purchased_at: string | null
+          sms_purchased: number | null
+          sms_remaining: number | null
+          status: string | null
+          stripe_payment_id: string | null
+          tenant_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          minutes_purchased: number
+          minutes_remaining?: number | null
+          pack_id?: string | null
+          payment_method?: string | null
+          price_paid: number
+          purchased_at?: string | null
+          sms_purchased?: number | null
+          sms_remaining?: number | null
+          status?: string | null
+          stripe_payment_id?: string | null
+          tenant_id: string
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          expires_at?: string | null
+          id?: string
+          invoice_id?: string | null
+          minutes_purchased?: number
+          minutes_remaining?: number | null
+          pack_id?: string | null
+          payment_method?: string | null
+          price_paid?: number
+          purchased_at?: string | null
+          sms_purchased?: number | null
+          sms_remaining?: number | null
+          status?: string | null
+          stripe_payment_id?: string | null
+          tenant_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_telephony_purchases_pack_id_fkey"
+            columns: ["pack_id"]
+            isOneToOne: false
+            referencedRelation: "telephony_packs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_purchases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_purchases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_purchases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_telephony_purchases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
           },
@@ -38216,6 +38765,10 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: number
       }
+      add_telephony_minutes: {
+        Args: { p_minutes: number; p_sms?: number; p_tenant_id: string }
+        Returns: boolean
+      }
       admin_change_organization_plan: {
         Args: {
           p_billing_cycle?: string
@@ -38521,6 +39074,10 @@ export type Database = {
       }
       daitch_mokotoff: { Args: { "": string }; Returns: string[] }
       days_until_expiry: { Args: { expiry_date: string }; Returns: number }
+      deduct_telephony_minutes: {
+        Args: { p_minutes: number; p_tenant_id: string; p_usage_type?: string }
+        Returns: boolean
+      }
       dmetaphone: { Args: { "": string }; Returns: string }
       dmetaphone_alt: { Args: { "": string }; Returns: string }
       expire_trials: { Args: never; Returns: number }
