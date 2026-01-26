@@ -16420,6 +16420,7 @@ export type Database = {
           country_code: string | null
           created_at: string
           data_source: string
+          display_order: number | null
           fees_url: string | null
           flag_emoji: string | null
           id: string
@@ -16457,6 +16458,7 @@ export type Database = {
           country_code?: string | null
           created_at?: string
           data_source?: string
+          display_order?: number | null
           fees_url?: string | null
           flag_emoji?: string | null
           id?: string
@@ -16494,6 +16496,7 @@ export type Database = {
           country_code?: string | null
           created_at?: string
           data_source?: string
+          display_order?: number | null
           fees_url?: string | null
           flag_emoji?: string | null
           id?: string
@@ -19221,6 +19224,164 @@ export type Database = {
             columns: ["document_id"]
             isOneToOne: false
             referencedRelation: "legal_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_deadlines: {
+        Row: {
+          business_days_only: boolean | null
+          code: string
+          created_at: string | null
+          days_offset: number | null
+          deadline_category: string
+          description: string | null
+          grace_has_surcharge: boolean | null
+          grace_period_days: number | null
+          grace_period_months: number | null
+          id: string
+          is_active: boolean | null
+          is_before_event: boolean | null
+          is_extendable: boolean | null
+          last_verified_at: string
+          legal_basis: string | null
+          legal_basis_url: string | null
+          max_extension_days: number | null
+          max_extension_months: number | null
+          months_offset: number | null
+          name: string
+          name_en: string | null
+          next_review_at: string | null
+          notes: string | null
+          office_id: string | null
+          right_type: string
+          trigger_event: string
+          updated_at: string | null
+          verified_source: string | null
+          window_end_months: number | null
+          window_start_months: number | null
+          years_offset: number | null
+        }
+        Insert: {
+          business_days_only?: boolean | null
+          code: string
+          created_at?: string | null
+          days_offset?: number | null
+          deadline_category: string
+          description?: string | null
+          grace_has_surcharge?: boolean | null
+          grace_period_days?: number | null
+          grace_period_months?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_before_event?: boolean | null
+          is_extendable?: boolean | null
+          last_verified_at?: string
+          legal_basis?: string | null
+          legal_basis_url?: string | null
+          max_extension_days?: number | null
+          max_extension_months?: number | null
+          months_offset?: number | null
+          name: string
+          name_en?: string | null
+          next_review_at?: string | null
+          notes?: string | null
+          office_id?: string | null
+          right_type: string
+          trigger_event: string
+          updated_at?: string | null
+          verified_source?: string | null
+          window_end_months?: number | null
+          window_start_months?: number | null
+          years_offset?: number | null
+        }
+        Update: {
+          business_days_only?: boolean | null
+          code?: string
+          created_at?: string | null
+          days_offset?: number | null
+          deadline_category?: string
+          description?: string | null
+          grace_has_surcharge?: boolean | null
+          grace_period_days?: number | null
+          grace_period_months?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_before_event?: boolean | null
+          is_extendable?: boolean | null
+          last_verified_at?: string
+          legal_basis?: string | null
+          legal_basis_url?: string | null
+          max_extension_days?: number | null
+          max_extension_months?: number | null
+          months_offset?: number | null
+          name?: string
+          name_en?: string | null
+          next_review_at?: string | null
+          notes?: string | null
+          office_id?: string | null
+          right_type?: string
+          trigger_event?: string
+          updated_at?: string | null
+          verified_source?: string | null
+          window_end_months?: number | null
+          window_start_months?: number | null
+          years_offset?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_deadlines_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ip_offices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      legal_deadlines_history: {
+        Row: {
+          changed_at: string | null
+          changed_by: string | null
+          field_changed: string
+          id: string
+          legal_deadline_id: string | null
+          new_value: string | null
+          old_value: string | null
+          reason: string | null
+        }
+        Insert: {
+          changed_at?: string | null
+          changed_by?: string | null
+          field_changed: string
+          id?: string
+          legal_deadline_id?: string | null
+          new_value?: string | null
+          old_value?: string | null
+          reason?: string | null
+        }
+        Update: {
+          changed_at?: string | null
+          changed_by?: string | null
+          field_changed?: string
+          id?: string
+          legal_deadline_id?: string | null
+          new_value?: string | null
+          old_value?: string | null
+          reason?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "legal_deadlines_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_deadlines_history_legal_deadline_id_fkey"
+            columns: ["legal_deadline_id"]
+            isOneToOne: false
+            referencedRelation: "legal_deadlines"
             referencedColumns: ["id"]
           },
         ]
