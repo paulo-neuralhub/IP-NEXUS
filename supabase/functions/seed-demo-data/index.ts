@@ -669,7 +669,7 @@ serve(async (req) => {
           asset_id: asset.id,
           seller_id: sellerMarketUserId,
           status: "active",
-          transaction_types: ["sale"],
+          transaction_types: ["full_sale"],
           asking_price: 15000 + i * 5000,
           currency: "EUR",
           title: `Venta: ${pick(["NEXAL", "SOLARIA", "VELA"])} (${pick(["ES", "EU"])})`,
