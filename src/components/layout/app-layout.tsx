@@ -15,6 +15,7 @@ import { usePresence } from "@/hooks/use-realtime-collab";
 import { PageContainer } from "@/components/layout/PageContainer";
 import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 import { CallManager } from "@/components/telephony/CallManager";
+import { ModuleActivationDialog } from "@/components/modules";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
@@ -107,6 +108,9 @@ export function AppLayout() {
                 
                 {/* Click-to-Call Manager */}
                 <CallManager />
+                
+                {/* Module Activation Dialog */}
+                <ModuleActivationDialog />
               </div>
             )}
           </ContextualHelpProvider>

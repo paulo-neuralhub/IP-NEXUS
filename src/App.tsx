@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "@/contexts/auth-context";
 import { OrganizationProvider } from "@/contexts/organization-context";
+import { ModulesProvider } from "@/contexts/ModulesContext";
 import { PortalAuthProvider } from "@/hooks/usePortalAuth";
 import { BrandingProvider } from "@/components/branding";
 
@@ -288,13 +289,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <OrganizationProvider>
-        <BrandingProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <TooltipProvider delayDuration={0}>
-              <AnalyticsProvider>
-              <Routes>
+        <ModulesProvider>
+          <BrandingProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <TooltipProvider delayDuration={0}>
+                <AnalyticsProvider>
+                <Routes>
                 {/* Landing Pages */}
                 <Route path="/" element={<Landing />} />
                 <Route path="/spider" element={<SpiderLandingPage />} />
@@ -603,6 +605,7 @@ const App = () => (
             </TooltipProvider>
           </BrowserRouter>
         </BrandingProvider>
+      </ModulesProvider>
       </OrganizationProvider>
     </AuthProvider>
   </QueryClientProvider>
