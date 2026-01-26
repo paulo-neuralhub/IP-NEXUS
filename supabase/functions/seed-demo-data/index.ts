@@ -66,7 +66,7 @@ function formatError(e: unknown): string {
 }
 
 // Bump this string to confirm which deployed version is running
-const SEED_DEMO_DATA_VERSION = "2026-01-26-market-transaction-type-fix";
+const SEED_DEMO_DATA_VERSION = "2026-01-26-complete-demo-data-v2";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -336,6 +336,185 @@ serve(async (req) => {
     if (!stageRow) throw new Error("No pipeline stages found");
     const stageId = stageRow.id as string;
 
+    // CRM V2: Accounts (8) + Contacts (24) + Tasks + Interactions
+    const crmAccountIds: string[] = [];
+    const crmContactIds: string[] = [];
+
+    // Create CRM Accounts based on firmContacts
+    for (let i = 0; i < firmContacts.length; i++) {
+      const fc = firmContacts[i];
+      const { data, error } = await adminClient
+        .from("crm_accounts")
+        .insert({
+          organization_id: organizationId,
+          name: fc.name,
+          legal_name: fc.name,
+          status: pick(["prospect", "active", "inactive"]),
+          tier: pick(["bronze", "silver", "gold", "platinum"]),
+          health_score: 50 + Math.floor(Math.random() * 50),
+          churn_risk_level: pick(["low", "medium", "high"]),
+          tags: ["demo"],
+          metadata: { source: "demo-seed" },
+          last_interaction_at: daysAgo(Math.floor(Math.random() * 30)).toISOString(),
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      crmAccountIds.push(data.id);
+      await register("crm_accounts", data.id);
+    }
+
+    // Create CRM Contacts (3 per account = 24)
+    const contactFirstNames = ["Carlos", "María", "Pedro", "Ana", "Luis", "Elena", "Miguel", "Carmen", "José", "Laura", "David", "Isabel", "Antonio", "Marta", "Francisco", "Lucía", "Javier", "Paula", "Rafael", "Beatriz", "Manuel", "Cristina", "Alberto", "Rosa"];
+    const contactLastNames = ["García", "López", "Martínez", "González", "Rodríguez", "Fernández", "Pérez", "Sánchez", "Romero", "Torres", "Díaz", "Ruiz"];
+    
+    for (let aIdx = 0; aIdx < crmAccountIds.length; aIdx++) {
+      for (let c = 0; c < 3; c++) {
+        const firstName = contactFirstNames[(aIdx * 3 + c) % contactFirstNames.length];
+        const lastName = contactLastNames[(aIdx + c) % contactLastNames.length];
+        const fullName = `${firstName} ${lastName}`;
+        const emailSlug = fullName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, ".").replace(/[^a-z.]/g, "");
+        
+        const isLead = Math.random() < 0.3;
+        const { data, error } = await adminClient
+          .from("crm_contacts")
+          .insert({
+            organization_id: organizationId,
+            account_id: crmAccountIds[aIdx],
+            full_name: fullName,
+            email: `${emailSlug}@${firmContacts[aIdx].name.toLowerCase().replace(/[^a-z0-9]+/g, "")}.demo`,
+            phone: `+34 6${String(Math.floor(Math.random() * 90000000) + 10000000)}`,
+            is_lead: isLead,
+            lead_score: isLead ? 20 + Math.floor(Math.random() * 80) : 0,
+            lead_status: isLead ? pick(["new", "contacted", "qualified", "converted"]) : "none",
+            whatsapp_enabled: Math.random() < 0.7,
+            portal_access_enabled: Math.random() < 0.4,
+            tags: ["demo"],
+            metadata: { title: pick(["CEO", "Director Legal", "IP Manager", "Abogado", "Responsable PI"]) },
+            whatsapp_phone: `+34 6${String(Math.floor(Math.random() * 90000000) + 10000000)}`,
+            whatsapp_opted_in: Math.random() < 0.6,
+            email_opted_in: Math.random() < 0.8,
+            preferred_channel: pick(["email", "whatsapp", "phone"]),
+            last_contacted_at: daysAgo(Math.floor(Math.random() * 60)).toISOString(),
+            last_contacted_channel: pick(["email", "whatsapp", "phone"]),
+          })
+          .select("id")
+          .single();
+        if (error) throw error;
+        crmContactIds.push(data.id);
+        await register("crm_contacts", data.id);
+      }
+    }
+
+    // CRM Interactions (150 - emails, whatsapp, sms, calls)
+    const interactionChannels = ["email", "whatsapp", "sms", "phone"];
+    const interactionSubjects = [
+      "Consulta sobre renovación de marca",
+      "Informe de vigilancia - Alerta detectada",
+      "Confirmación de instrucciones",
+      "Próximo vencimiento de patente",
+      "Documentación requerida",
+      "Propuesta comercial adjunta",
+      "Seguimiento de expediente",
+      "Recordatorio de pago",
+      "Actualización de estado",
+      "Nueva solicitud recibida",
+      "Respuesta a consulta",
+      "Confirmación de reunión",
+      "Presupuesto solicitado",
+      "Factura enviada",
+      "Agradecimiento por confianza",
+    ];
+    const interactionContents = [
+      "Estimado cliente, le informamos que su marca está próxima a vencer. Por favor, confirme si desea proceder con la renovación.",
+      "Hemos detectado una marca similar registrada en su sector. Adjuntamos informe detallado con nuestras recomendaciones.",
+      "Gracias por confirmar las instrucciones. Procederemos según lo indicado.",
+      "Le recordamos que el plazo para la acción vence en 7 días. Quedamos a la espera de sus instrucciones.",
+      "Para continuar con el trámite necesitamos que nos envíe la documentación adjunta firmada.",
+      "Adjuntamos propuesta comercial para los servicios solicitados. No dude en contactarnos para cualquier aclaración.",
+      "Le informamos del estado actual de su expediente. Todo avanza según lo previsto.",
+      "Este es un recordatorio de que tiene una factura pendiente de pago.",
+      "Su expediente ha sido actualizado. Puede revisar los cambios en el portal de cliente.",
+      "Hemos recibido su nueva solicitud y la estamos procesando.",
+    ];
+
+    for (let i = 0; i < 150; i++) {
+      const channel = pick(interactionChannels);
+      const contactId = pick(crmContactIds);
+      const accountId = pick(crmAccountIds);
+      const direction = pick(["inbound", "outbound"]);
+      const daysBack = Math.floor(Math.random() * 180);
+      
+      const { data, error } = await adminClient
+        .from("crm_interactions")
+        .insert({
+          organization_id: organizationId,
+          account_id: accountId,
+          contact_id: contactId,
+          channel,
+          direction,
+          status: pick(["pending", "completed", "read"]),
+          subject: pick(interactionSubjects),
+          content: pick(interactionContents),
+          metadata: { 
+            demo: true,
+            duration_seconds: channel === "phone" ? 60 + Math.floor(Math.random() * 600) : null,
+            read_at: direction === "outbound" ? daysAgo(daysBack - 1).toISOString() : null,
+          },
+          created_at: daysAgo(daysBack).toISOString(),
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("crm_interactions", data.id);
+    }
+
+    // CRM Tasks (50)
+    const taskTitles = [
+      "Llamar para confirmar renovación",
+      "Enviar informe de vigilancia",
+      "Preparar propuesta comercial",
+      "Revisar documentación del cliente",
+      "Agendar reunión de seguimiento",
+      "Responder consulta pendiente",
+      "Verificar pago recibido",
+      "Actualizar datos de contacto",
+      "Enviar recordatorio de vencimiento",
+      "Completar ficha de cliente",
+      "Revisar contrato de servicios",
+      "Preparar presentación para reunión",
+      "Solicitar documentación adicional",
+      "Confirmar instrucciones de renovación",
+      "Realizar seguimiento post-venta",
+    ];
+
+    for (let i = 0; i < 50; i++) {
+      const contactId = pick(crmContactIds);
+      const accountId = pick(crmAccountIds);
+      const daysForward = -30 + Math.floor(Math.random() * 60); // Some past, some future
+      const dueDate = new Date(Date.now() + daysForward * 24 * 60 * 60 * 1000);
+      const status = daysForward < 0 && Math.random() < 0.7 ? "completed" : pick(["pending", "in_progress"]);
+      
+      const { data, error } = await adminClient
+        .from("crm_tasks")
+        .insert({
+          organization_id: organizationId,
+          account_id: accountId,
+          contact_id: contactId,
+          title: pick(taskTitles),
+          description: "Tarea de demostración generada automáticamente para simular flujo de trabajo.",
+          status,
+          due_date: dueDate.toISOString().slice(0, 10),
+          completed_at: status === "completed" ? daysAgo(-daysForward + 1).toISOString() : null,
+          metadata: { demo: true, priority: pick(["low", "medium", "high"]) },
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("crm_tasks", data.id);
+    }
+
+    // Original Deals (CRM v1)
     const dealIds: string[] = [];
     for (let i = 0; i < 15; i++) {
       const contactId = pick(contactIds);
@@ -900,6 +1079,165 @@ serve(async (req) => {
         .single();
       if (error) throw error;
       await register("activities", data.id);
+    }
+
+    // Quotes (Presupuestos) - 30
+    const quoteServices = [
+      "Registro de marca nacional",
+      "Registro de marca comunitaria",
+      "Renovación de marca",
+      "Búsqueda de anterioridades",
+      "Vigilancia de marca anual",
+      "Oposición a registro de marca",
+      "Registro de diseño industrial",
+      "Solicitud de patente nacional",
+      "Informe de patentabilidad",
+      "Respuesta a suspenso OEPM",
+    ];
+
+    for (let i = 0; i < 30; i++) {
+      const billingClientId = pick(billingClientIds);
+      const contactId = pick(contactIds);
+      const clientIdx = billingClientIds.indexOf(billingClientId);
+      const clientName = firmContacts[Math.max(0, clientIdx)].name;
+      const clientEmail = `${clientName.toLowerCase().replace(/[^a-z0-9]+/g, "-")}@billing.demo`;
+
+      const quoteNumber = `PRES-DEMO-${String(i + 1).padStart(4, "0")}`;
+      const quoteDate = daysAgo(Math.floor(Math.random() * 180));
+      const validUntil = new Date(quoteDate.getTime() + 30 * 24 * 60 * 60 * 1000);
+      
+      const subtotal = 200 + Math.floor(Math.random() * 2000);
+      const taxRate = 21;
+      const taxAmount = (subtotal * taxRate) / 100;
+      const total = subtotal + taxAmount;
+      
+      const status = pick(["draft", "sent", "accepted", "rejected", "expired"]);
+      
+      const { data: quoteData, error: quoteErr } = await adminClient
+        .from("quotes")
+        .insert({
+          organization_id: organizationId,
+          quote_number: quoteNumber,
+          billing_client_id: billingClientId,
+          contact_id: contactId,
+          client_name: clientName,
+          client_email: clientEmail,
+          quote_date: quoteDate.toISOString().slice(0, 10),
+          valid_until: validUntil.toISOString().slice(0, 10),
+          subtotal,
+          tax_rate: taxRate,
+          tax_amount: taxAmount,
+          total,
+          currency: "EUR",
+          status,
+          introduction: "Estimado cliente, adjuntamos presupuesto para los servicios solicitados.",
+          terms: "Validez 30 días. Pago a 30 días desde aceptación.",
+          notes: "Presupuesto demo generado automáticamente.",
+          sent_at: status !== "draft" ? daysAgo(Math.floor(Math.random() * 30)).toISOString() : null,
+          accepted_at: status === "accepted" ? daysAgo(Math.floor(Math.random() * 15)).toISOString() : null,
+          created_by: userData.user.id,
+        })
+        .select("id")
+        .single();
+      if (quoteErr) throw quoteErr;
+      await register("quotes", quoteData.id);
+
+      // Quote items (1-3 per quote)
+      const itemCount = 1 + Math.floor(Math.random() * 3);
+      for (let j = 0; j < itemCount; j++) {
+        const qty = 1;
+        const unitPrice = 100 + Math.floor(Math.random() * 800);
+        const lineSubtotal = qty * unitPrice;
+        const lineTax = (lineSubtotal * taxRate) / 100;
+
+        try {
+          const { data: qItem, error: qItemErr } = await adminClient
+            .from("quote_items")
+            .insert({
+              quote_id: quoteData.id,
+              line_number: j + 1,
+              description: pick(quoteServices),
+              quantity: qty,
+              unit_price: unitPrice,
+              subtotal: lineSubtotal,
+              tax_rate: taxRate,
+              tax_amount: lineTax,
+            })
+            .select("id")
+            .single();
+          if (qItemErr) throw qItemErr;
+          await register("quote_items", qItem.id);
+        } catch (itemError) {
+          // Table might not exist, continue
+          console.warn("quote_items insert failed:", formatError(itemError));
+        }
+      }
+    }
+
+    // Client Portals (4 portals for demo clients)
+    const portalClientIds = pickMany(contactIds, 4);
+    for (let i = 0; i < portalClientIds.length; i++) {
+      const clientId = portalClientIds[i];
+      const clientName = firmContacts[i % firmContacts.length].name;
+      const portalSlug = `demo-portal-${i + 1}`;
+
+      try {
+        const { data: portalData, error: portalErr } = await adminClient
+          .from("client_portals")
+          .insert({
+            organization_id: organizationId,
+            client_id: clientId,
+            portal_name: `Portal ${clientName}`,
+            portal_slug: portalSlug,
+            branding_config: {
+              primary_color: "#3B82F6",
+              logo_url: null,
+              company_name: clientName,
+            },
+            settings: {
+              show_invoices: true,
+              show_quotes: true,
+              show_matters: true,
+              show_documents: true,
+              allow_messages: true,
+            },
+            is_active: true,
+            activated_at: daysAgo(Math.floor(Math.random() * 180)).toISOString(),
+            total_logins: Math.floor(Math.random() * 50),
+            created_by: userData.user.id,
+          })
+          .select("id")
+          .single();
+        if (portalErr) throw portalErr;
+        await register("client_portals", portalData.id);
+
+        // Portal users (1-2 per portal)
+        const userCount = 1 + Math.floor(Math.random() * 2);
+        for (let u = 0; u < userCount; u++) {
+          const userName = `Usuario Portal ${i + 1}-${u + 1}`;
+          const userEmail = `portal-user-${i + 1}-${u + 1}@demo.ip-nexus.local`;
+
+          const { data: portalUser, error: puErr } = await adminClient
+            .from("portal_users")
+            .insert({
+              portal_id: portalData.id,
+              contact_id: clientId,
+              email: userEmail,
+              full_name: userName,
+              role: u === 0 ? "admin" : "viewer",
+              is_active: true,
+              last_login_at: Math.random() < 0.7 ? daysAgo(Math.floor(Math.random() * 30)).toISOString() : null,
+              login_count: Math.floor(Math.random() * 20),
+            })
+            .select("id")
+            .single();
+          if (puErr) throw puErr;
+          await register("portal_users", portalUser.id);
+        }
+      } catch (portalError) {
+        // Tables might not exist in some environments
+        console.warn("client_portals insert failed:", formatError(portalError));
+      }
     }
 
     // 5) Mark run completed
