@@ -232,7 +232,7 @@ export function CallInitiateModal({
               <Button
                 onClick={() => {
                   onOpenChange(false);
-                  navigate("/configuraciones/telefonia/packs");
+                  navigate("/app/settings/telephony/packs");
                 }}
               >
                 Comprar minutos
