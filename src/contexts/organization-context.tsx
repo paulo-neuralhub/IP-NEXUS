@@ -3,7 +3,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { supabase } from "@/integrations/supabase/client";
 import { ROLES } from "@/lib/constants";
 
-interface Organization {
+export interface Organization {
   id: string;
   name: string;
   slug: string;

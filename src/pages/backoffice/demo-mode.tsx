@@ -4,14 +4,15 @@
 // ============================================================
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { 
   Target, Play, Settings, BarChart3, Clock, TrendingUp, 
   Users, CheckCircle2, XCircle, Timer, Rocket, RefreshCw,
-  Building2, Mail, User, Calendar
+  Building2, Mail, User, Calendar, ExternalLink
 } from "lucide-react";
 
-import { useOrganization } from "@/contexts/organization-context";
+import { useOrganization, type Organization } from "@/contexts/organization-context";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -52,8 +53,17 @@ import {
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
+// Demo organization slugs for quick access
+const DEMO_ORGS = [
+  { slug: "demo-enterprise-total", label: "🏢 Enterprise (Todos los módulos)" },
+  { slug: "demo-pro-completo", label: "⭐ Pro Completo" },
+  { slug: "demo-pro-docket", label: "📁 Solo Docket" },
+  { slug: "demo-starter-docket", label: "🚀 Starter" },
+];
+
 export default function DemoModePage() {
-  const { currentOrganization } = useOrganization();
+  const navigate = useNavigate();
+  const { currentOrganization, memberships, setCurrentOrganization } = useOrganization();
   const organizationId = currentOrganization?.id;
 
   // Queries
@@ -76,6 +86,30 @@ export default function DemoModePage() {
   const [prospectContact, setProspectContact] = useState("");
   const [prospectEmail, setProspectEmail] = useState("");
   const [prospectIndustry, setProspectIndustry] = useState("");
+  const [selectedDemoOrg, setSelectedDemoOrg] = useState(DEMO_ORGS[0].slug);
+
+  // Extract organizations from memberships
+  const organizations = memberships
+    .map(m => m.organization)
+    .filter((org): org is NonNullable<typeof org> => org !== null && org !== undefined);
+
+  // Find demo organizations from the list
+  const demoOrganizations = organizations.filter(org => 
+    org.slug?.startsWith("demo-") || (org.settings as Record<string, unknown>)?.demo === true
+  );
+
+  const handleOpenDemo = () => {
+    // Find the selected demo org
+    const targetOrg = demoOrganizations.find(org => org.slug === selectedDemoOrg);
+    if (targetOrg) {
+      setCurrentOrganization(targetOrg as Organization);
+      toast.success(`Cambiado a: ${targetOrg.name}`);
+      // Navigate to app dashboard
+      navigate("/app/dashboard");
+    } else {
+      toast.error("Organización demo no encontrada. Selecciona otra.");
+    }
+  };
 
   const handleToggleActive = async (active: boolean) => {
     if (!organizationId) return;
@@ -181,6 +215,61 @@ export default function DemoModePage() {
           {config?.is_active ? "ACTIVO" : "INACTIVO"}
         </Badge>
       </div>
+
+      {/* Quick Open Demo Card */}
+      <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/5 to-primary/10">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <ExternalLink className="h-5 w-5 text-primary" />
+            Abrir Demo en la App
+          </CardTitle>
+          <CardDescription>
+            Cambia rápidamente a una organización demo y abre la aplicación
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-end">
+            <div className="flex-1 space-y-2">
+              <Label htmlFor="demo-org-select">Organización demo</Label>
+              <Select value={selectedDemoOrg} onValueChange={setSelectedDemoOrg}>
+                <SelectTrigger id="demo-org-select">
+                  <SelectValue placeholder="Selecciona organización" />
+                </SelectTrigger>
+                <SelectContent>
+                  {demoOrganizations.length > 0 ? (
+                    demoOrganizations.map(org => (
+                      <SelectItem key={org.id} value={org.slug ?? org.id}>
+                        {org.name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    DEMO_ORGS.map(d => (
+                      <SelectItem key={d.slug} value={d.slug}>
+                        {d.label}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button 
+              onClick={handleOpenDemo}
+              size="lg"
+              className="gap-2"
+              disabled={!config?.data_loaded}
+            >
+              <Play className="h-4 w-4" />
+              Abrir Demo
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+          {!config?.data_loaded && (
+            <p className="mt-3 text-sm text-amber-600">
+              ⚠️ Carga los datos demo primero (abajo) antes de abrir la demo
+            </p>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">
