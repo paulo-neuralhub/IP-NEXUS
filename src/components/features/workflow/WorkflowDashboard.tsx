@@ -17,7 +17,8 @@ import {
   Trash2,
   Edit,
   Copy,
-  Eye
+  Eye,
+  Bell
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -49,6 +50,7 @@ import {
   useDeleteWorkflowTemplate,
   useTriggerWorkflowManually
 } from '@/hooks/workflow/useWorkflows';
+import { usePendingApprovalsCount } from '@/hooks/workflow/useWorkflowApprovals';
 import { WORKFLOW_TRIGGER_TYPES } from '@/types/workflow.types';
 import type { WorkflowTemplate, WorkflowExecution } from '@/types/workflow.types';
 import { InlineHelp } from '@/components/help';
@@ -62,6 +64,7 @@ export function WorkflowDashboard() {
   const { data: workflows = [], isLoading: loadingWorkflows } = useWorkflowTemplates();
   const { data: executions = [], isLoading: loadingExecutions } = useWorkflowExecutions({ limit: 50 });
   const { data: stats } = useWorkflowStats(30);
+  const { data: pendingCount = 0 } = usePendingApprovalsCount();
   
   const toggleActive = useToggleWorkflowActive();
   const deleteWorkflow = useDeleteWorkflowTemplate();

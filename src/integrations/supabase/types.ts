@@ -37807,16 +37807,25 @@ export type Database = {
       }
       workflow_queue: {
         Row: {
+          approval_requested_at: string | null
+          approval_status: string | null
+          approved_at: string | null
+          approved_by: string | null
           attempts: number | null
+          contact_id: string | null
           created_at: string | null
           execution_id: string | null
           id: string
           last_error: string | null
           locked_at: string | null
           locked_by: string | null
+          matter_id: string | null
           max_attempts: number | null
           organization_id: string
           priority: number | null
+          rejection_reason: string | null
+          requested_by: string | null
+          requires_approval: boolean | null
           scheduled_for: string | null
           status: string
           trigger_data: Json | null
@@ -37824,16 +37833,25 @@ export type Database = {
           workflow_id: string
         }
         Insert: {
+          approval_requested_at?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           attempts?: number | null
+          contact_id?: string | null
           created_at?: string | null
           execution_id?: string | null
           id?: string
           last_error?: string | null
           locked_at?: string | null
           locked_by?: string | null
+          matter_id?: string | null
           max_attempts?: number | null
           organization_id: string
           priority?: number | null
+          rejection_reason?: string | null
+          requested_by?: string | null
+          requires_approval?: boolean | null
           scheduled_for?: string | null
           status?: string
           trigger_data?: Json | null
@@ -37841,16 +37859,25 @@ export type Database = {
           workflow_id: string
         }
         Update: {
+          approval_requested_at?: string | null
+          approval_status?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
           attempts?: number | null
+          contact_id?: string | null
           created_at?: string | null
           execution_id?: string | null
           id?: string
           last_error?: string | null
           locked_at?: string | null
           locked_by?: string | null
+          matter_id?: string | null
           max_attempts?: number | null
           organization_id?: string
           priority?: number | null
+          rejection_reason?: string | null
+          requested_by?: string | null
+          requires_approval?: boolean | null
           scheduled_for?: string | null
           status?: string
           trigger_data?: Json | null
@@ -38034,6 +38061,7 @@ export type Database = {
       workflow_templates: {
         Row: {
           actions: Json | null
+          approval_message: string | null
           category: string
           code: string
           color: string | null
@@ -38051,6 +38079,7 @@ export type Database = {
           last_executed_at: string | null
           name: string
           organization_id: string | null
+          requires_approval: boolean | null
           steps: Json | null
           tags: string[] | null
           times_used: number | null
@@ -38060,6 +38089,7 @@ export type Database = {
         }
         Insert: {
           actions?: Json | null
+          approval_message?: string | null
           category?: string
           code: string
           color?: string | null
@@ -38077,6 +38107,7 @@ export type Database = {
           last_executed_at?: string | null
           name: string
           organization_id?: string | null
+          requires_approval?: boolean | null
           steps?: Json | null
           tags?: string[] | null
           times_used?: number | null
@@ -38086,6 +38117,7 @@ export type Database = {
         }
         Update: {
           actions?: Json | null
+          approval_message?: string | null
           category?: string
           code?: string
           color?: string | null
@@ -38103,6 +38135,7 @@ export type Database = {
           last_executed_at?: string | null
           name?: string
           organization_id?: string | null
+          requires_approval?: boolean | null
           steps?: Json | null
           tags?: string[] | null
           times_used?: number | null
@@ -39165,6 +39198,10 @@ export type Database = {
         }[]
       }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
+      approve_workflow: {
+        Args: { p_queue_id: string; p_user_id: string }
+        Returns: boolean
+      }
       assign_automatic_badges: { Args: never; Returns: undefined }
       backoffice_get_platform_metrics: { Args: never; Returns: Json }
       backoffice_get_tenant_detail: {
@@ -39623,6 +39660,22 @@ export type Database = {
         }[]
       }
       register_voip_usage: { Args: { p_call_id: string }; Returns: undefined }
+      reject_workflow: {
+        Args: { p_queue_id: string; p_reason?: string; p_user_id: string }
+        Returns: boolean
+      }
+      request_workflow_approval: {
+        Args: {
+          p_contact_id?: string
+          p_matter_id?: string
+          p_organization_id: string
+          p_requested_by?: string
+          p_trigger_data?: Json
+          p_trigger_type: string
+          p_workflow_id: string
+        }
+        Returns: string
+      }
       resolve_event: {
         Args: { p_event_id: string; p_resolution_notes?: string }
         Returns: boolean
