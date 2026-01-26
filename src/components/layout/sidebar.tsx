@@ -6,12 +6,13 @@ import { MODULE_COLORS } from "@/lib/constants";
 import {
   LayoutDashboard, FileText, Database, Radar, Users, Megaphone,
   Globe, Brain, DollarSign, HelpCircle, Settings, LogOut, ChevronDown, Lock, Shield,
-  Users2, Bell, MessageSquare
+  Users2, Bell, MessageSquare, Check
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const navItems = [
   { path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, module: "dashboard" },
@@ -35,9 +36,13 @@ const navItems = [
 export function Sidebar() {
   const location = useLocation();
   const { profile, signOut } = useAuth();
-  const { currentOrganization, hasAddon, memberships } = useOrganization();
+  const { currentOrganization, hasAddon, memberships, setCurrentOrganization } = useOrganization();
 
-  const otherOrgs = memberships.filter(m => m.organization_id !== currentOrganization?.id);
+  const handleSwitchOrganization = (membership: typeof memberships[0]) => {
+    if (membership.organization) {
+      setCurrentOrganization(membership.organization);
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar flex flex-col z-50">
@@ -119,21 +124,43 @@ export function Sidebar() {
             </div>
             <ChevronDown className="h-4 w-4 text-white/60" />
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuContent align="end" side="top" className="w-72 bg-popover">
             <DropdownMenuItem asChild>
               <Link to="/app/settings">Mi perfil</Link>
             </DropdownMenuItem>
-            {otherOrgs.length > 0 && (
+            
+            {/* Organization Switcher */}
+            {memberships.length > 1 && (
               <>
                 <DropdownMenuSeparator />
-                <p className="px-2 py-1 text-xs text-muted-foreground">Cambiar organización</p>
-                {otherOrgs.map((m) => (
-                  <DropdownMenuItem key={m.organization_id}>
-                    {m.organization?.name}
-                  </DropdownMenuItem>
-                ))}
+                <p className="px-2 py-1.5 text-xs font-medium text-muted-foreground">
+                  Cambiar organización ({memberships.length})
+                </p>
+                <ScrollArea className="max-h-[240px]">
+                  {memberships.map((m) => (
+                    <DropdownMenuItem 
+                      key={m.organization_id}
+                      onClick={() => handleSwitchOrganization(m)}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
+                      <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded bg-primary/10 text-[10px] font-semibold text-primary">
+                        {m.organization?.name?.charAt(0) || '?'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm truncate">{m.organization?.name}</p>
+                        <p className="text-[10px] text-muted-foreground truncate">
+                          {m.organization?.plan || 'free'} • {m.role}
+                        </p>
+                      </div>
+                      {m.organization_id === currentOrganization?.id && (
+                        <Check className="h-4 w-4 text-primary shrink-0" />
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </ScrollArea>
               </>
             )}
+            
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={signOut} className="text-destructive">
               <LogOut className="mr-2 h-4 w-4" />
