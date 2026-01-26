@@ -146,6 +146,10 @@ import ServiceCatalogPage from "./pages/app/settings/ServiceCatalogPage";
 import ServicesPage from "./pages/app/settings/services";
 
 import DeadlineConfigPage from "./pages/app/settings/deadlines";
+import AutomationsPage from "./pages/app/settings/automations";
+import AutomationRulesPage from "./pages/app/settings/automations/rules";
+import LegalDeadlinesPage from "./pages/app/settings/automations/legal-deadlines";
+import ExecutionHistoryPage from "./pages/app/settings/automations/history";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
 import MyOfficesPage from "./pages/app/settings/offices";
@@ -443,6 +447,11 @@ const App = () => (
                 <Route path="settings/servicios" element={<ServicesPage />} />
                 
                 <Route path="settings/deadlines" element={<DeadlineConfigPage />} />
+                {/* Automations */}
+                <Route path="settings/automations" element={<AutomationsPage />} />
+                <Route path="settings/automations/rules" element={<AutomationRulesPage />} />
+                <Route path="settings/automations/legal-deadlines" element={<LegalDeadlinesPage />} />
+                <Route path="settings/automations/history" element={<ExecutionHistoryPage />} />
                 <Route path="settings/offices" element={<MyOfficesPage />} />
                 <Route path="settings/offices/sync" element={<SyncPreferencesPage />} />
                 <Route path="settings/offices/history" element={<SyncHistoryPage />} />
