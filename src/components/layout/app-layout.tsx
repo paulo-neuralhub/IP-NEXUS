@@ -16,7 +16,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 import { CallManager } from "@/components/telephony/CallManager";
 import { ModuleActivationDialog } from "@/components/modules";
-import { DemoBadge } from "@/components/demo";
+import { DemoBadge, DemoGuideBox } from "@/components/demo";
 import { useOrganization } from "@/contexts/organization-context";
 import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
 
@@ -90,8 +90,13 @@ export function AppLayout() {
                 {/* Softphone Widget (VoIP) */}
                 <SoftphoneWidget />
                 
-                {/* Demo Badge */}
-                {isDemoMode && <DemoBadge prospectCompany={config?.prospect_company} />}
+                {/* Demo Mode Components */}
+                {isDemoMode && (
+                  <>
+                    <DemoBadge prospectCompany={config?.prospect_company} />
+                    <DemoGuideBox />
+                  </>
+                )}
               </div>
             ) : (
               // Desktop Layout
@@ -122,8 +127,13 @@ export function AppLayout() {
                 {/* Module Activation Dialog */}
                 <ModuleActivationDialog />
                 
-                {/* Demo Badge */}
-                {isDemoMode && <DemoBadge prospectCompany={config?.prospect_company} />}
+                {/* Demo Mode Components */}
+                {isDemoMode && (
+                  <>
+                    <DemoBadge prospectCompany={config?.prospect_company} />
+                    <DemoGuideBox />
+                  </>
+                )}
               </div>
             )}
           </ContextualHelpProvider>
