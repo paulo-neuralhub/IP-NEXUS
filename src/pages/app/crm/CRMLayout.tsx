@@ -64,8 +64,8 @@ export default function CRMLayout() {
       <div className="space-y-4">
         {/* Header */}
         <div>
-          <p className="text-muted-foreground">Visión global (Accounts · Contacts · Deals · Interactions · Tasks)</p>
           <h1 className="text-2xl font-bold">CRM</h1>
+          <p className="text-muted-foreground">Visión global (Accounts · Contacts · Deals · Interactions · Tasks)</p>
         </div>
         
         {/* Sub-navigation */}
