@@ -306,7 +306,10 @@ function EmailTemplateCard({ template, onEdit, onDelete, onDuplicate, onPreview 
   const category = TEMPLATE_CATEGORIES.find(c => c.value === template.category);
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card 
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={onEdit}
+    >
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -322,7 +325,12 @@ function EmailTemplateCard({ template, onEdit, onDelete, onDuplicate, onPreview 
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <MoreVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -417,7 +425,10 @@ function WhatsAppTemplateCard({ template, onEdit, onDelete, onPreview }: WhatsAp
   const StatusIcon = status.icon;
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
+    <Card 
+      className="hover:shadow-md transition-shadow cursor-pointer"
+      onClick={onEdit}
+    >
       <CardContent className="p-4">
         {/* Header */}
         <div className="flex items-start justify-between mb-3">
@@ -433,7 +444,12 @@ function WhatsAppTemplateCard({ template, onEdit, onDelete, onPreview }: WhatsAp
           
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-8 w-8">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-8 w-8"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <MoreVertical className="w-4 h-4" />
               </Button>
             </DropdownMenuTrigger>
