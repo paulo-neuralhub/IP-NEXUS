@@ -52,6 +52,8 @@ import {
   type WorkflowCondition,
   type WorkflowTriggerConfig
 } from '@/types/workflow.types';
+import { ConditionBuilder } from './ConditionBuilder';
+import { ActionConfigFields } from './ActionConfigPanels';
 
 const CATEGORIES: { value: WorkflowCategory; label: string }[] = [
   { value: 'onboarding', label: 'Onboarding' },
@@ -455,6 +457,25 @@ export function WorkflowBuilder() {
         </CardContent>
       </Card>
 
+      {/* Conditions */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <AlertCircle className="h-5 w-5 text-warning" />
+            Condiciones (Opcional)
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground mb-4">
+            Define condiciones que deben cumplirse para ejecutar las acciones
+          </p>
+          <ConditionBuilder
+            conditions={formData.conditions}
+            onChange={(conditions) => setFormData(prev => ({ ...prev, conditions }))}
+          />
+        </CardContent>
+      </Card>
+
       {/* Actions */}
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
@@ -576,206 +597,4 @@ export function WorkflowBuilder() {
       </Card>
     </div>
   );
-}
-
-// Component for action-specific configuration fields
-function ActionConfigFields({ 
-  action, 
-  onUpdate 
-}: { 
-  action: WorkflowAction; 
-  onUpdate: (config: Record<string, unknown>) => void;
-}) {
-  const actionType = WORKFLOW_ACTION_TYPES.find(t => t.type === action.type);
-  
-  if (!actionType) return null;
-
-  const updateField = (field: string, value: unknown) => {
-    onUpdate({ ...action.config, [field]: value });
-  };
-
-  switch (action.type) {
-    case 'send_email':
-      return (
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Destinatario</Label>
-            <Input
-              value={(action.config.to as string) || ''}
-              onChange={(e) => updateField('to', e.target.value)}
-              placeholder="{{contact.email}} o email@ejemplo.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Plantilla de email</Label>
-            <Input
-              value={(action.config.template_id as string) || ''}
-              onChange={(e) => updateField('template_id', e.target.value)}
-              placeholder="ID de la plantilla"
-            />
-          </div>
-        </div>
-      );
-
-    case 'send_notification':
-      return (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Título</Label>
-            <Input
-              value={(action.config.title as string) || ''}
-              onChange={(e) => updateField('title', e.target.value)}
-              placeholder="Título de la notificación"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Mensaje</Label>
-            <Textarea
-              value={(action.config.message as string) || ''}
-              onChange={(e) => updateField('message', e.target.value)}
-              placeholder="Contenido de la notificación"
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Tipo</Label>
-            <Select 
-              value={(action.config.type as string) || 'info'}
-              onValueChange={(value) => updateField('type', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="info">Información</SelectItem>
-                <SelectItem value="success">Éxito</SelectItem>
-                <SelectItem value="warning">Advertencia</SelectItem>
-                <SelectItem value="error">Error</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      );
-
-    case 'create_task':
-      return (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>Título de la tarea</Label>
-            <Input
-              value={(action.config.title as string) || ''}
-              onChange={(e) => updateField('title', e.target.value)}
-              placeholder="Título de la tarea"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Descripción</Label>
-            <Textarea
-              value={(action.config.description as string) || ''}
-              onChange={(e) => updateField('description', e.target.value)}
-              placeholder="Descripción de la tarea"
-              rows={2}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Prioridad</Label>
-            <Select 
-              value={(action.config.priority as string) || 'medium'}
-              onValueChange={(value) => updateField('priority', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="low">Baja</SelectItem>
-                <SelectItem value="medium">Media</SelectItem>
-                <SelectItem value="high">Alta</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      );
-
-    case 'delay':
-      return (
-        <div className="grid gap-4 md:grid-cols-2">
-          <div className="space-y-2">
-            <Label>Duración</Label>
-            <Input
-              type="number"
-              min={1}
-              value={(action.config.duration as number) || 1}
-              onChange={(e) => updateField('duration', parseInt(e.target.value))}
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Unidad</Label>
-            <Select 
-              value={(action.config.unit as string) || 'minutes'}
-              onValueChange={(value) => updateField('unit', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="minutes">Minutos</SelectItem>
-                <SelectItem value="hours">Horas</SelectItem>
-                <SelectItem value="days">Días</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      );
-
-    case 'add_tag':
-    case 'remove_tag':
-      return (
-        <div className="space-y-2">
-          <Label>Etiqueta</Label>
-          <Input
-            value={(action.config.tag as string) || ''}
-            onChange={(e) => updateField('tag', e.target.value)}
-            placeholder="Nombre de la etiqueta"
-          />
-        </div>
-      );
-
-    case 'webhook':
-      return (
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label>URL</Label>
-            <Input
-              value={(action.config.url as string) || ''}
-              onChange={(e) => updateField('url', e.target.value)}
-              placeholder="https://api.ejemplo.com/webhook"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label>Método HTTP</Label>
-            <Select 
-              value={(action.config.method as string) || 'POST'}
-              onValueChange={(value) => updateField('method', value)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="GET">GET</SelectItem>
-                <SelectItem value="POST">POST</SelectItem>
-                <SelectItem value="PUT">PUT</SelectItem>
-                <SelectItem value="PATCH">PATCH</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
-      );
-
-    default:
-      return (
-        <div className="p-3 bg-muted rounded-lg text-sm text-muted-foreground">
-          Configuración avanzada disponible próximamente
-        </div>
-      );
-  }
 }
