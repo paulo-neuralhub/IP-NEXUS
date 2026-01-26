@@ -7,6 +7,9 @@ export { MatterParties } from './MatterParties';
 export { AddPartyModal } from './AddPartyModal';
 export { ImportPartiesModal } from './ImportPartiesModal';
 
+// Matter communications
+export { MatterCommunications } from './MatterCommunications';
+
 // Matter office components
 export { MatterOfficialTab } from './MatterOfficialTab';
 export { MatterOfficeWidget } from './MatterOfficeWidget';
