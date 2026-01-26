@@ -1,5 +1,4 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import twilio from 'https://esm.sh/twilio@4.23.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -86,6 +85,74 @@ async function readTwilioCredential(supabase: any, organizationId: string, key: 
   return await aesGcmDecrypt(data.encrypted_value, keyBytes);
 }
 
+// Base64URL encode/decode helpers
+function base64UrlEncode(data: Uint8Array): string {
+  const b64 = btoa(String.fromCharCode(...data));
+  return b64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function textToBase64Url(text: string): string {
+  return base64UrlEncode(new TextEncoder().encode(text));
+}
+
+// Generate Twilio Access Token using Web Crypto API (no external JWT libs)
+async function generateTwilioAccessToken(
+  accountSid: string,
+  apiKeySid: string,
+  apiKeySecret: string,
+  twimlAppSid: string,
+  identity: string,
+  ttl: number = 3600
+): Promise<string> {
+  const now = Math.floor(Date.now() / 1000);
+  
+  const header = {
+    typ: 'JWT',
+    alg: 'HS256',
+    cty: 'twilio-fpa;v=1',
+  };
+
+  const grants: Record<string, unknown> = {
+    identity,
+    voice: {
+      incoming: { allow: true },
+      outgoing: { application_sid: twimlAppSid },
+    },
+  };
+
+  const payload = {
+    jti: `${apiKeySid}-${now}`,
+    iss: apiKeySid,
+    sub: accountSid,
+    exp: now + ttl,
+    grants,
+  };
+
+  const encodedHeader = textToBase64Url(JSON.stringify(header));
+  const encodedPayload = textToBase64Url(JSON.stringify(payload));
+  const signingInput = `${encodedHeader}.${encodedPayload}`;
+
+  // Sign with HMAC-SHA256
+  const keyData = new TextEncoder().encode(apiKeySecret);
+  const cryptoKey = await crypto.subtle.importKey(
+    'raw',
+    keyData,
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  
+  const signatureArrayBuffer = await crypto.subtle.sign(
+    'HMAC',
+    cryptoKey,
+    new TextEncoder().encode(signingInput)
+  );
+  
+  const signature = base64UrlEncode(new Uint8Array(signatureArrayBuffer));
+
+  return `${signingInput}.${signature}`;
+}
+
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
@@ -122,22 +189,17 @@ Deno.serve(async (req) => {
       });
     }
 
-    const AccessToken = (twilio as any).jwt.AccessToken;
-    const VoiceGrant = (twilio as any).jwt.AccessToken.VoiceGrant;
-
     const identity = `user:${user.id}`;
-    const voiceGrant = new VoiceGrant({
-      outgoingApplicationSid: twimlAppSid,
-      incomingAllow: true,
-    });
-
-    const accessToken = new AccessToken(accountSid, apiKeySid, apiKeySecret, {
+    const accessToken = await generateTwilioAccessToken(
+      accountSid,
+      apiKeySid,
+      apiKeySecret,
+      twimlAppSid,
       identity,
-      ttl: 60 * 60,
-    });
-    accessToken.addGrant(voiceGrant);
+      3600 // 1 hour TTL
+    );
 
-    return json(200, { token: accessToken.toJwt(), identity });
+    return json(200, { token: accessToken, identity });
   } catch (error) {
     console.error('twilio-voice-token error:', error);
     return json(500, { error: error instanceof Error ? error.message : 'Internal error' });

@@ -224,10 +224,13 @@ export default function TemplateListPage() {
 
       {/* Preview Dialog */}
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] p-0 overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="px-6 py-4 border-b">Vista previa: {previewTitle}</DialogTitle>
-          </DialogHeader>
+        <DialogContent 
+          className="max-w-5xl max-h-[90vh] p-0 overflow-hidden flex flex-col"
+          aria-describedby={undefined}
+        >
+          <div className="px-6 py-4 border-b">
+            <h2 className="text-lg font-semibold">Vista previa: {previewTitle}</h2>
+          </div>
           <div className="flex-1 overflow-auto bg-muted/30 p-8">
             <div 
               className="bg-background shadow-xl rounded-lg overflow-hidden"
