@@ -236,7 +236,7 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
       {
         moduleCode: "marketing",
         moduleName: "Marketing",
-        moduleShortName: "Campañas",
+        moduleShortName: "Marketing",
         moduleIcon: "Megaphone",
         moduleIconLucide: "Megaphone",
         moduleColor: "#F97316",
