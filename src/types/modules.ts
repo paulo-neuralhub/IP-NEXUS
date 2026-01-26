@@ -233,3 +233,81 @@ export interface CanActivateResult {
   current_addons?: number;
   max_addons?: number;
 }
+
+// =============================================
+// TIPOS: Categorías de Add-ons
+// =============================================
+
+export type AddonCategory = 
+  | 'jurisdictions'
+  | 'communications'
+  | 'integrations'
+  | 'storage'
+  | 'support';
+
+export interface PlatformAddon {
+  id: string;
+  code: string;
+  name: string;
+  description: string | null;
+  category: string;
+  subcategory: string | null;
+  icon: string | null;
+  flag_emoji: string | null;
+  price_monthly: number;
+  price_yearly: number;
+  applies_to_modules: string[];
+  is_popular: boolean;
+  is_included_free: boolean;
+  is_visible: boolean;
+  display_order: number;
+}
+
+export interface TenantAddon {
+  id: string;
+  tenant_id: string;
+  addon_code: string;
+  status: 'active' | 'trialing' | 'canceled';
+  access_type: 'included' | 'paid' | 'trial' | 'promotional';
+  activated_at: string;
+  trial_ends_at: string | null;
+  expires_at: string | null;
+}
+
+export interface AddonWithStatus extends PlatformAddon {
+  is_active: boolean;
+  tenant_addon?: TenantAddon;
+}
+
+// Configuración de categorías de addons para UI
+export const ADDON_CATEGORY_CONFIG: Record<string, { 
+  label: string; 
+  icon: string; 
+  description: string;
+}> = {
+  jurisdictions: {
+    label: 'Jurisdicciones',
+    icon: '🌍',
+    description: 'Cobertura geográfica para expedientes y vigilancia',
+  },
+  communications: {
+    label: 'Comunicaciones',
+    icon: '📞',
+    description: 'Canales de comunicación con clientes',
+  },
+  integrations: {
+    label: 'Integraciones',
+    icon: '🔌',
+    description: 'Conecta con herramientas externas',
+  },
+  storage: {
+    label: 'Almacenamiento',
+    icon: '💾',
+    description: 'Espacio adicional para documentos',
+  },
+  support: {
+    label: 'Soporte',
+    icon: '🎯',
+    description: 'Soporte prioritario y dedicado',
+  },
+};
