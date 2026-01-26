@@ -137,7 +137,7 @@ export function SoftphoneWidget() {
   const handleMakeCall = useCallback(async () => {
     if (!voipAvailable) return;
     if (!phoneNumber.trim()) return;
-    if (!isReady) return;
+    if (!isReady || !isConfigured) return;
 
     setCallState('connecting');
     setCallDuration(0);
@@ -152,7 +152,7 @@ export function SoftphoneWidget() {
     } catch {
       resetCallUi();
     }
-  }, [contactInfo?.id, isReady, makeCall, phoneNumber, resetCallUi, voipAvailable]);
+  }, [contactInfo?.id, isReady, isConfigured, makeCall, phoneNumber, resetCallUi, voipAvailable]);
 
   const handleHangUp = useCallback(() => {
     hangUp();
@@ -467,7 +467,7 @@ export function SoftphoneWidget() {
               <button
                 type="button"
                 onClick={handleMakeCall}
-                disabled={!phoneNumber.trim() || !isReady || !!deviceError || !voipAvailable}
+                disabled={!phoneNumber.trim() || !isReady || !!deviceError || !voipAvailable || !isConfigured}
                 className="flex items-center justify-center gap-2 rounded-xl bg-accent px-4 py-3 text-sm font-semibold text-accent-foreground hover:opacity-90 disabled:opacity-50"
               >
                 <Phone className="h-4 w-4" />

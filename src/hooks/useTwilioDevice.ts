@@ -79,8 +79,22 @@ export function useTwilioDevice(): TwilioDeviceState {
 
         if (cancelled || !mountedRef.current) return;
 
-        // Handle 503/not configured gracefully
-        if (fnError || data?.error === 'TWILIO_NOT_CONFIGURED' || !data?.token) {
+        // Handle 503/not configured or any error gracefully
+        if (fnError) {
+          // Check if it's a not configured error
+          const errorMsg = fnError.message || String(fnError);
+          if (errorMsg.includes('503') || errorMsg.includes('TWILIO_NOT_CONFIGURED')) {
+            setIsConfigured(false);
+            setError(null);
+          } else {
+            setIsConfigured(true);
+            setError(errorMsg);
+          }
+          return;
+        }
+
+        // Handle missing token or explicit not configured error
+        if (data?.error === 'TWILIO_NOT_CONFIGURED' || !data?.token) {
           setIsConfigured(false);
           setError(null);
           return;
