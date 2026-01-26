@@ -1,10 +1,10 @@
 /**
  * Services Dashboard
  * Main view for managing service catalog
+ * Unified view with tabs for active and available services
  */
 
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { 
   Plus, 
@@ -12,7 +12,6 @@ import {
   CheckCircle, 
   AlertCircle, 
   Layers, 
-  ArrowRight,
   Search,
   Filter,
   RefreshCw,
@@ -21,7 +20,6 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
 import {
   Select,
   SelectContent,
@@ -50,71 +48,90 @@ export function ServicesDashboard() {
   const stats = useServiceStats();
   const { data: services = [], isLoading } = useOrganizationServices(true);
   const { data: preconfigured = [], isLoading: loadingPreconfigured } = usePreconfiguredServices();
-  const activatedCodes = new Set(services.filter(s => s.preconfigured_code).map(s => s.preconfigured_code));
+  
+  // Map of activated preconfigured codes
+  const activatedCodes = useMemo(() => 
+    new Set(services.filter(s => s.preconfigured_code).map(s => s.preconfigured_code)),
+    [services]
+  );
+  
+  // Count available (not yet activated)
+  const availableCount = preconfigured.filter(s => !activatedCodes.has(s.preconfigured_code)).length;
 
   const handleRefresh = async () => {
     await queryClient.invalidateQueries({ queryKey: ['preconfigured-services'] });
     await queryClient.invalidateQueries({ queryKey: ['organization-services'] });
   };
   
-  // Filter services
-  const filteredServices = services.filter(service => {
-    const matchesSearch = !search || 
-      service.name.toLowerCase().includes(search.toLowerCase()) ||
-      service.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  // Filter organization services
+  const filteredServices = useMemo(() => 
+    services.filter(service => {
+      const matchesSearch = !search || 
+        service.name.toLowerCase().includes(search.toLowerCase()) ||
+        service.description?.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    }),
+    [services, search, categoryFilter]
+  );
   
-  // Filter available services (not yet activated)
-  const filteredAvailable = preconfigured.filter(service => {
-    if (activatedCodes.has(service.preconfigured_code)) return false;
-    const matchesSearch = !search || 
-      service.name.toLowerCase().includes(search.toLowerCase()) ||
-      service.description?.toLowerCase().includes(search.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  // Filter preconfigured services (show all, indicate which are activated)
+  const filteredPreconfigured = useMemo(() => 
+    preconfigured.filter(service => {
+      const matchesSearch = !search || 
+        service.name.toLowerCase().includes(search.toLowerCase()) ||
+        service.description?.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory = categoryFilter === 'all' || service.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    }),
+    [preconfigured, search, categoryFilter]
+  );
   
-  // Group by category and subcategory
-  const groupedServices = Object.entries(CATEGORY_CONFIG)
-    .map(([key, config]) => {
-      const categoryServices = filteredServices.filter(s => s.category === key);
-      const subcategories = [...new Set(categoryServices.map(s => s.subcategory))];
-      
-      return {
-        category: key,
-        label: config.label,
-        icon: config.icon,
-        services: categoryServices,
-        subcategories: subcategories.map(sub => ({
-          key: sub || 'general',
-          label: SUBCATEGORY_LABELS[sub || 'general'] || sub || 'General',
-          services: categoryServices.filter(s => s.subcategory === sub),
-        })),
-      };
-    })
-    .filter(g => g.services.length > 0);
+  // Group organization services by category
+  const groupedServices = useMemo(() => 
+    Object.entries(CATEGORY_CONFIG)
+      .map(([key, config]) => {
+        const categoryServices = filteredServices.filter(s => s.category === key);
+        const subcategories = [...new Set(categoryServices.map(s => s.subcategory))];
+        
+        return {
+          category: key,
+          label: config.label,
+          icon: config.icon,
+          services: categoryServices,
+          subcategories: subcategories.map(sub => ({
+            key: sub || 'general',
+            label: SUBCATEGORY_LABELS[sub || 'general'] || sub || 'General',
+            services: categoryServices.filter(s => s.subcategory === sub),
+          })),
+        };
+      })
+      .filter(g => g.services.length > 0),
+    [filteredServices]
+  );
   
-  // Group available services by category
-  const groupedAvailable = Object.entries(CATEGORY_CONFIG)
-    .map(([key, config]) => {
-      const categoryServices = filteredAvailable.filter(s => s.category === key);
-      const subcategories = [...new Set(categoryServices.map(s => s.subcategory))];
-      
-      return {
-        category: key,
-        label: config.label,
-        icon: config.icon,
-        services: categoryServices,
-        subcategories: subcategories.map(sub => ({
-          key: sub || 'general',
-          label: SUBCATEGORY_LABELS[sub || 'general'] || sub || 'General',
-          services: categoryServices.filter(s => s.subcategory === sub),
-        })),
-      };
-    })
-    .filter(g => g.services.length > 0);
+  // Group preconfigured services by category
+  const groupedPreconfigured = useMemo(() => 
+    Object.entries(CATEGORY_CONFIG)
+      .map(([key, config]) => {
+        const categoryServices = filteredPreconfigured.filter(s => s.category === key);
+        const subcategories = [...new Set(categoryServices.map(s => s.subcategory))];
+        
+        return {
+          category: key,
+          label: config.label,
+          icon: config.icon,
+          services: categoryServices,
+          subcategories: subcategories.map(sub => ({
+            key: sub || 'general',
+            label: SUBCATEGORY_LABELS[sub || 'general'] || sub || 'General',
+            services: categoryServices.filter(s => s.subcategory === sub),
+          })),
+        };
+      })
+      .filter(g => g.services.length > 0),
+    [filteredPreconfigured]
+  );
   
   return (
     <div className="space-y-6">
@@ -171,7 +188,7 @@ export function ServicesDashboard() {
               )}
             </div>
             <p className="text-xs text-muted-foreground">
-              {loadingPreconfigured ? 'cargando...' : `${stats.available - stats.active} por activar`}
+              {loadingPreconfigured ? 'cargando...' : `${availableCount} por activar`}
             </p>
           </CardContent>
         </Card>
@@ -203,28 +220,21 @@ export function ServicesDashboard() {
         </Card>
       </div>
       
-      {/* Action Bar */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          <Button 
-            variant={!showAvailable ? "default" : "outline"}
-            size="sm"
-            onClick={() => setShowAvailable(false)}
-          >
-            Activos ({services.length})
-          </Button>
-          <Button 
-            variant={showAvailable ? "default" : "outline"}
-            size="sm"
-            onClick={() => setShowAvailable(true)}
-          >
-            Disponibles ({filteredAvailable.length})
-          </Button>
-        </div>
-        <Button variant="outline" size="sm" asChild>
-          <Link to="/app/settings/servicios/catalogo">
-            Catálogo completo <ArrowRight className="ml-2 h-4 w-4" />
-          </Link>
+      {/* View Toggle */}
+      <div className="flex gap-2">
+        <Button 
+          variant={!showAvailable ? "default" : "outline"}
+          size="sm"
+          onClick={() => setShowAvailable(false)}
+        >
+          Mis servicios ({services.length})
+        </Button>
+        <Button 
+          variant={showAvailable ? "default" : "outline"}
+          size="sm"
+          onClick={() => setShowAvailable(true)}
+        >
+          Ver disponibles ({preconfigured.length})
         </Button>
       </div>
       
@@ -256,42 +266,38 @@ export function ServicesDashboard() {
         </div>
       </div>
       
-      {/* Services List by Category */}
+      {/* Services List */}
       {(isLoading || loadingPreconfigured) ? (
         <div className="text-center py-8 text-muted-foreground">
           Cargando servicios...
         </div>
       ) : showAvailable ? (
-        groupedAvailable.length === 0 ? (
-        <Card className="p-8 text-center">
-          <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
-          <h3 className="mt-4 text-lg font-semibold">No hay servicios disponibles</h3>
-          <p className="mt-2 text-muted-foreground">
-            Todos los servicios del catálogo ya están activados.
-          </p>
-          <div className="mt-4 flex justify-center gap-4">
-            <Button variant="outline" asChild>
-              <Link to="/app/settings/servicios/catalogo">
-                Ver catálogo
-              </Link>
-            </Button>
-          </div>
-        </Card>
+        // Available/Preconfigured Services View
+        groupedPreconfigured.length === 0 ? (
+          <Card className="p-8 text-center">
+            <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
+            <h3 className="mt-4 text-lg font-semibold">No hay servicios</h3>
+            <p className="mt-2 text-muted-foreground">
+              No se encontraron servicios con los filtros aplicados.
+            </p>
+          </Card>
         ) : (
           <div className="space-y-4">
-            {groupedAvailable.map((group) => (
+            {groupedPreconfigured.map((group) => (
               <ServiceCategoryAccordion
                 key={group.category}
                 category={group.category}
                 label={group.label}
                 icon={group.icon}
                 subcategories={group.subcategories}
-                readOnly={true}
+                activatedCodes={activatedCodes}
+                showAvailableActions={true}
               />
             ))}
           </div>
         )
       ) : (
+        // Organization Services View
         groupedServices.length === 0 ? (
           <Card className="p-8 text-center">
             <Package className="mx-auto h-12 w-12 text-muted-foreground/50" />
@@ -310,17 +316,17 @@ export function ServicesDashboard() {
             </div>
           </Card>
         ) : (
-        <div className="space-y-4">
-          {groupedServices.map((group) => (
-            <ServiceCategoryAccordion
-              key={group.category}
-              category={group.category}
-              label={group.label}
-              icon={group.icon}
-              subcategories={group.subcategories}
-            />
-          ))}
-        </div>
+          <div className="space-y-4">
+            {groupedServices.map((group) => (
+              <ServiceCategoryAccordion
+                key={group.category}
+                category={group.category}
+                label={group.label}
+                icon={group.icon}
+                subcategories={group.subcategories}
+              />
+            ))}
+          </div>
         )
       )}
       
