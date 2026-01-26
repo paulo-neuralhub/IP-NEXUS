@@ -170,6 +170,7 @@ import NewWorkflowPage from "./pages/app/workflow/new";
 import WorkflowTemplatesPage from "./pages/app/workflow/templates";
 import WorkflowDetailPage from "./pages/app/workflow/[id]";
 import EditWorkflowPage from "./pages/app/workflow/[id]/edit";
+import WorkflowHistoryRoute from "./pages/app/workflow/[id]/history";
 import WorkflowApprovalsPage from "./pages/app/workflow/approvals";
 import AnalyticsPage from "./pages/app/analytics";
 import AlertsPage from "./pages/app/alerts";
@@ -498,6 +499,7 @@ const App = () => (
                 <Route path="workflow/approvals" element={<WorkflowApprovalsPage />} />
                 <Route path="workflow/:id" element={<WorkflowDetailPage />} />
                 <Route path="workflow/:id/edit" element={<EditWorkflowPage />} />
+                <Route path="workflow/:id/history" element={<WorkflowHistoryRoute />} />
                 <Route path="analytics" element={<AnalyticsPage />} />
                 <Route path="analytics/charts" element={<AnalyticsChartsPage />} />
                 <Route path="collab" element={<CollabIndexPage />} />
