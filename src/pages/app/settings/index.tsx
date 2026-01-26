@@ -22,6 +22,7 @@ import {
   PackageSearch,
   CalendarClock,
   FileText,
+  Zap,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { RequirePermission, RequireRole } from '@/components/auth/RequirePermission';
@@ -66,6 +67,7 @@ const ORG_TABS = [
   { id: 'voip', label: 'Telefonía', icon: PhoneCall, permission: 'settings.view' },
   { id: 'catalog', label: 'Catálogo Servicios', icon: PackageSearch, permission: 'settings.view' },
   { id: 'templates', label: 'Plantillas', icon: FileText, permission: 'settings.view' },
+  { id: 'automations', label: 'Automatizaciones', icon: Zap, permission: 'settings.update' },
   { id: 'deadlines', label: 'Reglas de Plazos', icon: CalendarClock, permission: 'settings.update' },
 ];
 
@@ -243,6 +245,19 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
       {activeTab === 'templates' && (
         <RequirePermission permission="settings.view">
           <TemplatesSettings />
+        </RequirePermission>
+      )}
+
+      {activeTab === 'automations' && (
+        <RequirePermission permission="settings.update">
+          <div className="text-center py-8">
+            <p className="text-muted-foreground mb-4">
+              Gestiona automatizaciones desde la página dedicada
+            </p>
+            <a href="/app/settings/automations" className="text-primary hover:underline">
+              Ir a Automatizaciones →
+            </a>
+          </div>
         </RequirePermission>
       )}
 
