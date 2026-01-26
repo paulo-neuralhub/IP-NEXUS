@@ -3,6 +3,7 @@
 // Grid de módulos organizados por sidebar_section
 // =============================================
 
+import type { CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Check, 
@@ -13,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { LucideDynamicIcon } from '@/components/ui/lucide-dynamic-icon';
 import { useModulesContext } from '@/contexts/ModulesContext';
 import { cn } from '@/lib/utils';
 import type { ModuleWithStatus } from '@/types/modules';
@@ -175,33 +177,60 @@ function ModuleCard({ module, onActivate }: ModuleCardProps) {
   // Obtener nombre corto para display
   const displayName = module.short_name || module.name;
 
+  const getAccentVar = (code: string) => {
+    const map: Record<string, string> = {
+      dashboard: '--module-dashboard',
+      docket: '--module-docket',
+      'data-hub': '--module-datahub',
+      datahub: '--module-datahub',
+      spider: '--module-spider',
+      market: '--module-market',
+      genius: '--module-genius',
+      finance: '--module-finance',
+      crm: '--module-crm',
+      marketing: '--module-marketing',
+      help: '--module-help',
+    };
+    return map[code] ?? '--primary';
+  };
+
+  const accentVar = getAccentVar(module.code);
+
   return (
     <div
       className={cn(
         'group relative rounded-lg border bg-card overflow-hidden transition-all duration-200',
-        'hover:shadow-md hover:border-primary/30',
+        'hover:shadow-md',
         isActive && 'ring-1 ring-primary/20 bg-primary/[0.02]',
-        isTrial && 'ring-1 ring-amber-500/20 bg-amber-500/[0.02]',
+        isTrial && 'ring-1 ring-[hsl(var(--warning)/0.22)] bg-[hsl(var(--warning)/0.03)]',
         isLocked && 'hover:bg-muted/20',
         isComingSoon && 'border-dashed opacity-60 pointer-events-none'
       )}
+      style={{ ['--module-accent' as never]: `var(${accentVar})` } as CSSProperties}
     >
       {/* Header con icono y status */}
       <div className="flex items-start gap-3 p-4 pb-3">
         {/* Icono compacto */}
         <div 
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg"
-          style={{ 
-            backgroundColor: `${module.color}12`,
-            color: module.color,
-          }}
+          className={cn(
+            'flex h-10 w-10 shrink-0 items-center justify-center rounded-lg',
+            'bg-[hsl(var(--module-accent)/0.12)] text-[hsl(var(--module-accent))]'
+          )}
         >
-          {module.icon}
+          <LucideDynamicIcon
+            name={module.icon_lucide || module.icon}
+            className="h-5 w-5"
+            aria-hidden="true"
+            fallback={<span className="text-sm font-semibold">{displayName.slice(0, 1)}</span>}
+          />
         </div>
 
         {/* Título y tagline */}
         <div className="flex-1 min-w-0 pr-1">
-          <h4 className="text-sm font-semibold text-foreground leading-tight truncate" title={module.name}>
+          <h4
+            className="text-sm font-semibold text-foreground leading-snug line-clamp-2"
+            title={module.name}
+          >
             {displayName}
           </h4>
           <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2 leading-relaxed">
@@ -212,12 +241,15 @@ function ModuleCard({ module, onActivate }: ModuleCardProps) {
         {/* Status badge - compacto */}
         <div className="shrink-0">
           {isActive && (
-            <span className="flex items-center justify-center h-5 w-5 rounded-full bg-emerald-100 dark:bg-emerald-900/30">
-              <Check className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+            <span className="flex items-center justify-center h-5 w-5 rounded-full bg-[hsl(var(--success)/0.12)]">
+              <Check className="h-3 w-3 text-[hsl(var(--success))]" />
             </span>
           )}
           {isTrial && (
-            <Badge variant="outline" className="text-[10px] px-1.5 py-0 h-5 border-amber-300 text-amber-600 dark:text-amber-400">
+            <Badge
+              variant="outline"
+              className="text-[10px] px-1.5 py-0 h-5 border-[hsl(var(--warning)/0.35)] text-[hsl(var(--warning))]"
+            >
               {module.trial_days_remaining}d
             </Badge>
           )}
@@ -242,9 +274,9 @@ function ModuleCard({ module, onActivate }: ModuleCardProps) {
               <span>/mes</span>
             </>
           ) : isActive ? (
-            <span className="text-emerald-600 dark:text-emerald-400 font-medium">Activo</span>
+            <span className="text-[hsl(var(--success))] font-medium">Activo</span>
           ) : isTrial ? (
-            <span className="text-amber-600 dark:text-amber-400 font-medium">En prueba</span>
+            <span className="text-[hsl(var(--warning))] font-medium">En prueba</span>
           ) : (
             <span>Disponible</span>
           )}
