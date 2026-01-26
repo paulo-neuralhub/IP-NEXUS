@@ -237,7 +237,7 @@ export function DeadlineRulesTab() {
                               {JURISDICTIONS.find(j => j.value === rule.jurisdiction)?.label || rule.jurisdiction}
                             </TableCell>
                             <TableCell className="capitalize">
-                              {rule.event_type.replace(/_/g, ' ')}
+                              {rule.event_type?.replace(/_/g, ' ') || 'N/A'}
                             </TableCell>
                             <TableCell>
                               <Badge variant={rule.days_from_event < 0 ? 'destructive' : 'default'}>
