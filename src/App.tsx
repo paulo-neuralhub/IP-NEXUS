@@ -145,6 +145,7 @@ import SSOSettingsPage from "./pages/app/settings/sso";
 import NotFound from "./pages/NotFound";
 import ServiceCatalogPage from "./pages/app/settings/ServiceCatalogPage";
 import ServicesPage from "./pages/app/settings/services";
+import ModulesManagementPage from "./pages/app/settings/modules";
 
 import DeadlineConfigPage from "./pages/app/settings/deadlines";
 import AutomationsPage from "./pages/app/settings/automations";
@@ -461,6 +462,7 @@ const App = () => (
                 <Route path="settings/subscription" element={<SubscriptionPage />} />
                 <Route path="settings/subscription/invoices" element={<SubscriptionInvoicesPage />} />
                 <Route path="settings/subscription/plans" element={<SubscriptionPlansPage />} />
+                <Route path="settings/modules" element={<ModulesManagementPage />} />
                 {/* Telephony Settings */}
                 <Route path="settings/telephony" element={<TenantTelephonySettingsPage />} />
                 <Route path="settings/telephony/packs" element={<TenantTelephonyPacksPage />} />
