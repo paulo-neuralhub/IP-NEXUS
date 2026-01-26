@@ -1,6 +1,6 @@
 // ============================================================
 // IP-NEXUS - DEADLINE CALENDAR COMPONENT
-// Calendar view for deadlines
+// Calendar view for deadlines with rich visual information
 // ============================================================
 
 import * as React from 'react';
@@ -8,8 +8,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, isPast, addMonths, subMonths, getDay } from 'date-fns';
+import { ChevronLeft, ChevronRight, FileText, CreditCard, RefreshCw, AlertTriangle, Gavel, Clock } from 'lucide-react';
+import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isPast, addMonths, subMonths, getDay, differenceInDays } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { useDeadlinesCalendar } from '@/hooks/useDeadlines';
@@ -18,6 +18,23 @@ import { Link } from 'react-router-dom';
 interface DeadlineCalendarProps {
   onDayClick?: (date: Date) => void;
 }
+
+// Deadline type icons and colors
+const deadlineTypeConfig: Record<string, { icon: React.ElementType; color: string; bg: string }> = {
+  filing: { icon: FileText, color: 'text-blue-600', bg: 'bg-blue-100' },
+  payment: { icon: CreditCard, color: 'text-green-600', bg: 'bg-green-100' },
+  renewal: { icon: RefreshCw, color: 'text-purple-600', bg: 'bg-purple-100' },
+  opposition: { icon: Gavel, color: 'text-orange-600', bg: 'bg-orange-100' },
+  office_action: { icon: AlertTriangle, color: 'text-red-600', bg: 'bg-red-100' },
+  default: { icon: Clock, color: 'text-gray-600', bg: 'bg-gray-100' },
+};
+
+const priorityColors: Record<string, string> = {
+  critical: 'border-l-red-500 bg-red-50',
+  high: 'border-l-orange-500 bg-orange-50',
+  normal: 'border-l-blue-500 bg-blue-50',
+  low: 'border-l-gray-400 bg-gray-50',
+};
 
 export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
@@ -30,9 +47,7 @@ export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
   const monthEnd = endOfMonth(currentMonth);
   const days = eachDayOfInterval({ start: monthStart, end: monthEnd });
   
-  // Get the day of week the month starts on (0 = Sunday)
   const startDay = getDay(monthStart);
-  // Adjust for Monday start
   const adjustedStartDay = startDay === 0 ? 6 : startDay - 1;
 
   // Group deadlines by date
@@ -49,19 +64,14 @@ export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
   }, [deadlines]);
 
   const getDeadlineStatus = (date: Date) => {
-    const dateStr = format(date, 'yyyy-MM-dd');
-    const dayDeadlines = deadlinesByDate.get(dateStr) || [];
+    const isOverdue = isPast(date) && !isToday(date);
+    const isTodayDate = isToday(date);
+    const daysUntil = differenceInDays(date, new Date());
     
-    if (dayDeadlines.length === 0) return null;
-    
-    const hasOverdue = isPast(date) && !isToday(date);
-    const hasToday = isToday(date);
-    const hasCritical = dayDeadlines.some(d => d.priority === 'critical');
-    
-    if (hasOverdue) return { color: 'bg-destructive', count: dayDeadlines.length };
-    if (hasToday) return { color: 'bg-orange-500', count: dayDeadlines.length };
-    if (hasCritical) return { color: 'bg-yellow-500', count: dayDeadlines.length };
-    return { color: 'bg-green-500', count: dayDeadlines.length };
+    if (isOverdue) return 'overdue';
+    if (isTodayDate) return 'today';
+    if (daysUntil <= 7) return 'urgent';
+    return 'upcoming';
   };
 
   const weekDays = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
@@ -77,7 +87,7 @@ export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <CardTitle className="text-lg">
+          <CardTitle className="text-lg capitalize">
             {format(currentMonth, 'MMMM yyyy', { locale: es })}
           </CardTitle>
           <Button 
@@ -103,72 +113,121 @@ export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
         <div className="grid grid-cols-7 gap-1">
           {/* Empty cells for days before month start */}
           {Array.from({ length: adjustedStartDay }).map((_, i) => (
-            <div key={`empty-${i}`} className="aspect-square" />
+            <div key={`empty-${i}`} className="min-h-[100px]" />
           ))}
           
           {/* Day cells */}
           {days.map((day) => {
-            const status = getDeadlineStatus(day);
             const dateStr = format(day, 'yyyy-MM-dd');
             const dayDeadlines = deadlinesByDate.get(dateStr) || [];
+            const status = dayDeadlines.length > 0 ? getDeadlineStatus(day) : null;
+            const visibleDeadlines = dayDeadlines.slice(0, 3);
+            const remainingCount = dayDeadlines.length - 3;
             
             return (
               <Popover key={day.toISOString()}>
                 <PopoverTrigger asChild>
                   <button
                     className={cn(
-                      "aspect-square p-1 text-sm rounded-md relative transition-colors",
-                      "hover:bg-accent",
-                      isToday(day) && "bg-primary/10 font-bold",
-                      !isSameMonth(day, currentMonth) && "text-muted-foreground opacity-50"
+                      "min-h-[100px] p-1 text-sm rounded-lg relative transition-colors flex flex-col",
+                      "hover:bg-accent border border-transparent",
+                      isToday(day) && "bg-primary/5 border-primary/20",
+                      !isSameMonth(day, currentMonth) && "opacity-50",
+                      status === 'overdue' && "bg-red-50/50",
+                      status === 'today' && "bg-orange-50/50",
+                      status === 'urgent' && "bg-yellow-50/50"
                     )}
                     onClick={() => onDayClick?.(day)}
                   >
+                    {/* Day number */}
                     <span className={cn(
-                      "absolute top-1 left-1/2 -translate-x-1/2",
-                      isToday(day) && "text-primary"
+                      "text-xs font-medium mb-1 self-end px-1 rounded",
+                      isToday(day) && "bg-primary text-primary-foreground"
                     )}>
                       {format(day, 'd')}
                     </span>
                     
-                    {status && (
-                      <div className={cn(
-                        "absolute bottom-1 left-1/2 -translate-x-1/2 text-[10px] text-white font-bold rounded-full px-1.5 min-w-[18px] text-center",
-                        status.color
-                      )}>
-                        {status.count}
-                      </div>
-                    )}
+                    {/* Deadline items */}
+                    <div className="flex-1 space-y-0.5 overflow-hidden">
+                      {visibleDeadlines.map((deadline) => {
+                        const typeConfig = deadlineTypeConfig[deadline.deadline_type] || deadlineTypeConfig.default;
+                        const Icon = typeConfig.icon;
+                        
+                        return (
+                          <div
+                            key={deadline.id}
+                            className={cn(
+                              "text-[10px] leading-tight px-1 py-0.5 rounded truncate border-l-2",
+                              priorityColors[deadline.priority] || priorityColors.normal
+                            )}
+                            title={`${deadline.title} - ${deadline.matter?.reference}`}
+                          >
+                            <div className="flex items-center gap-0.5">
+                              <Icon className={cn("h-2.5 w-2.5 flex-shrink-0", typeConfig.color)} />
+                              <span className="truncate font-medium">
+                                {deadline.matter?.reference || deadline.title}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                      
+                      {remainingCount > 0 && (
+                        <div className="text-[10px] text-muted-foreground px-1 font-medium">
+                          +{remainingCount} más
+                        </div>
+                      )}
+                    </div>
                   </button>
                 </PopoverTrigger>
                 
                 {dayDeadlines.length > 0 && (
                   <PopoverContent className="w-80" align="start">
                     <div className="space-y-2">
-                      <h4 className="font-semibold">
+                      <h4 className="font-semibold capitalize">
                         {format(day, 'EEEE, d MMMM', { locale: es })}
                       </h4>
                       <div className="space-y-2 max-h-60 overflow-y-auto">
-                        {dayDeadlines.map((deadline) => (
-                          <Link 
-                            key={deadline.id}
-                            to={`/app/docket/${deadline.matter?.id}`}
-                            className="block p-2 rounded-md bg-muted hover:bg-accent transition-colors"
-                          >
-                            <div className="flex items-center justify-between">
-                              <span className="font-medium text-sm truncate">{deadline.title}</span>
-                              <Badge variant={
-                                deadline.priority === 'critical' ? 'destructive' :
-                                deadline.priority === 'high' ? 'default' : 'secondary'
-                              } className="text-xs ml-2">
-                                {deadline.priority}
-                              </Badge>
-                            </div>
-                            <p className="text-xs text-muted-foreground mt-1 truncate">
-                              {deadline.matter?.reference} - {deadline.matter?.title}
-                            </p>
-                          </Link>
-                        ))}
+                        {dayDeadlines.map((deadline) => {
+                          const typeConfig = deadlineTypeConfig[deadline.deadline_type] || deadlineTypeConfig.default;
+                          const Icon = typeConfig.icon;
+                          
+                          return (
+                            <Link 
+                              key={deadline.id}
+                              to={`/app/docket/${deadline.matter?.id}`}
+                              className="block p-2 rounded-md bg-muted hover:bg-accent transition-colors"
+                            >
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center gap-2 min-w-0">
+                                  <div className={cn("p-1 rounded", typeConfig.bg)}>
+                                    <Icon className={cn("h-3.5 w-3.5", typeConfig.color)} />
+                                  </div>
+                                  <span className="font-medium text-sm truncate">{deadline.title}</span>
+                                </div>
+                                <Badge 
+                                  variant={
+                                    deadline.priority === 'critical' ? 'destructive' :
+                                    deadline.priority === 'high' ? 'default' : 'secondary'
+                                  } 
+                                  className="text-xs flex-shrink-0"
+                                >
+                                  {deadline.priority}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-2 mt-1.5">
+                                <span className="text-xs text-muted-foreground truncate">
+                                  {deadline.matter?.reference} - {deadline.matter?.title}
+                                </span>
+                              </div>
+                              <div className="mt-1">
+                                <Badge variant="outline" className="text-[10px]">
+                                  {deadline.deadline_type}
+                                </Badge>
+                              </div>
+                            </Link>
+                          );
+                        })}
                       </div>
                     </div>
                   </PopoverContent>
@@ -179,22 +238,35 @@ export function DeadlineCalendar({ onDayClick }: DeadlineCalendarProps) {
         </div>
         
         {/* Legend */}
-        <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-destructive" />
-            <span>Vencido</span>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-red-50 border-l-2 border-red-500" />
+            <span>Crítico</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-orange-500" />
-            <span>Hoy</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-orange-50 border-l-2 border-orange-500" />
+            <span>Alto</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-yellow-500" />
-            <span>1-7 días</span>
+          <div className="flex items-center gap-1.5">
+            <div className="w-3 h-3 rounded bg-blue-50 border-l-2 border-blue-500" />
+            <span>Normal</span>
           </div>
-          <div className="flex items-center gap-1">
-            <div className="w-3 h-3 rounded-full bg-green-500" />
-            <span>+7 días</span>
+          <span className="text-muted-foreground/50">|</span>
+          <div className="flex items-center gap-1.5">
+            <FileText className="h-3 w-3 text-blue-600" />
+            <span>Filing</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <CreditCard className="h-3 w-3 text-green-600" />
+            <span>Pago</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <RefreshCw className="h-3 w-3 text-purple-600" />
+            <span>Renovación</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Gavel className="h-3 w-3 text-orange-600" />
+            <span>Oposición</span>
           </div>
         </div>
       </CardContent>
