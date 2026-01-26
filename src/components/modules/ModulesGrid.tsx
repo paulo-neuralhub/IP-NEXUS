@@ -235,7 +235,7 @@ function ModuleCard({ module, onActivate }: ModuleCardProps) {
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => navigate(`/${module.code}`)}
+                onClick={() => navigate(`/app/${module.code}`)}
                 className="text-primary"
               >
                 Abrir
