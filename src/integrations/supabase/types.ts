@@ -33181,22 +33181,39 @@ export type Database = {
       }
       subscription_plans: {
         Row: {
+          addon_discount_percent: number | null
+          badge: string | null
           badge_color: string | null
           badge_text: string | null
           code: string
+          color: string | null
           created_at: string | null
           currency: string | null
           description: string | null
+          display_order: number | null
           features: Json
           highlight: boolean | null
+          icon: string | null
           id: string
+          included_ai_queries: number | null
+          included_emails: number | null
+          included_modules: string[] | null
+          included_sms: number | null
+          included_voice_minutes: number | null
+          included_whatsapp: number | null
           is_active: boolean | null
           is_enterprise: boolean | null
           is_popular: boolean | null
           is_public: boolean | null
           limits: Json
+          max_addon_modules: number | null
+          max_clients: number | null
+          max_contacts: number | null
+          max_documents_month: number | null
+          max_matters: number | null
           max_storage_gb: number | null
           max_users: number | null
+          modules_to_choose: number | null
           name: string
           plan_type: string | null
           price_monthly: number
@@ -33205,28 +33222,46 @@ export type Database = {
           stripe_price_id_monthly: string | null
           stripe_price_id_yearly: string | null
           stripe_product_id: string | null
+          tagline: string | null
           trial_days: number | null
           trial_includes_all: boolean | null
           ui_config: Json | null
           updated_at: string | null
         }
         Insert: {
+          addon_discount_percent?: number | null
+          badge?: string | null
           badge_color?: string | null
           badge_text?: string | null
           code: string
+          color?: string | null
           created_at?: string | null
           currency?: string | null
           description?: string | null
+          display_order?: number | null
           features?: Json
           highlight?: boolean | null
+          icon?: string | null
           id?: string
+          included_ai_queries?: number | null
+          included_emails?: number | null
+          included_modules?: string[] | null
+          included_sms?: number | null
+          included_voice_minutes?: number | null
+          included_whatsapp?: number | null
           is_active?: boolean | null
           is_enterprise?: boolean | null
           is_popular?: boolean | null
           is_public?: boolean | null
           limits?: Json
+          max_addon_modules?: number | null
+          max_clients?: number | null
+          max_contacts?: number | null
+          max_documents_month?: number | null
+          max_matters?: number | null
           max_storage_gb?: number | null
           max_users?: number | null
+          modules_to_choose?: number | null
           name: string
           plan_type?: string | null
           price_monthly?: number
@@ -33235,28 +33270,46 @@ export type Database = {
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
           stripe_product_id?: string | null
+          tagline?: string | null
           trial_days?: number | null
           trial_includes_all?: boolean | null
           ui_config?: Json | null
           updated_at?: string | null
         }
         Update: {
+          addon_discount_percent?: number | null
+          badge?: string | null
           badge_color?: string | null
           badge_text?: string | null
           code?: string
+          color?: string | null
           created_at?: string | null
           currency?: string | null
           description?: string | null
+          display_order?: number | null
           features?: Json
           highlight?: boolean | null
+          icon?: string | null
           id?: string
+          included_ai_queries?: number | null
+          included_emails?: number | null
+          included_modules?: string[] | null
+          included_sms?: number | null
+          included_voice_minutes?: number | null
+          included_whatsapp?: number | null
           is_active?: boolean | null
           is_enterprise?: boolean | null
           is_popular?: boolean | null
           is_public?: boolean | null
           limits?: Json
+          max_addon_modules?: number | null
+          max_clients?: number | null
+          max_contacts?: number | null
+          max_documents_month?: number | null
+          max_matters?: number | null
           max_storage_gb?: number | null
           max_users?: number | null
+          modules_to_choose?: number | null
           name?: string
           plan_type?: string | null
           price_monthly?: number
@@ -33265,6 +33318,7 @@ export type Database = {
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
           stripe_product_id?: string | null
+          tagline?: string | null
           trial_days?: number | null
           trial_includes_all?: boolean | null
           ui_config?: Json | null
