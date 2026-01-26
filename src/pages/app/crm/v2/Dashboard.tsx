@@ -68,10 +68,6 @@ export default function CRMV2Dashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">CRM V2</h1>
-        <p className="text-muted-foreground">Visión global (Accounts · Contacts · Deals · Interactions · Tasks)</p>
-      </div>
 
       <div className="flex items-center justify-between gap-3">
         <div className="text-sm text-muted-foreground">
