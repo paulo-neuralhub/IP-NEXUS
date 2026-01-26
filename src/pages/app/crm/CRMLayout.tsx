@@ -61,7 +61,10 @@ export default function CRMLayout() {
   
   return (
     <ModuleGate module="crm">
-      <div className="space-y-6">
+      <div className="space-y-4">
+        {/* Title */}
+        <h1 className="text-2xl font-bold">CRM</h1>
+        
         {/* Sub-navigation */}
         <div className="border-b">
           <nav className="flex gap-6 -mb-px overflow-x-auto">
