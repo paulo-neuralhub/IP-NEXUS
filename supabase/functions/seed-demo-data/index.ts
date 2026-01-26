@@ -587,7 +587,7 @@ serve(async (req) => {
     // Demo agents
     const agentSeeds = [
       { name: "María López", country: "ES", jurisdictions: ["ES", "EU"] },
-      { name: "Jean Martin", country: "FR", jurisdictions: ["EU", "WO"] },
+      { name: "Jean Martin", country: "FR", jurisdictions: ["EU", "WIPO"] },
       { name: "Anna Schmidt", country: "DE", jurisdictions: ["DE", "EU"] },
       { name: "James Taylor", country: "GB", jurisdictions: ["GB", "EU"] },
     ];
@@ -599,7 +599,8 @@ serve(async (req) => {
         .insert({
           organization_id: null,
           user_type: "external_agent",
-          agent_type: "ip_attorney",
+          // Must match DB constraint market_users_agent_type_check
+          agent_type: "trademark_attorney",
           email: `agent-${i + 1}@demo.ip-nexus.local`,
           display_name: a.name,
           country: a.country,
