@@ -738,7 +738,7 @@ serve(async (req) => {
             budget_min: 400,
             budget_max: 900,
             budget_currency: "EUR",
-            budget_type: "fixed",
+            budget_type: "total",
             urgency: "normal",
             status: "open",
             published_at: new Date().toISOString(),
