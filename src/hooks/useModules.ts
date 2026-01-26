@@ -106,6 +106,7 @@ export function useModules() {
       menu_items: Array.isArray(m.menu_items) ? m.menu_items : [],
       default_limits: typeof m.default_limits === 'object' ? m.default_limits as Record<string, number> : {},
       category: m.category as PlatformModule['category'],
+      display_order: m.sort_order, // Map DB sort_order to display_order
     }))
   , [platformModulesRaw]);
 

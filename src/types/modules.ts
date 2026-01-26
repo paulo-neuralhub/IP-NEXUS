@@ -79,7 +79,7 @@ export interface PlatformModule {
   is_beta: boolean;
   
   // Control
-  sort_order: number;
+  display_order: number;
   is_active: boolean;
 }
 
