@@ -376,20 +376,34 @@ export function useCreateInvoice() {
       
       const invoiceNumber = `${year}-${String((count || 0) + 1).padStart(5, '0')}`;
       
+      // Extract only DB-safe fields (exclude relations and TypeScript-only fields)
+      const { billing_client, items, ...invoiceFields } = data.invoice;
+      
       const invoiceData = {
-        billing_client_id: data.invoice.billing_client_id!,
-        client_name: data.invoice.client_name || '',
+        billing_client_id: invoiceFields.billing_client_id!,
+        client_name: invoiceFields.client_name || '',
         invoice_number: invoiceNumber,
         organization_id: currentOrganization!.id,
-        subtotal: data.invoice.subtotal || 0,
-        tax_amount: data.invoice.tax_amount || 0,
-        total: data.invoice.total || 0,
-        ...data.invoice,
+        subtotal: invoiceFields.subtotal || 0,
+        tax_amount: invoiceFields.tax_amount || 0,
+        total: invoiceFields.total || 0,
+        invoice_date: invoiceFields.invoice_date || new Date().toISOString().split('T')[0],
+        due_date: invoiceFields.due_date,
+        tax_rate: invoiceFields.tax_rate ?? 21,
+        discount_amount: invoiceFields.discount_amount ?? 0,
+        currency: invoiceFields.currency || 'EUR',
+        status: invoiceFields.status || 'draft',
+        notes: invoiceFields.notes,
+        internal_notes: invoiceFields.internal_notes,
+        footer_text: invoiceFields.footer_text,
+        invoice_type: invoiceFields.invoice_type,
+        client_tax_id: invoiceFields.client_tax_id,
+        client_address: invoiceFields.client_address,
       };
       
       const { data: invoice, error: invoiceError } = await supabase
         .from('invoices')
-        .insert(invoiceData)
+        .insert(invoiceData as any)
         .select()
         .single();
       if (invoiceError) throw invoiceError;
@@ -426,9 +440,12 @@ export function useUpdateInvoice() {
   
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<Invoice> }) => {
+      // Extract only DB-safe fields
+      const { billing_client, items, ...updateFields } = data;
+      
       const { data: invoice, error } = await supabase
         .from('invoices')
-        .update({ ...data, updated_at: new Date().toISOString() })
+        .update({ ...updateFields, updated_at: new Date().toISOString() } as any)
         .eq('id', id)
         .select()
         .single();

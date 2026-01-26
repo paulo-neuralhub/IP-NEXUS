@@ -22,6 +22,7 @@ export const INVOICE_STATUSES = {
   overdue: { label: 'Vencida', color: '#EF4444', icon: 'AlertTriangle' },
   cancelled: { label: 'Anulada', color: '#6B7280', icon: 'XCircle' },
   refunded: { label: 'Reembolsada', color: '#EC4899', icon: 'RotateCcw' },
+  rectified: { label: 'Rectificada', color: '#F97316', icon: 'FileWarning' },
 } as const;
 
 export const QUOTE_STATUSES = {

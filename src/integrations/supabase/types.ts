@@ -7095,6 +7095,21 @@ export type Database = {
           },
         ]
       }
+      correction_reason_codes: {
+        Row: {
+          code: string
+          name_es: string
+        }
+        Insert: {
+          code: string
+          name_es: string
+        }
+        Update: {
+          code?: string
+          name_es?: string
+        }
+        Relationships: []
+      }
       crm_account_health_history: {
         Row: {
           change_factors: Json | null
@@ -13472,6 +13487,164 @@ export type Database = {
           },
         ]
       }
+      fiscal_settings: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          applies_surcharge: boolean | null
+          certificate_data: string | null
+          certificate_expires_at: string | null
+          certificate_password_encrypted: string | null
+          certificate_subject: string | null
+          city: string | null
+          country_code: string | null
+          created_at: string | null
+          default_bank_account: string | null
+          default_bank_bic: string | null
+          default_bank_name: string | null
+          default_vat_rate: number | null
+          default_withholding: number | null
+          dpd_clause: string | null
+          id: string
+          invoice_footer: string | null
+          invoice_notes: string | null
+          invoice_number_format: string | null
+          legal_name: string
+          organization_id: string
+          postal_code: string | null
+          province: string | null
+          quote_number_format: string | null
+          sii_certificate_id: string | null
+          sii_enabled: boolean | null
+          sii_test_mode: boolean | null
+          tax_id: string
+          tax_id_type: string | null
+          tbai_enabled: boolean | null
+          tbai_license_key: string | null
+          tbai_software_name: string | null
+          tbai_software_version: string | null
+          tbai_territory: string | null
+          trade_name: string | null
+          updated_at: string | null
+          vat_regime: string | null
+          verifactu_certificate_id: string | null
+          verifactu_enabled: boolean | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          applies_surcharge?: boolean | null
+          certificate_data?: string | null
+          certificate_expires_at?: string | null
+          certificate_password_encrypted?: string | null
+          certificate_subject?: string | null
+          city?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          default_bank_account?: string | null
+          default_bank_bic?: string | null
+          default_bank_name?: string | null
+          default_vat_rate?: number | null
+          default_withholding?: number | null
+          dpd_clause?: string | null
+          id?: string
+          invoice_footer?: string | null
+          invoice_notes?: string | null
+          invoice_number_format?: string | null
+          legal_name: string
+          organization_id: string
+          postal_code?: string | null
+          province?: string | null
+          quote_number_format?: string | null
+          sii_certificate_id?: string | null
+          sii_enabled?: boolean | null
+          sii_test_mode?: boolean | null
+          tax_id: string
+          tax_id_type?: string | null
+          tbai_enabled?: boolean | null
+          tbai_license_key?: string | null
+          tbai_software_name?: string | null
+          tbai_software_version?: string | null
+          tbai_territory?: string | null
+          trade_name?: string | null
+          updated_at?: string | null
+          vat_regime?: string | null
+          verifactu_certificate_id?: string | null
+          verifactu_enabled?: boolean | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          applies_surcharge?: boolean | null
+          certificate_data?: string | null
+          certificate_expires_at?: string | null
+          certificate_password_encrypted?: string | null
+          certificate_subject?: string | null
+          city?: string | null
+          country_code?: string | null
+          created_at?: string | null
+          default_bank_account?: string | null
+          default_bank_bic?: string | null
+          default_bank_name?: string | null
+          default_vat_rate?: number | null
+          default_withholding?: number | null
+          dpd_clause?: string | null
+          id?: string
+          invoice_footer?: string | null
+          invoice_notes?: string | null
+          invoice_number_format?: string | null
+          legal_name?: string
+          organization_id?: string
+          postal_code?: string | null
+          province?: string | null
+          quote_number_format?: string | null
+          sii_certificate_id?: string | null
+          sii_enabled?: boolean | null
+          sii_test_mode?: boolean | null
+          tax_id?: string
+          tax_id_type?: string | null
+          tbai_enabled?: boolean | null
+          tbai_license_key?: string | null
+          tbai_software_name?: string | null
+          tbai_software_version?: string | null
+          tbai_territory?: string | null
+          trade_name?: string | null
+          updated_at?: string | null
+          vat_regime?: string | null
+          verifactu_certificate_id?: string | null
+          verifactu_enabled?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fiscal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "fiscal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fiscal_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       gazette_sources: {
         Row: {
           code: string
@@ -16187,48 +16360,66 @@ export type Database = {
           created_at: string | null
           description: string
           discount_percent: number | null
+          expense_id: string | null
           id: string
           invoice_id: string
+          item_code: string | null
           line_number: number
           matter_cost_id: string | null
           matter_id: string | null
           notes: string | null
           quantity: number | null
           subtotal: number
+          surcharge_amount: number | null
+          surcharge_rate: number | null
           tax_amount: number | null
           tax_rate: number | null
+          time_entry_id: string | null
+          total: number | null
           unit_price: number
         }
         Insert: {
           created_at?: string | null
           description: string
           discount_percent?: number | null
+          expense_id?: string | null
           id?: string
           invoice_id: string
+          item_code?: string | null
           line_number: number
           matter_cost_id?: string | null
           matter_id?: string | null
           notes?: string | null
           quantity?: number | null
           subtotal: number
+          surcharge_amount?: number | null
+          surcharge_rate?: number | null
           tax_amount?: number | null
           tax_rate?: number | null
+          time_entry_id?: string | null
+          total?: number | null
           unit_price: number
         }
         Update: {
           created_at?: string | null
           description?: string
           discount_percent?: number | null
+          expense_id?: string | null
           id?: string
           invoice_id?: string
+          item_code?: string | null
           line_number?: number
           matter_cost_id?: string | null
           matter_id?: string | null
           notes?: string | null
           quantity?: number | null
           subtotal?: number
+          surcharge_amount?: number | null
+          surcharge_rate?: number | null
           tax_amount?: number | null
           tax_rate?: number | null
+          time_entry_id?: string | null
+          total?: number | null
           unit_price?: number
         }
         Relationships: [
@@ -16347,99 +16538,293 @@ export type Database = {
           },
         ]
       }
+      invoice_series: {
+        Row: {
+          code: string
+          created_at: string | null
+          current_number: number | null
+          description: string | null
+          fiscal_year: number | null
+          for_credit_notes: boolean | null
+          for_invoices: boolean | null
+          for_proforma: boolean | null
+          for_quotes: boolean | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          organization_id: string
+          prefix: string | null
+          reset_yearly: boolean | null
+          suffix: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          current_number?: number | null
+          description?: string | null
+          fiscal_year?: number | null
+          for_credit_notes?: boolean | null
+          for_invoices?: boolean | null
+          for_proforma?: boolean | null
+          for_quotes?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          organization_id: string
+          prefix?: string | null
+          reset_yearly?: boolean | null
+          suffix?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          current_number?: number | null
+          description?: string | null
+          fiscal_year?: number | null
+          for_credit_notes?: boolean | null
+          for_invoices?: boolean | null
+          for_proforma?: boolean | null
+          for_quotes?: boolean | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          organization_id?: string
+          prefix?: string | null
+          reset_yearly?: boolean | null
+          suffix?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_series_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_series_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "invoice_series_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_series_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       invoices: {
         Row: {
+          bank_account: string | null
           billing_client_id: string
           client_address: string | null
           client_name: string
           client_tax_id: string | null
+          corrected_invoice_id: string | null
+          correction_description: string | null
+          correction_reason: string | null
           created_at: string | null
           created_by: string | null
           currency: string | null
           discount_amount: number | null
           due_date: string | null
+          facturae_certificate_id: string | null
+          facturae_signed: boolean | null
+          facturae_xml: string | null
           footer_text: string | null
           id: string
           internal_notes: string | null
           invoice_date: string
           invoice_number: string
           invoice_series: string | null
+          invoice_type: string | null
           notes: string | null
           organization_id: string
           paid_amount: number | null
           paid_date: string | null
           payment_method: string | null
+          payment_method_code: string | null
           payment_reference: string | null
           pdf_url: string | null
+          period_end: string | null
+          period_start: string | null
           sent_at: string | null
+          sent_to_email: string | null
+          sii_csv: string | null
+          sii_registration_key: string | null
+          sii_response: Json | null
+          sii_sent_at: string | null
+          sii_status: string | null
           status: string | null
           subtotal: number
           tax_amount: number
+          tax_point_date: string | null
           tax_rate: number | null
+          tbai_chain_hash: string | null
+          tbai_identifier: string | null
+          tbai_qr_url: string | null
+          tbai_sent_at: string | null
+          tbai_signature: string | null
+          tbai_status: string | null
           total: number
+          total_surcharge: number | null
+          total_withholding: number | null
           updated_at: string | null
+          vat_breakdown: Json | null
+          verifactu_hash: string | null
+          verifactu_id: string | null
+          verifactu_qr: string | null
+          verifactu_sent_at: string | null
+          verifactu_status: string | null
+          viewed_at: string | null
+          withholding_percent: number | null
         }
         Insert: {
+          bank_account?: string | null
           billing_client_id: string
           client_address?: string | null
           client_name: string
           client_tax_id?: string | null
+          corrected_invoice_id?: string | null
+          correction_description?: string | null
+          correction_reason?: string | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
           discount_amount?: number | null
           due_date?: string | null
+          facturae_certificate_id?: string | null
+          facturae_signed?: boolean | null
+          facturae_xml?: string | null
           footer_text?: string | null
           id?: string
           internal_notes?: string | null
           invoice_date?: string
           invoice_number: string
           invoice_series?: string | null
+          invoice_type?: string | null
           notes?: string | null
           organization_id: string
           paid_amount?: number | null
           paid_date?: string | null
           payment_method?: string | null
+          payment_method_code?: string | null
           payment_reference?: string | null
           pdf_url?: string | null
+          period_end?: string | null
+          period_start?: string | null
           sent_at?: string | null
+          sent_to_email?: string | null
+          sii_csv?: string | null
+          sii_registration_key?: string | null
+          sii_response?: Json | null
+          sii_sent_at?: string | null
+          sii_status?: string | null
           status?: string | null
           subtotal?: number
           tax_amount?: number
+          tax_point_date?: string | null
           tax_rate?: number | null
+          tbai_chain_hash?: string | null
+          tbai_identifier?: string | null
+          tbai_qr_url?: string | null
+          tbai_sent_at?: string | null
+          tbai_signature?: string | null
+          tbai_status?: string | null
           total?: number
+          total_surcharge?: number | null
+          total_withholding?: number | null
           updated_at?: string | null
+          vat_breakdown?: Json | null
+          verifactu_hash?: string | null
+          verifactu_id?: string | null
+          verifactu_qr?: string | null
+          verifactu_sent_at?: string | null
+          verifactu_status?: string | null
+          viewed_at?: string | null
+          withholding_percent?: number | null
         }
         Update: {
+          bank_account?: string | null
           billing_client_id?: string
           client_address?: string | null
           client_name?: string
           client_tax_id?: string | null
+          corrected_invoice_id?: string | null
+          correction_description?: string | null
+          correction_reason?: string | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
           discount_amount?: number | null
           due_date?: string | null
+          facturae_certificate_id?: string | null
+          facturae_signed?: boolean | null
+          facturae_xml?: string | null
           footer_text?: string | null
           id?: string
           internal_notes?: string | null
           invoice_date?: string
           invoice_number?: string
           invoice_series?: string | null
+          invoice_type?: string | null
           notes?: string | null
           organization_id?: string
           paid_amount?: number | null
           paid_date?: string | null
           payment_method?: string | null
+          payment_method_code?: string | null
           payment_reference?: string | null
           pdf_url?: string | null
+          period_end?: string | null
+          period_start?: string | null
           sent_at?: string | null
+          sent_to_email?: string | null
+          sii_csv?: string | null
+          sii_registration_key?: string | null
+          sii_response?: Json | null
+          sii_sent_at?: string | null
+          sii_status?: string | null
           status?: string | null
           subtotal?: number
           tax_amount?: number
+          tax_point_date?: string | null
           tax_rate?: number | null
+          tbai_chain_hash?: string | null
+          tbai_identifier?: string | null
+          tbai_qr_url?: string | null
+          tbai_sent_at?: string | null
+          tbai_signature?: string | null
+          tbai_status?: string | null
           total?: number
+          total_surcharge?: number | null
+          total_withholding?: number | null
           updated_at?: string | null
+          vat_breakdown?: Json | null
+          verifactu_hash?: string | null
+          verifactu_id?: string | null
+          verifactu_qr?: string | null
+          verifactu_sent_at?: string | null
+          verifactu_status?: string | null
+          viewed_at?: string | null
+          withholding_percent?: number | null
         }
         Relationships: [
           {
@@ -16447,6 +16832,13 @@ export type Database = {
             columns: ["billing_client_id"]
             isOneToOne: false
             referencedRelation: "billing_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_corrected_invoice_id_fkey"
+            columns: ["corrected_invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
             referencedColumns: ["id"]
           },
           {
@@ -26567,6 +26959,24 @@ export type Database = {
           },
         ]
       }
+      payment_method_codes: {
+        Row: {
+          code: string
+          name_en: string
+          name_es: string
+        }
+        Insert: {
+          code: string
+          name_en: string
+          name_es: string
+        }
+        Update: {
+          code?: string
+          name_en?: string
+          name_es?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -28873,6 +29283,108 @@ export type Database = {
           },
           {
             foreignKeyName: "quotes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      regulatory_submissions: {
+        Row: {
+          created_at: string | null
+          csv_code: string | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          invoice_id: string
+          next_retry_at: string | null
+          operation: string
+          organization_id: string
+          registration_id: string | null
+          request_json: Json | null
+          request_xml: string | null
+          response_at: string | null
+          response_json: Json | null
+          response_xml: string | null
+          retry_count: number | null
+          sent_at: string | null
+          status: string
+          submission_type: string
+        }
+        Insert: {
+          created_at?: string | null
+          csv_code?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          invoice_id: string
+          next_retry_at?: string | null
+          operation: string
+          organization_id: string
+          registration_id?: string | null
+          request_json?: Json | null
+          request_xml?: string | null
+          response_at?: string | null
+          response_json?: Json | null
+          response_xml?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string
+          submission_type: string
+        }
+        Update: {
+          created_at?: string | null
+          csv_code?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          invoice_id?: string
+          next_retry_at?: string | null
+          operation?: string
+          organization_id?: string
+          registration_id?: string | null
+          request_json?: Json | null
+          request_xml?: string | null
+          response_at?: string | null
+          response_json?: Json | null
+          response_xml?: string | null
+          retry_count?: number | null
+          sent_at?: string | null
+          status?: string
+          submission_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulatory_submissions_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "regulatory_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "regulatory_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "regulatory_submissions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "regulatory_submissions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
@@ -39801,6 +40313,10 @@ export type Database = {
         }
         Returns: string
       }
+      calculate_invoice_vat_breakdown: {
+        Args: { p_invoice_id: string }
+        Returns: Json
+      }
       calculate_kyc_level: { Args: { p_user_id: string }; Returns: number }
       calculate_trademark_similarity: {
         Args: { term_a: string; term_b: string }
@@ -40066,6 +40582,10 @@ export type Database = {
           p_organization_id: string
         }
         Returns: number
+      }
+      get_next_invoice_number: {
+        Args: { p_org_id: string; p_series_code?: string }
+        Returns: string
       }
       get_organization_jurisdictions: {
         Args: { p_organization_id: string }

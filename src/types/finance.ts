@@ -115,40 +115,111 @@ export interface BillingClient {
 // ===== FACTURAS =====
 export type InvoiceStatus = 
   | 'draft' | 'sent' | 'viewed' | 'paid' 
-  | 'partial' | 'overdue' | 'cancelled' | 'refunded';
+  | 'partial' | 'overdue' | 'cancelled' | 'refunded' | 'rectified';
+
+export type InvoiceType = 'FC' | 'FA' | 'FR' | 'NC';
+
+export interface VatBreakdownItem {
+  rate: number;
+  base: number;
+  amount: number;
+  surcharge?: number;
+  withholding?: number;
+}
 
 export interface Invoice {
   id: string;
   organization_id: string;
   invoice_number: string;
   invoice_series?: string;
+  
+  // Tipo de factura (Facturae)
+  invoice_type?: InvoiceType;
+  
+  // Rectificativa
+  corrected_invoice_id?: string;
+  correction_reason?: string;
+  correction_description?: string;
+  
   billing_client_id: string;
   client_name: string;
   client_tax_id?: string;
   client_address?: string;
   invoice_date: string;
   due_date?: string;
+  
+  // Fecha devengo y período
+  tax_point_date?: string;
+  period_start?: string;
+  period_end?: string;
+  
+  // Importes
   subtotal: number;
   tax_rate: number;
   tax_amount: number;
   discount_amount: number;
+  
+  // IVA desglosado (stored as JSON in DB)
+  vat_breakdown?: VatBreakdownItem[] | unknown;
+  total_surcharge?: number;
+  total_withholding?: number;
+  withholding_percent?: number;
+  
   total: number;
   currency: string;
   status: InvoiceStatus;
   paid_amount: number;
   paid_date?: string;
+  
+  // Método de pago (Facturae)
   payment_method?: string;
+  payment_method_code?: string;
   payment_reference?: string;
+  bank_account?: string;
+  
   notes?: string;
   internal_notes?: string;
   footer_text?: string;
   pdf_url?: string;
+  
+  // === SII (AEAT) ===
+  sii_status?: string;
+  sii_csv?: string;
+  sii_sent_at?: string;
+  sii_response?: unknown;
+  sii_registration_key?: string;
+  
+  // === TicketBAI (País Vasco) ===
+  tbai_status?: string;
+  tbai_identifier?: string;
+  tbai_qr_url?: string;
+  tbai_signature?: string;
+  tbai_sent_at?: string;
+  tbai_chain_hash?: string;
+  
+  // === VERI*FACTU (2025) ===
+  verifactu_status?: string;
+  verifactu_id?: string;
+  verifactu_qr?: string;
+  verifactu_hash?: string;
+  verifactu_sent_at?: string;
+  
+  // === Facturae XML ===
+  facturae_xml?: string;
+  facturae_signed?: boolean;
+  facturae_certificate_id?: string;
+  
+  // Envío y tracking
+  sent_at?: string;
+  sent_to_email?: string;
+  viewed_at?: string;
+  
   created_by?: string;
   created_at: string;
   updated_at?: string;
-  sent_at?: string;
-  // Relaciones
-  billing_client?: BillingClient;
+  
+  // Relaciones (parciales para queries)
+  billing_client?: Partial<BillingClient> & { id: string; legal_name: string };
   items?: InvoiceItem[];
 }
 
@@ -165,11 +236,27 @@ export interface InvoiceItem {
   subtotal: number;
   tax_rate?: number;
   tax_amount?: number;
+  
+  // Recargo equivalencia
+  surcharge_rate?: number;
+  surcharge_amount?: number;
+  
+  // Código producto/servicio (Facturae)
+  item_code?: string;
+  
+  // Total línea
+  total?: number;
+  
+  // Referencias adicionales
+  time_entry_id?: string;
+  expense_id?: string;
+  
   notes?: string;
   created_at?: string;
-  // Relaciones
-  matter?: Matter;
-  matter_cost?: MatterCost;
+  
+  // Relaciones (parciales para queries)
+  matter?: Partial<Matter> & { id: string; reference?: string; title?: string };
+  matter_cost?: Partial<MatterCost>;
 }
 
 // ===== PRESUPUESTOS =====
@@ -360,4 +447,155 @@ export interface FinanceStats {
   overdue_count: number;
   upcoming_renewals: number;
   portfolio_value?: number;
+}
+
+// ===== CONFIGURACIÓN FISCAL =====
+export type VatRegime = 'general' | 'simplified' | 'surcharge' | 'exempt' | 'oss';
+export type TaxIdType = 'NIF' | 'CIF' | 'NIE' | 'VAT' | 'OTHER';
+export type TbaiTerritory = 'BI' | 'SS' | 'VI';
+
+export interface FiscalSettings {
+  id: string;
+  organization_id: string;
+  
+  // Datos fiscales
+  tax_id: string;
+  tax_id_type: TaxIdType;
+  legal_name: string;
+  trade_name?: string;
+  
+  // Dirección fiscal
+  address_line1?: string;
+  address_line2?: string;
+  postal_code?: string;
+  city?: string;
+  province?: string;
+  country_code: string;
+  
+  // Configuración IVA
+  vat_regime: VatRegime;
+  default_vat_rate: number;
+  applies_surcharge: boolean;
+  default_withholding: number;
+  
+  // Formatos numeración
+  invoice_number_format?: string;
+  quote_number_format?: string;
+  
+  // === SII ===
+  sii_enabled: boolean;
+  sii_test_mode: boolean;
+  sii_certificate_id?: string;
+  
+  // === TicketBAI ===
+  tbai_enabled: boolean;
+  tbai_territory?: TbaiTerritory;
+  tbai_license_key?: string;
+  tbai_software_name?: string;
+  tbai_software_version?: string;
+  
+  // === VERI*FACTU ===
+  verifactu_enabled: boolean;
+  verifactu_certificate_id?: string;
+  
+  // Certificado digital
+  certificate_data?: string;
+  certificate_password_encrypted?: string;
+  certificate_expires_at?: string;
+  certificate_subject?: string;
+  
+  // Cuenta bancaria por defecto
+  default_bank_account?: string;
+  default_bank_name?: string;
+  default_bank_bic?: string;
+  
+  // Textos legales
+  invoice_footer?: string;
+  invoice_notes?: string;
+  dpd_clause?: string;
+  
+  created_at: string;
+  updated_at: string;
+}
+
+// ===== SERIES DE FACTURACIÓN =====
+export interface InvoiceSeries {
+  id: string;
+  organization_id: string;
+  code: string;
+  name: string;
+  description?: string;
+  
+  // Numeración
+  current_number: number;
+  prefix?: string;
+  suffix?: string;
+  
+  // Tipo de documentos
+  for_invoices: boolean;
+  for_quotes: boolean;
+  for_credit_notes: boolean;
+  for_proforma: boolean;
+  
+  // Año fiscal
+  fiscal_year: number;
+  reset_yearly: boolean;
+  
+  // Estado
+  is_default: boolean;
+  is_active: boolean;
+  
+  created_at: string;
+  updated_at: string;
+}
+
+// ===== ENVÍOS REGULATORIOS =====
+export type SubmissionType = 'sii' | 'tbai' | 'verifactu' | 'facturae';
+export type SubmissionOperation = 'alta' | 'modificacion' | 'anulacion';
+export type SubmissionStatus = 'pending' | 'sent' | 'accepted' | 'rejected' | 'error' | 'cancelled';
+
+export interface RegulatorySubmission {
+  id: string;
+  organization_id: string;
+  invoice_id: string;
+  
+  submission_type: SubmissionType;
+  operation: SubmissionOperation;
+  status: SubmissionStatus;
+  
+  // Request/Response
+  request_xml?: string;
+  request_json?: unknown;
+  response_xml?: string;
+  response_json?: unknown;
+  
+  // Identificadores
+  csv_code?: string;
+  registration_id?: string;
+  
+  // Error
+  error_code?: string;
+  error_message?: string;
+  
+  // Fechas
+  sent_at?: string;
+  response_at?: string;
+  
+  // Reintentos
+  retry_count: number;
+  next_retry_at?: string;
+  
+  created_at: string;
+}
+
+// ===== CÓDIGOS FACTURAE =====
+export interface PaymentMethodCode {
+  code: string;
+  name_es: string;
+  name_en: string;
+}
+
+export interface CorrectionReasonCode {
+  code: string;
+  name_es: string;
 }
