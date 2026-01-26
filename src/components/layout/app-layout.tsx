@@ -16,12 +16,19 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 import { CallManager } from "@/components/telephony/CallManager";
 import { ModuleActivationDialog } from "@/components/modules";
+import { DemoBadge } from "@/components/demo";
+import { useOrganization } from "@/contexts/organization-context";
+import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const { isOnline } = useNetworkStatus();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  
+  // Demo mode check
+  const { currentOrganization } = useOrganization();
+  const { isDemoMode, config } = useIsDemoMode(currentOrganization?.id);
   
   // Track user presence for real-time collaboration
   usePresence();
@@ -82,6 +89,9 @@ export function AppLayout() {
 
                 {/* Softphone Widget (VoIP) */}
                 <SoftphoneWidget />
+                
+                {/* Demo Badge */}
+                {isDemoMode && <DemoBadge prospectCompany={config?.prospect_company} />}
               </div>
             ) : (
               // Desktop Layout
@@ -111,6 +121,9 @@ export function AppLayout() {
                 
                 {/* Module Activation Dialog */}
                 <ModuleActivationDialog />
+                
+                {/* Demo Badge */}
+                {isDemoMode && <DemoBadge prospectCompany={config?.prospect_company} />}
               </div>
             )}
           </ContextualHelpProvider>

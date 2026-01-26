@@ -10637,6 +10637,107 @@ export type Database = {
           },
         ]
       }
+      demo_config: {
+        Row: {
+          avg_demo_duration_seconds: number | null
+          created_at: string | null
+          created_by: string | null
+          data_loaded: boolean | null
+          demos_converted: number | null
+          demos_count: number | null
+          demos_lost: number | null
+          demos_pending: number | null
+          id: string
+          is_active: boolean | null
+          last_demo_at: string | null
+          organization_id: string
+          prospect_company: string | null
+          prospect_contact_email: string | null
+          prospect_contact_name: string | null
+          prospect_industry: string | null
+          show_comparisons: boolean | null
+          show_guide: boolean | null
+          show_highlights: boolean | null
+          total_demo_duration_seconds: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          avg_demo_duration_seconds?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          data_loaded?: boolean | null
+          demos_converted?: number | null
+          demos_count?: number | null
+          demos_lost?: number | null
+          demos_pending?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_demo_at?: string | null
+          organization_id: string
+          prospect_company?: string | null
+          prospect_contact_email?: string | null
+          prospect_contact_name?: string | null
+          prospect_industry?: string | null
+          show_comparisons?: boolean | null
+          show_guide?: boolean | null
+          show_highlights?: boolean | null
+          total_demo_duration_seconds?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          avg_demo_duration_seconds?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          data_loaded?: boolean | null
+          demos_converted?: number | null
+          demos_count?: number | null
+          demos_lost?: number | null
+          demos_pending?: number | null
+          id?: string
+          is_active?: boolean | null
+          last_demo_at?: string | null
+          organization_id?: string
+          prospect_company?: string | null
+          prospect_contact_email?: string | null
+          prospect_contact_name?: string | null
+          prospect_industry?: string | null
+          show_comparisons?: boolean | null
+          show_guide?: boolean | null
+          show_highlights?: boolean | null
+          total_demo_duration_seconds?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "demo_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       demo_seed_entities: {
         Row: {
           created_at: string
@@ -10701,6 +10802,92 @@ export type Database = {
           status?: string
         }
         Relationships: []
+      }
+      demo_sessions: {
+        Row: {
+          created_at: string | null
+          duration_seconds: number | null
+          ended_at: string | null
+          features_shown: string[] | null
+          follow_up_date: string | null
+          id: string
+          modules_visited: string[] | null
+          notes: string | null
+          organization_id: string
+          presenter_id: string | null
+          prospect_company: string | null
+          prospect_contact_email: string | null
+          prospect_contact_name: string | null
+          prospect_industry: string | null
+          started_at: string
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          features_shown?: string[] | null
+          follow_up_date?: string | null
+          id?: string
+          modules_visited?: string[] | null
+          notes?: string | null
+          organization_id: string
+          presenter_id?: string | null
+          prospect_company?: string | null
+          prospect_contact_email?: string | null
+          prospect_contact_name?: string | null
+          prospect_industry?: string | null
+          started_at?: string
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          features_shown?: string[] | null
+          follow_up_date?: string | null
+          id?: string
+          modules_visited?: string[] | null
+          notes?: string | null
+          organization_id?: string
+          presenter_id?: string | null
+          prospect_company?: string | null
+          prospect_contact_email?: string | null
+          prospect_contact_name?: string | null
+          prospect_industry?: string | null
+          started_at?: string
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "demo_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "demo_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "demo_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
       }
       document_chunks: {
         Row: {
