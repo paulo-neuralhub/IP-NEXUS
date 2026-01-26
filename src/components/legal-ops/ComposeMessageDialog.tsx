@@ -1,6 +1,7 @@
 // =============================================
 // COMPONENTE: ComposeMessageDialog
 // Dialog para componer nuevos mensajes (Email, SMS, WhatsApp)
+// Para Email usa EmailComposer con WYSIWYG, para otros canales usa form simple
 // =============================================
 
 import { useState } from 'react';
@@ -9,7 +10,6 @@ import {
   Phone, 
   MessageSquare, 
   Send,
-  X,
   Clock,
   Loader2,
 } from 'lucide-react';
@@ -23,22 +23,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Calendar } from '@/components/ui/calendar';
 import { 
-  useSendEmail, 
   useSendSMS, 
   useSendWhatsApp, 
   useMakeCall 
 } from '@/hooks/legal-ops/useCommunications';
 import { toast } from 'sonner';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { CommChannel } from '@/types/legal-ops';
+import { EmailComposer } from '@/components/communications/EmailComposer';
 
 interface ComposeMessageDialogProps {
   open: boolean;
@@ -55,56 +47,48 @@ const CHANNEL_CONFIG: Record<CommChannel, {
   color: string; 
   label: string;
   placeholder: string;
-  hasSubject: boolean;
 }> = {
   email: { 
     icon: Mail, 
     color: 'hsl(var(--primary))', 
     label: 'Email',
     placeholder: 'email@ejemplo.com',
-    hasSubject: true,
   },
   whatsapp: { 
     icon: MessageSquare, 
     color: '#25D366', 
     label: 'WhatsApp',
     placeholder: '+34 612 345 678',
-    hasSubject: false,
   },
   phone: { 
     icon: Phone, 
     color: 'hsl(var(--primary))', 
     label: 'Llamada',
     placeholder: '+34 612 345 678',
-    hasSubject: false,
   },
   sms: { 
     icon: MessageSquare, 
     color: 'hsl(var(--warning))', 
     label: 'SMS',
     placeholder: '+34 612 345 678',
-    hasSubject: false,
   },
   portal: {
     icon: Mail,
     color: 'hsl(var(--primary))',
     label: 'Portal',
     placeholder: '',
-    hasSubject: true,
   },
   in_person: {
     icon: Phone,
     color: 'hsl(var(--primary))',
     label: 'Presencial',
     placeholder: '',
-    hasSubject: false,
   },
   other: {
     icon: MessageSquare,
     color: 'hsl(var(--muted-foreground))',
     label: 'Otro',
     placeholder: '',
-    hasSubject: false,
   },
 };
 
@@ -117,25 +101,58 @@ export function ComposeMessageDialog({
   defaultClientId,
   defaultMatterId,
 }: ComposeMessageDialogProps) {
-  const sendEmail = useSendEmail();
+  // Para EMAIL usamos EmailComposer con WYSIWYG
+  if (channelType === 'email') {
+    return (
+      <EmailComposer
+        open={open}
+        onOpenChange={onOpenChange}
+        defaultTo={defaultTo ? [{ email: defaultTo, id: defaultContactId }] : []}
+        matterId={defaultMatterId}
+        contactId={defaultContactId}
+        clientId={defaultClientId}
+      />
+    );
+  }
+
+  // Para otros canales usamos el form simple
+  return (
+    <SimpleComposeDialog
+      open={open}
+      onOpenChange={onOpenChange}
+      channelType={channelType}
+      defaultTo={defaultTo}
+      defaultContactId={defaultContactId}
+      defaultClientId={defaultClientId}
+      defaultMatterId={defaultMatterId}
+    />
+  );
+}
+
+// Form simple para SMS, WhatsApp, Phone
+function SimpleComposeDialog({
+  open,
+  onOpenChange,
+  channelType,
+  defaultTo = '',
+  defaultContactId,
+  defaultClientId,
+  defaultMatterId,
+}: ComposeMessageDialogProps) {
   const sendSMS = useSendSMS();
   const sendWhatsApp = useSendWhatsApp();
   const makeCall = useMakeCall();
 
   const [to, setTo] = useState(defaultTo);
-  const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
-  const [scheduledAt, setScheduledAt] = useState<Date | null>(null);
   const [isSending, setIsSending] = useState(false);
 
-  const config = CHANNEL_CONFIG[channelType] || CHANNEL_CONFIG.email;
+  const config = CHANNEL_CONFIG[channelType] || CHANNEL_CONFIG.sms;
   const ChannelIcon = config.icon;
 
   const resetForm = () => {
     setTo(defaultTo);
-    setSubject('');
     setBody('');
-    setScheduledAt(null);
   };
 
   const handleSend = async () => {
@@ -158,16 +175,6 @@ export function ComposeMessageDialog({
       };
 
       switch (channelType) {
-        case 'email':
-          await sendEmail.mutateAsync({
-            to,
-            subject,
-            body,
-            scheduled_at: scheduledAt?.toISOString(),
-            ...commonParams,
-          });
-          toast.success('Email enviado correctamente');
-          break;
         case 'sms':
           await sendSMS.mutateAsync({
             to,
@@ -233,19 +240,6 @@ export function ComposeMessageDialog({
             />
           </div>
 
-          {/* Subject (solo email) */}
-          {config.hasSubject && (
-            <div className="space-y-2">
-              <Label htmlFor="subject">Asunto</Label>
-              <Input
-                id="subject"
-                value={subject}
-                onChange={(e) => setSubject(e.target.value)}
-                placeholder="Asunto del email"
-              />
-            </div>
-          )}
-
           {/* Cuerpo (no para llamadas) */}
           {channelType !== 'phone' && (
             <div className="space-y-2">
@@ -259,47 +253,12 @@ export function ComposeMessageDialog({
                     ? 'Máximo 160 caracteres' 
                     : 'Escribe tu mensaje...'
                 }
-                rows={channelType === 'email' ? 8 : 4}
+                rows={4}
               />
               {channelType === 'sms' && (
                 <p className="text-xs text-muted-foreground">
                   {body.length}/160 caracteres
                 </p>
-              )}
-            </div>
-          )}
-
-          {/* Programar (solo email) */}
-          {channelType === 'email' && (
-            <div className="flex items-center gap-4">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm">
-                    <Clock className="w-4 h-4 mr-2" />
-                    {scheduledAt 
-                      ? format(scheduledAt, "d MMM 'a las' HH:mm", { locale: es })
-                      : 'Programar envío'
-                    }
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                  <Calendar
-                    mode="single"
-                    selected={scheduledAt || undefined}
-                    onSelect={(date) => setScheduledAt(date || null)}
-                    disabled={(date) => date < new Date()}
-                    locale={es}
-                  />
-                </PopoverContent>
-              </Popover>
-              {scheduledAt && (
-                <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setScheduledAt(null)}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
               )}
             </div>
           )}
