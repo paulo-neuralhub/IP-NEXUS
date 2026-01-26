@@ -16,7 +16,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 import { CallManager } from "@/components/telephony/CallManager";
 import { ModuleActivationDialog } from "@/components/modules";
-import { DemoBadge, DemoGuideBox, ValueHighlightsManager, DemoClosingButton, DemoTourNavigator } from "@/components/demo";
+import { DemoBadge, DemoTourNavigator } from "@/components/demo";
 import { useOrganization } from "@/contexts/organization-context";
 import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
 
@@ -26,9 +26,9 @@ export function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   
-  // Demo mode check
+  // Demo mode check - detectar por config O por slug "demo-*"
   const { currentOrganization } = useOrganization();
-  const { isDemoMode, config } = useIsDemoMode(currentOrganization?.id);
+  const { isDemoMode, config } = useIsDemoMode(currentOrganization?.id, currentOrganization?.slug);
   
   // Track user presence for real-time collaboration
   usePresence();
@@ -94,9 +94,6 @@ export function AppLayout() {
                 {isDemoMode && (
                   <>
                     <DemoBadge prospectCompany={config?.prospect_company} />
-                    <DemoGuideBox />
-                    <ValueHighlightsManager />
-                    <DemoClosingButton />
                     <DemoTourNavigator />
                   </>
                 )}
@@ -134,9 +131,6 @@ export function AppLayout() {
                 {isDemoMode && (
                   <>
                     <DemoBadge prospectCompany={config?.prospect_company} />
-                    <DemoGuideBox />
-                    <ValueHighlightsManager />
-                    <DemoClosingButton />
                     <DemoTourNavigator />
                   </>
                 )}

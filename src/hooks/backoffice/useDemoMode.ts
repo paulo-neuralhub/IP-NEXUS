@@ -363,11 +363,18 @@ export function useEndDemoSession() {
 }
 
 // Hook para verificar si la organización actual está en modo demo
-export function useIsDemoMode(organizationId?: string) {
+export function useIsDemoMode(organizationId?: string, organizationSlug?: string) {
   const { data: config, isLoading } = useDemoConfig(organizationId);
   
+  // Una organización está en modo demo si:
+  // 1. Tiene config.is_active = true, O
+  // 2. Su slug empieza con "demo-"
+  const isDemoBySlug = organizationSlug?.startsWith("demo-") ?? false;
+  const isDemoByConfig = config?.is_active ?? false;
+  const isDemoMode = isDemoByConfig || isDemoBySlug;
+  
   return {
-    isDemoMode: config?.is_active ?? false,
+    isDemoMode,
     showGuide: config?.show_guide ?? true,
     showHighlights: config?.show_highlights ?? true,
     showComparisons: config?.show_comparisons ?? true,
