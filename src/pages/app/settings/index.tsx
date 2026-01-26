@@ -49,6 +49,7 @@ import DeadlineConfigPage from './deadlines';
 import TemplatesSettings from './sections/TemplatesSettings';
 import TenantTelephonySettingsPage from './telephony';
 import { ServicesDashboard } from '@/components/services';
+import ModulesSettings from './sections/ModulesSettings';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -217,7 +218,9 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
         </RequirePermission>
       )}
       {activeTab === 'modules' && (
-        <div className="text-muted-foreground">Configuración de Módulos - Próximamente</div>
+        <RequirePermission permission="settings.update">
+          <ModulesSettings />
+        </RequirePermission>
       )}
       {activeTab === 'team' && (
         <RequirePermission permission="team.view">
