@@ -730,7 +730,7 @@ serve(async (req) => {
             requester_id: requester.id,
             organization_id: organizationId,
             service_category: "trademark",
-            service_type: "trademark_filing",
+            service_type: "tm_registration",
             title: "Registro de marca en España (DEMO)",
             description: "Necesito registrar una marca denominativa con 2 clases.",
             jurisdictions: ["ES"],
