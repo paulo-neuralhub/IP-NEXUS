@@ -12,16 +12,20 @@ import {
   Settings,
   Package,
   BarChart3,
-  Users
+  Users,
+  Power
 } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
   useTelephonyConfig, 
   useTelephonyProviders, 
-  useTelephonyMetrics 
+  useTelephonyMetrics,
+  useUpdateTelephonyConfig
 } from '@/hooks/backoffice/useTelephonyConfig';
 import { 
   ResponsiveContainer, 
@@ -35,11 +39,13 @@ import {
 } from 'recharts';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 export default function TelephonyDashboard() {
   const { data: config, isLoading: loadingConfig } = useTelephonyConfig();
   const { data: providers } = useTelephonyProviders();
   const { data: metrics, isLoading: loadingMetrics } = useTelephonyMetrics();
+  const updateConfig = useUpdateTelephonyConfig();
 
   const activeProvider = providers?.find(p => p.id === config?.active_provider_id);
 
@@ -57,6 +63,44 @@ export default function TelephonyDashboard() {
           </p>
         </div>
       </div>
+
+      {/* VoIP Global Toggle */}
+      <Card className="border-2 border-primary/20">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg ${config?.voip_enabled ? 'bg-success/10' : 'bg-muted'}`}>
+                <Power className={`h-5 w-5 ${config?.voip_enabled ? 'text-success' : 'text-muted-foreground'}`} />
+              </div>
+              <div>
+                <CardTitle className="text-lg">Módulo VoIP</CardTitle>
+                <CardDescription>
+                  {config?.voip_enabled 
+                    ? 'El softphone está activo para todos los tenants' 
+                    : 'El softphone está desactivado globalmente'}
+                </CardDescription>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Label htmlFor="voip-toggle" className="text-sm font-medium">
+                {config?.voip_enabled ? 'Activado' : 'Desactivado'}
+              </Label>
+              <Switch
+                id="voip-toggle"
+                checked={config?.voip_enabled ?? false}
+                disabled={updateConfig.isPending || loadingConfig}
+                onCheckedChange={(checked) => {
+                  if (!config?.id) {
+                    toast.error('Primero configura un proveedor de telefonía');
+                    return;
+                  }
+                  updateConfig.mutate({ id: config.id, voip_enabled: checked });
+                }}
+              />
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
 
       {/* Service Status */}
       <Card>
