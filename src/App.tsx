@@ -201,6 +201,9 @@ import BackofficeDashboard from "./pages/backoffice";
 import TenantsPage from "./pages/backoffice/tenants";
 import BackofficeUsersPage from "./pages/backoffice/users";
 import BillingPage from "./pages/backoffice/billing";
+import PlansManagementPage from "./pages/backoffice/plans";
+import AdminModulesPage from "./pages/backoffice/modules";
+import AdminAddonsPage from "./pages/backoffice/addons";
 import IPORegistryPage from "./pages/backoffice/ipo";
 import IPOOfficeDetailPage from "./pages/backoffice/ipo/[officeId]";
 import NewIPOOfficePage from "./pages/backoffice/ipo/new";
@@ -519,6 +522,9 @@ const App = () => (
                 <Route path="tenants" element={<TenantsPage />} />
                 <Route path="users" element={<BackofficeUsersPage />} />
                 <Route path="billing" element={<BillingPage />} />
+                <Route path="plans" element={<PlansManagementPage />} />
+                <Route path="modules" element={<AdminModulesPage />} />
+                <Route path="addons" element={<AdminAddonsPage />} />
                 {/* Communications */}
                 <Route path="communications/whatsapp" element={<BackofficeWhatsAppCommunicationsPage />} />
                 <Route path="communications/email" element={<BackofficeEmailCommunicationsPage />} />

@@ -47,6 +47,9 @@ const sidebarSections = [
       { label: 'Tenants', path: '/backoffice/tenants', icon: Building2 },
       { label: 'Users', path: '/backoffice/users', icon: Users },
       { label: 'Billing', path: '/backoffice/billing', icon: CreditCard },
+      { label: 'Planes', path: '/backoffice/plans', icon: CreditCard },
+      { label: 'Módulos', path: '/backoffice/modules', icon: BarChart3 },
+      { label: 'Add-ons', path: '/backoffice/addons', icon: Target },
     ],
   },
   {
