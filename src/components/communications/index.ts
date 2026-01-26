@@ -1,4 +1,5 @@
 // Communications Components
+export { AssociateMatterDialog } from './AssociateMatterDialog';
 export { AudioPlayer } from './AudioPlayer';
 export { ContactSearch } from './ContactSearch';
 export { EmailComposer } from './EmailComposer';

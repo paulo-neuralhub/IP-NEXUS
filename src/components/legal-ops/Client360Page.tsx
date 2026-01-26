@@ -17,6 +17,7 @@ import {
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { ClientTimeline } from './ClientTimeline';
+import { ClientActivityTimeline } from '@/components/clients';
 import { ClientDocuments } from './ClientDocuments';
 import { ClientAlerts } from './ClientAlerts';
 import { DocumentValidityBadge } from './DocumentValidityBadge';
@@ -277,13 +278,7 @@ export function Client360Page({ clientId }: Client360PageProps) {
             </TabsContent>
 
             <TabsContent value="communications" className="mt-4">
-              <Card>
-                <CardContent className="p-6 text-center text-muted-foreground">
-                  <MessageSquare className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                  <p>Historial de comunicaciones</p>
-                  <p className="text-sm">Funcionalidad próximamente</p>
-                </CardContent>
-              </Card>
+              <ClientActivityTimeline clientId={clientId} />
             </TabsContent>
           </Tabs>
         </div>

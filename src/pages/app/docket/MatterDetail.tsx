@@ -10,7 +10,7 @@ import { MatterTimeWidget } from '@/components/timetracking';
 import { useOrganization } from '@/contexts/organization-context';
 import { MatterStatusBadge, MatterTypeBadge, ExpiryIndicator, DocumentList } from '@/components/features/docket';
 import { MatterPresence, MatterComments, MatterActivityFeed } from '@/components/collaboration';
-import { MatterOfficialTab, MatterOfficeWidget } from '@/components/matters';
+import { MatterOfficialTab, MatterOfficeWidget, MatterCommunications } from '@/components/matters';
 import { MATTER_TYPES, MATTER_STATUSES, MARK_TYPES, JURISDICTIONS } from '@/lib/constants/matters';
 import type { MatterType, MatterStatus, MarkType, Matter } from '@/types/matters';
 import { formatDate, formatCurrency } from '@/lib/utils';
@@ -210,6 +210,10 @@ export default function MatterDetail() {
                 <Clock className="h-4 w-4 mr-2" />
                 Tiempo
               </TabsTrigger>
+              <TabsTrigger value="communications">
+                <MessageSquare className="h-4 w-4 mr-2" />
+                Comunicaciones
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="info" className="space-y-4 mt-4">
@@ -377,6 +381,22 @@ export default function MatterDetail() {
                 matterId={id!}
                 matterReference={matter.reference}
                 matterTitle={matter.title}
+              />
+            </TabsContent>
+            
+            <TabsContent value="communications" className="mt-4">
+              <MatterCommunications
+                matterId={id!}
+                matterTitle={matter.title}
+                onComposeEmail={() => {
+                  toast({ title: 'Compositor de email', description: 'Próximamente' });
+                }}
+                onComposeWhatsApp={() => {
+                  toast({ title: 'WhatsApp', description: 'Próximamente' });
+                }}
+                onCall={() => {
+                  toast({ title: 'Llamada', description: 'Próximamente' });
+                }}
               />
             </TabsContent>
           </Tabs>
