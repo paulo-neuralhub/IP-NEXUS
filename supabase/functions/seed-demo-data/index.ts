@@ -758,10 +758,10 @@ serve(async (req) => {
               request_id: rfq.id,
               agent_id: agentId,
               status: "submitted",
-              amount: 650,
+              total_price: 650,
               currency: "EUR",
-              message: "Propuesta DEMO para presentación en OEPM.",
-              estimated_days: 7,
+              proposal_summary: "Propuesta DEMO para presentación en OEPM.",
+              estimated_duration_days: 7,
             })
             .select("id")
             .single();
