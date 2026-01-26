@@ -46,6 +46,17 @@ export function ModuleBadge({
     return `${name} - Click para activar`;
   };
 
+  // Generate soft background color from module color
+  const getSoftBgStyle = () => {
+    if (!isAccessible) return undefined;
+    // Create a soft pastel version using opacity
+    return { 
+      backgroundColor: `${color}15`, // 15 = ~8% opacity in hex
+      borderColor: `${color}40`,     // 40 = ~25% opacity
+      color: color,
+    };
+  };
+
   return (
     <Tooltip>
       <TooltipTrigger asChild>
@@ -56,28 +67,31 @@ export function ModuleBadge({
           className={cn(
             'group relative flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all',
             'border focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1',
-            // Active state
-            isAccessible && 'border-transparent text-white shadow-sm hover:shadow-md',
+            // Active state - now with soft colors
+            isAccessible && 'shadow-sm hover:shadow-md',
             // Locked state
             isLocked && 'border-border bg-muted/50 text-muted-foreground hover:bg-muted hover:border-border/80',
             // Coming soon
             isComingSoon && 'cursor-not-allowed border-dashed border-border bg-muted/30 text-muted-foreground/60',
           )}
-          style={isAccessible ? { backgroundColor: color } : undefined}
+          style={getSoftBgStyle()}
         >
           <Icon className={cn(
             'h-3.5 w-3.5 shrink-0',
-            isAccessible && 'text-white/90',
             isLocked && 'text-muted-foreground',
           )} />
           
+          {/* Show only short name like "Docket", "CRM", "Marketing" */}
           <span className="hidden sm:inline truncate max-w-[80px]">
             {shortName || name}
           </span>
 
           {/* Trial indicator */}
           {status === 'trial' && trialDaysRemaining !== undefined && (
-            <span className="ml-0.5 rounded bg-white/20 px-1 py-0.5 text-[10px] font-semibold">
+            <span 
+              className="ml-0.5 rounded px-1 py-0.5 text-[10px] font-semibold"
+              style={{ backgroundColor: `${color}30` }}
+            >
               {trialDaysRemaining}d
             </span>
           )}
