@@ -187,21 +187,37 @@ export function useDemoSessions(organizationId?: string) {
   return useQuery({
     queryKey: ["demo-sessions", organizationId],
     queryFn: async () => {
+      // Query sessions without FK join (no FK exists for presenter_id)
       let query = supabase
         .from("demo_sessions")
-        .select(`
-          *,
-          presenter:users!demo_sessions_presenter_id_fkey(id, full_name, avatar_url)
-        `)
+        .select("*")
         .order("started_at", { ascending: false });
       
       if (organizationId) {
         query = query.eq("organization_id", organizationId);
       }
       
-      const { data, error } = await query;
+      const { data: sessions, error } = await query;
       if (error) throw error;
-      return data;
+
+      // Fetch presenter info separately if needed
+      if (sessions && sessions.length > 0) {
+        const presenterIds = [...new Set(sessions.map(s => s.presenter_id).filter(Boolean))];
+        if (presenterIds.length > 0) {
+          const { data: users } = await supabase
+            .from("users")
+            .select("id, full_name, avatar_url")
+            .in("id", presenterIds);
+
+          const userMap = new Map((users ?? []).map(u => [u.id, u]));
+          return sessions.map(s => ({
+            ...s,
+            presenter: s.presenter_id ? userMap.get(s.presenter_id) ?? null : null,
+          }));
+        }
+      }
+
+      return sessions?.map(s => ({ ...s, presenter: null })) ?? [];
     },
   });
 }
