@@ -598,14 +598,16 @@ serve(async (req) => {
 
     for (let i = 0; i < agentSeeds.length; i++) {
       const a = agentSeeds[i];
+      const agentEmail = `agent-${i + 1}@demo.ip-nexus.local`;
       const { data, error } = await adminClient
         .from("market_users")
-        .insert({
+        // Use upsert to make the seeder re-runnable (avoid unique violations on email)
+        .upsert({
           organization_id: null,
           user_type: "external_agent",
           // Must match DB constraint market_users_agent_type_check
           agent_type: "trademark_attorney",
-          email: `agent-${i + 1}@demo.ip-nexus.local`,
+          email: agentEmail,
           display_name: a.name,
           country: a.country,
           timezone: "Europe/Madrid",
@@ -623,7 +625,7 @@ serve(async (req) => {
           reputation_score: 75 + i * 5,
           rating_avg: 4.5,
           ratings_count: 12 + i,
-        })
+        }, { onConflict: "email" })
         .select("id")
         .single();
       if (error) throw error;
@@ -640,7 +642,8 @@ serve(async (req) => {
         .insert({
           owner_id: sellerId,
           asset_type: "trademark",
-          asset_category: "brand",
+          // market_asset_category enum: industrial_property | intellectual_property | intangible_assets
+          asset_category: "industrial_property",
           title: `Marca DEMO ${i + 1}`,
           description: "Activo DEMO para mercado (marca).",
           jurisdiction: pick(["ES", "EU"]),
