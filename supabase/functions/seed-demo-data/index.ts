@@ -568,7 +568,7 @@ serve(async (req) => {
           .insert({
             auth_user_id: userData.user.id,
             organization_id: organizationId,
-            user_type: "buyer",
+            user_type: "service_seeker",
             email: userData.user.email ?? `buyer-${userData.user.id}@demo.ip-nexus.local`,
             display_name: "Buyer DEMO",
             country: "ES",
@@ -598,7 +598,7 @@ serve(async (req) => {
         .from("market_users")
         .insert({
           organization_id: null,
-          user_type: "agent",
+          user_type: "external_agent",
           email: `agent-${i + 1}@demo.ip-nexus.local`,
           display_name: a.name,
           country: a.country,
