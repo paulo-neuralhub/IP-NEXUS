@@ -44,10 +44,10 @@ import SSOSettings from './sections/SSOSettings';
 import ApiWebhooksSettings from './sections/ApiWebhooksSettings';
 import CrmSettings from './sections/CrmSettings';
 import EmailSettings from './sections/EmailSettings';
-import VoipSettings from './sections/VoipSettings';
-import ServiceCatalogPage from './ServiceCatalogPage';
 import DeadlineConfigPage from './deadlines';
 import TemplatesSettings from './sections/TemplatesSettings';
+import TenantTelephonySettingsPage from './telephony';
+import { ServicesDashboard } from '@/components/services';
 
 // Tabs for organization settings
 const ORG_TABS = [
@@ -230,13 +230,13 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
 
       {activeTab === 'voip' && (
         <RequirePermission permission="settings.view">
-          <VoipSettings />
+          <TenantTelephonySettingsPage embedded />
         </RequirePermission>
       )}
 
       {activeTab === 'catalog' && (
         <RequirePermission permission="settings.view">
-          <ServiceCatalogPage />
+          <ServicesDashboard />
         </RequirePermission>
       )}
 

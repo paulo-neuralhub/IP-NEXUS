@@ -46,7 +46,11 @@ function formatPhoneNumber(phone: string | null): string {
   return phone;
 }
 
-export default function TelephonySettingsPage() {
+interface TelephonySettingsPageProps {
+  embedded?: boolean;
+}
+
+export default function TelephonySettingsPage({ embedded = false }: TelephonySettingsPageProps) {
   const { data: balance, isLoading: isLoadingBalance } = useTenantTelephonyBalance();
   const { data: usageLogs = [], isLoading: isLoadingLogs } = useTelephonyUsageLogs(10);
   const updateSettings = useUpdateTelephonySettings();
@@ -91,8 +95,13 @@ export default function TelephonySettingsPage() {
     return acc;
   }, {} as Record<string, typeof usageLogs>);
 
+  // When embedded, skip container wrapper
+  const Wrapper = embedded 
+    ? ({ children }: { children: React.ReactNode }) => <div className="space-y-6">{children}</div>
+    : ({ children }: { children: React.ReactNode }) => <div className="container max-w-4xl py-6 space-y-6">{children}</div>;
+
   return (
-    <div className="container max-w-4xl py-6 space-y-6">
+    <Wrapper>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -398,6 +407,6 @@ export default function TelephonySettingsPage() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </Wrapper>
   );
 }
