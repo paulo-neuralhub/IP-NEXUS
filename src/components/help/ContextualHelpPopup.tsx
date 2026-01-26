@@ -3,7 +3,7 @@
 // Prompt 48: Knowledge Base & Rules Engine
 // ============================================================
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, HelpCircle, ExternalLink, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,22 +15,24 @@ interface ContextualHelpPopupProps {
   className?: string;
 }
 
-export function ContextualHelpPopup({ className }: ContextualHelpPopupProps) {
-  const { activeRule, isVisible, dismiss, complete } = useContextualHelp();
+export const ContextualHelpPopup = React.forwardRef<HTMLDivElement, ContextualHelpPopupProps>(
+  function ContextualHelpPopup({ className }, _ref) {
+    const { activeRule, isVisible, dismiss, complete } = useContextualHelp();
 
-  if (!activeRule || !isVisible) return null;
+    if (!activeRule || !isVisible) return null;
 
-  return (
-    <AnimatePresence>
-      <ContextualHelpContent 
-        rule={activeRule} 
-        onDismiss={dismiss} 
-        onComplete={complete}
-        className={className}
-      />
-    </AnimatePresence>
-  );
-}
+    return (
+      <AnimatePresence>
+        <ContextualHelpContent 
+          rule={activeRule} 
+          onDismiss={dismiss} 
+          onComplete={complete}
+          className={className}
+        />
+      </AnimatePresence>
+    );
+  }
+);
 
 interface ContextualHelpContentProps {
   rule: HelpRule;

@@ -3,7 +3,7 @@
 // Popup para activar módulos (trial o pago)
 // =============================================
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Dialog,
@@ -27,7 +27,8 @@ import { useModulesContext } from '@/contexts/ModulesContext';
 import { cn } from '@/lib/utils';
 import type { ModuleWithStatus } from '@/types/modules';
 
-export function ModuleActivationDialog() {
+export const ModuleActivationDialog = React.forwardRef<HTMLDivElement, object>(
+  function ModuleActivationDialog(_props, ref) {
   const navigate = useNavigate();
   const { 
     activationPopup, 
@@ -323,7 +324,7 @@ export function ModuleActivationDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+});
 
 // =============================================
 // Subcomponente: Footer con módulos relacionados
