@@ -29,6 +29,7 @@ import {
   GitBranch,
   DollarSign,
   Activity,
+  Play,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -112,7 +113,10 @@ const sidebarSections = [
   },
   {
     label: 'Demo',
-    items: [{ label: 'Demo Data', path: '/backoffice/demo-data', icon: Database }],
+    items: [
+      { label: 'Demo Mode', path: '/backoffice/demo-mode', icon: Play },
+      { label: 'Demo Data', path: '/backoffice/demo-data', icon: Database },
+    ],
   },
   {
     label: 'Compliance',
