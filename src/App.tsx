@@ -146,6 +146,7 @@ import NotFound from "./pages/NotFound";
 import ServiceCatalogPage from "./pages/app/settings/ServiceCatalogPage";
 import ServicesPage from "./pages/app/settings/services";
 import ModulesManagementPage from "./pages/app/settings/modules";
+import SignaturesPage from "./pages/app/settings/signatures";
 
 import DeadlineConfigPage from "./pages/app/settings/deadlines";
 import AutomationsPage from "./pages/app/settings/automations";
@@ -475,6 +476,7 @@ const App = () => (
                 <Route path="settings/templates/branding" element={<DocumentTemplateBrandingPage />} />
                 <Route path="settings/templates/:type" element={<DocumentTemplateListPage />} />
                 <Route path="settings/templates/:id/edit" element={<DocumentTemplateEditPage />} />
+                <Route path="settings/signatures" element={<SignaturesPage />} />
                 <Route path="expedientes/importar" element={<ImportDataPage />} />
                 <Route path="expedientes/revision" element={<ReviewQueuePage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
