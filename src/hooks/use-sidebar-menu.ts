@@ -177,8 +177,8 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
       },
       {
         moduleCode: "collab",
-        moduleName: "Colaboración",
-        moduleShortName: "Equipos",
+        moduleName: "Equipos",
+        moduleShortName: "Colaboración",
         moduleIcon: "Users2",
         moduleIconLucide: "Users2",
         moduleColor: "#EC4899",
@@ -196,7 +196,7 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
       {
         moduleCode: "communications",
         moduleName: "Comunicaciones",
-        moduleShortName: "Comms",
+        moduleShortName: "Comunicaciones",
         moduleIcon: "MessageSquare",
         moduleIconLucide: "MessageSquare",
         moduleColor: "#F97316",
