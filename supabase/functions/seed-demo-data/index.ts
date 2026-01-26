@@ -599,9 +599,12 @@ serve(async (req) => {
         .insert({
           organization_id: null,
           user_type: "external_agent",
+          agent_type: "ip_attorney",
           email: `agent-${i + 1}@demo.ip-nexus.local`,
           display_name: a.name,
           country: a.country,
+          timezone: "Europe/Madrid",
+          languages: ["es"],
           is_agent: true,
           is_verified_agent: true,
           is_active: true,
