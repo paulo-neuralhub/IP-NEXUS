@@ -1,6 +1,6 @@
 // =============================================
 // COMPONENTE: ModulesGrid
-// Grid de módulos principales organizados por sección
+// Grid de módulos organizados por sidebar_section
 // =============================================
 
 import { useNavigate } from 'react-router-dom';
@@ -17,33 +17,29 @@ import { useModulesContext } from '@/contexts/ModulesContext';
 import { cn } from '@/lib/utils';
 import type { ModuleWithStatus } from '@/types/modules';
 
-// Configuración de secciones - ampliada
-const MODULE_SECTIONS = [
-  {
-    id: 'core',
-    title: 'Módulos Core',
-    description: 'Funcionalidades principales del sistema',
-    codes: ['docket', 'crm'],
+// Configuración de secciones basada en sidebar_section de la BD
+const SECTION_CONFIG: Record<string, { title: string; description: string; order: number }> = {
+  'gestion': {
+    title: 'Gestión',
+    description: 'Herramientas principales para gestionar expedientes y clientes',
+    order: 1,
   },
-  {
-    id: 'intelligence',
-    title: 'Inteligencia',
-    description: 'IA y análisis avanzado',
-    codes: ['spider', 'genius', 'analytics', 'alertas-ia'],
-  },
-  {
-    id: 'operations',
+  'operaciones': {
     title: 'Operaciones',
-    description: 'Gestión del día a día',
-    codes: ['legal-ops', 'workflow', 'filing', 'finance', 'timetracking'],
+    description: 'Automatización y gestión del día a día',
+    order: 2,
   },
-  {
-    id: 'extensions',
+  'inteligencia': {
+    title: 'Inteligencia',
+    description: 'IA, análisis y alertas avanzadas',
+    order: 3,
+  },
+  'extensiones': {
     title: 'Extensiones',
-    description: 'Funcionalidades adicionales',
-    codes: ['communications', 'portal-cliente', 'data-hub', 'equipos'],
+    description: 'Funcionalidades adicionales y marketplace',
+    order: 4,
   },
-];
+};
 
 interface ModulesGridProps {
   searchQuery?: string;
@@ -52,8 +48,9 @@ interface ModulesGridProps {
 export function ModulesGrid({ searchQuery = '' }: ModulesGridProps) {
   const { modulesWithStatus, showActivationPopup } = useModulesContext();
 
-  // Filtrar módulos por búsqueda
+  // Filtrar módulos por búsqueda (excluyendo 'core' que es interno)
   const filteredModules = modulesWithStatus.filter(m => {
+    if (m.code === 'core') return false; // No mostrar el módulo core interno
     if (!searchQuery) return true;
     const query = searchQuery.toLowerCase();
     return (
@@ -64,67 +61,68 @@ export function ModulesGrid({ searchQuery = '' }: ModulesGridProps) {
     );
   });
 
-  // Agrupar por sección
-  const getModulesForSection = (sectionCodes: string[]) => {
-    return filteredModules.filter(m => 
-      sectionCodes.includes(m.code) && m.category !== 'addon'
+  // Agrupar módulos por sidebar_section
+  const groupedModules = filteredModules.reduce((acc, module) => {
+    const section = module.sidebar_section || 'otros';
+    if (!acc[section]) {
+      acc[section] = [];
+    }
+    acc[section].push(module);
+    return acc;
+  }, {} as Record<string, ModuleWithStatus[]>);
+
+  // Ordenar secciones
+  const sortedSections = Object.keys(groupedModules).sort((a, b) => {
+    const orderA = SECTION_CONFIG[a]?.order ?? 99;
+    const orderB = SECTION_CONFIG[b]?.order ?? 99;
+    return orderA - orderB;
+  });
+
+  if (filteredModules.length === 0) {
+    return (
+      <div className="text-center py-12 text-muted-foreground">
+        <p>No se encontraron módulos que coincidan con tu búsqueda.</p>
+      </div>
     );
-  };
+  }
 
   return (
     <div className="space-y-8">
-      {MODULE_SECTIONS.map(section => {
-        const sectionModules = getModulesForSection(section.codes);
-        if (sectionModules.length === 0) return null;
+      {sortedSections.map(sectionKey => {
+        const sectionModules = groupedModules[sectionKey];
+        const config = SECTION_CONFIG[sectionKey] || {
+          title: sectionKey.charAt(0).toUpperCase() + sectionKey.slice(1),
+          description: 'Otros módulos disponibles',
+          order: 99,
+        };
 
         return (
-          <div key={section.id} className="space-y-4">
+          <div key={sectionKey} className="space-y-4">
             {/* Header de sección */}
             <div>
               <h3 className="text-lg font-semibold text-foreground">
-                {section.title}
+                {config.title}
               </h3>
               <p className="text-sm text-muted-foreground">
-                {section.description}
+                {config.description}
               </p>
             </div>
 
             {/* Grid de módulos */}
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {sectionModules.map(module => (
-                <ModuleCard
-                  key={module.code}
-                  module={module}
-                  onActivate={() => showActivationPopup(module.code)}
-                />
-              ))}
+              {sectionModules
+                .sort((a, b) => a.sidebar_order - b.sidebar_order)
+                .map(module => (
+                  <ModuleCard
+                    key={module.code}
+                    module={module}
+                    onActivate={() => showActivationPopup(module.code)}
+                  />
+                ))}
             </div>
           </div>
         );
       })}
-
-      {/* Módulos no categorizados */}
-      {filteredModules.filter(m => 
-        !MODULE_SECTIONS.some(s => s.codes.includes(m.code)) && 
-        m.category !== 'addon'
-      ).length > 0 && (
-        <div className="space-y-4">
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Otros módulos</h3>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredModules
-              .filter(m => !MODULE_SECTIONS.some(s => s.codes.includes(m.code)) && m.category !== 'addon')
-              .map(module => (
-                <ModuleCard
-                  key={module.code}
-                  module={module}
-                  onActivate={() => showActivationPopup(module.code)}
-                />
-              ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -145,6 +143,35 @@ function ModuleCard({ module, onActivate }: ModuleCardProps) {
   const isTrial = module.visual_status === 'trial';
   const isLocked = module.visual_status === 'locked';
   const isComingSoon = module.visual_status === 'coming_soon';
+
+  // Determinar ruta de navegación
+  const getModulePath = () => {
+    // Mapeo de códigos a rutas
+    const routeMap: Record<string, string> = {
+      'docket': '/app/docket',
+      'crm': '/app/crm',
+      'spider': '/app/spider',
+      'genius': '/app/genius',
+      'finance': '/app/finance',
+      'analytics': '/app/analytics',
+      'market': '/app/market',
+      'marketing': '/app/marketing',
+      'communications': '/app/communications',
+      'portal-cliente': '/app/portal-cliente',
+      'datahub': '/app/data-hub',
+      'data-hub': '/app/data-hub',
+      'legalops': '/app/legal-ops',
+      'workflow': '/app/workflow',
+      'filing': '/app/filing',
+      'timetracking': '/app/timetracking',
+      'equipos': '/app/equipos',
+      'alertas-ia': '/app/alertas-ia',
+      'informes': '/app/informes',
+      'herramientas': '/app/herramientas',
+      'ip-chain': '/app/ip-chain',
+    };
+    return routeMap[module.code] || `/app/${module.code}`;
+  };
 
   return (
     <div
@@ -235,7 +262,7 @@ function ModuleCard({ module, onActivate }: ModuleCardProps) {
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={() => navigate(`/app/${module.code}`)}
+                onClick={() => navigate(getModulePath())}
                 className="text-primary"
               >
                 Abrir
