@@ -26868,6 +26868,69 @@ export type Database = {
           },
         ]
       }
+      platform_addons: {
+        Row: {
+          applies_to_modules: string[] | null
+          category: string
+          code: string
+          config: Json | null
+          created_at: string | null
+          description: string | null
+          display_order: number | null
+          flag_emoji: string | null
+          icon: string | null
+          id: string
+          is_included_free: boolean | null
+          is_popular: boolean | null
+          is_visible: boolean | null
+          name: string
+          price_monthly: number | null
+          price_yearly: number | null
+          subcategory: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          applies_to_modules?: string[] | null
+          category: string
+          code: string
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          flag_emoji?: string | null
+          icon?: string | null
+          id?: string
+          is_included_free?: boolean | null
+          is_popular?: boolean | null
+          is_visible?: boolean | null
+          name: string
+          price_monthly?: number | null
+          price_yearly?: number | null
+          subcategory?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          applies_to_modules?: string[] | null
+          category?: string
+          code?: string
+          config?: Json | null
+          created_at?: string | null
+          description?: string | null
+          display_order?: number | null
+          flag_emoji?: string | null
+          icon?: string | null
+          id?: string
+          is_included_free?: boolean | null
+          is_popular?: boolean | null
+          is_visible?: boolean | null
+          name?: string
+          price_monthly?: number | null
+          price_yearly?: number | null
+          subcategory?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       platform_modules: {
         Row: {
           badge_text: string | null
@@ -26880,7 +26943,9 @@ export type Database = {
           created_at: string | null
           default_limits: Json | null
           description: string | null
+          display_order: number | null
           docs_url: string | null
+          features: Json | null
           icon: string | null
           icon_lucide: string | null
           id: string
@@ -26891,18 +26956,22 @@ export type Database = {
           is_core: boolean | null
           is_popular: boolean | null
           is_standalone_available: boolean | null
+          is_visible: boolean | null
           landing_url: string | null
           launch_date: string | null
           menu_items: Json | null
           name: string
           price_addon_monthly: number | null
           price_addon_yearly: number | null
+          price_monthly: number | null
           price_standalone_monthly: number | null
           price_standalone_yearly: number | null
+          price_yearly: number | null
           pricing_model: string | null
           recommended_modules: string[] | null
           required_modules: string[] | null
           requires_modules: string[] | null
+          section: string | null
           short_name: string | null
           show_in_sidebar: boolean | null
           sidebar_expanded_default: boolean | null
@@ -26927,7 +26996,9 @@ export type Database = {
           created_at?: string | null
           default_limits?: Json | null
           description?: string | null
+          display_order?: number | null
           docs_url?: string | null
+          features?: Json | null
           icon?: string | null
           icon_lucide?: string | null
           id?: string
@@ -26938,18 +27009,22 @@ export type Database = {
           is_core?: boolean | null
           is_popular?: boolean | null
           is_standalone_available?: boolean | null
+          is_visible?: boolean | null
           landing_url?: string | null
           launch_date?: string | null
           menu_items?: Json | null
           name: string
           price_addon_monthly?: number | null
           price_addon_yearly?: number | null
+          price_monthly?: number | null
           price_standalone_monthly?: number | null
           price_standalone_yearly?: number | null
+          price_yearly?: number | null
           pricing_model?: string | null
           recommended_modules?: string[] | null
           required_modules?: string[] | null
           requires_modules?: string[] | null
+          section?: string | null
           short_name?: string | null
           show_in_sidebar?: boolean | null
           sidebar_expanded_default?: boolean | null
@@ -26974,7 +27049,9 @@ export type Database = {
           created_at?: string | null
           default_limits?: Json | null
           description?: string | null
+          display_order?: number | null
           docs_url?: string | null
+          features?: Json | null
           icon?: string | null
           icon_lucide?: string | null
           id?: string
@@ -26985,18 +27062,22 @@ export type Database = {
           is_core?: boolean | null
           is_popular?: boolean | null
           is_standalone_available?: boolean | null
+          is_visible?: boolean | null
           landing_url?: string | null
           launch_date?: string | null
           menu_items?: Json | null
           name?: string
           price_addon_monthly?: number | null
           price_addon_yearly?: number | null
+          price_monthly?: number | null
           price_standalone_monthly?: number | null
           price_standalone_yearly?: number | null
+          price_yearly?: number | null
           pricing_model?: string | null
           recommended_modules?: string[] | null
           required_modules?: string[] | null
           requires_modules?: string[] | null
+          section?: string | null
           short_name?: string | null
           show_in_sidebar?: boolean | null
           sidebar_expanded_default?: boolean | null
@@ -33195,6 +33276,7 @@ export type Database = {
           highlight: boolean | null
           icon: string | null
           id: string
+          included_addons: string[] | null
           included_ai_queries: number | null
           included_emails: number | null
           included_modules: string[] | null
@@ -33205,12 +33287,15 @@ export type Database = {
           is_enterprise: boolean | null
           is_popular: boolean | null
           is_public: boolean | null
+          is_visible: boolean | null
           limits: Json
           max_addon_modules: number | null
+          max_addons: number | null
           max_clients: number | null
           max_contacts: number | null
           max_documents_month: number | null
           max_matters: number | null
+          max_modules: number | null
           max_storage_gb: number | null
           max_users: number | null
           modules_to_choose: number | null
@@ -33218,6 +33303,7 @@ export type Database = {
           plan_type: string | null
           price_monthly: number
           price_yearly: number
+          requires_contact: boolean | null
           sort_order: number | null
           stripe_price_id_monthly: string | null
           stripe_price_id_yearly: string | null
@@ -33243,6 +33329,7 @@ export type Database = {
           highlight?: boolean | null
           icon?: string | null
           id?: string
+          included_addons?: string[] | null
           included_ai_queries?: number | null
           included_emails?: number | null
           included_modules?: string[] | null
@@ -33253,12 +33340,15 @@ export type Database = {
           is_enterprise?: boolean | null
           is_popular?: boolean | null
           is_public?: boolean | null
+          is_visible?: boolean | null
           limits?: Json
           max_addon_modules?: number | null
+          max_addons?: number | null
           max_clients?: number | null
           max_contacts?: number | null
           max_documents_month?: number | null
           max_matters?: number | null
+          max_modules?: number | null
           max_storage_gb?: number | null
           max_users?: number | null
           modules_to_choose?: number | null
@@ -33266,6 +33356,7 @@ export type Database = {
           plan_type?: string | null
           price_monthly?: number
           price_yearly?: number
+          requires_contact?: boolean | null
           sort_order?: number | null
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
@@ -33291,6 +33382,7 @@ export type Database = {
           highlight?: boolean | null
           icon?: string | null
           id?: string
+          included_addons?: string[] | null
           included_ai_queries?: number | null
           included_emails?: number | null
           included_modules?: string[] | null
@@ -33301,12 +33393,15 @@ export type Database = {
           is_enterprise?: boolean | null
           is_popular?: boolean | null
           is_public?: boolean | null
+          is_visible?: boolean | null
           limits?: Json
           max_addon_modules?: number | null
+          max_addons?: number | null
           max_clients?: number | null
           max_contacts?: number | null
           max_documents_month?: number | null
           max_matters?: number | null
+          max_modules?: number | null
           max_storage_gb?: number | null
           max_users?: number | null
           modules_to_choose?: number | null
@@ -33314,6 +33409,7 @@ export type Database = {
           plan_type?: string | null
           price_monthly?: number
           price_yearly?: number
+          requires_contact?: boolean | null
           sort_order?: number | null
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
@@ -34684,6 +34780,77 @@ export type Database = {
           },
         ]
       }
+      tenant_addons: {
+        Row: {
+          access_type: string | null
+          activated_at: string | null
+          addon_code: string
+          created_at: string | null
+          expires_at: string | null
+          id: string
+          status: string | null
+          stripe_subscription_item_id: string | null
+          tenant_id: string
+          trial_ends_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_type?: string | null
+          activated_at?: string | null
+          addon_code: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          status?: string | null
+          stripe_subscription_item_id?: string | null
+          tenant_id: string
+          trial_ends_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_type?: string | null
+          activated_at?: string | null
+          addon_code?: string
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string
+          status?: string | null
+          stripe_subscription_item_id?: string | null
+          tenant_id?: string
+          trial_ends_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_addons_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_addons_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_addons_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_addons_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       tenant_ai_config: {
         Row: {
           ai_assistant_accepted_at: string | null
@@ -35174,6 +35341,7 @@ export type Database = {
           organization_id: string | null
           price_id: string | null
           product_id: string | null
+          selected_modules: string[] | null
           status: string | null
           stripe_customer_id: string | null
           stripe_metadata: Json | null
@@ -35194,6 +35362,7 @@ export type Database = {
           organization_id?: string | null
           price_id?: string | null
           product_id?: string | null
+          selected_modules?: string[] | null
           status?: string | null
           stripe_customer_id?: string | null
           stripe_metadata?: Json | null
@@ -35214,6 +35383,7 @@ export type Database = {
           organization_id?: string | null
           price_id?: string | null
           product_id?: string | null
+          selected_modules?: string[] | null
           status?: string | null
           stripe_customer_id?: string | null
           stripe_metadata?: Json | null
@@ -39638,6 +39808,10 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: Json
       }
+      get_tenant_modules_summary: {
+        Args: { p_tenant_id: string }
+        Returns: Json
+      }
       get_tenant_sidebar_menu: {
         Args: { p_organization_id: string }
         Returns: {
@@ -39871,6 +40045,14 @@ export type Database = {
       sync_market_user_from_nexus: {
         Args: { p_auth_user_id: string; p_organization_id: string }
         Returns: string
+      }
+      tenant_has_addon: {
+        Args: { p_addon_code: string; p_tenant_id: string }
+        Returns: boolean
+      }
+      tenant_has_module: {
+        Args: { p_module_code: string; p_tenant_id: string }
+        Returns: boolean
       }
       text_soundex: { Args: { "": string }; Returns: string }
       trigger_workflow_manually: {
