@@ -38,10 +38,12 @@ export interface ActiveService extends PreconfiguredService {
   organization_id: string;
   professional_fee: number;
   official_fee: number;
+  reference_code: string | null;
 }
 
 export interface ActivateServiceConfig {
   preconfigured_code: string;
+  reference_code?: string;  // Auto-generated or custom reference
   professional_fee: number;
   includes_official_fees: boolean;
   official_fees_note?: string;
@@ -95,6 +97,61 @@ export const SUBCATEGORY_LABELS: Record<string, string> = {
   advisory: 'Asesoría',
   training: 'Formación',
 };
+
+// =============================================
+// HELPERS
+// =============================================
+
+/**
+ * Generate a sequential reference code for a service
+ * Format: PREFIX-NNN (e.g., RM-001 for Registro Marca)
+ */
+async function generateReferenceCode(
+  organizationId: string,
+  preconfiguredCode: string,
+  category: string
+): Promise<string> {
+  // Map preconfigured codes to short prefixes
+  const prefixMap: Record<string, string> = {
+    // Trademarks
+    'TM_SEARCH_ES': 'BM',
+    'TM_REG_ES': 'RM',
+    'TM_REG_EU': 'RME',
+    'TM_REG_INT': 'RMI',
+    'TM_RENEW_ES': 'REN',
+    'TM_RENEW_EU': 'RENE',
+    'TM_OPP_DEF': 'OPO',
+    'TM_OPP_FILE': 'OPF',
+    // Patents
+    'PAT_REG_ES': 'RP',
+    'PAT_REG_EU': 'RPE',
+    'PAT_RENEW': 'RENP',
+    // Designs
+    'DES_REG_ES': 'RD',
+    'DES_REG_EU': 'RDE',
+    // General fallback by category
+  };
+  
+  const categoryPrefixes: Record<string, string> = {
+    trademarks: 'TM',
+    patents: 'PAT',
+    designs: 'DIS',
+    domains: 'DOM',
+    other: 'SRV',
+  };
+  
+  const prefix = prefixMap[preconfiguredCode] || categoryPrefixes[category] || 'SRV';
+  
+  // Count existing services with same prefix
+  const { count } = await supabase
+    .from('service_catalog')
+    .select('*', { count: 'exact', head: true })
+    .eq('organization_id', organizationId)
+    .ilike('reference_code', `${prefix}-%`);
+  
+  const sequence = String((count || 0) + 1).padStart(3, '0');
+  return `${prefix}-${sequence}`;
+}
 
 // =============================================
 // HOOKS
@@ -288,10 +345,21 @@ export function useActivateService() {
         throw new Error('Servicio preconfigurado no encontrado');
       }
       
+      // Generate reference code if not provided
+      let referenceCode = config.reference_code;
+      if (!referenceCode) {
+        referenceCode = await generateReferenceCode(
+          currentOrganization!.id,
+          config.preconfigured_code,
+          preconfig.category
+        );
+      }
+      
       // Create organization's copy
       const insertData = {
         organization_id: currentOrganization!.id,
         preconfigured_code: config.preconfigured_code,
+        reference_code: referenceCode,
         name: preconfig.name,
         description: config.description || preconfig.description,
         category: preconfig.category,

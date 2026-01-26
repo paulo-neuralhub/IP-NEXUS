@@ -52,6 +52,7 @@ import {
 // =============================================
 
 const activateServiceSchema = z.object({
+  reference_code: z.string().optional(),
   professional_fee: z.number().min(0, 'El precio debe ser positivo'),
   includes_official_fees: z.boolean(),
   official_fees_note: z.string().optional(),
@@ -120,6 +121,7 @@ export function ServiceActivateModal({
   const form = useForm<ActivateServiceFormValues>({
     resolver: zodResolver(activateServiceSchema),
     defaultValues: {
+      reference_code: '',
       professional_fee: 0,
       includes_official_fees: false,
       official_fees_note: '',
@@ -159,6 +161,7 @@ export function ServiceActivateModal({
     try {
       await activateService.mutateAsync({
         preconfigured_code: service.preconfigured_code,
+        reference_code: values.reference_code || undefined,
         professional_fee: values.professional_fee,
         includes_official_fees: values.includes_official_fees,
         official_fees_note: values.official_fees_note,

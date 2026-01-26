@@ -58,6 +58,7 @@ import { useCreateQuote } from '@/hooks/use-finance';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { ServiceSelector } from '@/components/service-catalog';
+import { ServiceSearchInput } from '@/components/features/finance/ServiceSearchInput';
 import type { ServiceCatalogItem } from '@/types/service-catalog';
 
 // =============================================
@@ -68,6 +69,7 @@ const lineItemSchema = z.object({
   description: z.string().min(1, 'Descripción requerida'),
   quantity: z.number().min(0.01, 'Cantidad mínima 0.01'),
   unit_price: z.number().min(0, 'Precio no puede ser negativo'),
+  service_id: z.string().optional(),
 });
 
 const quoteFormSchema = z.object({
@@ -364,10 +366,15 @@ export default function QuoteForm({ open, onOpenChange, onSuccess }: QuoteFormPr
                               render={({ field }) => (
                                 <FormItem className="space-y-0">
                                   <FormControl>
-                                    <Input
-                                      placeholder="Descripción del servicio..."
+                                    <ServiceSearchInput
+                                      value={field.value}
+                                      onChange={field.onChange}
+                                      onServiceSelect={(service) => {
+                                        form.setValue(`items.${index}.unit_price`, service.base_price);
+                                        form.setValue(`items.${index}.service_id`, service.id);
+                                      }}
+                                      placeholder="Escriba o busque un servicio..."
                                       className="border-0 bg-transparent focus-visible:ring-1"
-                                      {...field}
                                     />
                                   </FormControl>
                                 </FormItem>

@@ -1,6 +1,7 @@
 // =============================================
 // InvoiceLineEditor - Editor de líneas de factura
 // Tabla editable con cálculo automático de totales
+// Incluye búsqueda de servicios del catálogo
 // =============================================
 
 import { useState } from 'react';
@@ -24,6 +25,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { formatCurrency } from '@/lib/constants/finance';
+import { ServiceSearchInput } from '../ServiceSearchInput';
+import type { ServiceCatalogItem } from '@/types/service-catalog';
 
 export interface InvoiceLine {
   id: string;
@@ -39,6 +42,7 @@ export interface InvoiceLine {
   matter_id?: string;
   time_entry_id?: string;
   expense_id?: string;
+  service_id?: string;  // Link to service catalog
 }
 
 interface InvoiceLineEditorProps {
@@ -112,6 +116,15 @@ export function InvoiceLineEditor({
     );
   };
 
+  // Handle service selection - auto-fill price
+  const handleServiceSelect = (lineId: string, service: ServiceCatalogItem) => {
+    updateLine(lineId, {
+      unit_price: service.base_price,
+      vat_rate: (service as any).tax_rate ?? 21,
+      service_id: service.id,
+    });
+  };
+
   const removeLine = (id: string) => {
     onChange(lines.filter(line => line.id !== id));
   };
@@ -161,10 +174,11 @@ export function InvoiceLineEditor({
                       {readOnly ? (
                         <span className="text-sm">{line.description}</span>
                       ) : (
-                        <Input
+                        <ServiceSearchInput
                           value={line.description}
-                          onChange={(e) => updateLine(line.id, { description: e.target.value })}
-                          placeholder="Descripción del concepto"
+                          onChange={(value) => updateLine(line.id, { description: value })}
+                          onServiceSelect={(service) => handleServiceSelect(line.id, service)}
+                          placeholder="Escriba o busque un servicio..."
                           className="border-0 shadow-none focus-visible:ring-0 p-0 h-auto"
                         />
                       )}
