@@ -278,3 +278,15 @@ verify_jwt = false
 
 [functions.portal-auth]
 verify_jwt = false
+
+[functions.generate-facturae]
+verify_jwt = true
+
+[functions.submit-sii]
+verify_jwt = true
+
+[functions.submit-ticketbai]
+verify_jwt = true
+
+[functions.submit-verifactu]
+verify_jwt = true

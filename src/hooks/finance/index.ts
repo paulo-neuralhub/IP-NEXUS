@@ -4,3 +4,4 @@
 export * from './usePortfolioValuation';
 export * from './useAssetValuation';
 export * from './useFiscalSettings';
+export * from './useRegulatorySubmissions';
