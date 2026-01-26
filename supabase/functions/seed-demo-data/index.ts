@@ -540,7 +540,7 @@ serve(async (req) => {
         .insert({
           campaign_id: campaignId,
           contact_id: cid,
-          status: pick(["queued", "sent", "delivered"]),
+          status: pick(["sent", "delivered"]),
           sent_at: daysAgo(Math.floor(Math.random() * 30)).toISOString(),
           delivered_at: daysAgo(Math.floor(Math.random() * 25)).toISOString(),
           open_count: Math.random() < 0.6 ? 1 + Math.floor(Math.random() * 3) : 0,
