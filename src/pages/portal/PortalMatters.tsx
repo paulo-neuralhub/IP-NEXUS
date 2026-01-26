@@ -1,15 +1,16 @@
 /**
  * Portal Matters List
- * Lista de expedientes del cliente
+ * Lista de expedientes del cliente - DATOS REALES
  */
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { usePortalMatters } from '@/hooks/use-portal-matters';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -24,97 +25,105 @@ import {
   ArrowRight,
   Calendar,
   MapPin,
-  Tag
+  Tag,
+  Clock
 } from 'lucide-react';
-
-// Mock data
-const mockMatters = [
-  {
-    id: '1',
-    reference: 'TM-2025-001',
-    title: 'Marca NEXUS',
-    type: 'trademark',
-    status: 'active',
-    jurisdiction: 'ES',
-    filingDate: '2025-01-15',
-    classes: [9, 42],
-    nextDeadline: '2026-01-15',
-  },
-  {
-    id: '2',
-    reference: 'PT-2025-003',
-    title: 'Patente IoT Device',
-    type: 'patent',
-    status: 'pending',
-    jurisdiction: 'EP',
-    filingDate: '2025-02-20',
-    classes: [],
-    nextDeadline: '2026-02-20',
-  },
-  {
-    id: '3',
-    reference: 'TM-2024-089',
-    title: 'Marca ACME Corp',
-    type: 'trademark',
-    status: 'active',
-    jurisdiction: 'US',
-    filingDate: '2024-06-10',
-    classes: [25, 35],
-    nextDeadline: null,
-  },
-  {
-    id: '4',
-    reference: 'DS-2024-012',
-    title: 'Diseño Industrial Widget',
-    type: 'design',
-    status: 'granted',
-    jurisdiction: 'ES',
-    filingDate: '2024-03-05',
-    classes: [],
-    nextDeadline: '2029-03-05',
-  },
-];
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { MATTER_STATUSES, MATTER_TYPES } from '@/lib/constants/matters';
 
 export default function PortalMatters() {
   const { slug } = useParams<{ slug: string }>();
   const [search, setSearch] = useState('');
   const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [statusFilter, setStatusFilter] = useState<string>('all');
 
-  const filteredMatters = mockMatters.filter((matter) => {
-    const matchesSearch = 
-      matter.title.toLowerCase().includes(search.toLowerCase()) ||
-      matter.reference.toLowerCase().includes(search.toLowerCase());
-    const matchesType = typeFilter === 'all' || matter.type === typeFilter;
-    return matchesSearch && matchesType;
-  });
+  const { data: matters, isLoading, error } = usePortalMatters();
+
+  const filteredMatters = useMemo(() => {
+    if (!matters) return [];
+    
+    return matters.filter((matter) => {
+      const matchesSearch = 
+        matter.title.toLowerCase().includes(search.toLowerCase()) ||
+        matter.reference.toLowerCase().includes(search.toLowerCase());
+      const matchesType = typeFilter === 'all' || matter.type === typeFilter;
+      const matchesStatus = statusFilter === 'all' || matter.status === statusFilter;
+      return matchesSearch && matchesType && matchesStatus;
+    });
+  }, [matters, search, typeFilter, statusFilter]);
 
   const getTypeBadge = (type: string) => {
-    const config: Record<string, { label: string; className: string }> = {
-      trademark: { label: 'Marca', className: 'bg-blue-100 text-blue-700 border-blue-200' },
-      patent: { label: 'Patente', className: 'bg-purple-100 text-purple-700 border-purple-200' },
-      design: { label: 'Diseño', className: 'bg-green-100 text-green-700 border-green-200' },
-    };
-    const c = config[type] || { label: type, className: '' };
-    return <Badge className={c.className}>{c.label}</Badge>;
+    const labels: Record<string, string> = { trademark: 'Marca', patent: 'Patente', design: 'Diseño' };
+    const colors: Record<string, string> = { trademark: 'blue', patent: 'purple', design: 'green' };
+    return <Badge className={`bg-${colors[type] || 'gray'}-100 text-${colors[type] || 'gray'}-700`}>{labels[type] || type}</Badge>;
   };
 
   const getStatusBadge = (status: string) => {
-    const config: Record<string, { label: string; className: string }> = {
-      active: { label: 'Activo', className: 'bg-green-100 text-green-700 border-green-200' },
-      pending: { label: 'Pendiente', className: 'bg-amber-100 text-amber-700 border-amber-200' },
-      granted: { label: 'Concedido', className: 'bg-blue-100 text-blue-700 border-blue-200' },
-      expired: { label: 'Expirado', className: 'bg-gray-100 text-gray-700 border-gray-200' },
-    };
-    const c = config[status] || { label: status, className: '' };
-    return <Badge variant="outline" className={c.className}>{c.label}</Badge>;
+    const config = MATTER_STATUSES[status as keyof typeof MATTER_STATUSES];
+    if (!config) return <Badge variant="outline">{status}</Badge>;
+    
+    return (
+      <Badge 
+        variant="outline"
+        style={{ 
+          backgroundColor: `${config.color}20`, 
+          color: config.color,
+          borderColor: `${config.color}40`
+        }}
+      >
+        {config.label}
+      </Badge>
+    );
   };
 
-  const stats = {
-    total: mockMatters.length,
-    trademarks: mockMatters.filter(m => m.type === 'trademark').length,
-    patents: mockMatters.filter(m => m.type === 'patent').length,
-    designs: mockMatters.filter(m => m.type === 'design').length,
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'trademark': return { bg: 'bg-blue-100', text: 'text-blue-600' };
+      case 'patent': return { bg: 'bg-purple-100', text: 'text-purple-600' };
+      case 'design': return { bg: 'bg-green-100', text: 'text-green-600' };
+      default: return { bg: 'bg-muted', text: 'text-muted-foreground' };
+    }
   };
+
+  // Stats
+  const stats = useMemo(() => ({
+    total: matters?.length || 0,
+    trademarks: matters?.filter(m => m.type === 'trademark').length || 0,
+    patents: matters?.filter(m => m.type === 'patent').length || 0,
+    designs: matters?.filter(m => m.type === 'design').length || 0,
+  }), [matters]);
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div>
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64 mt-2" />
+        </div>
+        <div className="grid grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => (
+            <Card key={i}><CardContent className="pt-4 pb-4"><Skeleton className="h-12" /></CardContent></Card>
+          ))}
+        </div>
+        <Card>
+          <CardContent className="pt-6">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="h-20 mb-3" />
+            ))}
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-destructive">Error al cargar expedientes</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -127,7 +136,7 @@ export default function PortalMatters() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-4 pb-4">
             <div className="flex items-center gap-2">
@@ -180,7 +189,7 @@ export default function PortalMatters() {
               />
             </div>
             <Select value={typeFilter} onValueChange={setTypeFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[160px]">
                 <Filter className="w-4 h-4 mr-2" />
                 <SelectValue placeholder="Tipo" />
               </SelectTrigger>
@@ -191,6 +200,18 @@ export default function PortalMatters() {
                 <SelectItem value="design">Diseños</SelectItem>
               </SelectContent>
             </Select>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Estado" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="active">Activos</SelectItem>
+                <SelectItem value="pending">Pendientes</SelectItem>
+                <SelectItem value="granted">Concedidos</SelectItem>
+                <SelectItem value="expired">Expirados</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </CardHeader>
         <CardContent>
@@ -198,63 +219,57 @@ export default function PortalMatters() {
           <div className="space-y-3">
             {filteredMatters.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                No se encontraron expedientes
+                <Briefcase className="w-12 h-12 mx-auto opacity-30 mb-4" />
+                <p className="font-medium">No se encontraron expedientes</p>
+                <p className="text-sm">Prueba ajustando los filtros de búsqueda</p>
               </div>
             ) : (
-              filteredMatters.map((matter) => (
-                <Link
-                  key={matter.id}
-                  to={`/portal/${slug}/matters/${matter.id}`}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors group gap-4"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${
-                      matter.type === 'trademark' ? 'bg-blue-100' :
-                      matter.type === 'patent' ? 'bg-purple-100' : 'bg-green-100'
-                    }`}>
-                      <Briefcase className={`w-6 h-6 ${
-                        matter.type === 'trademark' ? 'text-blue-600' :
-                        matter.type === 'patent' ? 'text-purple-600' : 'text-green-600'
-                      }`} />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <h3 className="font-medium group-hover:text-primary transition-colors">
-                          {matter.title}
-                        </h3>
-                        {getTypeBadge(matter.type)}
-                        {getStatusBadge(matter.status)}
+              filteredMatters.map((matter) => {
+                const colors = getTypeColor(matter.type);
+                return (
+                  <Link
+                    key={matter.id}
+                    to={`/portal/${slug}/matters/${matter.id}`}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors group gap-4"
+                  >
+                    <div className="flex items-start gap-4">
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center shrink-0 ${colors.bg}`}>
+                        <Briefcase className={`w-6 h-6 ${colors.text}`} />
                       </div>
-                      <p className="text-sm text-muted-foreground">{matter.reference}</p>
-                      <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1">
-                          <MapPin className="w-3 h-3" />
-                          {matter.jurisdiction}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3" />
-                          {new Date(matter.filingDate).toLocaleDateString('es')}
-                        </span>
-                        {matter.classes.length > 0 && (
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-medium group-hover:text-primary transition-colors">
+                            {matter.title}
+                          </h3>
+                          {getStatusBadge(matter.status)}
+                        </div>
+                        <p className="text-sm text-muted-foreground">{matter.reference}</p>
+                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                          {matter.jurisdiction && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="w-3 h-3" />
+                              {matter.jurisdiction}
+                            </span>
+                          )}
                           <span className="flex items-center gap-1">
-                            <Tag className="w-3 h-3" />
-                            Clases: {matter.classes.join(', ')}
+                            <Calendar className="w-3 h-3" />
+                            {format(new Date(matter.created_at), 'd MMM yyyy', { locale: es })}
                           </span>
-                        )}
+                          {matter.deadline_count > 0 && (
+                            <span className="flex items-center gap-1 text-amber-600">
+                              <Clock className="w-3 h-3" />
+                              {matter.deadline_count} plazos
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-3 sm:ml-auto">
-                    {matter.nextDeadline && (
-                      <div className="text-right text-sm">
-                        <p className="text-muted-foreground">Próximo plazo</p>
-                        <p className="font-medium">{new Date(matter.nextDeadline).toLocaleDateString('es')}</p>
-                      </div>
-                    )}
-                    <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
-                  </div>
-                </Link>
-              ))
+                    <div className="flex items-center gap-3 sm:ml-auto">
+                      <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </Link>
+                );
+              })
             )}
           </div>
         </CardContent>

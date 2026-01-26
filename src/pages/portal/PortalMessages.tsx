@@ -1,12 +1,18 @@
 /**
  * Portal Messages
- * Sistema de mensajes entre cliente y despacho
+ * Sistema de mensajes entre cliente y despacho - DATOS REALES
  */
 
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { usePortalAuth } from '@/hooks/usePortalAuth';
+import { 
+  usePortalThreads, 
+  usePortalThreadMessages, 
+  useSendPortalMessage,
+  useMarkMessagesRead 
+} from '@/hooks/use-portal-messages';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -14,6 +20,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Dialog,
   DialogContent,
@@ -30,105 +37,62 @@ import {
   Plus,
   Paperclip,
   Clock,
-  CheckCheck
+  CheckCheck,
+  Inbox
 } from 'lucide-react';
-
-// Mock data
-const mockConversations = [
-  {
-    id: '1',
-    subject: 'Consulta sobre renovación marca NEXUS',
-    lastMessage: 'Perfecto, procederemos con la renovación la próxima semana.',
-    lastMessageDate: '2025-01-20T10:30:00',
-    unread: 0,
-    participants: ['María García', 'Juan López'],
-  },
-  {
-    id: '2',
-    subject: 'Estado patente IoT Device',
-    lastMessage: 'Hemos recibido el informe de examen de fondo. Te adjunto el documento.',
-    lastMessageDate: '2025-01-19T16:45:00',
-    unread: 2,
-    participants: ['Carlos Martínez'],
-  },
-  {
-    id: '3',
-    subject: 'Documentación pendiente',
-    lastMessage: 'Necesitamos el poder firmado para continuar con el trámite.',
-    lastMessageDate: '2025-01-18T09:00:00',
-    unread: 1,
-    participants: ['Ana Ruiz'],
-  },
-];
-
-const mockMessages = [
-  {
-    id: '1',
-    conversationId: '1',
-    sender: 'María García',
-    senderType: 'staff',
-    content: 'Buenos días, le informamos que la marca NEXUS está próxima a su fecha de renovación.',
-    date: '2025-01-18T09:00:00',
-    read: true,
-  },
-  {
-    id: '2',
-    conversationId: '1',
-    sender: 'Cliente',
-    senderType: 'client',
-    content: '¿Cuál sería el coste de la renovación?',
-    date: '2025-01-18T10:15:00',
-    read: true,
-  },
-  {
-    id: '3',
-    conversationId: '1',
-    sender: 'María García',
-    senderType: 'staff',
-    content: 'El coste total incluyendo tasas oficiales y honorarios sería de 450€. ¿Desea que procedamos?',
-    date: '2025-01-19T11:30:00',
-    read: true,
-  },
-  {
-    id: '4',
-    conversationId: '1',
-    sender: 'Cliente',
-    senderType: 'client',
-    content: 'Sí, por favor procedan con la renovación.',
-    date: '2025-01-20T09:00:00',
-    read: true,
-  },
-  {
-    id: '5',
-    conversationId: '1',
-    sender: 'María García',
-    senderType: 'staff',
-    content: 'Perfecto, procederemos con la renovación la próxima semana.',
-    date: '2025-01-20T10:30:00',
-    read: true,
-  },
-];
+import { format, formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 export default function PortalMessages() {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useTranslation();
   const { user } = usePortalAuth();
   const [search, setSearch] = useState('');
-  const [selectedConversation, setSelectedConversation] = useState<string | null>('1');
+  const [selectedThread, setSelectedThread] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState('');
   const [newConversationOpen, setNewConversationOpen] = useState(false);
+  const [newSubject, setNewSubject] = useState('');
+  const [newBody, setNewBody] = useState('');
 
-  const filteredConversations = mockConversations.filter((conv) =>
-    conv.subject.toLowerCase().includes(search.toLowerCase())
-  );
+  // Hooks de datos reales
+  const { data: threads, isLoading: threadsLoading } = usePortalThreads();
+  const { data: messages, isLoading: messagesLoading } = usePortalThreadMessages(selectedThread);
+  const sendMessage = useSendPortalMessage();
+  const markRead = useMarkMessagesRead();
 
-  const currentMessages = mockMessages.filter(
-    (msg) => msg.conversationId === selectedConversation
-  );
+  const filteredThreads = threads?.filter((t) =>
+    t.subject.toLowerCase().includes(search.toLowerCase())
+  ) || [];
 
-  const currentConversation = mockConversations.find(
-    (conv) => conv.id === selectedConversation
-  );
+  const currentThread = threads?.find((t) => t.thread_id === selectedThread);
+
+  const handleSelectThread = (threadId: string) => {
+    setSelectedThread(threadId);
+    // Marcar como leídos
+    markRead.mutate(threadId);
+  };
+
+  const handleSendMessage = () => {
+    if (!newMessage.trim() || !selectedThread) return;
+    
+    sendMessage.mutate({
+      body: newMessage,
+      thread_id: selectedThread,
+    });
+    setNewMessage('');
+  };
+
+  const handleCreateConversation = () => {
+    if (!newSubject.trim() || !newBody.trim()) return;
+    
+    sendMessage.mutate({
+      subject: newSubject,
+      body: newBody,
+    });
+    setNewConversationOpen(false);
+    setNewSubject('');
+    setNewBody('');
+  };
 
   const formatTime = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -136,18 +100,14 @@ export default function PortalMessages() {
     const diffDays = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60 * 24));
     
     if (diffDays === 0) {
-      return date.toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' });
+      return format(date, 'HH:mm');
     } else if (diffDays === 1) {
       return 'Ayer';
+    } else if (diffDays < 7) {
+      return format(date, 'EEEE', { locale: es });
     } else {
-      return date.toLocaleDateString('es', { day: 'numeric', month: 'short' });
+      return format(date, 'd MMM', { locale: es });
     }
-  };
-
-  const handleSendMessage = () => {
-    if (!newMessage.trim()) return;
-    // TODO: Implementar envío real de mensajes a Supabase
-    setNewMessage('');
   };
 
   return (
@@ -164,35 +124,44 @@ export default function PortalMessages() {
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              {t('common.new')}
+              Nuevo mensaje
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>{t('portal.messages.general_inquiry')}</DialogTitle>
+              <DialogTitle>Nueva consulta</DialogTitle>
               <DialogDescription>
-                {t('portal.messages.conversations')}
+                Envía un mensaje a tu equipo de gestión
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('marketing.subject')}</label>
-                <Input placeholder={t('portal.messages.general_inquiry')} />
+                <label className="text-sm font-medium">Asunto</label>
+                <Input 
+                  placeholder="¿En qué podemos ayudarte?"
+                  value={newSubject}
+                  onChange={(e) => setNewSubject(e.target.value)}
+                />
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">{t('portal.messages.placeholder')}</label>
+                <label className="text-sm font-medium">Mensaje</label>
                 <Textarea 
-                  placeholder={t('portal.messages.placeholder')} 
+                  placeholder="Escribe tu consulta..." 
                   rows={4}
+                  value={newBody}
+                  onChange={(e) => setNewBody(e.target.value)}
                 />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setNewConversationOpen(false)}>
-                {t('common.cancel')}
+                Cancelar
               </Button>
-              <Button onClick={() => setNewConversationOpen(false)}>
-                {t('portal.messages.send')}
+              <Button 
+                onClick={handleCreateConversation}
+                disabled={!newSubject.trim() || !newBody.trim() || sendMessage.isPending}
+              >
+                {sendMessage.isPending ? 'Enviando...' : 'Enviar'}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -207,7 +176,7 @@ export default function PortalMessages() {
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder={t('common.search')}
+                placeholder="Buscar conversación..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
@@ -216,101 +185,125 @@ export default function PortalMessages() {
           </CardHeader>
           <CardContent className="p-0">
             <ScrollArea className="h-[calc(100%-80px)]">
-              {filteredConversations.map((conv) => (
-                <div
-                  key={conv.id}
-                  onClick={() => setSelectedConversation(conv.id)}
-                  className={`p-4 cursor-pointer hover:bg-muted/50 transition-colors border-b ${
-                    selectedConversation === conv.id ? 'bg-muted' : ''
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium truncate">{conv.subject}</p>
-                        {conv.unread > 0 && (
-                          <Badge className="h-5 px-1.5">{conv.unread}</Badge>
+              {threadsLoading ? (
+                <div className="p-4 space-y-3">
+                  {[...Array(3)].map((_, i) => (
+                    <Skeleton key={i} className="h-20" />
+                  ))}
+                </div>
+              ) : filteredThreads.length === 0 ? (
+                <div className="p-8 text-center text-muted-foreground">
+                  <Inbox className="w-10 h-10 mx-auto opacity-30 mb-2" />
+                  <p className="text-sm">No tienes conversaciones</p>
+                </div>
+              ) : (
+                filteredThreads.map((thread) => (
+                  <div
+                    key={thread.thread_id}
+                    onClick={() => handleSelectThread(thread.thread_id)}
+                    className={`p-4 cursor-pointer hover:bg-muted/50 transition-colors border-b ${
+                      selectedThread === thread.thread_id ? 'bg-muted' : ''
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="font-medium truncate">{thread.subject}</p>
+                          {thread.unread_count > 0 && (
+                            <Badge className="h-5 px-1.5">{thread.unread_count}</Badge>
+                          )}
+                        </div>
+                        <p className="text-sm text-muted-foreground truncate mt-1">
+                          {thread.last_message}
+                        </p>
+                        {thread.matter_reference && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            📁 {thread.matter_reference}
+                          </p>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground truncate mt-1">
-                        {conv.lastMessage}
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1">
-                        {conv.participants.join(', ')}
-                      </p>
+                      <span className="text-xs text-muted-foreground whitespace-nowrap">
+                        {formatTime(thread.last_message_date)}
+                      </span>
                     </div>
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">
-                      {formatTime(conv.lastMessageDate)}
-                    </span>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </ScrollArea>
           </CardContent>
         </Card>
 
         {/* Messages View */}
         <Card className="lg:col-span-2 flex flex-col">
-          {selectedConversation && currentConversation ? (
+          {selectedThread && currentThread ? (
             <>
               <CardHeader className="border-b">
-                <CardTitle className="text-lg">{currentConversation.subject}</CardTitle>
+                <CardTitle className="text-lg">{currentThread.subject}</CardTitle>
                 <CardDescription>
-                  {currentConversation.participants.join(', ')}
+                  {currentThread.message_count} mensajes
+                  {currentThread.matter_reference && ` • ${currentThread.matter_reference}`}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-1 p-0 flex flex-col">
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4">
-                  <div className="space-y-4">
-                    {currentMessages.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={`flex ${msg.senderType === 'client' ? 'justify-end' : 'justify-start'}`}
-                      >
-                        <div className={`max-w-[80%] ${msg.senderType === 'client' ? 'order-1' : ''}`}>
-                          {msg.senderType === 'staff' && (
-                            <div className="flex items-center gap-2 mb-1">
-                              <Avatar className="h-6 w-6">
-                                <AvatarFallback className="text-xs">
-                                  {msg.sender.split(' ').map(n => n[0]).join('')}
-                                </AvatarFallback>
-                              </Avatar>
-                              <span className="text-sm font-medium">{msg.sender}</span>
-                            </div>
-                          )}
-                          <div
-                            className={`rounded-lg p-3 ${
-                              msg.senderType === 'client'
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-muted'
-                            }`}
-                          >
-                            <p className="text-sm">{msg.content}</p>
-                          </div>
-                          <div className={`flex items-center gap-1 mt-1 text-xs text-muted-foreground ${
-                            msg.senderType === 'client' ? 'justify-end' : ''
-                          }`}>
-                            <Clock className="w-3 h-3" />
-                            <span>{formatTime(msg.date)}</span>
-                            {msg.senderType === 'client' && msg.read && (
-                              <CheckCheck className="w-3 h-3 ml-1 text-primary" />
+                  {messagesLoading ? (
+                    <div className="space-y-4">
+                      {[...Array(3)].map((_, i) => (
+                        <Skeleton key={i} className="h-16" />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {messages?.map((msg) => (
+                        <div
+                          key={msg.id}
+                          className={`flex ${msg.direction === 'inbound' ? 'justify-end' : 'justify-start'}`}
+                        >
+                          <div className={`max-w-[80%] ${msg.direction === 'inbound' ? 'order-1' : ''}`}>
+                            {msg.direction === 'outbound' && (
+                              <div className="flex items-center gap-2 mb-1">
+                                <Avatar className="h-6 w-6">
+                                  <AvatarFallback className="text-xs bg-primary text-primary-foreground">
+                                    IP
+                                  </AvatarFallback>
+                                </Avatar>
+                                <span className="text-sm font-medium">Equipo IP-NEXUS</span>
+                              </div>
                             )}
+                            <div
+                              className={`rounded-lg p-3 ${
+                                msg.direction === 'inbound'
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-muted'
+                              }`}
+                            >
+                              <p className="text-sm whitespace-pre-wrap">{msg.body}</p>
+                            </div>
+                            <div className={`flex items-center gap-1 mt-1 text-xs text-muted-foreground ${
+                              msg.direction === 'inbound' ? 'justify-end' : ''
+                            }`}>
+                              <Clock className="w-3 h-3" />
+                              <span>{format(new Date(msg.created_at), 'd MMM HH:mm', { locale: es })}</span>
+                              {msg.direction === 'inbound' && msg.status === 'read' && (
+                                <CheckCheck className="w-3 h-3 ml-1 text-primary" />
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
+                      ))}
+                    </div>
+                  )}
                 </ScrollArea>
 
                 {/* Input */}
                 <div className="p-4 border-t">
                   <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon">
+                    <Button variant="ghost" size="icon" disabled>
                       <Paperclip className="w-4 h-4" />
                     </Button>
                     <Input
-                      placeholder={t('portal.messages.placeholder')}
+                      placeholder="Escribe tu mensaje..."
                       value={newMessage}
                       onChange={(e) => setNewMessage(e.target.value)}
                       onKeyDown={(e) => {
@@ -320,7 +313,10 @@ export default function PortalMessages() {
                         }
                       }}
                     />
-                    <Button onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                    <Button 
+                      onClick={handleSendMessage} 
+                      disabled={!newMessage.trim() || sendMessage.isPending}
+                    >
                       <Send className="w-4 h-4" />
                     </Button>
                   </div>
@@ -331,7 +327,8 @@ export default function PortalMessages() {
             <div className="flex-1 flex items-center justify-center text-muted-foreground">
               <div className="text-center">
                 <MessageSquare className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                <p>{t('portal.messages.select_conversation')}</p>
+                <p className="font-medium">Selecciona una conversación</p>
+                <p className="text-sm">o crea un nuevo mensaje</p>
               </div>
             </div>
           )}

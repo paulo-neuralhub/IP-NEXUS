@@ -1,13 +1,18 @@
 /**
  * Portal Dashboard
- * Vista principal del cliente en el portal
+ * Vista principal del cliente en el portal - DATOS REALES
  */
 
 import { useTranslation } from 'react-i18next';
 import { usePortalAuth } from '@/hooks/usePortalAuth';
+import { usePortalMatters } from '@/hooks/use-portal-matters';
+import { usePortalDocuments } from '@/hooks/use-portal-documents';
+import { usePortalThreads } from '@/hooks/use-portal-messages';
+import { usePortalInvoices } from '@/hooks/use-portal-invoices';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Link, useParams } from 'react-router-dom';
 import { 
   Briefcase, 
@@ -18,50 +23,87 @@ import {
   AlertTriangle,
   ArrowRight,
   CheckCircle2,
-  TrendingUp
+  TrendingUp,
+  Calendar
 } from 'lucide-react';
+import { format, differenceInDays } from 'date-fns';
+import { es } from 'date-fns/locale';
+import { MATTER_STATUSES } from '@/lib/constants/matters';
 
 export default function PortalDashboard() {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useTranslation();
   const { user } = usePortalAuth();
+  
+  // Datos reales
+  const { data: matters, isLoading: mattersLoading } = usePortalMatters();
+  const { data: documents, isLoading: documentsLoading } = usePortalDocuments();
+  const { data: threads, isLoading: messagesLoading } = usePortalThreads();
+  const { data: invoices, isLoading: invoicesLoading } = usePortalInvoices();
 
-  // Mock data for demo - en producción vendría de hooks con Supabase
+  const isLoading = mattersLoading || documentsLoading || messagesLoading || invoicesLoading;
+
+  // Stats calculados de datos reales
   const stats = {
-    activeMatters: 12,
-    pendingDocuments: 3,
-    pendingInvoices: 2,
-    unreadMessages: 5,
-    upcomingDeadlines: 4,
+    activeMatters: matters?.length || 0,
+    pendingDocuments: documents?.filter(d => !d.viewed_at)?.length || 0,
+    pendingInvoices: invoices?.filter(i => i.status !== 'paid')?.length || 0,
+    unreadMessages: threads?.reduce((acc, t) => acc + t.unread_count, 0) || 0,
+    upcomingDeadlines: matters?.reduce((acc, m) => acc + m.deadline_count, 0) || 0,
   };
 
-  const recentMatters = [
-    { id: '1', reference: 'TM-2025-001', title: 'Marca NEXUS', status: 'active', type: 'trademark' },
-    { id: '2', reference: 'PT-2025-003', title: 'Patente IoT Device', status: 'pending', type: 'patent' },
-    { id: '3', reference: 'TM-2024-089', title: 'Marca ACME Corp', status: 'active', type: 'trademark' },
-  ];
+  // Expedientes recientes
+  const recentMatters = matters?.slice(0, 3) || [];
 
-  const pendingActions = [
-    { id: '1', type: 'document', title: 'Firmar poder de representación', matter: 'TM-2025-001' },
-    { id: '2', type: 'approval', title: 'Aprobar respuesta a oposición', matter: 'TM-2024-089' },
-    { id: '3', type: 'payment', title: 'Pago tasas renovación', matter: 'PT-2025-003' },
-  ];
-
-  const upcomingDeadlines = [
-    { id: '1', date: '2026-02-15', title: 'Renovación marca NEXUS', matter: 'TM-2025-001' },
-    { id: '2', date: '2026-03-01', title: 'Respuesta examen de fondo', matter: 'PT-2025-003' },
-  ];
+  // Próximos plazos (simulados por ahora - en producción vendría de una query específica)
+  const upcomingDeadlines = matters?.filter(m => m.deadline_count > 0).slice(0, 3) || [];
 
   const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-700 border-green-200">{t('portal.matters.status.active')}</Badge>;
-      case 'pending':
-        return <Badge className="bg-amber-100 text-amber-700 border-amber-200">{t('portal.matters.status.pending')}</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
+    const config = MATTER_STATUSES[status as keyof typeof MATTER_STATUSES];
+    if (!config) return <Badge variant="outline">{status}</Badge>;
+    
+    return (
+      <Badge 
+        variant="outline"
+        style={{ 
+          backgroundColor: `${config.color}20`, 
+          color: config.color,
+          borderColor: `${config.color}40`
+        }}
+      >
+        {config.label}
+      </Badge>
+    );
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'trademark': return { bg: 'bg-blue-100', text: 'text-blue-600' };
+      case 'patent': return { bg: 'bg-purple-100', text: 'text-purple-600' };
+      case 'design': return { bg: 'bg-green-100', text: 'text-green-600' };
+      default: return { bg: 'bg-muted', text: 'text-muted-foreground' };
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <div>
+          <Skeleton className="h-8 w-64" />
+          <Skeleton className="h-4 w-48 mt-2" />
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+          {[...Array(5)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="pt-6">
+                <Skeleton className="h-10 w-full" />
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">
@@ -71,7 +113,7 @@ export default function PortalDashboard() {
           {t('portal.dashboard.welcome')}, {user?.name || 'Cliente'}
         </h1>
         <p className="text-muted-foreground">
-          {t('portal.dashboard.subtitle')}
+          {format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", { locale: es })}
         </p>
       </div>
 
@@ -150,41 +192,51 @@ export default function PortalDashboard() {
 
       {/* Main Content Grid */}
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* Acciones Pendientes */}
+        {/* Documentos nuevos */}
         <Card className="lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-amber-500" />
-                {t('portal.dashboard.pending_approvals', { count: pendingActions.length })}
+                <FileText className="w-5 h-5 text-amber-500" />
+                Documentos recientes
               </CardTitle>
-              <CardDescription>{t('portal.dashboard.view_documents')}</CardDescription>
+              <CardDescription>Últimos documentos compartidos contigo</CardDescription>
             </div>
-            <Badge variant="outline">{pendingActions.length}</Badge>
+            <Button variant="outline" size="sm" asChild>
+              <Link to={`/portal/${slug}/documents`}>Ver todos</Link>
+            </Button>
           </CardHeader>
           <CardContent>
-            <div className="space-y-3">
-              {pendingActions.map((action) => (
-                <div 
-                  key={action.id} 
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={`w-2 h-2 rounded-full ${
-                      action.type === 'payment' ? 'bg-red-500' : 
-                      action.type === 'document' ? 'bg-amber-500' : 'bg-blue-500'
-                    }`} />
-                    <div>
-                      <p className="font-medium text-sm">{action.title}</p>
-                      <p className="text-xs text-muted-foreground">{action.matter}</p>
+            {documents && documents.length > 0 ? (
+              <div className="space-y-3">
+                {documents.slice(0, 5).map((doc) => (
+                  <div 
+                    key={doc.id} 
+                    className="flex items-center justify-between p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+                        <FileText className="w-5 h-5 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-sm">{doc.name}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {doc.matter_reference || 'General'} • {format(new Date(doc.shared_at), 'd MMM', { locale: es })}
+                        </p>
+                      </div>
                     </div>
+                    {!doc.viewed_at && (
+                      <Badge className="bg-amber-100 text-amber-700 border-amber-200">Nuevo</Badge>
+                    )}
                   </div>
-                  <Button size="sm" variant="outline">
-                    {t('common.view')} <ArrowRight className="w-3 h-3 ml-1" />
-                  </Button>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-muted-foreground">
+                <FileText className="w-10 h-10 mx-auto opacity-30 mb-2" />
+                <p>No hay documentos compartidos</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -198,26 +250,33 @@ export default function PortalDashboard() {
             <CardDescription>{t('portal.dashboard.pending_deadlines')}</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="space-y-4">
-              {upcomingDeadlines.map((deadline) => (
-                <div key={deadline.id} className="flex gap-3">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-primary">
-                      {new Date(deadline.date).getDate()}
-                    </p>
-                    <p className="text-xs text-muted-foreground uppercase">
-                      {new Date(deadline.date).toLocaleDateString('es', { month: 'short' })}
-                    </p>
-                  </div>
-                  <div className="flex-1 border-l pl-3">
-                    <p className="font-medium text-sm">{deadline.title}</p>
-                    <p className="text-xs text-muted-foreground">{deadline.matter}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            {upcomingDeadlines.length > 0 ? (
+              <div className="space-y-4">
+                {upcomingDeadlines.map((matter) => (
+                  <Link 
+                    key={matter.id} 
+                    to={`/portal/${slug}/matters/${matter.id}`}
+                    className="flex gap-3 hover:bg-muted/50 p-2 rounded-lg transition-colors"
+                  >
+                    <div className="text-center min-w-[40px]">
+                      <Calendar className="w-5 h-5 text-primary mx-auto" />
+                      <p className="text-xs text-muted-foreground mt-1">{matter.deadline_count}</p>
+                    </div>
+                    <div className="flex-1 border-l pl-3">
+                      <p className="font-medium text-sm">{matter.title}</p>
+                      <p className="text-xs text-muted-foreground">{matter.reference}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-6 text-muted-foreground">
+                <CheckCircle2 className="w-8 h-8 mx-auto opacity-30 mb-2" />
+                <p className="text-sm">Sin plazos próximos</p>
+              </div>
+            )}
             <Button variant="link" className="w-full mt-4" asChild>
-              <Link to={`/portal/${slug}/matters`}>{t('portal.dashboard.upcoming_deadlines')}</Link>
+              <Link to={`/portal/${slug}/deadlines`}>Ver todos los plazos</Link>
             </Button>
           </CardContent>
         </Card>
@@ -231,42 +290,48 @@ export default function PortalDashboard() {
               <TrendingUp className="w-5 h-5 text-primary" />
               {t('portal.dashboard.recent_activity')}
             </CardTitle>
-            <CardDescription>{t('portal.matters.subtitle')}</CardDescription>
+            <CardDescription>Tus expedientes más recientes</CardDescription>
           </div>
           <Button variant="outline" size="sm" asChild>
             <Link to={`/portal/${slug}/matters`}>{t('common.all')}</Link>
           </Button>
         </CardHeader>
         <CardContent>
-          <div className="space-y-3">
-            {recentMatters.map((matter) => (
-              <Link 
-                key={matter.id}
-                to={`/portal/${slug}/matters/${matter.id}`}
-                className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors group"
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                    matter.type === 'trademark' ? 'bg-blue-100' : 'bg-purple-100'
-                  }`}>
-                    <CheckCircle2 className={`w-5 h-5 ${
-                      matter.type === 'trademark' ? 'text-blue-600' : 'text-purple-600'
-                    }`} />
-                  </div>
-                  <div>
-                    <p className="font-medium group-hover:text-primary transition-colors">
-                      {matter.title}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{matter.reference}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  {getStatusBadge(matter.status)}
-                  <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </Link>
-            ))}
-          </div>
+          {recentMatters.length > 0 ? (
+            <div className="space-y-3">
+              {recentMatters.map((matter) => {
+                const colors = getTypeColor(matter.type);
+                return (
+                  <Link 
+                    key={matter.id}
+                    to={`/portal/${slug}/matters/${matter.id}`}
+                    className="flex items-center justify-between p-4 rounded-lg border hover:bg-muted/50 transition-colors group"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${colors.bg}`}>
+                        <Briefcase className={`w-5 h-5 ${colors.text}`} />
+                      </div>
+                      <div>
+                        <p className="font-medium group-hover:text-primary transition-colors">
+                          {matter.title}
+                        </p>
+                        <p className="text-sm text-muted-foreground">{matter.reference}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      {getStatusBadge(matter.status)}
+                      <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                    </div>
+                  </Link>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <Briefcase className="w-10 h-10 mx-auto opacity-30 mb-2" />
+              <p>No tienes expedientes activos</p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
