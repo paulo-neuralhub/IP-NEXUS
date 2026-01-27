@@ -388,6 +388,10 @@ export default function AIBrainPage() {
           />
         </TabsContent>
 
+        <TabsContent value="knowledge" className="space-y-4">
+          <KnowledgeBasesTab />
+        </TabsContent>
+
         <TabsContent value="tests" className="space-y-4">
           <TestSuitesTab />
         </TabsContent>
