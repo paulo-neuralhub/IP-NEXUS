@@ -6828,6 +6828,7 @@ export type Database = {
           avatar_url: string | null
           city: string | null
           client_token: string | null
+          client_token_generated_at: string | null
           client_type: string | null
           company_name: string | null
           country: string | null
@@ -6888,6 +6889,7 @@ export type Database = {
           avatar_url?: string | null
           city?: string | null
           client_token?: string | null
+          client_token_generated_at?: string | null
           client_type?: string | null
           company_name?: string | null
           country?: string | null
@@ -6948,6 +6950,7 @@ export type Database = {
           avatar_url?: string | null
           city?: string | null
           client_token?: string | null
+          client_token_generated_at?: string | null
           client_type?: string | null
           company_name?: string | null
           country?: string | null
@@ -41776,19 +41779,31 @@ export type Database = {
       dmetaphone: { Args: { "": string }; Returns: string }
       dmetaphone_alt: { Args: { "": string }; Returns: string }
       expire_trials: { Args: never; Returns: number }
-      generate_client_token: {
-        Args: { p_client_name: string; p_organization_id: string }
-        Returns: string
-      }
-      generate_matter_number: {
-        Args: {
-          p_client_id?: string
-          p_jurisdiction_code: string
-          p_matter_type: string
-          p_organization_id: string
-        }
-        Returns: string
-      }
+      generate_client_token:
+        | { Args: { p_organization_id: string }; Returns: string }
+        | {
+            Args: { p_client_name: string; p_organization_id: string }
+            Returns: string
+          }
+      generate_matter_number:
+        | {
+            Args: {
+              p_client_id?: string
+              p_jurisdiction_code: string
+              p_matter_type: string
+              p_organization_id: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_client_id?: string
+              p_jurisdiction_code: string
+              p_organization_id: string
+              p_type_code: string
+            }
+            Returns: string
+          }
       generate_voip_invoices_superadmin: {
         Args: { p_period_start: string; p_tax_rate?: number }
         Returns: {
@@ -42097,6 +42112,15 @@ export type Database = {
         Args: { p_matter_id: string; p_portal_user_id: string }
         Returns: boolean
       }
+      preview_matter_number: {
+        Args: {
+          p_client_id?: string
+          p_jurisdiction_code: string
+          p_organization_id: string
+          p_type_code: string
+        }
+        Returns: string
+      }
       provision_pack_modules: {
         Args: {
           p_billing_cycle?: string
@@ -42229,6 +42253,10 @@ export type Database = {
       }
       user_has_org_access_from_path: {
         Args: { bucket_path: string }
+        Returns: boolean
+      }
+      validate_matter_number: {
+        Args: { p_matter_number: string }
         Returns: boolean
       }
       verify_api_key: {
