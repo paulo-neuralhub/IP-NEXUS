@@ -23577,67 +23577,133 @@ export type Database = {
       }
       matter_parties: {
         Row: {
+          assignment_date: string | null
+          assignment_status: string | null
           client_id: string | null
           contact_id: string | null
           created_at: string | null
           created_by: string | null
+          effective_from: string | null
+          effective_to: string | null
+          employment_status: string | null
+          entity_status: string | null
+          entity_status_date: string | null
           external_address: string | null
           external_country: string | null
           external_email: string | null
           external_name: string | null
+          external_name_local: string | null
           external_phone: string | null
+          filing_id: string | null
           id: string
+          inventor_id_number: string | null
+          inventor_nationality: string | null
+          inventor_residence: string | null
+          is_active: boolean | null
           is_primary: boolean | null
           jurisdiction: string | null
           matter_id: string
           notes: string | null
+          oath_declaration_date: string | null
+          oath_declaration_status: string | null
           organization_id: string
           party_role: string
+          party_type: string | null
           percentage: number | null
+          poa_date: string | null
+          poa_document_id: string | null
+          poa_expiry: string | null
+          poa_reference: string | null
+          poa_type: string | null
+          role_detail: string | null
           source_relationship_id: string | null
           source_type: string
           updated_at: string | null
         }
         Insert: {
+          assignment_date?: string | null
+          assignment_status?: string | null
           client_id?: string | null
           contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          employment_status?: string | null
+          entity_status?: string | null
+          entity_status_date?: string | null
           external_address?: string | null
           external_country?: string | null
           external_email?: string | null
           external_name?: string | null
+          external_name_local?: string | null
           external_phone?: string | null
+          filing_id?: string | null
           id?: string
+          inventor_id_number?: string | null
+          inventor_nationality?: string | null
+          inventor_residence?: string | null
+          is_active?: boolean | null
           is_primary?: boolean | null
           jurisdiction?: string | null
           matter_id: string
           notes?: string | null
+          oath_declaration_date?: string | null
+          oath_declaration_status?: string | null
           organization_id: string
           party_role: string
+          party_type?: string | null
           percentage?: number | null
+          poa_date?: string | null
+          poa_document_id?: string | null
+          poa_expiry?: string | null
+          poa_reference?: string | null
+          poa_type?: string | null
+          role_detail?: string | null
           source_relationship_id?: string | null
           source_type?: string
           updated_at?: string | null
         }
         Update: {
+          assignment_date?: string | null
+          assignment_status?: string | null
           client_id?: string | null
           contact_id?: string | null
           created_at?: string | null
           created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          employment_status?: string | null
+          entity_status?: string | null
+          entity_status_date?: string | null
           external_address?: string | null
           external_country?: string | null
           external_email?: string | null
           external_name?: string | null
+          external_name_local?: string | null
           external_phone?: string | null
+          filing_id?: string | null
           id?: string
+          inventor_id_number?: string | null
+          inventor_nationality?: string | null
+          inventor_residence?: string | null
+          is_active?: boolean | null
           is_primary?: boolean | null
           jurisdiction?: string | null
           matter_id?: string
           notes?: string | null
+          oath_declaration_date?: string | null
+          oath_declaration_status?: string | null
           organization_id?: string
           party_role?: string
+          party_type?: string | null
           percentage?: number | null
+          poa_date?: string | null
+          poa_document_id?: string | null
+          poa_expiry?: string | null
+          poa_reference?: string | null
+          poa_type?: string | null
+          role_detail?: string | null
           source_relationship_id?: string | null
           source_type?: string
           updated_at?: string | null
@@ -23662,6 +23728,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_filing_id_fkey"
+            columns: ["filing_id"]
+            isOneToOne: false
+            referencedRelation: "matter_filings"
             referencedColumns: ["id"]
           },
           {
@@ -23902,6 +23975,9 @@ export type Database = {
       }
       matter_timeline: {
         Row: {
+          actor_name: string | null
+          actor_type: string | null
+          actor_user_id: string | null
           changed_fields: string[] | null
           created_at: string | null
           created_by: string | null
@@ -23912,15 +23988,22 @@ export type Database = {
           event_type: string
           filing_id: string | null
           id: string
+          is_internal: boolean | null
+          is_pinned: boolean | null
           matter_id: string
           metadata: Json | null
           new_value: Json | null
           old_value: Json | null
           organization_id: string
           party_id: string | null
+          reference_id: string | null
+          reference_type: string | null
           title: string
         }
         Insert: {
+          actor_name?: string | null
+          actor_type?: string | null
+          actor_user_id?: string | null
           changed_fields?: string[] | null
           created_at?: string | null
           created_by?: string | null
@@ -23931,15 +24014,22 @@ export type Database = {
           event_type: string
           filing_id?: string | null
           id?: string
+          is_internal?: boolean | null
+          is_pinned?: boolean | null
           matter_id: string
           metadata?: Json | null
           new_value?: Json | null
           old_value?: Json | null
           organization_id: string
           party_id?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
           title: string
         }
         Update: {
+          actor_name?: string | null
+          actor_type?: string | null
+          actor_user_id?: string | null
           changed_fields?: string[] | null
           created_at?: string | null
           created_by?: string | null
@@ -23950,12 +24040,16 @@ export type Database = {
           event_type?: string
           filing_id?: string | null
           id?: string
+          is_internal?: boolean | null
+          is_pinned?: boolean | null
           matter_id?: string
           metadata?: Json | null
           new_value?: Json | null
           old_value?: Json | null
           organization_id?: string
           party_id?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
           title?: string
         }
         Relationships: [
@@ -42226,20 +42320,37 @@ export type Database = {
         }
         Returns: string
       }
-      log_matter_event: {
-        Args: {
-          p_changed_fields?: string[]
-          p_description?: string
-          p_event_type: string
-          p_filing_id?: string
-          p_matter_id: string
-          p_metadata?: Json
-          p_new_value?: Json
-          p_old_value?: Json
-          p_title: string
-        }
-        Returns: string
-      }
+      log_matter_event:
+        | {
+            Args: {
+              p_changed_fields?: string[]
+              p_description?: string
+              p_event_type: string
+              p_filing_id?: string
+              p_matter_id: string
+              p_metadata?: Json
+              p_new_value?: Json
+              p_old_value?: Json
+              p_title: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_description?: string
+              p_event_type: string
+              p_filing_id: string
+              p_is_internal?: boolean
+              p_matter_id: string
+              p_new_value?: Json
+              p_old_value?: Json
+              p_organization_id: string
+              p_reference_id?: string
+              p_reference_type?: string
+              p_title: string
+            }
+            Returns: string
+          }
       match_knowledge: {
         Args: {
           match_count?: number
