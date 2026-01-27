@@ -310,13 +310,16 @@ serve(async (req) => {
     ];
     
     // Valid matter_status_enum values: draft, filed, examination, published, opposition, registered, granted, renewed, rejected, withdrawn, expired, abandoned
+    // NOTE: matters.status_code is matter_status_enum (strict). Do NOT write legacy UI labels like "pending" here.
     const matterStatuses: Record<string, { status: string; statusCode?: string }> = {
-      "registered": { status: "registered", statusCode: "registered" },
-      "pending": { status: "examination", statusCode: "pending" },
-      "filed": { status: "filed", statusCode: "filed" },
-      "granted": { status: "granted", statusCode: "granted" },
-      "opposed": { status: "opposition", statusCode: "opposed" },
-      "renewal_due": { status: "registered", statusCode: "renewal_pending" },
+      // matters.status is legacy text used by some UI; keep it simple for demo.
+      "registered": { status: "active", statusCode: "registered" },
+      "pending": { status: "active", statusCode: "examination" },
+      "filed": { status: "active", statusCode: "filed" },
+      "granted": { status: "active", statusCode: "granted" },
+      "opposed": { status: "active", statusCode: "opposition" },
+      // There's no enum value for "renewal_pending"; keep it registered and use next_renewal_date + tags/notes to tell the story.
+      "renewal_due": { status: "active", statusCode: "registered" },
     };
     
     const matterIds: string[] = [];
