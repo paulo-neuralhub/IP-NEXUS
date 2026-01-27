@@ -392,32 +392,109 @@ export default function MatterDetailPage() {
                 </p>
               ) : (
                 <div className="space-y-4">
-                  {timeline.map((event, index) => (
-                    <div key={event.id} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        <div className="h-3 w-3 rounded-full bg-primary" />
-                        {index < timeline.length - 1 && (
-                          <div className="w-px h-full bg-border flex-1" />
-                        )}
-                      </div>
-                      <div className="pb-4 flex-1">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium">{event.title}</p>
-                          <span className="text-sm text-muted-foreground">
-                            {formatDistanceToNow(new Date(event.event_date), { 
-                              addSuffix: true, 
-                              locale: es 
-                            })}
-                          </span>
+                  {timeline.map((event, index) => {
+                    // Determine navigation based on event type
+                    const getEventNavigation = () => {
+                      const type = event.event_type?.toLowerCase() || '';
+                      const metadata = event.metadata || {};
+                      
+                      // Email events
+                      if (type.includes('email') || type === 'communication_email') {
+                        const commId = metadata.communication_id || metadata.email_id;
+                        return commId ? `/app/communications/${commId}` : null;
+                      }
+                      // WhatsApp events
+                      if (type.includes('whatsapp') || type === 'communication_whatsapp') {
+                        const contactId = metadata.contact_id;
+                        return contactId ? `/app/crm/contacts/${contactId}?tab=whatsapp` : '/app/communications';
+                      }
+                      // Phone/Call events
+                      if (type.includes('call') || type.includes('phone')) {
+                        const contactId = metadata.contact_id;
+                        return contactId ? `/app/crm/contacts/${contactId}?tab=calls` : null;
+                      }
+                      // Document events
+                      if (type.includes('document') || type === 'filing') {
+                        const docId = metadata.document_id;
+                        return docId ? `/app/documents/${docId}` : null;
+                      }
+                      // Deadline events
+                      if (type.includes('deadline') || type.includes('plazo')) {
+                        return `/app/docket/deadlines`;
+                      }
+                      // Notification events  
+                      if (type.includes('notification') || type.includes('alert')) {
+                        return null; // Notifications open in sidebar
+                      }
+                      // Invoice/Finance events
+                      if (type.includes('invoice') || type.includes('payment') || type.includes('factura')) {
+                        const invoiceId = metadata.invoice_id;
+                        return invoiceId ? `/app/finance/invoices/${invoiceId}` : null;
+                      }
+                      return null;
+                    };
+                    
+                    const eventUrl = getEventNavigation();
+                    const isClickable = !!eventUrl;
+                    
+                    const getEventIcon = () => {
+                      const type = event.event_type?.toLowerCase() || '';
+                      if (type.includes('email')) return '✉️';
+                      if (type.includes('whatsapp')) return '💬';
+                      if (type.includes('call') || type.includes('phone')) return '📞';
+                      if (type.includes('document') || type === 'filing') return '📄';
+                      if (type.includes('deadline') || type.includes('plazo')) return '📅';
+                      if (type.includes('notification') || type.includes('alert')) return '🔔';
+                      if (type.includes('invoice') || type.includes('payment')) return '💰';
+                      if (type.includes('status') || type.includes('grant')) return '✅';
+                      if (type.includes('examination')) return '🔍';
+                      if (type.includes('receipt')) return '📨';
+                      if (type.includes('note')) return '📝';
+                      return '📌';
+                    };
+                    
+                    return (
+                      <div 
+                        key={event.id} 
+                        className={`flex gap-4 ${isClickable ? 'cursor-pointer hover:bg-muted/50 rounded-lg p-2 -m-2 transition-colors' : ''}`}
+                        onClick={() => eventUrl && navigate(eventUrl)}
+                        role={isClickable ? 'button' : undefined}
+                        tabIndex={isClickable ? 0 : undefined}
+                      >
+                        <div className="flex flex-col items-center">
+                          <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm">
+                            {getEventIcon()}
+                          </div>
+                          {index < timeline.length - 1 && (
+                            <div className="w-px h-full bg-border flex-1 mt-2" />
+                          )}
                         </div>
-                        {event.description && (
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {event.description}
-                          </p>
-                        )}
+                        <div className="pb-4 flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className={`font-medium ${isClickable ? 'text-primary hover:underline' : ''}`}>
+                              {event.title}
+                            </p>
+                            <span className="text-sm text-muted-foreground">
+                              {formatDistanceToNow(new Date(event.event_date), { 
+                                addSuffix: true, 
+                                locale: es 
+                              })}
+                            </span>
+                          </div>
+                          {event.description && (
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {event.description}
+                            </p>
+                          )}
+                          {isClickable && (
+                            <p className="text-xs text-primary/70 mt-2">
+                              Clic para ver detalle →
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </CardContent>
