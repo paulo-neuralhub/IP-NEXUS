@@ -66,7 +66,7 @@ function formatError(e: unknown): string {
 }
 
 // Bump this string to confirm which deployed version is running
-const SEED_DEMO_DATA_VERSION = "2026-01-26-complete-demo-data-v2";
+const SEED_DEMO_DATA_VERSION = "2026-01-27-demo-comercial-completo-v3";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -128,19 +128,81 @@ serve(async (req) => {
     };
 
     // 4) Seed realistic-ish data (coherent cross-module dataset)
+    // ============================================================
+    // CLIENTES CON HISTORIAS COHERENTES PARA DEMO COMERCIAL
+    // ============================================================
     const firmContacts = [
-      { name: "Nexus Demo Law Firm", company: true },
-      { name: "Acme Foods S.L.", company: true },
-      { name: "BluePeak Robotics", company: true },
-      { name: "Iberia HealthTech", company: true },
-      { name: "Solaria Renewables", company: true },
-      { name: "Vela Cosmetics", company: true },
-      { name: "Atlas Logistics", company: true },
-      { name: "Cobalt Games Studio", company: true },
+      { 
+        name: "TechVerde Innovations S.L.", 
+        company: true, 
+        industry: "Tecnología", 
+        story: "startup_exito",
+        tier: "gold",
+        contacts: ["María García (CEO)", "Javier Ruiz (CTO)", "Ana López (CFO)"]
+      },
+      { 
+        name: "BioSalud Pharmaceutical S.A.", 
+        company: true, 
+        industry: "Farmacéutica", 
+        story: "enterprise_patentes",
+        tier: "platinum",
+        contacts: ["Dr. Roberto Hernández (I+D)", "Carmen Vega (IP Manager)"]
+      },
+      { 
+        name: "Artesanía Mediterránea", 
+        company: false, 
+        industry: "Artesanía", 
+        story: "autonomo_primera_marca",
+        tier: "bronze",
+        contacts: ["Rosa Martínez López"]
+      },
+      { 
+        name: "GlobalLog International Inc.", 
+        company: true, 
+        industry: "Logística", 
+        story: "multinacional_renovacion",
+        tier: "platinum",
+        contacts: ["Sarah Johnson (VP Legal)", "Pedro Silva (IP Coordinator)"]
+      },
+      { 
+        name: "Vela Cosmetics S.L.", 
+        company: true, 
+        industry: "Cosmética", 
+        story: "pyme_expansion",
+        tier: "silver",
+        contacts: ["Lucía Fernández (Directora)", "Carlos Méndez (Marketing)"]
+      },
+      { 
+        name: "Atlas Logistics Europe", 
+        company: true, 
+        industry: "Transporte", 
+        story: "cliente_habitual",
+        tier: "gold",
+        contacts: ["Miguel Torres (CEO)", "Eva Sánchez (Legal)"]
+      },
+      { 
+        name: "Cobalt Games Studio", 
+        company: true, 
+        industry: "Videojuegos", 
+        story: "startup_tech",
+        tier: "silver",
+        contacts: ["David Herrera (Founder)", "Patricia Gómez (IP)"]
+      },
+      { 
+        name: "Solaria Renewables", 
+        company: true, 
+        industry: "Energías Renovables", 
+        story: "scale_up",
+        tier: "gold",
+        contacts: ["Alberto Ruiz (CEO)", "Marta Díaz (Legal)"]
+      },
     ];
 
-    // Contacts (8)
+    // Contacts (8) - con datos más realistas
     const contactIds: string[] = [];
+    const cities = ["Madrid", "Barcelona", "Valencia", "Sevilla", "Bilbao", "Málaga", "Alicante", "Zaragoza"];
+    const postalCodes = ["28001", "08001", "46001", "41001", "48001", "29001", "03001", "50001"];
+    
     for (let i = 0; i < 8; i++) {
       const c = firmContacts[i];
       const emailSlug = c.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
@@ -151,12 +213,25 @@ serve(async (req) => {
           owner_type: "tenant",
           type: c.company ? "company" : "person",
           name: c.name,
-          email: `${emailSlug}@demo.ip-nexus.local`,
-          phone: "+34 910 000 000",
+          email: `legal@${emailSlug}.demo`,
+          phone: `+34 91 ${String(5550000 + i * 111).slice(0, 3)} ${String(1000 + i * 100)}`,
+          mobile: `+34 6${String(10000000 + i * 11111111).slice(0, 8)}`,
           company_name: c.company ? c.name : null,
-          source: "demo-seed",
-          tags: ["demo"],
+          industry: c.industry,
+          source: pick(["referral", "web", "conference", "linkedin", "direct"]),
+          tags: ["demo", c.industry.toLowerCase().replace(/\s+/g, "-"), c.tier],
           lifecycle_stage: "customer",
+          address_line1: `Calle ${pick(["Serrano", "Velázquez", "Goya", "Alcalá", "Gran Vía"])} ${10 + i * 5}`,
+          city: cities[i],
+          postal_code: postalCodes[i],
+          country: "ES",
+          notes: `Cliente ${c.tier.toUpperCase()}. Historia: ${c.story}. Contactos: ${c.contacts.join(", ")}`,
+          custom_fields: {
+            tier: c.tier,
+            story: c.story,
+            founded_year: 2015 + Math.floor(Math.random() * 8),
+            employee_count: c.tier === "platinum" ? "200+" : c.tier === "gold" ? "50-200" : "10-50"
+          },
           created_by: userData.user.id,
         })
         .select("id")
@@ -191,54 +266,161 @@ serve(async (req) => {
       await register("billing_clients", data.id);
     }
 
-    // Matters (3 per contact = 24)
-    const matterTypes = ["trademark", "patent", "design"];
-    const jurisdictions = ["ES", "EU", "WIPO"];
+    // ============================================================
+    // EXPEDIENTES CON CASOS REALISTAS Y COHERENTES
+    // ============================================================
+    const matterScenarios = [
+      // TechVerde - Historia de éxito
+      { clientIdx: 0, type: "trademark", jur: "ES", mark: "TECHVERDE", status: "registered", story: "Marca registrada con éxito" },
+      { clientIdx: 0, type: "trademark", jur: "EU", mark: "TECHVERDE", status: "pending", story: "Extensión a UE en trámite" },
+      { clientIdx: 0, type: "patent", jur: "ES", mark: null, status: "filed", story: "Patente software IA en examen" },
+      
+      // BioSalud - Enterprise con oposición
+      { clientIdx: 1, type: "patent", jur: "EU", mark: null, status: "opposed", story: "Patente con oposición activa" },
+      { clientIdx: 1, type: "trademark", jur: "ES", mark: "BIOSALUD", status: "registered", story: "Marca principal registrada" },
+      { clientIdx: 1, type: "trademark", jur: "EU", mark: "BIOSALUD PHARMA", status: "registered", story: "Marca EU protegida" },
+      
+      // Artesanía - Primera marca
+      { clientIdx: 2, type: "trademark", jur: "ES", mark: "MEDITERRÁNEA", status: "pending", story: "Primera marca en trámite" },
+      { clientIdx: 2, type: "design", jur: "ES", mark: null, status: "filed", story: "Diseños cerámica 2024" },
+      
+      // GlobalLog - Renovación urgente
+      { clientIdx: 3, type: "trademark", jur: "EU", mark: "GLOBALLOG", status: "renewal_due", story: "URGENTE: Renovación vence en 30 días" },
+      { clientIdx: 3, type: "trademark", jur: "US", mark: "GLOBALLOG", status: "registered", story: "Marca USA vigente" },
+      { clientIdx: 3, type: "trademark", jur: "WIPO", mark: "GLOBALLOG", status: "registered", story: "Madrid Protocol activo" },
+      
+      // Vela Cosmetics - Expansión
+      { clientIdx: 4, type: "trademark", jur: "ES", mark: "VELA", status: "registered", story: "Marca base registrada" },
+      { clientIdx: 4, type: "trademark", jur: "EU", mark: "VELA BEAUTY", status: "pending", story: "Nueva marca en examen" },
+      { clientIdx: 4, type: "design", jur: "EU", mark: null, status: "registered", story: "Packaging registrado" },
+      
+      // Atlas Logistics
+      { clientIdx: 5, type: "trademark", jur: "ES", mark: "ATLAS", status: "registered", story: "Marca principal" },
+      { clientIdx: 5, type: "trademark", jur: "EU", mark: "ATLAS EXPRESS", status: "registered", story: "Submarca servicios" },
+      
+      // Cobalt Games
+      { clientIdx: 6, type: "trademark", jur: "ES", mark: "COBALT", status: "registered", story: "Marca estudio" },
+      { clientIdx: 6, type: "trademark", jur: "EU", mark: "COBALT GAMES", status: "pending", story: "Extensión EU" },
+      { clientIdx: 6, type: "patent", jur: "ES", mark: null, status: "filed", story: "Patente motor gráfico" },
+      
+      // Solaria Renewables
+      { clientIdx: 7, type: "trademark", jur: "ES", mark: "SOLARIA", status: "registered", story: "Marca principal" },
+      { clientIdx: 7, type: "patent", jur: "EU", mark: null, status: "granted", story: "Patente panel solar" },
+      { clientIdx: 7, type: "trademark", jur: "WIPO", mark: "SOLARIA GREEN", status: "pending", story: "Expansión global" },
+    ];
+    
+    const matterStatuses: Record<string, { status: string; statusCode?: string }> = {
+      "registered": { status: "active", statusCode: "registered" },
+      "pending": { status: "active", statusCode: "pending" },
+      "filed": { status: "active", statusCode: "filed" },
+      "granted": { status: "active", statusCode: "granted" },
+      "opposed": { status: "active", statusCode: "opposed" },
+      "renewal_due": { status: "active", statusCode: "renewal_pending" },
+    };
+    
     const matterIds: string[] = [];
     let matterCounter = 1;
-    for (let cIdx = 0; cIdx < contactIds.length; cIdx++) {
-      for (let m = 0; m < 3; m++) {
-        const type = pick(matterTypes);
-        const reference = `DEMO-${String(matterCounter).padStart(4, "0")}`;
-        matterCounter += 1;
-
-        const markName = type === "trademark" ? pick(["NEXAL", "SOLARIA", "BLUEPEAK", "VELA", "COBALT"]) : null;
-
-        const jurisdictionCode = pick(jurisdictions);
-        const filingDate = daysAgo(90 + Math.floor(Math.random() * 720));
-        const expiryDate = new Date(filingDate.getTime() + 10 * 365 * 24 * 60 * 60 * 1000);
-        const nextRenewalDate = new Date(expiryDate.getTime() - 180 * 24 * 60 * 60 * 1000);
-
-        const { data, error } = await adminClient
-          .from("matters")
-          .insert({
-            organization_id: organizationId,
-            reference,
-            title: `${type.toUpperCase()} — ${markName ?? reference}`,
-            type,
-            status: "active",
-            jurisdiction: jurisdictionCode,
-            jurisdiction_code: jurisdictionCode,
-            filing_date: filingDate.toISOString().slice(0, 10),
-            expiry_date: expiryDate.toISOString().slice(0, 10),
-            next_renewal_date: nextRenewalDate.toISOString().slice(0, 10),
-            mark_name: markName,
-            owner_name: firmContacts[cIdx].name,
-            tags: ["demo"],
-            notes: "Expediente de demostración generado automáticamente.",
-            created_by: userData.user.id,
-          })
-          .select("id")
-          .single();
-        if (error) throw error;
-        matterIds.push(data.id);
-        await register("matters", data.id);
-      }
+    
+    for (const scenario of matterScenarios) {
+      const reference = `${new Date().getFullYear()}/${scenario.type.toUpperCase().slice(0, 2)}/${String(matterCounter).padStart(3, "0")}`;
+      matterCounter += 1;
+      
+      const filingDate = daysAgo(90 + Math.floor(Math.random() * 720));
+      const expiryDate = new Date(filingDate.getTime() + 10 * 365 * 24 * 60 * 60 * 1000);
+      const nextRenewalDate = scenario.status === "renewal_due" 
+        ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) 
+        : new Date(expiryDate.getTime() - 180 * 24 * 60 * 60 * 1000);
+      
+      const statusInfo = matterStatuses[scenario.status] || { status: "active" };
+      
+      const { data, error } = await adminClient
+        .from("matters")
+        .insert({
+          organization_id: organizationId,
+          client_id: contactIds[scenario.clientIdx],
+          reference,
+          title: scenario.mark ? `${scenario.mark} (${scenario.jur})` : `${scenario.type.toUpperCase()} ${reference}`,
+          type: scenario.type,
+          status: statusInfo.status,
+          status_code: statusInfo.statusCode,
+          jurisdiction: scenario.jur,
+          jurisdiction_code: scenario.jur,
+          filing_date: filingDate.toISOString().slice(0, 10),
+          registration_date: ["registered", "granted"].includes(scenario.status) ? daysAgo(Math.floor(Math.random() * 365)).toISOString().slice(0, 10) : null,
+          expiry_date: expiryDate.toISOString().slice(0, 10),
+          next_renewal_date: nextRenewalDate.toISOString().slice(0, 10),
+          mark_name: scenario.mark,
+          owner_name: firmContacts[scenario.clientIdx].name,
+          nice_classes: scenario.type === "trademark" ? pickMany([3, 5, 9, 25, 35, 42], 2 + Math.floor(Math.random() * 2)) : null,
+          tags: ["demo", scenario.status, scenario.jur.toLowerCase()],
+          notes: scenario.story,
+          internal_notes: `Demo: ${scenario.story}. Cliente: ${firmContacts[scenario.clientIdx].name}`,
+          created_by: userData.user.id,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      matterIds.push(data.id);
+      await register("matters", data.id);
     }
 
-    // Matter deadlines (40)
-    const deadlineTypes = ["renewal", "office_action", "opposition", "payment", "filing"];
-    for (let i = 0; i < 40; i++) {
+    // ============================================================
+    // PLAZOS Y DEADLINES - Variedad de estados para demo
+    // ============================================================
+    const deadlineScenarios = [
+      // Vencidos (críticos para demo)
+      { daysOffset: -5, type: "office_action", title: "VENCIDO: Respuesta a Oposición EPO", priority: "critical", status: "overdue" },
+      { daysOffset: -2, type: "payment", title: "VENCIDO: Pago tasa renovación", priority: "critical", status: "overdue" },
+      
+      // Urgentes (próximos 7 días)
+      { daysOffset: 3, type: "renewal", title: "URGENTE: Renovación EUTM GlobalLog", priority: "critical", status: "pending" },
+      { daysOffset: 5, type: "filing", title: "URGENTE: Presentación respuesta EUIPO", priority: "high", status: "pending" },
+      { daysOffset: 7, type: "office_action", title: "Respuesta a examen formal", priority: "high", status: "pending" },
+      
+      // Próximos (8-30 días)
+      { daysOffset: 14, type: "opposition", title: "Fin período enfriamiento", priority: "normal", status: "pending" },
+      { daysOffset: 21, type: "payment", title: "Pago anualidad patente", priority: "normal", status: "pending" },
+      { daysOffset: 30, type: "filing", title: "Presentación diseño industrial", priority: "normal", status: "pending" },
+      
+      // Futuros (>30 días)
+      { daysOffset: 45, type: "renewal", title: "Renovación marca ES", priority: "low", status: "pending" },
+      { daysOffset: 60, type: "office_action", title: "Respuesta a informe técnico", priority: "normal", status: "pending" },
+      { daysOffset: 90, type: "renewal", title: "Renovación marca EU", priority: "low", status: "pending" },
+      
+      // Completados
+      { daysOffset: -30, type: "payment", title: "Pago tasas registro", priority: "normal", status: "completed" },
+      { daysOffset: -45, type: "filing", title: "Presentación solicitud", priority: "normal", status: "completed" },
+    ];
+    
+    // Crear plazos específicos de escenarios
+    for (let i = 0; i < deadlineScenarios.length; i++) {
+      const scenario = deadlineScenarios[i];
+      const matterId = matterIds[i % matterIds.length];
+      const deadlineDate = new Date(Date.now() + scenario.daysOffset * 24 * 60 * 60 * 1000);
+      const triggerDate = new Date(deadlineDate.getTime() - 30 * 24 * 60 * 60 * 1000);
+      
+      const { data, error } = await adminClient
+        .from("matter_deadlines")
+        .insert({
+          organization_id: organizationId,
+          matter_id: matterId,
+          deadline_type: scenario.type,
+          title: scenario.title,
+          description: `Plazo de demostración: ${scenario.title}`,
+          trigger_date: triggerDate.toISOString().slice(0, 10),
+          deadline_date: deadlineDate.toISOString().slice(0, 10),
+          status: scenario.status,
+          priority: scenario.priority,
+          completed_at: scenario.status === "completed" ? daysAgo(-scenario.daysOffset - 2).toISOString() : null,
+        })
+        .select("id")
+        .single();
+      if (error) throw error;
+      await register("matter_deadlines", data.id);
+    }
+    
+    // Añadir más plazos aleatorios para llenar el calendario
+    for (let i = 0; i < 25; i++) {
       const matterId = pick(matterIds);
       const daysForward = 7 + Math.floor(Math.random() * 365);
       const deadlineDate = new Date(Date.now() + daysForward * 24 * 60 * 60 * 1000);
@@ -249,13 +431,13 @@ serve(async (req) => {
         .insert({
           organization_id: organizationId,
           matter_id: matterId,
-          deadline_type: pick(deadlineTypes),
-          title: `Plazo demo #${i + 1}`,
+          deadline_type: pick(["renewal", "office_action", "opposition", "payment", "filing"]),
+          title: `Plazo ${pick(["renovación", "respuesta", "presentación", "pago"])} #${i + 1}`,
           description: "Plazo de demostración para simular gestión de vencimientos.",
           trigger_date: triggerDate.toISOString().slice(0, 10),
           deadline_date: deadlineDate.toISOString().slice(0, 10),
           status: "pending",
-          priority: pick(["normal", "high"]),
+          priority: pick(["normal", "high", "low"]),
         })
         .select("id")
         .single();
