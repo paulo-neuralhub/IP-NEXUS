@@ -5,7 +5,8 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Archive,
-  Tag, Clock, Building2, User, FileText, Users, History
+  Tag, Clock, Building2, User, FileText, Users, History,
+  Mail, Phone, Calendar, CheckSquare, Receipt, FolderOpen
 } from 'lucide-react';
 import { useMatterV2, useMatterFilings, useMatterTimeline, useMatterParties, useMatterTypes } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
@@ -23,6 +24,11 @@ import {
 import { usePageTitle } from '@/contexts/page-context';
 import { format, formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { MatterDocumentsTab } from '@/components/matters/MatterDocumentsTab';
+import { MatterDeadlinesTab } from '@/components/matters/MatterDeadlinesTab';
+import { MatterTasksTab } from '@/components/matters/MatterTasksTab';
+import { MatterInvoicesTab } from '@/components/matters/MatterInvoicesTab';
+import { MatterCommunicationsTab } from '@/components/matters/MatterCommunicationsTab';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   draft: { label: 'Borrador', color: 'bg-slate-100 text-slate-700' },
@@ -141,7 +147,7 @@ export default function MatterDetailPage() {
       
       {/* Tabs */}
       <Tabs defaultValue="general" className="space-y-6">
-        <TabsList>
+        <TabsList className="flex-wrap">
           <TabsTrigger value="general" className="gap-2">
             <FileText className="h-4 w-4" />
             General
@@ -153,6 +159,26 @@ export default function MatterDetailPage() {
           <TabsTrigger value="parties" className="gap-2">
             <Users className="h-4 w-4" />
             Partes ({parties?.length || 0})
+          </TabsTrigger>
+          <TabsTrigger value="documents" className="gap-2">
+            <FolderOpen className="h-4 w-4" />
+            Documentos
+          </TabsTrigger>
+          <TabsTrigger value="deadlines" className="gap-2">
+            <Calendar className="h-4 w-4" />
+            Plazos
+          </TabsTrigger>
+          <TabsTrigger value="communications" className="gap-2">
+            <Mail className="h-4 w-4" />
+            Comunicaciones
+          </TabsTrigger>
+          <TabsTrigger value="tasks" className="gap-2">
+            <CheckSquare className="h-4 w-4" />
+            Tareas
+          </TabsTrigger>
+          <TabsTrigger value="invoices" className="gap-2">
+            <Receipt className="h-4 w-4" />
+            Facturas
           </TabsTrigger>
           <TabsTrigger value="timeline" className="gap-2">
             <History className="h-4 w-4" />
@@ -377,6 +403,35 @@ export default function MatterDetailPage() {
               )}
             </CardContent>
           </Card>
+        </TabsContent>
+
+        {/* Documents Tab */}
+        <TabsContent value="documents">
+          <MatterDocumentsTab matterId={id!} />
+        </TabsContent>
+
+        {/* Deadlines Tab */}
+        <TabsContent value="deadlines">
+          <MatterDeadlinesTab matterId={id!} />
+        </TabsContent>
+
+        {/* Communications Tab */}
+        <TabsContent value="communications">
+          <MatterCommunicationsTab 
+            matterId={id!} 
+            matterTitle={matter.title}
+            clientId={matter.client_id}
+          />
+        </TabsContent>
+
+        {/* Tasks Tab */}
+        <TabsContent value="tasks">
+          <MatterTasksTab matterId={id!} />
+        </TabsContent>
+
+        {/* Invoices Tab */}
+        <TabsContent value="invoices">
+          <MatterInvoicesTab matterId={id!} clientId={matter.client_id} />
         </TabsContent>
         
         {/* Timeline Tab */}

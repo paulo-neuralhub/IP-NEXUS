@@ -9,6 +9,17 @@ export { ImportPartiesModal } from './ImportPartiesModal';
 
 // Matter communications
 export { MatterCommunications } from './MatterCommunications';
+export { MatterCommunicationsTab } from './MatterCommunicationsTab';
+export { EmailComposeModal } from './EmailComposeModal';
+export { LogCallModal } from './LogCallModal';
+
+// Matter tabs
+export { MatterDocumentsTab } from './MatterDocumentsTab';
+export { MatterDeadlinesTab } from './MatterDeadlinesTab';
+export { MatterTasksTab } from './MatterTasksTab';
+export { MatterInvoicesTab } from './MatterInvoicesTab';
+export { AddDeadlineModal } from './AddDeadlineModal';
+export { AddTaskModal } from './AddTaskModal';
 
 // Matter office components
 export { MatterOfficialTab } from './MatterOfficialTab';
