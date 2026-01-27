@@ -6,7 +6,15 @@ export type SeedDemoDataResponse =
   | { ok: false; error: string };
 
 export type CleanupDemoDataResponse =
-  | { ok: true; run_id: string; deleted: Record<string, number> }
+  | { ok: true; run_id?: string; deleted: Record<string, number> }
+  | { ok: false; error: string };
+
+export type CleanDemoTenantResponse =
+  | { ok: true; tenant_id: string; deleted: Record<string, number>; timestamp: string }
+  | { ok: false; error: string };
+
+export type CleanAllDemoTenantsResponse =
+  | { ok: true; cleaned_tenants: number; results: Array<{ org_id: string; org_name: string; org_slug: string; result: any }>; timestamp: string }
   | { ok: false; error: string };
 
 export type SeedDemoUsersResponse =
@@ -229,3 +237,78 @@ export function useSeedDemoTenantConfigs() {
     },
   });
 }
+
+// ============================================================
+// NUEVAS FUNCIONES DE LIMPIEZA TOTAL
+// ============================================================
+
+interface CleanDemoResult {
+  success: boolean;
+  tenant_id?: string;
+  deleted?: Record<string, number>;
+  timestamp?: string;
+  error?: string;
+}
+
+interface CleanAllDemoResult {
+  success: boolean;
+  cleaned_tenants?: number;
+  results?: Array<{ org_id: string; org_name: string; org_slug: string; result: unknown }>;
+  timestamp?: string;
+  error?: string;
+}
+
+/**
+ * Limpia todos los datos de un tenant DEMO específico usando la función SQL
+ */
+export function useCleanDemoTenant() {
+  return useMutation({
+    mutationFn: async (tenantId?: string): Promise<CleanDemoTenantResponse> => {
+      const { data, error } = await supabase.rpc('clean_demo_tenant_data', {
+        p_tenant_id: tenantId || '00000000-0000-0000-0000-00000000de00'
+      });
+      if (error) throw error;
+      
+      const result = data as unknown as CleanDemoResult;
+      
+      if (result?.success) {
+        return {
+          ok: true,
+          tenant_id: result.tenant_id || tenantId || DEMO_MASTER_TENANT_ID,
+          deleted: result.deleted || {},
+          timestamp: result.timestamp || new Date().toISOString()
+        };
+      }
+      
+      return { ok: false, error: result?.error || 'Error desconocido' };
+    },
+  });
+}
+
+/**
+ * Limpia todos los datos de TODOS los tenants marcados como demo
+ */
+export function useCleanAllDemoTenants() {
+  return useMutation({
+    mutationFn: async (): Promise<CleanAllDemoTenantsResponse> => {
+      const { data, error } = await supabase.rpc('clean_all_demo_tenants');
+      if (error) throw error;
+      
+      const result = data as unknown as CleanAllDemoResult;
+      
+      if (result?.success) {
+        return {
+          ok: true,
+          cleaned_tenants: result.cleaned_tenants || 0,
+          results: result.results || [],
+          timestamp: result.timestamp || new Date().toISOString()
+        };
+      }
+      
+      return { ok: false, error: result?.error || 'Error desconocido' };
+    },
+  });
+}
+
+// Constante para el tenant demo maestro
+export const DEMO_MASTER_TENANT_ID = '00000000-0000-0000-0000-00000000de00';

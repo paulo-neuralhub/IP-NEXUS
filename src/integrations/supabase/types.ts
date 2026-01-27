@@ -27172,6 +27172,7 @@ export type Database = {
           id: string
           industry: string | null
           ip_portfolio_summary: Json | null
+          is_demo: boolean | null
           is_platform_org: boolean | null
           last_interaction_at: string | null
           lifetime_value: number | null
@@ -27205,6 +27206,7 @@ export type Database = {
           id?: string
           industry?: string | null
           ip_portfolio_summary?: Json | null
+          is_demo?: boolean | null
           is_platform_org?: boolean | null
           last_interaction_at?: string | null
           lifetime_value?: number | null
@@ -27238,6 +27240,7 @@ export type Database = {
           id?: string
           industry?: string | null
           ip_portfolio_summary?: Json | null
+          is_demo?: boolean | null
           is_platform_org?: boolean | null
           last_interaction_at?: string | null
           lifetime_value?: number | null
@@ -40975,6 +40978,8 @@ export type Database = {
         }
         Returns: boolean
       }
+      clean_all_demo_tenants: { Args: never; Returns: Json }
+      clean_demo_tenant_data: { Args: { p_tenant_id?: string }; Returns: Json }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       create_alert: {
         Args: {
