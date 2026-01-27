@@ -3,11 +3,12 @@
 // ============================================================
 
 import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { 
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Archive,
   Tag, Clock, Building2, User, FileText, Users, History,
-  Mail, Phone, Calendar, CheckSquare, Receipt, FolderOpen
+  Mail, Phone, Calendar, CheckSquare, Receipt, FolderOpen,
+  ExternalLink
 } from 'lucide-react';
 import { useMatterV2, useMatterFilings, useMatterTimeline, useMatterParties, useMatterTypes } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
@@ -118,6 +119,19 @@ export default function MatterDetailPage() {
               )}
             </div>
             <p className="text-lg text-muted-foreground mt-1">{matter.title}</p>
+            {/* Client link */}
+            {matter.client_id && matter.client_name && (
+              <div className="flex items-center gap-2 mt-2">
+                <Building2 className="h-4 w-4 text-muted-foreground" />
+                <Link 
+                  to={`/app/crm/clients/${matter.client_id}`}
+                  className="text-primary hover:underline flex items-center gap-1"
+                >
+                  {matter.client_name}
+                  <ExternalLink className="h-3 w-3" />
+                </Link>
+              </div>
+            )}
           </div>
         </div>
         
