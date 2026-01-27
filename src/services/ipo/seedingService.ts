@@ -1,6 +1,6 @@
 // src/services/ipo/seedingService.ts
 import { supabase } from '@/integrations/supabase/client';
-import { ALL_IPO_SEED_DATA, IPOSeedData } from '@/data/ipo-seed-data';
+import { ALL_IPO_SEED_DATA } from '@/data/ipo-seed-data';
 
 interface SeedingProgress {
   phase: string;
@@ -23,7 +23,7 @@ export class IPOSeedingService {
       this.updateProgress('base_data', 0, ALL_IPO_SEED_DATA.length, 'Iniciando importación...');
       
       for (let i = 0; i < ALL_IPO_SEED_DATA.length; i++) {
-        const office = ALL_IPO_SEED_DATA[i];
+        const office = ALL_IPO_SEED_DATA[i] as any;
         const result = await this.insertOffice(office);
         
         if (result.created) stats.officesCreated++;
@@ -40,7 +40,7 @@ export class IPOSeedingService {
     }
   }
 
-  private async insertOffice(data: IPOSeedData): Promise<{ created?: boolean; skipped?: boolean; error?: boolean }> {
+  private async insertOffice(data: any): Promise<{ created?: boolean; skipped?: boolean; error?: boolean }> {
     const { data: existing } = await (supabase
       .from('ipo_offices' as any)
       .select('id')
@@ -57,15 +57,24 @@ export class IPOSeedingService {
         name_official: data.nameOfficial,
         name_short: data.nameShort,
         country_code: data.countryCode,
+        country_name: data.countryName,
+        flag_emoji: data.flagEmoji,
         region: data.region,
         office_type: data.officeType,
         ip_types: data.ipTypes,
         timezone: data.timezone,
         languages: data.languages,
         currency: data.currency,
+        tier: data.tier,
+        automation_level: data.automationLevel,
+        automation_percentage: data.automationPercentage,
         website_official: data.websiteOfficial,
         website_search: data.websiteSearch,
-        tier: data.tier,
+        has_api: data.hasApi,
+        api_type: data.apiType,
+        e_filing_available: data.eFilingAvailable,
+        online_payment: data.onlinePayment,
+        capabilities: data.capabilities,
         status: 'active',
         priority_score: data.tier === 1 ? 90 : data.tier === 2 ? 60 : 30,
       }) as any);

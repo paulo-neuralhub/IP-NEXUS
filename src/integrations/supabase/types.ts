@@ -18856,30 +18856,53 @@ export type Database = {
       ipo_offices: {
         Row: {
           address: string | null
+          api_authentication_type: string | null
           api_base_url: string | null
           api_credentials: Json | null
+          api_documentation_url: string | null
+          api_sandbox_available: boolean | null
+          api_type: string | null
+          api_url: string | null
           api_version: string | null
           auth_type: string | null
+          automation_level: string | null
+          automation_percentage: number | null
           avg_response_time_ms: number | null
+          capabilities: Json | null
           code: string
           code_alt: string | null
+          connection_config: Json | null
+          connection_status: string | null
           country_code: string | null
+          country_name: string | null
           created_at: string | null
           currency: string | null
           data_source_config: Json | null
           data_source_type: string | null
+          e_filing_available: boolean | null
+          e_filing_url: string | null
           email_general: string | null
           fees_url: string | null
+          flag_emoji: string | null
+          has_api: boolean | null
           id: string
+          internal_notes: string | null
           ip_types: string[] | null
           is_active: boolean | null
+          is_connected: boolean | null
           languages: string[] | null
           last_health_check: string | null
+          last_sync_at: string | null
+          last_sync_status: string | null
+          last_sync_type: string | null
           name_official: string
           name_short: string | null
+          nice_version: string | null
           notes: string | null
           office_type: string
+          online_payment: boolean | null
           operational_status: string | null
+          payment_methods: Json | null
           phone_general: string | null
           priority_score: number | null
           product_id: string | null
@@ -18887,43 +18910,72 @@ export type Database = {
           rate_limit_per_minute: number | null
           region: string | null
           status: string | null
+          support_email: string | null
+          support_phone: string | null
+          supported_mark_types: Json | null
           supports_documents: boolean | null
           supports_events: boolean | null
           supports_fees: boolean | null
           supports_search: boolean | null
           supports_status: boolean | null
+          sync_frequency: string | null
           tier: number | null
           timezone: string
           updated_at: string | null
+          uses_nice_classification: boolean | null
           website_official: string | null
           website_search: string | null
+          working_hours: Json | null
         }
         Insert: {
           address?: string | null
+          api_authentication_type?: string | null
           api_base_url?: string | null
           api_credentials?: Json | null
+          api_documentation_url?: string | null
+          api_sandbox_available?: boolean | null
+          api_type?: string | null
+          api_url?: string | null
           api_version?: string | null
           auth_type?: string | null
+          automation_level?: string | null
+          automation_percentage?: number | null
           avg_response_time_ms?: number | null
+          capabilities?: Json | null
           code: string
           code_alt?: string | null
+          connection_config?: Json | null
+          connection_status?: string | null
           country_code?: string | null
+          country_name?: string | null
           created_at?: string | null
           currency?: string | null
           data_source_config?: Json | null
           data_source_type?: string | null
+          e_filing_available?: boolean | null
+          e_filing_url?: string | null
           email_general?: string | null
           fees_url?: string | null
+          flag_emoji?: string | null
+          has_api?: boolean | null
           id?: string
+          internal_notes?: string | null
           ip_types?: string[] | null
           is_active?: boolean | null
+          is_connected?: boolean | null
           languages?: string[] | null
           last_health_check?: string | null
+          last_sync_at?: string | null
+          last_sync_status?: string | null
+          last_sync_type?: string | null
           name_official: string
           name_short?: string | null
+          nice_version?: string | null
           notes?: string | null
           office_type: string
+          online_payment?: boolean | null
           operational_status?: string | null
+          payment_methods?: Json | null
           phone_general?: string | null
           priority_score?: number | null
           product_id?: string | null
@@ -18931,43 +18983,72 @@ export type Database = {
           rate_limit_per_minute?: number | null
           region?: string | null
           status?: string | null
+          support_email?: string | null
+          support_phone?: string | null
+          supported_mark_types?: Json | null
           supports_documents?: boolean | null
           supports_events?: boolean | null
           supports_fees?: boolean | null
           supports_search?: boolean | null
           supports_status?: boolean | null
+          sync_frequency?: string | null
           tier?: number | null
           timezone: string
           updated_at?: string | null
+          uses_nice_classification?: boolean | null
           website_official?: string | null
           website_search?: string | null
+          working_hours?: Json | null
         }
         Update: {
           address?: string | null
+          api_authentication_type?: string | null
           api_base_url?: string | null
           api_credentials?: Json | null
+          api_documentation_url?: string | null
+          api_sandbox_available?: boolean | null
+          api_type?: string | null
+          api_url?: string | null
           api_version?: string | null
           auth_type?: string | null
+          automation_level?: string | null
+          automation_percentage?: number | null
           avg_response_time_ms?: number | null
+          capabilities?: Json | null
           code?: string
           code_alt?: string | null
+          connection_config?: Json | null
+          connection_status?: string | null
           country_code?: string | null
+          country_name?: string | null
           created_at?: string | null
           currency?: string | null
           data_source_config?: Json | null
           data_source_type?: string | null
+          e_filing_available?: boolean | null
+          e_filing_url?: string | null
           email_general?: string | null
           fees_url?: string | null
+          flag_emoji?: string | null
+          has_api?: boolean | null
           id?: string
+          internal_notes?: string | null
           ip_types?: string[] | null
           is_active?: boolean | null
+          is_connected?: boolean | null
           languages?: string[] | null
           last_health_check?: string | null
+          last_sync_at?: string | null
+          last_sync_status?: string | null
+          last_sync_type?: string | null
           name_official?: string
           name_short?: string | null
+          nice_version?: string | null
           notes?: string | null
           office_type?: string
+          online_payment?: boolean | null
           operational_status?: string | null
+          payment_methods?: Json | null
           phone_general?: string | null
           priority_score?: number | null
           product_id?: string | null
@@ -18975,16 +19056,22 @@ export type Database = {
           rate_limit_per_minute?: number | null
           region?: string | null
           status?: string | null
+          support_email?: string | null
+          support_phone?: string | null
+          supported_mark_types?: Json | null
           supports_documents?: boolean | null
           supports_events?: boolean | null
           supports_fees?: boolean | null
           supports_search?: boolean | null
           supports_status?: boolean | null
+          sync_frequency?: string | null
           tier?: number | null
           timezone?: string
           updated_at?: string | null
+          uses_nice_classification?: boolean | null
           website_official?: string | null
           website_search?: string | null
+          working_hours?: Json | null
         }
         Relationships: []
       }
