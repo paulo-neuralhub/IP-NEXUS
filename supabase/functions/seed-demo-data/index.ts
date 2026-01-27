@@ -117,6 +117,8 @@ serve(async (req) => {
     if (runErr) throw runErr;
 
     const runId = run.id as string;
+    // Short unique suffix to avoid reference collisions on re-runs
+    const runSuffix = runId.slice(0, 4).toUpperCase();
 
     const register = async (tableName: string, rowId: string) => {
       const { error } = await adminClient.from("demo_seed_entities").insert({
@@ -326,9 +328,10 @@ serve(async (req) => {
     let matterCounter = 1;
     
     for (const scenario of matterScenarios) {
-      const reference = `${new Date().getFullYear()}/${scenario.type.toUpperCase().slice(0, 2)}/${String(matterCounter).padStart(3, "0")}`;
+      // Include runSuffix to guarantee unique references across seed runs
+      const reference = `${new Date().getFullYear()}/${scenario.type.toUpperCase().slice(0, 2)}/${String(matterCounter).padStart(3, "0")}-${runSuffix}`;
       matterCounter += 1;
-      
+
       const filingDate = daysAgo(90 + Math.floor(Math.random() * 720));
       const expiryDate = new Date(filingDate.getTime() + 10 * 365 * 24 * 60 * 60 * 1000);
       const nextRenewalDate = scenario.status === "renewal_due" 
