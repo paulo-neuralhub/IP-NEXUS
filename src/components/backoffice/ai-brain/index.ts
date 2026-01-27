@@ -14,3 +14,4 @@ export { CostAnalyticsTab } from './CostAnalyticsTab';
 export { ProviderDialog } from './dialogs/ProviderDialog';
 export { TaskDialog } from './dialogs/TaskDialog';
 export { RAGDialog } from './dialogs/RAGDialog';
+export { TestSuitesTab } from './TestSuitesTab';

@@ -109,3 +109,21 @@ export {
   useAllTasksRouting,
 } from './useAIRoutingSimulator';
 
+// Test Suites & Evaluation (Phase 5)
+export {
+  useAITestSuites,
+  useAITestSuite,
+  useCreateTestSuite,
+  useUpdateTestSuite,
+  useDeleteTestSuite,
+  useAITestCases,
+  useCreateTestCase,
+  useUpdateTestCase,
+  useDeleteTestCase,
+  useAITestRuns,
+  useStartTestRun,
+  useCompleteTestRun,
+  useAITestResults,
+  useCheckQualityGate,
+} from './useAITestSuites';
+

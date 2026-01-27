@@ -2154,6 +2154,53 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_quality_evaluations: {
+        Row: {
+          criteria_scores: Json | null
+          evaluated_at: string | null
+          evaluated_by: string
+          execution_id: string | null
+          id: string
+          score: number
+          strengths: string | null
+          suggestions: string | null
+          test_result_id: string | null
+          weaknesses: string | null
+        }
+        Insert: {
+          criteria_scores?: Json | null
+          evaluated_at?: string | null
+          evaluated_by: string
+          execution_id?: string | null
+          id?: string
+          score: number
+          strengths?: string | null
+          suggestions?: string | null
+          test_result_id?: string | null
+          weaknesses?: string | null
+        }
+        Update: {
+          criteria_scores?: Json | null
+          evaluated_at?: string | null
+          evaluated_by?: string
+          execution_id?: string | null
+          id?: string
+          score?: number
+          strengths?: string | null
+          suggestions?: string | null
+          test_result_id?: string | null
+          weaknesses?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_quality_evaluations_test_result_id_fkey"
+            columns: ["test_result_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_results"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_rag_collections: {
         Row: {
           auto_update_enabled: boolean | null
@@ -2535,6 +2582,285 @@ export type Database = {
             columns: ["prompt_id"]
             isOneToOne: false
             referencedRelation: "ai_prompt_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_test_cases: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          expected_contains: string[] | null
+          expected_format: string | null
+          expected_max_length: number | null
+          expected_min_length: number | null
+          expected_not_contains: string[] | null
+          expected_schema: Json | null
+          id: string
+          input_variables: Json
+          is_active: boolean | null
+          is_golden: boolean | null
+          name: string
+          priority: number | null
+          reference_output: string | null
+          similarity_threshold: number | null
+          suite_id: string
+          tags: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          expected_contains?: string[] | null
+          expected_format?: string | null
+          expected_max_length?: number | null
+          expected_min_length?: number | null
+          expected_not_contains?: string[] | null
+          expected_schema?: Json | null
+          id?: string
+          input_variables?: Json
+          is_active?: boolean | null
+          is_golden?: boolean | null
+          name: string
+          priority?: number | null
+          reference_output?: string | null
+          similarity_threshold?: number | null
+          suite_id: string
+          tags?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          expected_contains?: string[] | null
+          expected_format?: string | null
+          expected_max_length?: number | null
+          expected_min_length?: number | null
+          expected_not_contains?: string[] | null
+          expected_schema?: Json | null
+          id?: string
+          input_variables?: Json
+          is_active?: boolean | null
+          is_golden?: boolean | null
+          name?: string
+          priority?: number | null
+          reference_output?: string | null
+          similarity_threshold?: number | null
+          suite_id?: string
+          tags?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_cases_suite_id_fkey"
+            columns: ["suite_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_suites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_test_results: {
+        Row: {
+          actual_output: string | null
+          cost: number | null
+          created_at: string | null
+          error_message: string | null
+          evaluated_at: string | null
+          evaluated_by: string | null
+          id: string
+          input_tokens: number | null
+          latency_ms: number | null
+          output_tokens: number | null
+          quality_notes: string | null
+          quality_score: number | null
+          run_id: string
+          status: string
+          test_case_id: string
+          validations: Json | null
+        }
+        Insert: {
+          actual_output?: string | null
+          cost?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          evaluated_at?: string | null
+          evaluated_by?: string | null
+          id?: string
+          input_tokens?: number | null
+          latency_ms?: number | null
+          output_tokens?: number | null
+          quality_notes?: string | null
+          quality_score?: number | null
+          run_id: string
+          status: string
+          test_case_id: string
+          validations?: Json | null
+        }
+        Update: {
+          actual_output?: string | null
+          cost?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          evaluated_at?: string | null
+          evaluated_by?: string | null
+          id?: string
+          input_tokens?: number | null
+          latency_ms?: number | null
+          output_tokens?: number | null
+          quality_notes?: string | null
+          quality_score?: number | null
+          run_id?: string
+          status?: string
+          test_case_id?: string
+          validations?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_results_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_runs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_test_results_test_case_id_fkey"
+            columns: ["test_case_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_cases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_test_runs: {
+        Row: {
+          avg_latency_ms: number | null
+          avg_quality_score: number | null
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          failed_tests: number | null
+          id: string
+          model_code: string | null
+          pass_rate: number | null
+          passed: boolean | null
+          passed_tests: number | null
+          prompt_id: string | null
+          skipped_tests: number | null
+          started_at: string | null
+          status: string | null
+          suite_id: string
+          temperature: number | null
+          total_cost: number | null
+          total_latency_ms: number | null
+          total_tests: number | null
+          total_tokens: number | null
+          triggered_by: string
+          triggered_by_user: string | null
+        }
+        Insert: {
+          avg_latency_ms?: number | null
+          avg_quality_score?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          failed_tests?: number | null
+          id?: string
+          model_code?: string | null
+          pass_rate?: number | null
+          passed?: boolean | null
+          passed_tests?: number | null
+          prompt_id?: string | null
+          skipped_tests?: number | null
+          started_at?: string | null
+          status?: string | null
+          suite_id: string
+          temperature?: number | null
+          total_cost?: number | null
+          total_latency_ms?: number | null
+          total_tests?: number | null
+          total_tokens?: number | null
+          triggered_by?: string
+          triggered_by_user?: string | null
+        }
+        Update: {
+          avg_latency_ms?: number | null
+          avg_quality_score?: number | null
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          failed_tests?: number | null
+          id?: string
+          model_code?: string | null
+          pass_rate?: number | null
+          passed?: boolean | null
+          passed_tests?: number | null
+          prompt_id?: string | null
+          skipped_tests?: number | null
+          started_at?: string | null
+          status?: string | null
+          suite_id?: string
+          temperature?: number | null
+          total_cost?: number | null
+          total_latency_ms?: number | null
+          total_tests?: number | null
+          total_tokens?: number | null
+          triggered_by?: string
+          triggered_by_user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_runs_suite_id_fkey"
+            columns: ["suite_id"]
+            isOneToOne: false
+            referencedRelation: "ai_test_suites"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_test_suites: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_required_for_publish: boolean | null
+          name: string
+          pass_threshold: number | null
+          task_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_required_for_publish?: boolean | null
+          name: string
+          pass_threshold?: number | null
+          task_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_required_for_publish?: boolean | null
+          name?: string
+          pass_threshold?: number | null
+          task_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_test_suites_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "ai_task_assignments"
             referencedColumns: ["id"]
           },
         ]
@@ -42476,6 +42802,16 @@ export type Database = {
         Args: { valid_until: string }
         Returns: Database["public"]["Enums"]["doc_validity_status"]
       }
+      can_task_publish: {
+        Args: { p_task_id: string }
+        Returns: {
+          can_publish: boolean
+          failed_suites: string[]
+          passed_suites: number
+          reason: string
+          required_suites: number
+        }[]
+      }
       check_budget_before_execution: {
         Args: {
           p_estimated_cost: number
@@ -42522,6 +42858,7 @@ export type Database = {
       clean_all_demo_tenants: { Args: never; Returns: Json }
       clean_demo_tenant_data: { Args: { p_tenant_id?: string }; Returns: Json }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      complete_test_run: { Args: { p_run_id: string }; Returns: boolean }
       create_alert: {
         Args: {
           p_alert_data?: Json
@@ -42914,6 +43251,19 @@ export type Database = {
           trial_ends_at: string
         }[]
       }
+      get_test_suite_stats: {
+        Args: { p_suite_id: string }
+        Returns: {
+          avg_pass_rate: number
+          golden_cases: number
+          latest_pass_rate: number
+          latest_run_id: string
+          latest_run_passed: boolean
+          latest_run_status: string
+          total_cases: number
+          total_runs: number
+        }[]
+      }
       get_ui_config: { Args: { p_organization_id: string }; Returns: Json }
       get_user_org_ids: { Args: never; Returns: string[] }
       get_user_organization_ids: { Args: never; Returns: string[] }
@@ -43086,6 +43436,21 @@ export type Database = {
           tier_code: string
         }[]
       }
+      record_test_result: {
+        Args: {
+          p_actual_output: string
+          p_cost?: number
+          p_error_message?: string
+          p_input_tokens?: number
+          p_latency_ms?: number
+          p_output_tokens?: number
+          p_run_id: string
+          p_status: string
+          p_test_case_id: string
+          p_validations: Json
+        }
+        Returns: string
+      }
       register_voip_usage: { Args: { p_call_id: string }; Returns: undefined }
       reject_workflow: {
         Args: { p_queue_id: string; p_reason?: string; p_user_id: string }
@@ -43198,6 +43563,15 @@ export type Database = {
       start_module_trial: {
         Args: { p_pack_code: string; p_trial_days?: number }
         Returns: undefined
+      }
+      start_test_run: {
+        Args: {
+          p_model_code?: string
+          p_suite_id: string
+          p_triggered_by?: string
+          p_user_id?: string
+        }
+        Returns: string
       }
       sync_market_user_from_nexus: {
         Args: { p_auth_user_id: string; p_organization_id: string }
