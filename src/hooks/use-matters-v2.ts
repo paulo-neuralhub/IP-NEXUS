@@ -317,15 +317,35 @@ export function useMatterTimeline(matterId: string) {
   return useQuery({
     queryKey: ['matter-timeline', matterId],
     queryFn: async () => {
-      const client: any = supabase;
-      const { data, error } = await client
-        .from('matter_timeline')
+      // Use legacy 'matter_events' table since matter_timeline (V2) is empty
+      const { data, error } = await supabase
+        .from('matter_events')
         .select('*')
         .eq('matter_id', matterId)
         .order('event_date', { ascending: false });
       
       if (error) throw error;
-      return data as MatterTimelineEvent[];
+      
+      // Map legacy fields to MatterTimelineEvent interface
+      return (data || []).map((e: any) => ({
+        id: e.id,
+        matter_id: e.matter_id,
+        organization_id: e.organization_id,
+        event_type: e.type || 'note',
+        event_category: 'general',
+        title: e.title,
+        description: e.description,
+        old_value: null,
+        new_value: null,
+        changed_fields: null,
+        filing_id: null,
+        document_id: null,
+        party_id: null,
+        metadata: {},
+        created_by: e.created_by,
+        created_at: e.created_at,
+        event_date: e.event_date,
+      })) as MatterTimelineEvent[];
     },
     enabled: !!matterId,
   });
