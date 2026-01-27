@@ -25,6 +25,9 @@ import {
   RAGTab,
   AnalyticsTab,
   FinOpsTab,
+  BudgetsTab,
+  CostAnalyticsTab,
+  TestSuitesTab,
   ProviderDialog,
   TaskDialog,
   RAGDialog
@@ -314,13 +317,16 @@ export default function AIBrainPage() {
       />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList>
+        <TabsList className="flex-wrap">
           <TabsTrigger value="providers">Providers</TabsTrigger>
           <TabsTrigger value="models">Modelos</TabsTrigger>
           <TabsTrigger value="router">Routing</TabsTrigger>
           <TabsTrigger value="circuit">Circuit Breaker</TabsTrigger>
           <TabsTrigger value="rag">RAG</TabsTrigger>
-          <TabsTrigger value="analytics">Costes</TabsTrigger>
+          <TabsTrigger value="tests">Evaluación</TabsTrigger>
+          <TabsTrigger value="budgets">Presupuestos</TabsTrigger>
+          <TabsTrigger value="costs">Costes</TabsTrigger>
+          <TabsTrigger value="finops">FinOps</TabsTrigger>
         </TabsList>
 
         <TabsContent value="providers" className="space-y-4">
@@ -380,7 +386,19 @@ export default function AIBrainPage() {
           />
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-4">
+        <TabsContent value="tests" className="space-y-4">
+          <TestSuitesTab />
+        </TabsContent>
+
+        <TabsContent value="budgets" className="space-y-4">
+          <BudgetsTab />
+        </TabsContent>
+
+        <TabsContent value="costs" className="space-y-4">
+          <CostAnalyticsTab />
+        </TabsContent>
+
+        <TabsContent value="finops" className="space-y-4">
           <FinOpsTab />
         </TabsContent>
       </Tabs>
