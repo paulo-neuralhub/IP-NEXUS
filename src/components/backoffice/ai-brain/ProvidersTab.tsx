@@ -1,9 +1,13 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Brain, Settings, Trash2, TestTube, Loader2, RefreshCw } from 'lucide-react';
+import { 
+  Brain, Settings, Trash2, TestTube, Loader2, RefreshCw,
+  MessageSquare, Image, Wrench, Database, Zap
+} from 'lucide-react';
 import { AIProvider } from '@/types/ai-brain.types';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ProvidersTabProps {
   providers: AIProvider[];
@@ -39,18 +43,32 @@ export function ProvidersTab({
     }
   };
 
-  const getHealthBadge = (health: string) => {
+  const getHealthBadge = (health: string, latency?: number | null) => {
+    const latencyText = latency ? ` • ${latency}ms` : '';
     switch (health) {
       case 'healthy':
-        return <Badge variant="secondary">Healthy</Badge>;
+        return <Badge variant="secondary">{`Healthy${latencyText}`}</Badge>;
       case 'degraded':
-        return <Badge variant="secondary">Degraded</Badge>;
+        return <Badge variant="outline">{`Degraded${latencyText}`}</Badge>;
       case 'down':
         return <Badge variant="destructive">Down</Badge>;
       default:
         return <Badge variant="secondary">Unknown</Badge>;
     }
   };
+
+  const CapabilityIcon = ({ enabled, icon: Icon, label }: { enabled?: boolean; icon: any; label: string }) => (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <div className={`p-1 rounded ${enabled ? 'text-primary' : 'text-muted-foreground/30'}`}>
+          <Icon className="h-4 w-4" />
+        </div>
+      </TooltipTrigger>
+      <TooltipContent>
+        <p>{label}: {enabled ? 'Sí' : 'No'}</p>
+      </TooltipContent>
+    </Tooltip>
+  );
 
   if (isLoading) {
     return (
@@ -85,7 +103,9 @@ export function ProvidersTab({
         <div className="flex items-start justify-between gap-4">
           <div>
             <CardTitle>AI Providers</CardTitle>
-            <CardDescription>Gestión de proveedores de IA y sus API keys</CardDescription>
+            <CardDescription>
+              {providers.length} proveedores • {providers.filter(p => p.status === 'active').length} activos
+            </CardDescription>
           </div>
 
           {onCreateDefaults && (
@@ -96,7 +116,7 @@ export function ProvidersTab({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-3">
           {providers.length === 0 ? (
             <div className="text-center py-8 text-muted-foreground">
               <Brain className="h-12 w-12 mx-auto mb-4 opacity-20" />
@@ -112,22 +132,41 @@ export function ProvidersTab({
             </div>
           ) : (
             providers.map((provider) => (
-              <div key={provider.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={provider.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/30 transition-colors">
                 <div className="flex items-center gap-4">
                   <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Brain className="h-5 w-5 text-primary" />
+                    {provider.is_gateway ? (
+                      <Zap className="h-5 w-5 text-primary" />
+                    ) : (
+                      <Brain className="h-5 w-5 text-primary" />
+                    )}
                   </div>
                   <div>
-                    <p className="font-medium">{provider.name}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium">{provider.name}</p>
+                      {provider.is_gateway && (
+                        <Badge variant="outline" className="text-xs">Gateway</Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-muted-foreground">
-                      {provider.code} • {provider.is_gateway ? 'Gateway' : 'Direct API'}
+                      {provider.code}
                       {provider.api_key_encrypted && ' • API Key: ••••••••'}
+                      {provider.base_url && ` • ${new URL(provider.base_url).hostname}`}
                     </p>
                   </div>
                 </div>
+                
+                {/* Capacidades */}
+                <div className="flex items-center gap-1 mx-4">
+                  <CapabilityIcon enabled={provider.supports_chat} icon={MessageSquare} label="Chat" />
+                  <CapabilityIcon enabled={provider.supports_vision} icon={Image} label="Vision" />
+                  <CapabilityIcon enabled={provider.supports_tools} icon={Wrench} label="Tools" />
+                  <CapabilityIcon enabled={provider.supports_embeddings} icon={Database} label="Embeddings" />
+                </div>
+
                 <div className="flex items-center gap-2">
                   {getStatusBadge(provider.status)}
-                  {getHealthBadge(provider.health_status)}
+                  {getHealthBadge(provider.health_status, provider.health_latency_ms)}
                   <Button
                     variant="outline"
                     size="sm"

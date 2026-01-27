@@ -10,9 +10,16 @@ export interface AIProvider {
   api_key_encrypted?: string | null;
   base_url?: string | null;
   is_gateway: boolean;
+  supports_chat?: boolean;
+  supports_embeddings?: boolean;
+  supports_vision?: boolean;
+  supports_tools?: boolean;
   status: 'active' | 'inactive' | 'error';
   health_status: 'healthy' | 'degraded' | 'down' | 'unknown';
   last_health_check_at?: string | null;
+  health_latency_ms?: number | null;
+  consecutive_failures?: number;
+  logo_url?: string | null;
   config: Record<string, unknown>;
   created_at: string;
   updated_at: string;
@@ -79,6 +86,10 @@ export interface AITaskAssignment {
   task_name: string;
   description?: string | null;
   category: TaskCategory;
+  module?: string | null;
+  edge_function?: string | null;
+  requires_vision?: boolean;
+  requires_tools?: boolean;
   primary_model_id?: string | null;
   fallback_1_model_id?: string | null;
   fallback_2_model_id?: string | null;

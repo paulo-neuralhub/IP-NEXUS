@@ -1696,6 +1696,50 @@ export type Database = {
           },
         ]
       }
+      ai_model_prices: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          effective_from: string
+          effective_to: string | null
+          id: string
+          input_price_per_million: number
+          model_id: string
+          output_price_per_million: number
+          source: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          input_price_per_million: number
+          model_id: string
+          output_price_per_million: number
+          source?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          effective_from?: string
+          effective_to?: string | null
+          id?: string
+          input_price_per_million?: number
+          model_id?: string
+          output_price_per_million?: number
+          source?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_model_prices_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "ai_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_models: {
         Row: {
           capabilities: Json | null
@@ -1887,13 +1931,20 @@ export type Database = {
           base_url: string | null
           code: string
           config: Json | null
+          consecutive_failures: number | null
           created_at: string | null
+          health_latency_ms: number | null
           health_status: string | null
           id: string
           is_gateway: boolean | null
           last_health_check_at: string | null
+          logo_url: string | null
           name: string
           status: string | null
+          supports_chat: boolean | null
+          supports_embeddings: boolean | null
+          supports_tools: boolean | null
+          supports_vision: boolean | null
           updated_at: string | null
         }
         Insert: {
@@ -1901,13 +1952,20 @@ export type Database = {
           base_url?: string | null
           code: string
           config?: Json | null
+          consecutive_failures?: number | null
           created_at?: string | null
+          health_latency_ms?: number | null
           health_status?: string | null
           id?: string
           is_gateway?: boolean | null
           last_health_check_at?: string | null
+          logo_url?: string | null
           name: string
           status?: string | null
+          supports_chat?: boolean | null
+          supports_embeddings?: boolean | null
+          supports_tools?: boolean | null
+          supports_vision?: boolean | null
           updated_at?: string | null
         }
         Update: {
@@ -1915,13 +1973,20 @@ export type Database = {
           base_url?: string | null
           code?: string
           config?: Json | null
+          consecutive_failures?: number | null
           created_at?: string | null
+          health_latency_ms?: number | null
           health_status?: string | null
           id?: string
           is_gateway?: boolean | null
           last_health_check_at?: string | null
+          logo_url?: string | null
           name?: string
           status?: string | null
+          supports_chat?: boolean | null
+          supports_embeddings?: boolean | null
+          supports_tools?: boolean | null
+          supports_vision?: boolean | null
           updated_at?: string | null
         }
         Relationships: []
@@ -2203,18 +2268,22 @@ export type Database = {
           category: string | null
           created_at: string | null
           description: string | null
+          edge_function: string | null
           fallback_1_model_id: string | null
           fallback_2_model_id: string | null
           id: string
           is_active: boolean | null
           max_retries: number | null
           max_tokens: number | null
+          module: string | null
           primary_model_id: string | null
           priority: number | null
           prompt_id: string | null
           rag_collection_ids: string[] | null
           rag_enabled: boolean | null
           rag_top_k: number | null
+          requires_tools: boolean | null
+          requires_vision: boolean | null
           system_prompt_override: string | null
           task_code: string
           task_name: string
@@ -2226,18 +2295,22 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           description?: string | null
+          edge_function?: string | null
           fallback_1_model_id?: string | null
           fallback_2_model_id?: string | null
           id?: string
           is_active?: boolean | null
           max_retries?: number | null
           max_tokens?: number | null
+          module?: string | null
           primary_model_id?: string | null
           priority?: number | null
           prompt_id?: string | null
           rag_collection_ids?: string[] | null
           rag_enabled?: boolean | null
           rag_top_k?: number | null
+          requires_tools?: boolean | null
+          requires_vision?: boolean | null
           system_prompt_override?: string | null
           task_code: string
           task_name: string
@@ -2249,18 +2322,22 @@ export type Database = {
           category?: string | null
           created_at?: string | null
           description?: string | null
+          edge_function?: string | null
           fallback_1_model_id?: string | null
           fallback_2_model_id?: string | null
           id?: string
           is_active?: boolean | null
           max_retries?: number | null
           max_tokens?: number | null
+          module?: string | null
           primary_model_id?: string | null
           priority?: number | null
           prompt_id?: string | null
           rag_collection_ids?: string[] | null
           rag_enabled?: boolean | null
           rag_top_k?: number | null
+          requires_tools?: boolean | null
+          requires_vision?: boolean | null
           system_prompt_override?: string | null
           task_code?: string
           task_name?: string
@@ -42189,6 +42266,14 @@ export type Database = {
           p_sort_order?: string
         }
         Returns: Json
+      }
+      calculate_ai_cost: {
+        Args: {
+          p_input_tokens: number
+          p_model_id: string
+          p_output_tokens: number
+        }
+        Returns: number
       }
       calculate_check_digit: { Args: { p_input: string }; Returns: string }
       calculate_daily_analytics: {
