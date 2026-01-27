@@ -11193,6 +11193,149 @@ export type Database = {
           },
         ]
       }
+      document_extractions: {
+        Row: {
+          ai_cost_usd: number | null
+          ai_model_used: string | null
+          ai_tokens_input: number | null
+          ai_tokens_output: number | null
+          client_data: Json | null
+          client_id: string | null
+          confidence_score: number | null
+          created_at: string | null
+          detected_jurisdiction: string | null
+          detected_language: string | null
+          document_id: string | null
+          document_source: string | null
+          document_type: string | null
+          extracted_entities: Json | null
+          file_name: string | null
+          file_type: string | null
+          id: string
+          matter_id: string | null
+          organization_id: string
+          processing_time_ms: number | null
+          raw_text: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          storage_path: string | null
+          suggestions: Json | null
+          suggestions_applied: number | null
+          suggestions_rejected: number | null
+        }
+        Insert: {
+          ai_cost_usd?: number | null
+          ai_model_used?: string | null
+          ai_tokens_input?: number | null
+          ai_tokens_output?: number | null
+          client_data?: Json | null
+          client_id?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          detected_jurisdiction?: string | null
+          detected_language?: string | null
+          document_id?: string | null
+          document_source?: string | null
+          document_type?: string | null
+          extracted_entities?: Json | null
+          file_name?: string | null
+          file_type?: string | null
+          id?: string
+          matter_id?: string | null
+          organization_id: string
+          processing_time_ms?: number | null
+          raw_text?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          storage_path?: string | null
+          suggestions?: Json | null
+          suggestions_applied?: number | null
+          suggestions_rejected?: number | null
+        }
+        Update: {
+          ai_cost_usd?: number | null
+          ai_model_used?: string | null
+          ai_tokens_input?: number | null
+          ai_tokens_output?: number | null
+          client_data?: Json | null
+          client_id?: string | null
+          confidence_score?: number | null
+          created_at?: string | null
+          detected_jurisdiction?: string | null
+          detected_language?: string | null
+          document_id?: string | null
+          document_source?: string | null
+          document_type?: string | null
+          extracted_entities?: Json | null
+          file_name?: string | null
+          file_type?: string | null
+          id?: string
+          matter_id?: string | null
+          organization_id?: string
+          processing_time_ms?: number | null
+          raw_text?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          storage_path?: string | null
+          suggestions?: Json | null
+          suggestions_applied?: number | null
+          suggestions_rejected?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_extractions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_extractions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters_v2"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_extractions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_extractions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "document_extractions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_extractions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "document_extractions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_template_variables: {
         Row: {
           created_at: string | null
@@ -12643,6 +12786,94 @@ export type Database = {
           },
           {
             foreignKeyName: "exports_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      extraction_suggestion_log: {
+        Row: {
+          action: string
+          applied_at: string | null
+          applied_by: string | null
+          extraction_id: string
+          field_name: string
+          id: string
+          new_value: string | null
+          notes: string | null
+          old_value: string | null
+          organization_id: string
+          target_id: string | null
+          target_table: string
+        }
+        Insert: {
+          action: string
+          applied_at?: string | null
+          applied_by?: string | null
+          extraction_id: string
+          field_name: string
+          id?: string
+          new_value?: string | null
+          notes?: string | null
+          old_value?: string | null
+          organization_id: string
+          target_id?: string | null
+          target_table: string
+        }
+        Update: {
+          action?: string
+          applied_at?: string | null
+          applied_by?: string | null
+          extraction_id?: string
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          notes?: string | null
+          old_value?: string | null
+          organization_id?: string
+          target_id?: string | null
+          target_table?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "extraction_suggestion_log_applied_by_fkey"
+            columns: ["applied_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extraction_suggestion_log_extraction_id_fkey"
+            columns: ["extraction_id"]
+            isOneToOne: false
+            referencedRelation: "document_extractions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extraction_suggestion_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extraction_suggestion_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "extraction_suggestion_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "extraction_suggestion_log_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
@@ -22834,6 +23065,8 @@ export type Database = {
           description: string | null
           document_date: string | null
           expiry_date: string | null
+          extraction_id: string | null
+          extraction_status: string | null
           file_path: string
           file_size: number | null
           id: string
@@ -22841,6 +23074,7 @@ export type Database = {
           matter_id: string
           mime_type: string | null
           name: string
+          ocr_text: string | null
           organization_id: string
           uploaded_by: string | null
         }
@@ -22850,6 +23084,8 @@ export type Database = {
           description?: string | null
           document_date?: string | null
           expiry_date?: string | null
+          extraction_id?: string | null
+          extraction_status?: string | null
           file_path: string
           file_size?: number | null
           id?: string
@@ -22857,6 +23093,7 @@ export type Database = {
           matter_id: string
           mime_type?: string | null
           name: string
+          ocr_text?: string | null
           organization_id: string
           uploaded_by?: string | null
         }
@@ -22866,6 +23103,8 @@ export type Database = {
           description?: string | null
           document_date?: string | null
           expiry_date?: string | null
+          extraction_id?: string | null
+          extraction_status?: string | null
           file_path?: string
           file_size?: number | null
           id?: string
@@ -22873,10 +23112,18 @@ export type Database = {
           matter_id?: string
           mime_type?: string | null
           name?: string
+          ocr_text?: string | null
           organization_id?: string
           uploaded_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "matter_documents_extraction_id_fkey"
+            columns: ["extraction_id"]
+            isOneToOne: false
+            referencedRelation: "document_extractions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "matter_documents_matter_id_fkey"
             columns: ["matter_id"]

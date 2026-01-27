@@ -290,3 +290,6 @@ verify_jwt = true
 
 [functions.submit-verifactu]
 verify_jwt = true
+
+[functions.extract-document-data]
+verify_jwt = false
