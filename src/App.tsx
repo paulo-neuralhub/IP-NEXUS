@@ -338,11 +338,12 @@ const App = () => (
               <Route path="/app" element={<AppLayout />}>
                 <Route index element={<Navigate to="/app/dashboard" replace />} />
                 <Route path="dashboard" element={<Dashboard />} />
-                <Route path="docket" element={<MatterList />} />
+                {/* Legacy Docket redirects to Expedientes V2 */}
+                <Route path="docket" element={<Navigate to="/app/expedientes" replace />} />
                 <Route path="docket/deadlines" element={<DeadlinesPage />} />
-                <Route path="docket/new" element={<MatterForm />} />
-                <Route path="docket/:id" element={<MatterDetail />} />
-                <Route path="docket/:id/edit" element={<MatterForm />} />
+                <Route path="docket/new" element={<Navigate to="/app/expedientes/nuevo" replace />} />
+                <Route path="docket/:id" element={<Navigate to="/app/expedientes" replace />} />
+                <Route path="docket/:id/edit" element={<Navigate to="/app/expedientes" replace />} />
                 <Route path="data-hub" element={<DataHubPage />} />
                 <Route path="data-hub/import-export" element={<ImportExportPage />} />
                 <Route path="spider" element={<SpiderLayout />}>

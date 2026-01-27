@@ -16,7 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 const navItems = [
   { path: "/app/dashboard", label: "Dashboard", icon: LayoutDashboard, module: "dashboard" },
-  { path: "/app/docket", label: "Docket", icon: FileText, module: "docket" },
+  { path: "/app/expedientes", label: "Expedientes", icon: FileText, module: "docket" },
   { path: "/app/data-hub", label: "Data Hub", icon: Database, module: "datahub" },
   { path: "/app/spider", label: "Spider", icon: Radar, module: "spider" },
   { separator: true },
