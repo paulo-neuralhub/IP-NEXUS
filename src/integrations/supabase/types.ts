@@ -34874,6 +34874,108 @@ export type Database = {
           },
         ]
       }
+      super_admin_sessions: {
+        Row: {
+          current_mode: string | null
+          expires_at: string | null
+          id: string
+          simulated_subscription: string | null
+          simulated_tenant_id: string | null
+          started_at: string | null
+          super_admin_id: string | null
+        }
+        Insert: {
+          current_mode?: string | null
+          expires_at?: string | null
+          id?: string
+          simulated_subscription?: string | null
+          simulated_tenant_id?: string | null
+          started_at?: string | null
+          super_admin_id?: string | null
+        }
+        Update: {
+          current_mode?: string | null
+          expires_at?: string | null
+          id?: string
+          simulated_subscription?: string | null
+          simulated_tenant_id?: string | null
+          started_at?: string | null
+          super_admin_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "super_admin_sessions_simulated_tenant_id_fkey"
+            columns: ["simulated_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "super_admin_sessions_simulated_tenant_id_fkey"
+            columns: ["simulated_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "super_admin_sessions_simulated_tenant_id_fkey"
+            columns: ["simulated_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "super_admin_sessions_simulated_tenant_id_fkey"
+            columns: ["simulated_tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "super_admin_sessions_super_admin_id_fkey"
+            columns: ["super_admin_id"]
+            isOneToOne: true
+            referencedRelation: "super_admins"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      super_admins: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          email: string
+          id: string
+          is_active: boolean | null
+          last_login_at: string | null
+          name: string | null
+          permissions: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          email: string
+          id?: string
+          is_active?: boolean | null
+          last_login_at?: string | null
+          name?: string | null
+          permissions?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          email?: string
+          id?: string
+          is_active?: boolean | null
+          last_login_at?: string | null
+          name?: string | null
+          permissions?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       superadmins: {
         Row: {
           created_at: string | null
@@ -41139,6 +41241,8 @@ export type Database = {
           value: number
         }[]
       }
+      get_effective_subscription: { Args: never; Returns: string }
+      get_effective_tenant_id: { Args: never; Returns: string }
       get_inverse_relationship_type: {
         Args: { rel_type: string }
         Returns: string
@@ -41222,6 +41326,8 @@ export type Database = {
           thread_id: string
         }[]
       }
+      get_super_admin_mode: { Args: never; Returns: Json }
+      get_super_admin_permissions: { Args: never; Returns: Json }
       get_tenant_modules_summary: {
         Args: { p_tenant_id: string }
         Returns: Json
@@ -41327,6 +41433,7 @@ export type Database = {
       }
       is_member_of_org: { Args: { org_id: string }; Returns: boolean }
       is_org_admin: { Args: { org_id: string }; Returns: boolean }
+      is_super_admin: { Args: never; Returns: boolean }
       is_superadmin: { Args: never; Returns: boolean }
       log_event: {
         Args: {
@@ -41460,6 +41567,10 @@ export type Database = {
       seed_voip_pricing_plans_if_empty_superadmin: {
         Args: never
         Returns: undefined
+      }
+      set_super_admin_mode: {
+        Args: { p_mode: string; p_subscription?: string; p_tenant_id?: string }
+        Returns: Json
       }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }

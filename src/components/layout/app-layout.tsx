@@ -19,12 +19,17 @@ import { ModuleActivationDialog } from "@/components/modules";
 import { DemoBadge, DemoTourNavigator } from "@/components/demo";
 import { useOrganization } from "@/contexts/organization-context";
 import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
+import { SuperAdminBar } from "@/components/super-admin";
+import { useSuperAdmin } from "@/hooks/useSuperAdmin";
 
 export function AppLayout() {
   const isMobile = useIsMobile();
   const { isOnline } = useNetworkStatus();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  
+  // Super Admin check
+  const { isSuperAdmin } = useSuperAdmin();
   
   // Demo mode check - detectar por config O por slug "demo-*"
   const { currentOrganization } = useOrganization();
@@ -35,16 +40,22 @@ export function AppLayout() {
   
   // Adjust viewport height for mobile
   useViewportHeight();
+  
+  // Offset for super admin bar (40px)
+  const superAdminOffset = isSuperAdmin ? 'pt-10' : '';
 
   return (
     <AuthGuard>
       <OrgGuard>
         <PageProvider>
           <ContextualHelpProvider>
+            {/* Super Admin Bar - Always on top */}
+            <SuperAdminBar />
+            
             {isMobile ? (
               // Mobile Layout
               <div 
-                className="h-screen-mobile flex flex-col bg-background overflow-hidden"
+                className={`h-screen-mobile flex flex-col bg-background overflow-hidden ${superAdminOffset}`}
               >
                 {/* Offline Banner */}
                 {!isOnline && <OfflineBanner />}
@@ -100,7 +111,7 @@ export function AppLayout() {
               </div>
             ) : (
               // Desktop Layout
-              <div className="min-h-screen bg-background">
+              <div className={`min-h-screen bg-background ${superAdminOffset}`}>
                 <DynamicSidebar
                   variant="desktop"
                   collapsed={sidebarCollapsed}
