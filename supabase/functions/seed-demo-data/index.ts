@@ -309,13 +309,14 @@ serve(async (req) => {
       { clientIdx: 7, type: "trademark", jur: "WIPO", mark: "SOLARIA GREEN", status: "pending", story: "Expansión global" },
     ];
     
+    // Valid matter_status_enum values: draft, filed, examination, published, opposition, registered, granted, renewed, rejected, withdrawn, expired, abandoned
     const matterStatuses: Record<string, { status: string; statusCode?: string }> = {
-      "registered": { status: "active", statusCode: "registered" },
-      "pending": { status: "active", statusCode: "pending" },
-      "filed": { status: "active", statusCode: "filed" },
-      "granted": { status: "active", statusCode: "granted" },
-      "opposed": { status: "active", statusCode: "opposed" },
-      "renewal_due": { status: "active", statusCode: "renewal_pending" },
+      "registered": { status: "registered", statusCode: "registered" },
+      "pending": { status: "examination", statusCode: "pending" },
+      "filed": { status: "filed", statusCode: "filed" },
+      "granted": { status: "granted", statusCode: "granted" },
+      "opposed": { status: "opposition", statusCode: "opposed" },
+      "renewal_due": { status: "registered", statusCode: "renewal_pending" },
     };
     
     const matterIds: string[] = [];
