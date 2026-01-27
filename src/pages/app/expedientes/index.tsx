@@ -3,12 +3,13 @@
 // ============================================================
 
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   Plus, Search, X, MoreHorizontal, Eye, Pencil, Trash2, 
-  Briefcase, Filter, Archive, AlertTriangle, CheckCircle2
+  Briefcase, Filter, Archive, AlertTriangle, CheckCircle2,
+  Globe, Building2, Flag
 } from 'lucide-react';
-import { useMattersV2, useDeleteMatterV2, useMatterTypes } from '@/hooks/use-matters-v2';
+import { useMattersV2, useDeleteMatterV2, useMatterTypes, useMatterClients, useMatterJurisdictions } from '@/hooks/use-matters-v2';
 import type { MatterV2Filters } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,12 +47,26 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
 import { EmptyState } from '@/components/ui/empty-state';
 import { useToast } from '@/hooks/use-toast';
 import { usePageTitle } from '@/contexts/page-context';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { cn } from '@/lib/utils';
 
 const ITEMS_PER_PAGE = 20;
 
@@ -68,6 +83,19 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   cancelled: { label: 'Cancelado', color: 'bg-red-100 text-red-700' },
 };
 
+const JURISDICTION_LABELS: Record<string, string> = {
+  ES: '🇪🇸 España',
+  EU: '🇪🇺 Unión Europea',
+  US: '🇺🇸 Estados Unidos',
+  EP: '🇪🇺 Patente Europea',
+  WIPO: '🌐 WIPO/PCT',
+  GB: '🇬🇧 Reino Unido',
+  DE: '🇩🇪 Alemania',
+  FR: '🇫🇷 Francia',
+  CN: '🇨🇳 China',
+  JP: '🇯🇵 Japón',
+};
+
 export default function ExpedientesPage() {
   usePageTitle('Expedientes');
   
@@ -75,11 +103,14 @@ export default function ExpedientesPage() {
   const { toast } = useToast();
   const deleteMatter = useDeleteMatterV2();
   const { data: matterTypes } = useMatterTypes();
+  const { data: clients } = useMatterClients();
+  const { data: jurisdictions } = useMatterJurisdictions();
   
   const [filters, setFilters] = useState<MatterV2Filters>({});
   const [searchInput, setSearchInput] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [clientSearchOpen, setClientSearchOpen] = useState(false);
   
   // Debounced search
   const handleSearchChange = (value: string) => {
@@ -114,7 +145,8 @@ export default function ExpedientesPage() {
   
   const totalPages = Math.ceil((matters?.length || 0) / ITEMS_PER_PAGE);
   
-  const hasActiveFilters = filters.search || filters.matter_type || filters.status;
+  const hasActiveFilters = filters.search || filters.matter_type || filters.status || filters.jurisdiction || filters.client_id;
+  const activeFilterCount = [filters.matter_type, filters.status, filters.jurisdiction, filters.client_id].filter(Boolean).length;
   
   const clearFilters = () => {
     setFilters({});
@@ -140,6 +172,8 @@ export default function ExpedientesPage() {
       icon: 'File'
     };
   };
+
+  const selectedClient = clients?.find(c => c.id === filters.client_id);
   
   if (error) {
     return (
@@ -262,11 +296,83 @@ export default function ExpedientesPage() {
             ))}
           </SelectContent>
         </Select>
+
+        {/* Jurisdiction Filter */}
+        <Select
+          value={filters.jurisdiction || ''}
+          onValueChange={(v) => {
+            setFilters(prev => ({ ...prev, jurisdiction: v || undefined }));
+            setCurrentPage(1);
+          }}
+        >
+          <SelectTrigger className="w-[180px]">
+            <Globe className="h-4 w-4 mr-2 text-muted-foreground" />
+            <SelectValue placeholder="Jurisdicción" />
+          </SelectTrigger>
+          <SelectContent>
+            {jurisdictions?.map((jur) => (
+              <SelectItem key={jur} value={jur}>
+                {JURISDICTION_LABELS[jur] || jur}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Client Filter with Search */}
+        <Popover open={clientSearchOpen} onOpenChange={setClientSearchOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              variant="outline"
+              role="combobox"
+              aria-expanded={clientSearchOpen}
+              className={cn(
+                "w-[200px] justify-between",
+                filters.client_id && "border-primary"
+              )}
+            >
+              <Building2 className="h-4 w-4 mr-2 text-muted-foreground shrink-0" />
+              <span className="truncate">
+                {selectedClient?.name || "Cliente"}
+              </span>
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[250px] p-0" align="start">
+            <Command>
+              <CommandInput placeholder="Buscar cliente..." />
+              <CommandList>
+                <CommandEmpty>No se encontraron clientes.</CommandEmpty>
+                <CommandGroup>
+                  {clients?.map((client) => (
+                    <CommandItem
+                      key={client.id}
+                      value={client.name}
+                      onSelect={() => {
+                        setFilters(prev => ({ 
+                          ...prev, 
+                          client_id: prev.client_id === client.id ? undefined : client.id 
+                        }));
+                        setCurrentPage(1);
+                        setClientSearchOpen(false);
+                      }}
+                    >
+                      <span className={cn(
+                        "truncate",
+                        filters.client_id === client.id && "font-semibold"
+                      )}>
+                        {client.name}
+                      </span>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </CommandList>
+            </Command>
+          </PopoverContent>
+        </Popover>
         
         {hasActiveFilters && (
           <Button variant="ghost" size="sm" onClick={clearFilters}>
             <X className="h-4 w-4 mr-1" />
-            Limpiar
+            Limpiar {activeFilterCount > 0 && `(${activeFilterCount})`}
           </Button>
         )}
       </div>
@@ -306,9 +412,11 @@ export default function ExpedientesPage() {
                   <TableRow>
                     <TableHead className="w-[180px]">Número</TableHead>
                     <TableHead>Título</TableHead>
+                    <TableHead className="w-[150px]">Cliente</TableHead>
+                    <TableHead className="w-[100px]">Jurisdicción</TableHead>
                     <TableHead className="w-[120px]">Tipo</TableHead>
                     <TableHead className="w-[120px]">Estado</TableHead>
-                    <TableHead className="w-[120px]">Fecha</TableHead>
+                    <TableHead className="w-[100px]">Fecha</TableHead>
                     <TableHead className="w-[60px]"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -325,16 +433,41 @@ export default function ExpedientesPage() {
                       >
                         <TableCell className="font-mono text-sm">
                           {matter.matter_number}
+                          {matter.is_urgent && (
+                            <Badge variant="destructive" className="ml-2 text-xs">!</Badge>
+                          )}
                         </TableCell>
                         <TableCell>
                           <div>
-                            <p className="font-medium truncate max-w-[300px]">{matter.title}</p>
+                            <p className="font-medium truncate max-w-[250px]">{matter.title}</p>
                             {matter.mark_name && (
                               <p className="text-sm text-muted-foreground">
                                 {matter.mark_name}
                               </p>
                             )}
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {matter.client_id && matter.client_name ? (
+                            <Link
+                              to={`/app/crm/clients/${matter.client_id}`}
+                              className="text-primary hover:underline truncate block max-w-[140px]"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {matter.client_name}
+                            </Link>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {matter.jurisdiction ? (
+                            <Badge variant="outline" className="font-mono">
+                              {JURISDICTION_LABELS[matter.jurisdiction]?.split(' ')[0] || matter.jurisdiction}
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
                         </TableCell>
                         <TableCell>
                           <Badge 
@@ -354,7 +487,7 @@ export default function ExpedientesPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {format(new Date(matter.created_at), 'dd MMM yyyy', { locale: es })}
+                          {format(new Date(matter.created_at), 'dd MMM yy', { locale: es })}
                         </TableCell>
                         <TableCell>
                           <DropdownMenu>

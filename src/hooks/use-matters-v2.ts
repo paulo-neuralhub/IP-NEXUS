@@ -31,6 +31,8 @@ export interface MatterV2 {
   status: string;
   status_date: string | null;
   client_id: string | null;
+  client_name: string | null;
+  jurisdiction: string | null;
   instruction_date: string | null;
   priority_date: string | null;
   mark_name: string | null;
@@ -138,6 +140,8 @@ export interface MatterV2Filters {
   status?: string;
   client_id?: string;
   responsible_id?: string;
+  jurisdiction?: string;
+  priority?: 'normal' | 'high' | 'critical';
   is_archived?: boolean;
 }
 
@@ -172,7 +176,7 @@ export function useMattersV2(filters?: MatterV2Filters) {
       // Map legacy fields to V2 interface
       let query = supabase
         .from('matters')
-        .select('*')
+        .select('*, client:contacts!matters_client_id_fkey(id, name)')
         .eq('organization_id', currentOrganization!.id)
         .order('created_at', { ascending: false });
       
@@ -191,6 +195,9 @@ export function useMattersV2(filters?: MatterV2Filters) {
       if (filters?.responsible_id) {
         query = query.eq('assigned_to', filters.responsible_id);
       }
+      if (filters?.jurisdiction) {
+        query = query.eq('jurisdiction', filters.jurisdiction);
+      }
       // Legacy table doesn't have is_archived, skip that filter
       
       const { data, error } = await query;
@@ -207,6 +214,8 @@ export function useMattersV2(filters?: MatterV2Filters) {
         status: m.status || 'active',
         status_date: m.updated_at,
         client_id: m.client_id,
+        client_name: m.client?.name || null,
+        jurisdiction: m.jurisdiction,
         instruction_date: m.filing_date,
         priority_date: m.priority_date,
         mark_name: m.mark_name,
@@ -221,7 +230,7 @@ export function useMattersV2(filters?: MatterV2Filters) {
         estimated_official_fees: null,
         estimated_professional_fees: null,
         currency: 'EUR',
-        is_urgent: false,
+        is_urgent: m.is_urgent || false,
         is_confidential: false,
         is_archived: false,
         internal_notes: m.notes,
@@ -237,6 +246,52 @@ export function useMattersV2(filters?: MatterV2Filters) {
   });
 }
 
+// Hook to get clients for filter dropdown
+export function useMatterClients() {
+  const { currentOrganization } = useOrganization();
+  
+  return useQuery({
+    queryKey: ['matter-clients', currentOrganization?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('id, name')
+        .eq('organization_id', currentOrganization!.id)
+        .eq('type', 'company')
+        .order('name');
+      
+      if (error) throw error;
+      return data as { id: string; name: string }[];
+    },
+    enabled: !!currentOrganization?.id,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+// Hook to get unique jurisdictions
+export function useMatterJurisdictions() {
+  const { currentOrganization } = useOrganization();
+  
+  return useQuery({
+    queryKey: ['matter-jurisdictions', currentOrganization?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('matters')
+        .select('jurisdiction')
+        .eq('organization_id', currentOrganization!.id)
+        .not('jurisdiction', 'is', null);
+      
+      if (error) throw error;
+      
+      // Get unique jurisdictions
+      const jurisdictions = [...new Set(data.map(m => m.jurisdiction).filter(Boolean))];
+      return jurisdictions.sort() as string[];
+    },
+    enabled: !!currentOrganization?.id,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
 export function useMatterV2(id: string) {
   const { currentOrganization } = useOrganization();
   
@@ -244,9 +299,10 @@ export function useMatterV2(id: string) {
     queryKey: ['matter-v2', id],
     queryFn: async () => {
       // Use legacy 'matters' table since matters_v2 is empty
+      // Include client data via join
       const { data: m, error } = await supabase
         .from('matters')
-        .select('*')
+        .select('*, client:contacts!matters_client_id_fkey(id, name)')
         .eq('id', id)
         .eq('organization_id', currentOrganization!.id)
         .maybeSingle();
@@ -265,6 +321,8 @@ export function useMatterV2(id: string) {
         status: m.status || 'active',
         status_date: m.updated_at,
         client_id: m.client_id,
+        client_name: (m as any).client?.name || null,
+        jurisdiction: m.jurisdiction,
         instruction_date: m.filing_date,
         priority_date: m.priority_date,
         mark_name: m.mark_name,
@@ -279,7 +337,7 @@ export function useMatterV2(id: string) {
         estimated_official_fees: m.official_fees,
         estimated_professional_fees: m.professional_fees,
         currency: m.currency || 'EUR',
-        is_urgent: false,
+        is_urgent: (m.risk_score && m.risk_score >= 80) || false,
         is_confidential: false,
         is_archived: m.is_archived || false,
         internal_notes: m.notes || m.internal_notes,
