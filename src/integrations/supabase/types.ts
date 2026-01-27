@@ -2818,6 +2818,93 @@ export type Database = {
           },
         ]
       }
+      ai_task_rag_config: {
+        Row: {
+          auto_filter_current: boolean | null
+          auto_filter_jurisdiction: boolean | null
+          auto_filter_language: boolean | null
+          created_at: string | null
+          id: string
+          injection_template: string | null
+          is_active: boolean | null
+          knowledge_base_ids: string[]
+          max_context_tokens: number | null
+          similarity_threshold: number | null
+          task_id: string | null
+          tenant_id: string | null
+          top_k: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          auto_filter_current?: boolean | null
+          auto_filter_jurisdiction?: boolean | null
+          auto_filter_language?: boolean | null
+          created_at?: string | null
+          id?: string
+          injection_template?: string | null
+          is_active?: boolean | null
+          knowledge_base_ids: string[]
+          max_context_tokens?: number | null
+          similarity_threshold?: number | null
+          task_id?: string | null
+          tenant_id?: string | null
+          top_k?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          auto_filter_current?: boolean | null
+          auto_filter_jurisdiction?: boolean | null
+          auto_filter_language?: boolean | null
+          created_at?: string | null
+          id?: string
+          injection_template?: string | null
+          is_active?: boolean | null
+          knowledge_base_ids?: string[]
+          max_context_tokens?: number | null
+          similarity_threshold?: number | null
+          task_id?: string | null
+          tenant_id?: string | null
+          top_k?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_task_rag_config_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "ai_task_assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_task_rag_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_task_rag_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "ai_task_rag_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_task_rag_config_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       ai_test_cases: {
         Row: {
           created_at: string | null
@@ -31887,6 +31974,377 @@ export type Database = {
           },
         ]
       }
+      rag_chunks: {
+        Row: {
+          chunk_index: number
+          content: string
+          created_at: string | null
+          document_id: string
+          document_type: string | null
+          embedding: Json | null
+          end_char: number | null
+          id: string
+          is_current: boolean | null
+          jurisdiction: string | null
+          knowledge_base_id: string
+          language: string | null
+          start_char: number | null
+          token_count: number | null
+        }
+        Insert: {
+          chunk_index: number
+          content: string
+          created_at?: string | null
+          document_id: string
+          document_type?: string | null
+          embedding?: Json | null
+          end_char?: number | null
+          id?: string
+          is_current?: boolean | null
+          jurisdiction?: string | null
+          knowledge_base_id: string
+          language?: string | null
+          start_char?: number | null
+          token_count?: number | null
+        }
+        Update: {
+          chunk_index?: number
+          content?: string
+          created_at?: string | null
+          document_id?: string
+          document_type?: string | null
+          embedding?: Json | null
+          end_char?: number | null
+          id?: string
+          is_current?: boolean | null
+          jurisdiction?: string | null
+          knowledge_base_id?: string
+          language?: string | null
+          start_char?: number | null
+          token_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_chunks_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "rag_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_chunks_knowledge_base_id_fkey"
+            columns: ["knowledge_base_id"]
+            isOneToOne: false
+            referencedRelation: "rag_knowledge_bases"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rag_documents: {
+        Row: {
+          chunk_count: number | null
+          content_hash: string | null
+          created_at: string | null
+          created_by: string | null
+          document_type: string | null
+          effective_from: string | null
+          effective_to: string | null
+          error_message: string | null
+          id: string
+          is_current: boolean | null
+          jurisdiction: string | null
+          knowledge_base_id: string
+          language: string | null
+          metadata: Json | null
+          processed_at: string | null
+          raw_content: string | null
+          source_type: string | null
+          source_url: string | null
+          status: string | null
+          supersedes_id: string | null
+          tags: string[] | null
+          title: string
+          token_count: number | null
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          chunk_count?: number | null
+          content_hash?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_type?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          error_message?: string | null
+          id?: string
+          is_current?: boolean | null
+          jurisdiction?: string | null
+          knowledge_base_id: string
+          language?: string | null
+          metadata?: Json | null
+          processed_at?: string | null
+          raw_content?: string | null
+          source_type?: string | null
+          source_url?: string | null
+          status?: string | null
+          supersedes_id?: string | null
+          tags?: string[] | null
+          title: string
+          token_count?: number | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          chunk_count?: number | null
+          content_hash?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_type?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          error_message?: string | null
+          id?: string
+          is_current?: boolean | null
+          jurisdiction?: string | null
+          knowledge_base_id?: string
+          language?: string | null
+          metadata?: Json | null
+          processed_at?: string | null
+          raw_content?: string | null
+          source_type?: string | null
+          source_url?: string | null
+          status?: string | null
+          supersedes_id?: string | null
+          tags?: string[] | null
+          title?: string
+          token_count?: number | null
+          updated_at?: string | null
+          version?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_documents_knowledge_base_id_fkey"
+            columns: ["knowledge_base_id"]
+            isOneToOne: false
+            referencedRelation: "rag_knowledge_bases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_documents_supersedes_id_fkey"
+            columns: ["supersedes_id"]
+            isOneToOne: false
+            referencedRelation: "rag_documents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rag_knowledge_bases: {
+        Row: {
+          allowed_roles: string[] | null
+          associated_tasks: string[] | null
+          chunk_count: number | null
+          chunk_overlap: number | null
+          chunk_size: number | null
+          code: string
+          created_at: string | null
+          created_by: string | null
+          default_top_k: number | null
+          description: string | null
+          document_count: number | null
+          embedding_dimensions: number | null
+          embedding_model: string | null
+          embedding_provider: string | null
+          id: string
+          is_active: boolean | null
+          jurisdictions: string[] | null
+          languages: string[] | null
+          last_updated_at: string | null
+          name: string
+          similarity_threshold: number | null
+          tenant_id: string | null
+          total_tokens: number | null
+          type: string | null
+          updated_at: string | null
+          visibility: string | null
+        }
+        Insert: {
+          allowed_roles?: string[] | null
+          associated_tasks?: string[] | null
+          chunk_count?: number | null
+          chunk_overlap?: number | null
+          chunk_size?: number | null
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          default_top_k?: number | null
+          description?: string | null
+          document_count?: number | null
+          embedding_dimensions?: number | null
+          embedding_model?: string | null
+          embedding_provider?: string | null
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          languages?: string[] | null
+          last_updated_at?: string | null
+          name: string
+          similarity_threshold?: number | null
+          tenant_id?: string | null
+          total_tokens?: number | null
+          type?: string | null
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Update: {
+          allowed_roles?: string[] | null
+          associated_tasks?: string[] | null
+          chunk_count?: number | null
+          chunk_overlap?: number | null
+          chunk_size?: number | null
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          default_top_k?: number | null
+          description?: string | null
+          document_count?: number | null
+          embedding_dimensions?: number | null
+          embedding_model?: string | null
+          embedding_provider?: string | null
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          languages?: string[] | null
+          last_updated_at?: string | null
+          name?: string
+          similarity_threshold?: number | null
+          tenant_id?: string | null
+          total_tokens?: number | null
+          type?: string | null
+          updated_at?: string | null
+          visibility?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_knowledge_bases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_knowledge_bases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "rag_knowledge_bases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_knowledge_bases_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      rag_queries: {
+        Row: {
+          chunks_retrieved: number | null
+          chunks_used: number | null
+          created_at: string | null
+          execution_id: string | null
+          filters_applied: Json | null
+          id: string
+          knowledge_base_id: string
+          latency_ms: number | null
+          query_embedding: Json | null
+          query_text: string
+          sources: Json | null
+          task_code: string | null
+          tenant_id: string | null
+          top_k_requested: number | null
+          user_id: string | null
+        }
+        Insert: {
+          chunks_retrieved?: number | null
+          chunks_used?: number | null
+          created_at?: string | null
+          execution_id?: string | null
+          filters_applied?: Json | null
+          id?: string
+          knowledge_base_id: string
+          latency_ms?: number | null
+          query_embedding?: Json | null
+          query_text: string
+          sources?: Json | null
+          task_code?: string | null
+          tenant_id?: string | null
+          top_k_requested?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          chunks_retrieved?: number | null
+          chunks_used?: number | null
+          created_at?: string | null
+          execution_id?: string | null
+          filters_applied?: Json | null
+          id?: string
+          knowledge_base_id?: string
+          latency_ms?: number | null
+          query_embedding?: Json | null
+          query_text?: string
+          sources?: Json | null
+          task_code?: string | null
+          tenant_id?: string | null
+          top_k_requested?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rag_queries_knowledge_base_id_fkey"
+            columns: ["knowledge_base_id"]
+            isOneToOne: false
+            referencedRelation: "rag_knowledge_bases"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_queries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_queries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "rag_queries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "rag_queries_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       regulatory_submissions: {
         Row: {
           created_at: string | null
@@ -43659,6 +44117,22 @@ export type Database = {
             }
             Returns: string
           }
+      log_rag_query: {
+        Args: {
+          p_chunks_retrieved: number
+          p_chunks_used: number
+          p_execution_id: string
+          p_filters: Json
+          p_knowledge_base_id: string
+          p_latency_ms: number
+          p_query_text: string
+          p_sources: Json
+          p_task_code: string
+          p_tenant_id: string
+          p_top_k: number
+        }
+        Returns: string
+      }
       match_knowledge: {
         Args: {
           match_count?: number
@@ -43887,6 +44361,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_rag_kb_stats: { Args: { p_kb_id: string }; Returns: undefined }
       use_ai_query: {
         Args: {
           p_input_tokens?: number

@@ -152,3 +152,24 @@ export type {
   AIPromptComment,
 } from './useAIPrompts';
 
+// RAG Knowledge Bases (Phase 6)
+export {
+  useRAGKnowledgeBases,
+  useRAGKnowledgeBase,
+  useRAGDocuments,
+  useCreateRAGKnowledgeBase,
+  useUpdateRAGKnowledgeBase,
+  useDeleteRAGKnowledgeBase,
+  useCreateRAGDocument,
+  useDeleteRAGDocument,
+  useProcessRAGDocument,
+  useRAGQueryStats,
+} from './useRAGKnowledgeBases';
+
+export type {
+  RAGKnowledgeBase,
+  RAGDocument,
+  RAGKnowledgeBaseFormData,
+  RAGDocumentFormData,
+} from './useRAGKnowledgeBases';
+

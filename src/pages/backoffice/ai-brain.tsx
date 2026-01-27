@@ -28,6 +28,7 @@ import {
   BudgetsTab,
   CostAnalyticsTab,
   TestSuitesTab,
+  KnowledgeBasesTab,
   ProviderDialog,
   TaskDialog,
   RAGDialog
@@ -323,6 +324,7 @@ export default function AIBrainPage() {
           <TabsTrigger value="router">Routing</TabsTrigger>
           <TabsTrigger value="circuit">Circuit Breaker</TabsTrigger>
           <TabsTrigger value="rag">RAG</TabsTrigger>
+          <TabsTrigger value="knowledge">Knowledge Bases</TabsTrigger>
           <TabsTrigger value="tests">Evaluación</TabsTrigger>
           <TabsTrigger value="budgets">Presupuestos</TabsTrigger>
           <TabsTrigger value="costs">Costes</TabsTrigger>
