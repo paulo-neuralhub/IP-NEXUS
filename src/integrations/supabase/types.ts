@@ -22980,24 +22980,44 @@ export type Database = {
       matter_filings: {
         Row: {
           application_number: string | null
+          art_unit: string | null
+          claims_count: number | null
+          confirmation_number: string | null
           created_at: string | null
+          created_by: string | null
           custom_fields: Json | null
+          designated_states: string[] | null
+          entity_status: string | null
+          entity_status_history: Json | null
           expiry_date: string | null
           filing_date: string | null
+          filing_reference: string | null
+          goods_services: string | null
           grant_date: string | null
           id: string
+          ipc_classes: string[] | null
           jurisdiction_code: string
+          jurisdiction_data: Json | null
           last_sync_at: string | null
           local_agent_id: string | null
           local_reference: string | null
+          mark_type: string | null
           matter_id: string
           next_renewal_date: string | null
+          nice_classes: number[] | null
+          nice_classes_detail: Json | null
           notes: string | null
           office_code: string | null
+          office_id: string | null
           office_link_id: string | null
+          official_fees_currency: string | null
           official_fees_paid: number | null
           organization_id: string
+          parent_filing_id: string | null
+          patent_term_adjustment: number | null
+          patent_type: string | null
           priority_claimed: boolean | null
+          priority_claims: Json | null
           priority_country: string | null
           priority_date: string | null
           priority_number: string | null
@@ -23006,30 +23026,56 @@ export type Database = {
           publication_number: string | null
           registration_date: string | null
           registration_number: string | null
+          relationship_type: string | null
+          security_review_date: string | null
           status: string | null
           status_date: string | null
+          status_detail: string | null
+          subclasses: Json | null
           updated_at: string | null
+          updated_by: string | null
+          validation_deadline: string | null
         }
         Insert: {
           application_number?: string | null
+          art_unit?: string | null
+          claims_count?: number | null
+          confirmation_number?: string | null
           created_at?: string | null
+          created_by?: string | null
           custom_fields?: Json | null
+          designated_states?: string[] | null
+          entity_status?: string | null
+          entity_status_history?: Json | null
           expiry_date?: string | null
           filing_date?: string | null
+          filing_reference?: string | null
+          goods_services?: string | null
           grant_date?: string | null
           id?: string
+          ipc_classes?: string[] | null
           jurisdiction_code: string
+          jurisdiction_data?: Json | null
           last_sync_at?: string | null
           local_agent_id?: string | null
           local_reference?: string | null
+          mark_type?: string | null
           matter_id: string
           next_renewal_date?: string | null
+          nice_classes?: number[] | null
+          nice_classes_detail?: Json | null
           notes?: string | null
           office_code?: string | null
+          office_id?: string | null
           office_link_id?: string | null
+          official_fees_currency?: string | null
           official_fees_paid?: number | null
           organization_id: string
+          parent_filing_id?: string | null
+          patent_term_adjustment?: number | null
+          patent_type?: string | null
           priority_claimed?: boolean | null
+          priority_claims?: Json | null
           priority_country?: string | null
           priority_date?: string | null
           priority_number?: string | null
@@ -23038,30 +23084,56 @@ export type Database = {
           publication_number?: string | null
           registration_date?: string | null
           registration_number?: string | null
+          relationship_type?: string | null
+          security_review_date?: string | null
           status?: string | null
           status_date?: string | null
+          status_detail?: string | null
+          subclasses?: Json | null
           updated_at?: string | null
+          updated_by?: string | null
+          validation_deadline?: string | null
         }
         Update: {
           application_number?: string | null
+          art_unit?: string | null
+          claims_count?: number | null
+          confirmation_number?: string | null
           created_at?: string | null
+          created_by?: string | null
           custom_fields?: Json | null
+          designated_states?: string[] | null
+          entity_status?: string | null
+          entity_status_history?: Json | null
           expiry_date?: string | null
           filing_date?: string | null
+          filing_reference?: string | null
+          goods_services?: string | null
           grant_date?: string | null
           id?: string
+          ipc_classes?: string[] | null
           jurisdiction_code?: string
+          jurisdiction_data?: Json | null
           last_sync_at?: string | null
           local_agent_id?: string | null
           local_reference?: string | null
+          mark_type?: string | null
           matter_id?: string
           next_renewal_date?: string | null
+          nice_classes?: number[] | null
+          nice_classes_detail?: Json | null
           notes?: string | null
           office_code?: string | null
+          office_id?: string | null
           office_link_id?: string | null
+          official_fees_currency?: string | null
           official_fees_paid?: number | null
           organization_id?: string
+          parent_filing_id?: string | null
+          patent_term_adjustment?: number | null
+          patent_type?: string | null
           priority_claimed?: boolean | null
+          priority_claims?: Json | null
           priority_country?: string | null
           priority_date?: string | null
           priority_number?: string | null
@@ -23070,9 +23142,15 @@ export type Database = {
           publication_number?: string | null
           registration_date?: string | null
           registration_number?: string | null
+          relationship_type?: string | null
+          security_review_date?: string | null
           status?: string | null
           status_date?: string | null
+          status_detail?: string | null
+          subclasses?: Json | null
           updated_at?: string | null
+          updated_by?: string | null
+          validation_deadline?: string | null
         }
         Relationships: [
           {
@@ -23116,6 +23194,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_filings_parent_filing_id_fkey"
+            columns: ["parent_filing_id"]
+            isOneToOne: false
+            referencedRelation: "matter_filings"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -24466,108 +24551,177 @@ export type Database = {
       matters_v2: {
         Row: {
           assistant_id: string | null
+          billing_type: string | null
+          business_unit: string | null
+          category: string | null
           client_id: string | null
           client_instructions: string | null
+          client_reference: string | null
+          closed_at: string | null
+          cost_center: string | null
           created_at: string | null
           created_by: string | null
           currency: string | null
           custom_fields: Json | null
+          description: string | null
+          estimated_budget: number | null
           estimated_official_fees: number | null
           estimated_professional_fees: number | null
           goods_services: string | null
           id: string
           instruction_date: string | null
           internal_notes: string | null
+          internal_reference: string | null
           invention_title: string | null
           ipc_classes: string[] | null
           is_archived: boolean | null
           is_confidential: boolean | null
           is_urgent: boolean | null
+          jurisdiction_primary: string | null
           mark_image_url: string | null
           mark_name: string | null
           mark_type: string | null
           matter_number: string
           matter_type: string
           nice_classes: number[] | null
+          notes_internal: string | null
+          opened_at: string | null
           organization_id: string
+          portal_visibility: Json | null
+          primary_contact_id: string | null
           priority_date: string | null
           reference: string | null
           responsible_id: string | null
+          source: string | null
+          source_detail: string | null
           status: string
+          status_changed_at: string | null
           status_date: string | null
+          sub_status: string | null
           tags: string[] | null
+          target_date: string | null
+          team_ids: string[] | null
           title: string
+          title_original: string | null
+          type_code: string | null
           updated_at: string | null
+          updated_by: string | null
         }
         Insert: {
           assistant_id?: string | null
+          billing_type?: string | null
+          business_unit?: string | null
+          category?: string | null
           client_id?: string | null
           client_instructions?: string | null
+          client_reference?: string | null
+          closed_at?: string | null
+          cost_center?: string | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
           custom_fields?: Json | null
+          description?: string | null
+          estimated_budget?: number | null
           estimated_official_fees?: number | null
           estimated_professional_fees?: number | null
           goods_services?: string | null
           id?: string
           instruction_date?: string | null
           internal_notes?: string | null
+          internal_reference?: string | null
           invention_title?: string | null
           ipc_classes?: string[] | null
           is_archived?: boolean | null
           is_confidential?: boolean | null
           is_urgent?: boolean | null
+          jurisdiction_primary?: string | null
           mark_image_url?: string | null
           mark_name?: string | null
           mark_type?: string | null
           matter_number: string
           matter_type: string
           nice_classes?: number[] | null
+          notes_internal?: string | null
+          opened_at?: string | null
           organization_id: string
+          portal_visibility?: Json | null
+          primary_contact_id?: string | null
           priority_date?: string | null
           reference?: string | null
           responsible_id?: string | null
+          source?: string | null
+          source_detail?: string | null
           status?: string
+          status_changed_at?: string | null
           status_date?: string | null
+          sub_status?: string | null
           tags?: string[] | null
+          target_date?: string | null
+          team_ids?: string[] | null
           title: string
+          title_original?: string | null
+          type_code?: string | null
           updated_at?: string | null
+          updated_by?: string | null
         }
         Update: {
           assistant_id?: string | null
+          billing_type?: string | null
+          business_unit?: string | null
+          category?: string | null
           client_id?: string | null
           client_instructions?: string | null
+          client_reference?: string | null
+          closed_at?: string | null
+          cost_center?: string | null
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
           custom_fields?: Json | null
+          description?: string | null
+          estimated_budget?: number | null
           estimated_official_fees?: number | null
           estimated_professional_fees?: number | null
           goods_services?: string | null
           id?: string
           instruction_date?: string | null
           internal_notes?: string | null
+          internal_reference?: string | null
           invention_title?: string | null
           ipc_classes?: string[] | null
           is_archived?: boolean | null
           is_confidential?: boolean | null
           is_urgent?: boolean | null
+          jurisdiction_primary?: string | null
           mark_image_url?: string | null
           mark_name?: string | null
           mark_type?: string | null
           matter_number?: string
           matter_type?: string
           nice_classes?: number[] | null
+          notes_internal?: string | null
+          opened_at?: string | null
           organization_id?: string
+          portal_visibility?: Json | null
+          primary_contact_id?: string | null
           priority_date?: string | null
           reference?: string | null
           responsible_id?: string | null
+          source?: string | null
+          source_detail?: string | null
           status?: string
+          status_changed_at?: string | null
           status_date?: string | null
+          sub_status?: string | null
           tags?: string[] | null
+          target_date?: string | null
+          team_ids?: string[] | null
           title?: string
+          title_original?: string | null
+          type_code?: string | null
           updated_at?: string | null
+          updated_by?: string | null
         }
         Relationships: [
           {
