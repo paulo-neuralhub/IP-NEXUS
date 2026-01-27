@@ -328,8 +328,12 @@ serve(async (req) => {
     let matterCounter = 1;
     
     for (const scenario of matterScenarios) {
-      // Include runSuffix to guarantee unique references across seed runs
-      const reference = `${new Date().getFullYear()}/${scenario.type.toUpperCase().slice(0, 2)}/${String(matterCounter).padStart(3, "0")}-${runSuffix}`;
+      // IMPORTANT: public.matters has a UNIQUE *partial index*:
+      //   matters_org_reference_unique_real (organization_id, reference)
+      //   WHERE reference IS NOT NULL AND reference NOT LIKE 'DEMO-%'
+      // To allow safe re-seeding in the same organization, all demo references must start with 'DEMO-'.
+      const baseRef = `${new Date().getFullYear()}/${scenario.type.toUpperCase().slice(0, 2)}/${String(matterCounter).padStart(3, "0")}`;
+      const reference = `DEMO-${baseRef}-${runSuffix}`;
       matterCounter += 1;
 
       const filingDate = daysAgo(90 + Math.floor(Math.random() * 720));
