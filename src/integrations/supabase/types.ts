@@ -1966,6 +1966,97 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_prompt_changes: {
+        Row: {
+          change_reason: string | null
+          changed_at: string | null
+          changed_by: string | null
+          field_changed: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          prompt_id: string
+        }
+        Insert: {
+          change_reason?: string | null
+          changed_at?: string | null
+          changed_by?: string | null
+          field_changed: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          prompt_id: string
+        }
+        Update: {
+          change_reason?: string | null
+          changed_at?: string | null
+          changed_by?: string | null
+          field_changed?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          prompt_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_prompt_changes_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "ai_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_prompt_comments: {
+        Row: {
+          comment: string
+          comment_type: string | null
+          created_at: string | null
+          created_by: string | null
+          field_reference: string | null
+          id: string
+          is_resolved: boolean | null
+          line_number: number | null
+          prompt_id: string
+          resolved_at: string | null
+          resolved_by: string | null
+        }
+        Insert: {
+          comment: string
+          comment_type?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          field_reference?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          line_number?: number | null
+          prompt_id: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+        }
+        Update: {
+          comment?: string
+          comment_type?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          field_reference?: string | null
+          id?: string
+          is_resolved?: boolean | null
+          line_number?: number | null
+          prompt_id?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_prompt_comments_prompt_id_fkey"
+            columns: ["prompt_id"]
+            isOneToOne: false
+            referencedRelation: "ai_prompts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_prompt_templates: {
         Row: {
           agent_type: string
@@ -2016,6 +2107,147 @@ export type Database = {
           user_prompt_template?: string | null
         }
         Relationships: []
+      }
+      ai_prompts: {
+        Row: {
+          avg_cost: number | null
+          avg_input_tokens: number | null
+          avg_latency_ms: number | null
+          avg_output_tokens: number | null
+          avg_quality_score: number | null
+          created_at: string | null
+          created_by: string | null
+          deprecated_at: string | null
+          deprecated_by: string | null
+          deprecation_reason: string | null
+          description: string | null
+          execution_count: number | null
+          id: string
+          is_latest: boolean | null
+          model_code: string | null
+          name: string
+          output_format: string | null
+          output_schema: Json | null
+          parent_version_id: string | null
+          published_at: string | null
+          published_by: string | null
+          review_notes: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          status: string | null
+          submitted_by: string | null
+          submitted_for_review_at: string | null
+          success_rate: number | null
+          suggested_max_tokens: number | null
+          suggested_temperature: number | null
+          system_prompt: string | null
+          task_id: string | null
+          tools_enabled: boolean | null
+          tools_schema: Json | null
+          updated_at: string | null
+          updated_by: string | null
+          user_prompt_template: string
+          variables: Json | null
+          version: number
+        }
+        Insert: {
+          avg_cost?: number | null
+          avg_input_tokens?: number | null
+          avg_latency_ms?: number | null
+          avg_output_tokens?: number | null
+          avg_quality_score?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          deprecated_at?: string | null
+          deprecated_by?: string | null
+          deprecation_reason?: string | null
+          description?: string | null
+          execution_count?: number | null
+          id?: string
+          is_latest?: boolean | null
+          model_code?: string | null
+          name: string
+          output_format?: string | null
+          output_schema?: Json | null
+          parent_version_id?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submitted_by?: string | null
+          submitted_for_review_at?: string | null
+          success_rate?: number | null
+          suggested_max_tokens?: number | null
+          suggested_temperature?: number | null
+          system_prompt?: string | null
+          task_id?: string | null
+          tools_enabled?: boolean | null
+          tools_schema?: Json | null
+          updated_at?: string | null
+          updated_by?: string | null
+          user_prompt_template: string
+          variables?: Json | null
+          version?: number
+        }
+        Update: {
+          avg_cost?: number | null
+          avg_input_tokens?: number | null
+          avg_latency_ms?: number | null
+          avg_output_tokens?: number | null
+          avg_quality_score?: number | null
+          created_at?: string | null
+          created_by?: string | null
+          deprecated_at?: string | null
+          deprecated_by?: string | null
+          deprecation_reason?: string | null
+          description?: string | null
+          execution_count?: number | null
+          id?: string
+          is_latest?: boolean | null
+          model_code?: string | null
+          name?: string
+          output_format?: string | null
+          output_schema?: Json | null
+          parent_version_id?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          review_notes?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          status?: string | null
+          submitted_by?: string | null
+          submitted_for_review_at?: string | null
+          success_rate?: number | null
+          suggested_max_tokens?: number | null
+          suggested_temperature?: number | null
+          system_prompt?: string | null
+          task_id?: string | null
+          tools_enabled?: boolean | null
+          tools_schema?: Json | null
+          updated_at?: string | null
+          updated_by?: string | null
+          user_prompt_template?: string
+          variables?: Json | null
+          version?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_prompts_parent_version_id_fkey"
+            columns: ["parent_version_id"]
+            isOneToOne: false
+            referencedRelation: "ai_prompts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_prompts_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "ai_task_assignments"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ai_provider_health_log: {
         Row: {
@@ -42812,6 +43044,18 @@ export type Database = {
           required_suites: number
         }[]
       }
+      change_prompt_status: {
+        Args: {
+          p_new_status: string
+          p_notes?: string
+          p_prompt_id: string
+          p_user_id?: string
+        }
+        Returns: {
+          message: string
+          success: boolean
+        }[]
+      }
       check_budget_before_execution: {
         Args: {
           p_estimated_cost: number
@@ -42858,6 +43102,15 @@ export type Database = {
       clean_all_demo_tenants: { Args: never; Returns: Json }
       clean_demo_tenant_data: { Args: { p_tenant_id?: string }; Returns: Json }
       cleanup_rate_limits: { Args: never; Returns: undefined }
+      compare_prompt_versions: {
+        Args: { p_version_a_id: string; p_version_b_id: string }
+        Returns: {
+          field_name: string
+          is_different: boolean
+          version_a_value: string
+          version_b_value: string
+        }[]
+      }
       complete_test_run: { Args: { p_run_id: string }; Returns: boolean }
       create_alert: {
         Args: {
@@ -42868,6 +43121,10 @@ export type Database = {
           p_organization_id?: string
           p_title: string
         }
+        Returns: string
+      }
+      create_prompt_version: {
+        Args: { p_created_by?: string; p_prompt_id: string }
         Returns: string
       }
       create_voip_call: {
@@ -43082,6 +43339,19 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_active_prompt: {
+        Args: { p_model_code?: string; p_task_code: string }
+        Returns: {
+          output_format: string
+          output_schema: Json
+          prompt_id: string
+          system_prompt: string
+          tools_schema: Json
+          user_prompt_template: string
+          variables: Json
+          version: number
+        }[]
       }
       get_ai_cost_analytics: {
         Args: { p_days?: number; p_tenant_id?: string }

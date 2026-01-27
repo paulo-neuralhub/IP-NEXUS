@@ -127,3 +127,28 @@ export {
   useCheckQualityGate,
 } from './useAITestSuites';
 
+// Prompts Studio (Phase 4)
+export {
+  useAIPrompts,
+  useAIPrompt,
+  useAIPromptVersions,
+  useAIPromptChanges,
+  useAIPromptComments,
+  useCreateAIPrompt,
+  useUpdateAIPrompt,
+  useDeleteAIPrompt,
+  useChangePromptStatus,
+  useCreatePromptVersion,
+  useComparePromptVersions,
+  useAddPromptComment,
+  useResolvePromptComment,
+} from './useAIPrompts';
+
+export type {
+  AIPrompt,
+  AIPromptFormData,
+  PromptVariable,
+  AIPromptChange,
+  AIPromptComment,
+} from './useAIPrompts';
+
