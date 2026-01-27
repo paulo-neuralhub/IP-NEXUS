@@ -39,9 +39,9 @@ export function LegalDeadlinesList() {
 
   // Group deadlines by office
   const groupedDeadlines = deadlines?.reduce((acc, deadline) => {
-    const officeCode = deadline.ip_offices?.code || 'OTHER';
-    const officeName = deadline.ip_offices?.name || 'Otros';
-    const flag = deadline.ip_offices?.flag_emoji || '🌐';
+    const officeCode = deadline.ipo_offices?.code || 'OTHER';
+    const officeName = deadline.ipo_offices?.name_official || 'Otros';
+    const flag = deadline.ipo_offices?.flag_emoji || '🌐';
     
     if (!acc[officeCode]) {
       acc[officeCode] = {

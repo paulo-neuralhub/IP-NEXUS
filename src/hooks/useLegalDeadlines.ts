@@ -37,11 +37,11 @@ export interface LegalDeadline {
   notes: string | null;
   is_active: boolean | null;
   created_at: string | null;
-  // Joined office data
-  ip_offices?: {
+  // Joined office data (from ipo_offices)
+  ipo_offices?: {
     id: string;
     code: string;
-    name: string;
+    name_official: string;
     country_code: string;
     flag_emoji: string | null;
   } | null;
@@ -59,18 +59,10 @@ export function useLegalDeadlines(filters?: LegalDeadlineFilters) {
   return useQuery({
     queryKey: ['legal-deadlines', filters],
     queryFn: async () => {
+      // First get deadlines
       let query = supabase
         .from('legal_deadlines')
-        .select(`
-          *,
-          ip_offices (
-            id,
-            code,
-            name,
-            country_code,
-            flag_emoji
-          )
-        `)
+        .select('*')
         .eq('is_active', true)
         .order('right_type')
         .order('name');
@@ -83,14 +75,34 @@ export function useLegalDeadlines(filters?: LegalDeadlineFilters) {
         query = query.eq('deadline_category', filters.deadlineCategory);
       }
 
-      const { data, error } = await query;
+      const { data: deadlines, error } = await query;
       if (error) throw error;
 
-      let results = data || [];
+      // Get unique office IDs
+      const officeIds = [...new Set((deadlines || []).map(d => d.office_id).filter(Boolean))];
+      
+      // Fetch offices if there are any office_ids
+      let officesMap: Record<string, { id: string; code: string; name_official: string; country_code: string; flag_emoji: string | null }> = {};
+      if (officeIds.length > 0) {
+        const { data: offices } = await supabase
+          .from('ipo_offices')
+          .select('id, code, name_official, country_code, flag_emoji')
+          .in('id', officeIds);
+        
+        offices?.forEach(o => {
+          officesMap[o.id] = o;
+        });
+      }
+
+      // Merge data
+      let results: LegalDeadline[] = (deadlines || []).map(d => ({
+        ...d,
+        ipo_offices: d.office_id ? officesMap[d.office_id] || null : null
+      }));
 
       // Filter by office code if provided
       if (filters?.officeCode) {
-        results = results.filter(d => d.ip_offices?.code === filters.officeCode);
+        results = results.filter(d => d.ipo_offices?.code === filters.officeCode);
       }
 
       // Client-side search filter
@@ -104,7 +116,7 @@ export function useLegalDeadlines(filters?: LegalDeadlineFilters) {
         );
       }
 
-      return results as LegalDeadline[];
+      return results;
     },
   });
 }
@@ -114,25 +126,29 @@ export function useLegalDeadlinesByOffice(officeCode: string) {
   return useQuery({
     queryKey: ['legal-deadlines-office', officeCode],
     queryFn: async () => {
-      const { data, error } = await supabase
+      // First find the office
+      const { data: office } = await supabase
+        .from('ipo_offices')
+        .select('id, code, name_official, country_code, flag_emoji')
+        .eq('code', officeCode)
+        .maybeSingle();
+
+      if (!office) return [];
+
+      const { data: deadlines, error } = await supabase
         .from('legal_deadlines')
-        .select(`
-          *,
-          ip_offices!inner (
-            id,
-            code,
-            name,
-            country_code,
-            flag_emoji
-          )
-        `)
-        .eq('ip_offices.code', officeCode)
+        .select('*')
+        .eq('office_id', office.id)
         .eq('is_active', true)
         .order('right_type')
         .order('name');
 
       if (error) throw error;
-      return (data || []) as LegalDeadline[];
+
+      return (deadlines || []).map(d => ({
+        ...d,
+        ipo_offices: office
+      })) as LegalDeadline[];
     },
     enabled: !!officeCode,
   });
@@ -143,24 +159,34 @@ export function useLegalDeadlinesByType(rightType: string) {
   return useQuery({
     queryKey: ['legal-deadlines-type', rightType],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: deadlines, error } = await supabase
         .from('legal_deadlines')
-        .select(`
-          *,
-          ip_offices (
-            id,
-            code,
-            name,
-            country_code,
-            flag_emoji
-          )
-        `)
+        .select('*')
         .eq('right_type', rightType)
         .eq('is_active', true)
         .order('name');
 
       if (error) throw error;
-      return (data || []) as LegalDeadline[];
+      
+      // Get unique office IDs
+      const officeIds = [...new Set((deadlines || []).map(d => d.office_id).filter(Boolean))];
+      
+      let officesMap: Record<string, { id: string; code: string; name_official: string; country_code: string; flag_emoji: string | null }> = {};
+      if (officeIds.length > 0) {
+        const { data: offices } = await supabase
+          .from('ipo_offices')
+          .select('id, code, name_official, country_code, flag_emoji')
+          .in('id', officeIds);
+        
+        offices?.forEach(o => {
+          officesMap[o.id] = o;
+        });
+      }
+
+      return (deadlines || []).map(d => ({
+        ...d,
+        ipo_offices: d.office_id ? officesMap[d.office_id] || null : null
+      })) as LegalDeadline[];
     },
     enabled: !!rightType,
   });
@@ -169,16 +195,20 @@ export function useLegalDeadlinesByType(rightType: string) {
 // Get all IP offices for filter dropdowns
 export function useIPOffices() {
   return useQuery({
-    queryKey: ['ip-offices'],
+    queryKey: ['ipo-offices-dropdown'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('ip_offices')
-        .select('id, code, name, country_code, flag_emoji, office_type')
+        .from('ipo_offices')
+        .select('id, code, name_official, country_code, flag_emoji, office_type')
         .eq('is_active', true)
-        .order('name');
+        .order('name_official');
 
       if (error) throw error;
-      return data || [];
+      // Map to expected format for backwards compatibility
+      return (data || []).map(o => ({
+        ...o,
+        name: o.name_official // Alias for compatibility
+      }));
     },
   });
 }

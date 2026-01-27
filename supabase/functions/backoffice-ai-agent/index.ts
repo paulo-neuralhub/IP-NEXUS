@@ -510,8 +510,8 @@ serve(async (req) => {
           const officeCode = args.office_code ? String(args.office_code) : null;
           
           let query = supabase
-            .from("ip_offices")
-            .select("code, name, api_status, last_health_check, avg_response_time_ms");
+            .from("ipo_offices")
+            .select("code, name_official, api_status, last_health_check, avg_response_time_ms");
           
           if (officeCode && officeCode !== "all") {
             query = query.eq("code", officeCode);

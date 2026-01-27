@@ -20221,7 +20221,14 @@ export type Database = {
             foreignKeyName: "legal_deadlines_office_id_fkey"
             columns: ["office_id"]
             isOneToOne: false
-            referencedRelation: "ip_offices"
+            referencedRelation: "ipo_health_overview"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "legal_deadlines_office_id_fkey"
+            columns: ["office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
             referencedColumns: ["id"]
           },
         ]
