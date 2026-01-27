@@ -243,16 +243,53 @@ export function useMatterV2(id: string) {
   return useQuery({
     queryKey: ['matter-v2', id],
     queryFn: async () => {
-      const client: any = supabase;
-      const { data, error } = await client
-        .from('matters_v2')
+      // Use legacy 'matters' table since matters_v2 is empty
+      const { data: m, error } = await supabase
+        .from('matters')
         .select('*')
         .eq('id', id)
         .eq('organization_id', currentOrganization!.id)
-        .single();
+        .maybeSingle();
       
       if (error) throw error;
-      return data as MatterV2;
+      if (!m) return null;
+      
+      // Map legacy fields to MatterV2 interface
+      return {
+        id: m.id,
+        organization_id: m.organization_id,
+        matter_number: m.reference || m.id.substring(0, 8),
+        reference: m.reference,
+        title: m.title || m.mark_name || 'Sin título',
+        matter_type: m.type || 'trademark',
+        status: m.status || 'active',
+        status_date: m.updated_at,
+        client_id: m.client_id,
+        instruction_date: m.filing_date,
+        priority_date: m.priority_date,
+        mark_name: m.mark_name,
+        mark_type: m.mark_type,
+        mark_image_url: m.mark_image_url,
+        invention_title: m.title,
+        nice_classes: m.nice_classes,
+        ipc_classes: null,
+        goods_services: m.goods_services,
+        responsible_id: m.assigned_to,
+        assistant_id: null,
+        estimated_official_fees: m.official_fees,
+        estimated_professional_fees: m.professional_fees,
+        currency: m.currency || 'EUR',
+        is_urgent: false,
+        is_confidential: false,
+        is_archived: m.is_archived || false,
+        internal_notes: m.notes || m.internal_notes,
+        client_instructions: null,
+        tags: m.tags || [],
+        custom_fields: {},
+        created_by: m.created_by,
+        created_at: m.created_at,
+        updated_at: m.updated_at,
+      } as MatterV2;
     },
     enabled: !!id && !!currentOrganization?.id,
   });
