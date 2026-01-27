@@ -78,6 +78,20 @@ export { useDiscoverAIModels } from './useAIModelDiscovery';
 // FinOps
 export { useAIFinOpsDashboard } from './useAIFinOps';
 
+// Budgets (Phase 3)
+export {
+  useAIBudgets,
+  useAIBudgetAlerts,
+  useAIBudgetSummary,
+  useAICostHistory,
+  useCreateAIBudget,
+  useUpdateAIBudget,
+  useDeleteAIBudget,
+  useAcknowledgeAlert,
+  useCheckBudget,
+  useEstimateCost,
+} from './useAIBudgets';
+
 // Health Monitor
 export {
   useProviderHealthStats,

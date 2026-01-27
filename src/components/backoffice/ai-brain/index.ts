@@ -9,6 +9,8 @@ export { RAGTab } from './RAGTab';
 export { AnalyticsTab } from './AnalyticsTab';
 export { PromptsTab } from './PromptsTab';
 export { FinOpsTab } from './FinOpsTab';
+export { BudgetsTab } from './BudgetsTab';
+export { CostAnalyticsTab } from './CostAnalyticsTab';
 export { ProviderDialog } from './dialogs/ProviderDialog';
 export { TaskDialog } from './dialogs/TaskDialog';
 export { RAGDialog } from './dialogs/RAGDialog';

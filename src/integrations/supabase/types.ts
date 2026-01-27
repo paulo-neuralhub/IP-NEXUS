@@ -960,16 +960,23 @@ export type Database = {
           created_at: string
           current_period_spend: number
           current_period_start: string | null
+          daily_limit: number | null
+          daily_spent: number | null
           fallback_model_id: string | null
           hard_limit: boolean
           hard_limit_action: string
           id: string
           is_active: boolean
+          last_alert_sent_at: string | null
+          last_daily_reset: string | null
           model_id: string | null
           module: string | null
+          monthly_spent: number | null
           organization_id: string | null
+          per_request_limit: number | null
           period_type: string
           scope_type: string
+          total_spent: number | null
           updated_at: string
         }
         Insert: {
@@ -982,16 +989,23 @@ export type Database = {
           created_at?: string
           current_period_spend?: number
           current_period_start?: string | null
+          daily_limit?: number | null
+          daily_spent?: number | null
           fallback_model_id?: string | null
           hard_limit?: boolean
           hard_limit_action?: string
           id?: string
           is_active?: boolean
+          last_alert_sent_at?: string | null
+          last_daily_reset?: string | null
           model_id?: string | null
           module?: string | null
+          monthly_spent?: number | null
           organization_id?: string | null
+          per_request_limit?: number | null
           period_type?: string
           scope_type: string
+          total_spent?: number | null
           updated_at?: string
         }
         Update: {
@@ -1004,16 +1018,23 @@ export type Database = {
           created_at?: string
           current_period_spend?: number
           current_period_start?: string | null
+          daily_limit?: number | null
+          daily_spent?: number | null
           fallback_model_id?: string | null
           hard_limit?: boolean
           hard_limit_action?: string
           id?: string
           is_active?: boolean
+          last_alert_sent_at?: string | null
+          last_daily_reset?: string | null
           model_id?: string | null
           module?: string | null
+          monthly_spent?: number | null
           organization_id?: string | null
+          per_request_limit?: number | null
           period_type?: string
           scope_type?: string
+          total_spent?: number | null
           updated_at?: string
         }
         Relationships: [
@@ -1253,6 +1274,77 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      ai_cost_history: {
+        Row: {
+          cost_by_model: Json | null
+          cost_by_provider: Json | null
+          cost_by_task: Json | null
+          created_at: string | null
+          date: string
+          hour: number | null
+          id: string
+          tenant_id: string | null
+          total_cost: number | null
+          total_executions: number | null
+          total_tokens: number | null
+        }
+        Insert: {
+          cost_by_model?: Json | null
+          cost_by_provider?: Json | null
+          cost_by_task?: Json | null
+          created_at?: string | null
+          date: string
+          hour?: number | null
+          id?: string
+          tenant_id?: string | null
+          total_cost?: number | null
+          total_executions?: number | null
+          total_tokens?: number | null
+        }
+        Update: {
+          cost_by_model?: Json | null
+          cost_by_provider?: Json | null
+          cost_by_task?: Json | null
+          created_at?: string | null
+          date?: string
+          hour?: number | null
+          id?: string
+          tenant_id?: string | null
+          total_cost?: number | null
+          total_executions?: number | null
+          total_tokens?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_cost_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_cost_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "ai_cost_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_cost_history_tenant_id_fkey"
+            columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -42384,6 +42476,21 @@ export type Database = {
         Args: { valid_until: string }
         Returns: Database["public"]["Enums"]["doc_validity_status"]
       }
+      check_budget_before_execution: {
+        Args: {
+          p_estimated_cost: number
+          p_task_code: string
+          p_tenant_id: string
+        }
+        Returns: {
+          action: string
+          can_execute: boolean
+          daily_remaining: number
+          monthly_remaining: number
+          reason: string
+          suggested_model: string
+        }[]
+      }
       check_capability: {
         Args: {
           p_capability_code: string
@@ -42559,6 +42666,14 @@ export type Database = {
       }
       dmetaphone: { Args: { "": string }; Returns: string }
       dmetaphone_alt: { Args: { "": string }; Returns: string }
+      estimate_execution_cost: {
+        Args: {
+          p_estimated_input_tokens: number
+          p_estimated_output_tokens?: number
+          p_model_code: string
+        }
+        Returns: number
+      }
       expire_trials: { Args: never; Returns: number }
       generate_client_token:
         | { Args: { p_organization_id: string }; Returns: string }
@@ -42630,6 +42745,18 @@ export type Database = {
           isOneToOne: false
           isSetofReturn: true
         }
+      }
+      get_ai_cost_analytics: {
+        Args: { p_days?: number; p_tenant_id?: string }
+        Returns: {
+          cost_by_model: Json
+          cost_by_provider: Json
+          cost_by_task: Json
+          date: string
+          total_cost: number
+          total_executions: number
+          total_tokens: number
+        }[]
       }
       get_analytics_stats: {
         Args: { p_days?: number; p_organization_id: string }
@@ -42976,6 +43103,8 @@ export type Database = {
         }
         Returns: string
       }
+      reset_daily_budgets: { Args: never; Returns: number }
+      reset_monthly_budgets: { Args: never; Returns: number }
       reset_provider_health: {
         Args: { p_provider_id: string }
         Returns: undefined
@@ -43090,6 +43219,17 @@ export type Database = {
       trigger_workflow_manually: {
         Args: { p_trigger_data?: Json; p_workflow_id: string }
         Returns: string
+      }
+      update_budget_after_execution: {
+        Args: {
+          p_actual_cost: number
+          p_model_code?: string
+          p_provider_code?: string
+          p_task_code: string
+          p_tenant_id: string
+          p_tokens?: number
+        }
+        Returns: undefined
       }
       update_deadline_statuses: { Args: never; Returns: number }
       update_provider_health_after_execution: {
