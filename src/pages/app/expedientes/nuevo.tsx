@@ -1,5 +1,6 @@
 // ============================================================
 // IP-NEXUS - New Matter Page (Matters V2)
+// Phase 1-E: Creation form with automatic number generation
 // ============================================================
 
 import { useState, useEffect } from 'react';
@@ -7,17 +8,21 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Loader2, Sparkles } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { ArrowLeft, Loader2, Sparkles, Building2, Info } from 'lucide-react';
 import { 
   useCreateMatterV2, 
   useGenerateMatterNumber, 
   useMatterTypes 
 } from '@/hooks/use-matters-v2';
+import { supabase } from '@/integrations/supabase/client';
+import { useOrganization } from '@/contexts/organization-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import {
   Form,
   FormControl,
@@ -39,27 +44,34 @@ import { useToast } from '@/hooks/use-toast';
 import { usePageTitle } from '@/contexts/page-context';
 import { cn } from '@/lib/utils';
 
-// Jurisdictions
+// Jurisdictions with full format support
 const JURISDICTIONS = [
-  { code: 'ES', name: 'España (OEPM)' },
-  { code: 'EU', name: 'Unión Europea (EUIPO)' },
-  { code: 'WO', name: 'Internacional (WIPO)' },
-  { code: 'US', name: 'Estados Unidos (USPTO)' },
-  { code: 'GB', name: 'Reino Unido (UKIPO)' },
-  { code: 'DE', name: 'Alemania (DPMA)' },
-  { code: 'FR', name: 'Francia (INPI)' },
-  { code: 'CN', name: 'China (CNIPA)' },
+  { code: 'GL', name: '🌍 Global (Pre-depósito)', description: 'Para evaluación antes de elegir países' },
+  { code: 'ES', name: '🇪🇸 España (OEPM)', description: 'Oficina Española de Patentes y Marcas' },
+  { code: 'EU', name: '🇪🇺 Unión Europea (EUIPO)', description: 'Oficina de Propiedad Intelectual de la UE' },
+  { code: 'WO', name: '🌐 Internacional (WIPO)', description: 'PCT / Sistema de Madrid' },
+  { code: 'EP', name: '🇪🇺 Patente Europea (EPO)', description: 'Oficina Europea de Patentes' },
+  { code: 'US', name: '🇺🇸 Estados Unidos (USPTO)', description: 'US Patent and Trademark Office' },
+  { code: 'GB', name: '🇬🇧 Reino Unido (UKIPO)', description: 'UK Intellectual Property Office' },
+  { code: 'DE', name: '🇩🇪 Alemania (DPMA)', description: 'Deutsches Patent- und Markenamt' },
+  { code: 'FR', name: '🇫🇷 Francia (INPI)', description: 'Institut National de la Propriété Industrielle' },
+  { code: 'CN', name: '🇨🇳 China (CNIPA)', description: 'China National IP Administration' },
+  { code: 'JP', name: '🇯🇵 Japón (JPO)', description: 'Japan Patent Office' },
+  { code: 'BR', name: '🇧🇷 Brasil (INPI)', description: 'Instituto Nacional da Propriedade Industrial' },
+  { code: 'MX', name: '🇲🇽 México (IMPI)', description: 'Instituto Mexicano de la Propiedad Industrial' },
 ];
 
 const formSchema = z.object({
   title: z.string().min(3, 'El título debe tener al menos 3 caracteres'),
   matter_type: z.string().min(1, 'Selecciona un tipo'),
   jurisdiction_code: z.string().min(1, 'Selecciona una jurisdicción'),
+  client_id: z.string().optional(),
   mark_name: z.string().optional(),
   invention_title: z.string().optional(),
   nice_classes: z.string().optional(),
   goods_services: z.string().optional(),
   reference: z.string().optional(),
+  client_reference: z.string().optional(),
   internal_notes: z.string().optional(),
   is_urgent: z.boolean().default(false),
   is_confidential: z.boolean().default(false),
@@ -67,11 +79,20 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
+// Contact with client token
+interface ContactWithToken {
+  id: string;
+  name: string;
+  company_name: string | null;
+  client_token: string | null;
+}
+
 export default function NewMatterPage() {
   usePageTitle('Nuevo Expediente');
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { currentOrganization } = useOrganization();
   const { data: matterTypes, isLoading: loadingTypes } = useMatterTypes();
   const createMatter = useCreateMatterV2();
   const generateNumber = useGenerateMatterNumber();
@@ -79,17 +100,36 @@ export default function NewMatterPage() {
   const [previewNumber, setPreviewNumber] = useState<string | null>(null);
   const [generatingNumber, setGeneratingNumber] = useState(false);
   
+  // Fetch clients (contacts with client_token)
+  const { data: clients, isLoading: loadingClients } = useQuery({
+    queryKey: ['clients-for-matter', currentOrganization?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('contacts')
+        .select('id, name, company_name, client_token')
+        .eq('organization_id', currentOrganization!.id)
+        .not('client_token', 'is', null)
+        .order('name');
+      
+      if (error) throw error;
+      return data as ContactWithToken[];
+    },
+    enabled: !!currentOrganization?.id,
+  });
+  
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
       matter_type: '',
       jurisdiction_code: '',
+      client_id: '',
       mark_name: '',
       invention_title: '',
       nice_classes: '',
       goods_services: '',
       reference: '',
+      client_reference: '',
       internal_notes: '',
       is_urgent: false,
       is_confidential: false,
@@ -98,14 +138,19 @@ export default function NewMatterPage() {
   
   const watchedType = form.watch('matter_type');
   const watchedJurisdiction = form.watch('jurisdiction_code');
+  const watchedClientId = form.watch('client_id');
   
-  // Generate preview number when type and jurisdiction change
+  // Get selected client info for preview
+  const selectedClient = clients?.find(c => c.id === watchedClientId);
+  
+  // Generate preview number when type, jurisdiction or client change
   useEffect(() => {
     if (watchedType && watchedJurisdiction) {
       setGeneratingNumber(true);
       generateNumber.mutateAsync({
         matterType: watchedType,
         jurisdictionCode: watchedJurisdiction,
+        clientId: watchedClientId || undefined,
       }).then(number => {
         setPreviewNumber(number);
       }).catch(() => {
@@ -116,14 +161,15 @@ export default function NewMatterPage() {
     } else {
       setPreviewNumber(null);
     }
-  }, [watchedType, watchedJurisdiction]);
+  }, [watchedType, watchedJurisdiction, watchedClientId]);
   
   const onSubmit = async (data: FormData) => {
     try {
-      // Generate final number
+      // Generate final number with client if selected
       const matterNumber = await generateNumber.mutateAsync({
         matterType: data.matter_type,
         jurisdictionCode: data.jurisdiction_code,
+        clientId: data.client_id || undefined,
       });
       
       // Parse nice classes
@@ -136,6 +182,7 @@ export default function NewMatterPage() {
         matter_number: matterNumber,
         title: data.title,
         matter_type: data.matter_type,
+        client_id: data.client_id || null,
         reference: data.reference || null,
         mark_name: data.mark_name || null,
         invention_title: data.invention_title || null,
@@ -224,40 +271,102 @@ export default function NewMatterPage() {
             </CardContent>
           </Card>
           
-          {/* Jurisdiction + Preview */}
+          {/* Jurisdiction + Client Selection */}
           <Card>
             <CardHeader>
-              <CardTitle>Jurisdicción</CardTitle>
-              <CardDescription>Selecciona la oficina principal de registro</CardDescription>
+              <CardTitle>Jurisdicción y Cliente</CardTitle>
+              <CardDescription>Selecciona la oficina de registro y el cliente asociado</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <FormField
-                control={form.control}
-                name="jurisdiction_code"
-                render={({ field }) => (
-                  <FormItem>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger>
-                          <SelectValue placeholder="Selecciona jurisdicción" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {JURISDICTIONS.map(j => (
-                          <SelectItem key={j.code} value={j.code}>{j.name}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Jurisdiction */}
+                <FormField
+                  control={form.control}
+                  name="jurisdiction_code"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Jurisdicción *</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona jurisdicción" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {JURISDICTIONS.map(j => (
+                            <SelectItem key={j.code} value={j.code}>
+                              <span>{j.name}</span>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                {/* Client */}
+                <FormField
+                  control={form.control}
+                  name="client_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Cliente</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecciona cliente (opcional)" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {loadingClients ? (
+                            <div className="p-2 text-sm text-muted-foreground">Cargando...</div>
+                          ) : clients?.length === 0 ? (
+                            <div className="p-2 text-sm text-muted-foreground">
+                              No hay clientes con token
+                            </div>
+                          ) : (
+                            clients?.map(client => (
+                              <SelectItem key={client.id} value={client.id}>
+                                <div className="flex items-center gap-2">
+                                  <Building2 className="h-4 w-4 text-muted-foreground" />
+                                  <span>{client.name}</span>
+                                  {client.client_token && (
+                                    <Badge variant="outline" className="text-xs">
+                                      {client.client_token}
+                                    </Badge>
+                                  )}
+                                </div>
+                              </SelectItem>
+                            ))
+                          )}
+                        </SelectContent>
+                      </Select>
+                      <FormDescription>
+                        El token del cliente se incluirá en el número de expediente
+                      </FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              {/* Global jurisdiction info */}
+              {watchedJurisdiction === 'GL' && (
+                <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Expediente Global (Pre-depósito):</strong> Usa esta opción para 
+                    invenciones o marcas en fase de evaluación, antes de decidir en qué países registrar.
+                    Podrás añadir Filings específicos por jurisdicción más adelante.
+                  </AlertDescription>
+                </Alert>
+              )}
               
               {/* Number Preview */}
               {(watchedType && watchedJurisdiction) && (
-                <div className="flex items-center gap-3 p-4 bg-muted/50 rounded-lg border">
+                <div className="flex items-center gap-3 p-4 bg-primary/5 rounded-lg border border-primary/20">
                   <Sparkles className="h-5 w-5 text-primary" />
-                  <div>
+                  <div className="flex-1">
                     <p className="text-sm text-muted-foreground">Número de expediente</p>
                     {generatingNumber ? (
                       <div className="flex items-center gap-2">
@@ -265,7 +374,12 @@ export default function NewMatterPage() {
                         <span className="text-sm">Generando...</span>
                       </div>
                     ) : previewNumber ? (
-                      <p className="font-mono text-lg font-semibold">{previewNumber}</p>
+                      <>
+                        <p className="font-mono text-lg font-semibold text-primary">{previewNumber}</p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Formato: TIPO-JUR-FECHA-{selectedClient ? selectedClient.client_token : 'CLI'}-SEQ-CHECK
+                        </p>
+                      </>
                     ) : null}
                   </div>
                 </div>
@@ -293,19 +407,35 @@ export default function NewMatterPage() {
                 )}
               />
               
-              <FormField
-                control={form.control}
-                name="reference"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Referencia interna</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Ej: CLI-2026-001" {...field} />
-                    </FormControl>
-                    <FormDescription>Referencia opcional para identificación interna</FormDescription>
-                  </FormItem>
-                )}
-              />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="reference"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Referencia interna</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Ej: 2026/TM/001" {...field} />
+                      </FormControl>
+                      <FormDescription>Tu referencia interna</FormDescription>
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="client_reference"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Referencia del cliente</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Referencia que usa el cliente" {...field} />
+                      </FormControl>
+                      <FormDescription>Referencia proporcionada por el cliente</FormDescription>
+                    </FormItem>
+                  )}
+                />
+              </div>
               
               {/* Trademark specific fields */}
               {isTrademarkType && (
