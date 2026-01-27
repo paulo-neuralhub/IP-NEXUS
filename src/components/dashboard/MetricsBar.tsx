@@ -76,59 +76,53 @@ function MetricCard({ metric }: { metric: Metric }) {
 // =============================================
 
 export function useDashboardMetrics() {
-  // TODO: Reemplazar con datos reales de Supabase
+  // Métricas vacías - se conectarán a datos reales de Supabase
   const metrics: Metric[] = [
     {
       label: 'Expedientes',
-      value: 127,
-      change: 12,
-      changeLabel: 'mes',
+      value: 0,
       icon: <Folder className="h-5 w-5" />,
       color: '#3B82F6',
     },
     {
       label: 'Activos',
-      value: 84,
+      value: 0,
       icon: <CheckCircle className="h-5 w-5" />,
       color: '#10B981',
     },
     {
       label: 'Plazos hoy',
-      value: 5,
+      value: 0,
       icon: <Calendar className="h-5 w-5" />,
       color: '#F59E0B',
     },
     {
       label: 'Urgentes',
-      value: 3,
+      value: 0,
       icon: <AlertTriangle className="h-5 w-5" />,
       color: '#EF4444',
     },
     {
       label: 'Clientes',
-      value: 42,
-      change: 8,
-      changeLabel: 'mes',
+      value: 0,
       icon: <Users className="h-5 w-5" />,
       color: '#8B5CF6',
     },
     {
       label: 'Vigilancias',
-      value: 18,
+      value: 0,
       icon: <Eye className="h-5 w-5" />,
       color: '#EC4899',
     },
     {
       label: 'Alertas Spider',
-      value: 7,
+      value: 0,
       icon: <Bell className="h-5 w-5" />,
       color: '#F97316',
     },
     {
       label: 'Fact. mes',
-      value: '€12.4k',
-      change: 23,
-      changeLabel: 'vs ant.',
+      value: '€0',
       icon: <Euro className="h-5 w-5" />,
       color: '#059669',
     },
