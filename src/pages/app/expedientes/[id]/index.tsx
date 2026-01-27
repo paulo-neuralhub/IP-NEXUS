@@ -2,6 +2,7 @@
 // IP-NEXUS - Matter Detail Page (Matters V2)
 // ============================================================
 
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Archive,
@@ -46,6 +47,7 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 export default function MatterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('general');
   
   const { data: matter, isLoading, error } = useMatterV2(id!);
   const { data: filings } = useMatterFilings(id!);
@@ -146,7 +148,7 @@ export default function MatterDetailPage() {
       </div>
       
       {/* Tabs */}
-      <Tabs defaultValue="general" className="space-y-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="flex-wrap">
           <TabsTrigger value="general" className="gap-2">
             <FileText className="h-4 w-4" />
@@ -448,49 +450,43 @@ export default function MatterDetailPage() {
               ) : (
                 <div className="space-y-4">
                   {timeline.map((event, index) => {
-                    // Determine navigation based on event type
-                    const getEventNavigation = () => {
+                    // Determine tab to open based on event type
+                    const getEventTab = (): string | null => {
                       const type = event.event_type?.toLowerCase() || '';
-                      const metadata = event.metadata || {};
                       
-                      // Email events
-                      if (type.includes('email') || type === 'communication_email') {
-                        const commId = metadata.communication_id || metadata.email_id;
-                        return commId ? `/app/communications/${commId}` : null;
+                      // Email/Communication events -> Communications tab
+                      if (type.includes('email') || type.includes('whatsapp') || type.includes('call') || type.includes('phone') || type.includes('communication')) {
+                        return 'communications';
                       }
-                      // WhatsApp events
-                      if (type.includes('whatsapp') || type === 'communication_whatsapp') {
-                        const contactId = metadata.contact_id;
-                        return contactId ? `/app/crm/contacts/${contactId}?tab=whatsapp` : '/app/communications';
+                      // Document events -> Documents tab
+                      if (type.includes('document')) {
+                        return 'documents';
                       }
-                      // Phone/Call events
-                      if (type.includes('call') || type.includes('phone')) {
-                        const contactId = metadata.contact_id;
-                        return contactId ? `/app/crm/contacts/${contactId}?tab=calls` : null;
+                      // Filing events -> Filings tab
+                      if (type === 'filing' || type.includes('presentation') || type.includes('solicitud')) {
+                        return 'filings';
                       }
-                      // Document events
-                      if (type.includes('document') || type === 'filing') {
-                        const docId = metadata.document_id;
-                        return docId ? `/app/documents/${docId}` : null;
+                      // Deadline/Plazo events -> Deadlines tab
+                      if (type.includes('deadline') || type.includes('plazo') || type.includes('vencimiento') || type.includes('renovación') || type.includes('renewal')) {
+                        return 'deadlines';
                       }
-                      // Deadline events
-                      if (type.includes('deadline') || type.includes('plazo')) {
-                        return `/app/docket/deadlines`;
+                      // Invoice/Finance events -> Invoices tab
+                      if (type.includes('invoice') || type.includes('payment') || type.includes('factura') || type.includes('pago')) {
+                        return 'invoices';
                       }
-                      // Notification events  
-                      if (type.includes('notification') || type.includes('alert')) {
-                        return null; // Notifications open in sidebar
+                      // Task events -> Tasks tab
+                      if (type.includes('task') || type.includes('tarea')) {
+                        return 'tasks';
                       }
-                      // Invoice/Finance events
-                      if (type.includes('invoice') || type.includes('payment') || type.includes('factura')) {
-                        const invoiceId = metadata.invoice_id;
-                        return invoiceId ? `/app/finance/invoices/${invoiceId}` : null;
+                      // Party events -> Parties tab
+                      if (type.includes('party') || type.includes('parte') || type.includes('titular') || type.includes('representante')) {
+                        return 'parties';
                       }
                       return null;
                     };
                     
-                    const eventUrl = getEventNavigation();
-                    const isClickable = !!eventUrl;
+                    const targetTab = getEventTab();
+                    const isClickable = !!targetTab;
                     
                     const getEventIcon = () => {
                       const type = event.event_type?.toLowerCase() || '';
@@ -505,14 +501,24 @@ export default function MatterDetailPage() {
                       if (type.includes('examination')) return '🔍';
                       if (type.includes('receipt')) return '📨';
                       if (type.includes('note')) return '📝';
+                      if (type.includes('task') || type.includes('tarea')) return '✅';
+                      if (type.includes('party') || type.includes('parte')) return '👤';
                       return '📌';
+                    };
+                    
+                    const handleEventClick = () => {
+                      if (targetTab) {
+                        setActiveTab(targetTab);
+                        // Scroll to top after changing tab
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                      }
                     };
                     
                     return (
                       <div 
                         key={event.id} 
                         className={`flex gap-4 ${isClickable ? 'cursor-pointer hover:bg-muted/50 rounded-lg p-2 -m-2 transition-colors' : ''}`}
-                        onClick={() => eventUrl && navigate(eventUrl)}
+                        onClick={handleEventClick}
                         role={isClickable ? 'button' : undefined}
                         tabIndex={isClickable ? 0 : undefined}
                       >
@@ -543,7 +549,13 @@ export default function MatterDetailPage() {
                           )}
                           {isClickable && (
                             <p className="text-xs text-primary/70 mt-2">
-                              Clic para ver detalle →
+                              Clic para ir a {targetTab === 'deadlines' ? 'Plazos' : 
+                                             targetTab === 'documents' ? 'Documentos' :
+                                             targetTab === 'communications' ? 'Comunicaciones' :
+                                             targetTab === 'invoices' ? 'Facturas' :
+                                             targetTab === 'tasks' ? 'Tareas' :
+                                             targetTab === 'filings' ? 'Presentaciones' :
+                                             targetTab === 'parties' ? 'Partes' : targetTab} →
                             </p>
                           )}
                         </div>
