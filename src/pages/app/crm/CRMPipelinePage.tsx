@@ -5,6 +5,8 @@
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { QuickLeadFormModal } from '@/components/features/crm/pipeline/QuickLeadFormModal';
+import { DealFormModal } from '@/components/features/crm/v2/DealFormModal';
 import { usePageTitle } from '@/contexts/page-context';
 import { useOrganization } from '@/contexts/organization-context';
 import { useIsDemoMode } from '@/hooks/backoffice/useDemoMode';
@@ -152,6 +154,9 @@ export default function CRMPipelinePage() {
   const [showLostModal, setShowLostModal] = useState(false);
   const [leadToClose, setLeadToClose] = useState<Lead | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  
+  // Create modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
   
 
   // Set default pipeline once loaded
@@ -604,9 +609,9 @@ export default function CRMPipelinePage() {
 
 
           {/* New */}
-          <Button>
+          <Button onClick={() => setShowCreateModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Nuevo
+            {view === 'leads' ? 'Nuevo Lead' : 'Nueva Negociación'}
           </Button>
         </div>
       </div>
@@ -750,6 +755,27 @@ export default function CRMPipelinePage() {
         onConfirm={handleConfirmLost}
         isLoading={isProcessing}
       />
+
+      {/* Create Lead/Deal Modal */}
+      {view === 'leads' ? (
+        <QuickLeadFormModal
+          open={showCreateModal}
+          onClose={() => {
+            setShowCreateModal(false);
+            refetchLeads();
+          }}
+          pipelineId={selectedPipelineId || undefined}
+        />
+      ) : (
+        <DealFormModal
+          open={showCreateModal}
+          onClose={() => {
+            setShowCreateModal(false);
+            refetchDeals();
+          }}
+          defaultPipelineId={selectedPipelineId || undefined}
+        />
+      )}
     </div>
   );
 }
