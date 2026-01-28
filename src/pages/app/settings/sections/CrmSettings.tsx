@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { GripVertical, Plus, Trash2 } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { ColorPicker } from '@/components/ui/color-picker';
 import { Separator } from '@/components/ui/separator';
 import {
   Dialog,
@@ -323,13 +324,9 @@ export default function CrmSettings() {
                 onChange={(e) => setStageProbability(Number(e.target.value))}
               />
             </div>
-            <div className="col-span-6">
-              <Label htmlFor="stageColor">Color (hex)</Label>
-              <Input id="stageColor" value={stageColor} onChange={(e) => setStageColor(e.target.value)} />
-              <div className="mt-2 flex items-center gap-2">
-                <div className="h-3 w-3 rounded-sm border" style={{ backgroundColor: stageColor }} />
-                <span className="text-xs text-muted-foreground">Preview</span>
-              </div>
+            <div className="col-span-12">
+              <Label>Color</Label>
+              <ColorPicker value={stageColor} onChange={setStageColor} className="mt-2" />
             </div>
           </div>
 

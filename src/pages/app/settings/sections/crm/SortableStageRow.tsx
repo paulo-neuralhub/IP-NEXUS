@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ColorPicker, STAGE_COLORS } from '@/components/ui/color-picker';
 
 type SortableStageRowProps = {
   id: string;
@@ -89,9 +91,29 @@ export const SortableStageRow = React.forwardRef<HTMLDivElement, SortableStageRo
           />
         </div>
 
-        <div className="col-span-6 md:col-span-2 min-w-0 flex items-center gap-2">
-          <div className="h-3 w-3 shrink-0 rounded-sm border" style={{ backgroundColor: stage.color }} />
-          <span className="min-w-0 text-xs text-muted-foreground truncate">{stage.color}</span>
+        <div className="col-span-6 md:col-span-2 min-w-0">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="flex items-center gap-2 px-2 py-1 rounded-md hover:bg-muted transition-colors"
+              >
+                <div 
+                  className="h-5 w-5 shrink-0 rounded-full border-2 border-white shadow-sm" 
+                  style={{ backgroundColor: stage.color }} 
+                />
+                <span className="min-w-0 text-xs text-muted-foreground truncate">
+                  {STAGE_COLORS.find(c => c.value === stage.color)?.name || 'Color'}
+                </span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-3" align="start">
+              <ColorPicker 
+                value={stage.color} 
+                onChange={(color) => onUpdate({ color })} 
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         <div className="col-span-12 md:col-span-3 flex items-start md:items-center justify-between gap-3">

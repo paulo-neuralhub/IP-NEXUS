@@ -44547,24 +44547,14 @@ export type Database = {
         }[]
       }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
-      approve_lead:
-        | {
-            Args: {
-              p_deal_title?: string
-              p_deal_value?: number
-              p_lead_id: string
-            }
-            Returns: Json
-          }
-        | {
-            Args: {
-              p_deal_title?: string
-              p_deal_value?: number
-              p_lead_id: string
-              p_user_id?: string
-            }
-            Returns: Json
-          }
+      approve_lead: {
+        Args: {
+          p_deal_title?: string
+          p_deal_value?: number
+          p_lead_id: string
+        }
+        Returns: Json
+      }
       approve_workflow: {
         Args: { p_queue_id: string; p_user_id: string }
         Returns: boolean

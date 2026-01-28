@@ -33,9 +33,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLeads, useUpdateLeadStatus, useApproveLead, Lead, LeadStatus } from '@/hooks/crm/useLeads';
-import { useDeals, useUpdateDealStage, useWinDeal, useLoseDeal, Deal, DealStage } from '@/hooks/crm/useDeals';
-import { useCRMPipelines, CRMPipeline, CRMPipelineStage } from '@/hooks/crm/v2/pipelines';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { useLeads, useUpdateLeadStatus, Lead, LeadStatus } from '@/hooks/crm/useLeads';
+import { useDeals, useUpdateDealStage, Deal, DealStage } from '@/hooks/crm/useDeals';
+import { useCRMPipelines, CRMPipelineStage } from '@/hooks/crm/v2/pipelines';
 import { PipelineKanbanColumn } from '@/components/features/crm/pipeline/PipelineKanbanColumn';
 import { PipelineCard } from '@/components/features/crm/pipeline/PipelineCard';
 import { LeadDetailModal } from '@/components/crm/modals/LeadDetailModal';
@@ -43,6 +51,7 @@ import { DealDetailSheet } from '@/components/crm/modals/DealDetailSheet';
 import { Plus, Search, Filter, RefreshCw, Info, KanbanSquare, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
+import { fromTable } from '@/lib/supabase';
 
 type ViewType = 'leads' | 'deals';
 
@@ -136,6 +145,11 @@ export default function CRMPipelinePage() {
   // Detail modals
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  
+  // Conversion modal state (when lead reaches "Won" stage)
+  const [showConvertModal, setShowConvertModal] = useState(false);
+  const [leadToConvert, setLeadToConvert] = useState<Lead | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
 
   // Set default pipeline once loaded
   useEffect(() => {
@@ -176,12 +190,9 @@ export default function CRMPipelinePage() {
   const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads } = useLeads();
   const { data: deals = [], isLoading: isLoadingDeals, refetch: refetchDeals } = useDeals();
 
-  // Mutations
+  // Mutations - SIMPLIFIED: only status/stage updates
   const updateLeadStatus = useUpdateLeadStatus();
-  const approveLead = useApproveLead();
   const updateDealStage = useUpdateDealStage();
-  const winDeal = useWinDeal();
-  const loseDeal = useLoseDeal();
 
   // Sensors for drag & drop
   const sensors = useSensors(
@@ -279,7 +290,7 @@ export default function CRMPipelinePage() {
     setActiveId(event.active.id as string);
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
     
@@ -289,149 +300,121 @@ export default function CRMPipelinePage() {
     const targetColId = over.id as string;
     const targetCol = columns.find(c => c.id === targetColId);
     
-    console.log('[DragEnd] itemId:', itemId, 'targetColId:', targetColId, 'targetCol:', targetCol);
-    
-    if (!targetCol) {
-      console.log('[DragEnd] No target column found');
-      return;
-    }
+    if (!targetCol) return;
+
+    // ========================================
+    // SIMPLIFIED LOGIC: Only update stage_id
+    // No automatic conversions!
+    // ========================================
 
     if (view === 'leads') {
-      // ========================================
-      // LEAD PIPELINE - Only handle leads here
-      // ========================================
+      // LEAD PIPELINE
       const lead = leads.find(l => l.id === itemId);
-      if (!lead) {
-        console.log('[DragEnd] Lead not found:', itemId);
-        return;
-      }
+      if (!lead) return;
 
-      // Normalize stage name for comparison (remove accents)
-      const normalizedStageName = targetCol.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      // Map stage name to valid status
+      const normalizedName = targetCol.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
       
-      // WON STAGE = Convert lead to deal with confirmation modal idea
-      if (targetCol.isWon) {
-        console.log('[DragEnd] Lead reached WON stage - converting to deal');
-        approveLead.mutate(
-          { leadId: lead.id, dealTitle: `Negociación - ${lead.company_name || lead.contact_name}` },
-          { 
-            onSuccess: () => {
-              toast.success('🎉 ¡Lead ganado! Negociación creada automáticamente');
-              refetchLeads();
-              refetchDeals();
-            },
-            onError: (error) => {
-              console.error('[DragEnd] Error converting lead:', error);
-              toast.error('Error al convertir lead');
-            }
-          }
-        );
-        return;
-      }
-
-      // LOST STAGE - Mark as standby/discard
-      if (targetCol.isLost) {
-        updateLeadStatus.mutate(
-          { leadId: lead.id, status: 'standby' },
-          { 
-            onSuccess: () => {
-              toast.info('Lead descartado');
-              refetchLeads();
-            }
-          }
-        );
-        return;
-      }
-
-      // NORMAL LEAD STATUS UPDATE - Only valid lead statuses
-      const validStatuses: LeadStatus[] = ['new', 'contacted', 'standby', 'converted'];
-      
-      const statusNormalizer: Record<string, LeadStatus> = {
-        'new': 'new', 'nuevo': 'new',
-        'contacted': 'contacted', 'contactado': 'contacted', 'contacto inicial': 'contacted', 'contacto': 'contacted',
-        'cualificado': 'contacted', 'qualified': 'contacted',
-        'propuesta': 'standby', 'propuesta enviada': 'standby',
+      const statusMap: Record<string, LeadStatus> = {
+        'nuevo': 'new', 'new': 'new',
+        'contactado': 'contacted', 'contacted': 'contacted', 'contacto': 'contacted',
+        'cualificado': 'contacted', 'propuesta': 'standby', 'propuesta enviada': 'standby',
         'standby': 'standby', 'rellamar': 'standby', 'recontactar': 'standby',
-        'converted': 'converted', 'ganado': 'converted',
+        'ganado': 'converted', 'converted': 'converted',
+        'perdido': 'standby', 'descartado': 'standby',
       };
       
-      const rawStatus = targetCol.status as string;
-      const statusFromCol = rawStatus ? statusNormalizer[rawStatus.toLowerCase()] : null;
-      const statusFromName = statusNormalizer[normalizedStageName];
-      const newStatus = statusFromCol || statusFromName || 'new';
+      const newStatus = statusMap[normalizedName] || (targetCol.status as LeadStatus) || 'new';
       
-      // Validate the status
-      const finalStatus = validStatuses.includes(newStatus) ? newStatus : 'new';
-
-      if (lead.status !== finalStatus) {
-        console.log('[DragEnd] Updating lead status from', lead.status, 'to', finalStatus);
-        updateLeadStatus.mutate(
-          { leadId: lead.id, status: finalStatus },
-          { 
-            onSuccess: () => {
-              toast.success(`Movido a ${targetCol.title}`);
-              refetchLeads();
+      // Update lead status
+      updateLeadStatus.mutate(
+        { leadId: lead.id, status: newStatus },
+        { 
+          onSuccess: () => {
+            toast.success(`Movido a ${targetCol.title}`);
+            refetchLeads();
+            
+            // If moved to WON stage, show conversion modal (don't auto-convert)
+            if (targetCol.isWon) {
+              setLeadToConvert(lead);
+              setShowConvertModal(true);
             }
+          },
+          onError: (err) => {
+            console.error('Error updating lead:', err);
+            toast.error('Error al mover lead');
           }
-        );
-      } else {
-        console.log('[DragEnd] Lead already has status:', finalStatus);
-      }
+        }
+      );
     } else {
+      // DEAL PIPELINE
       const deal = deals.find(d => d.id === itemId);
-      if (!deal) {
-        console.log('[DragEnd] Deal not found:', itemId);
-        return;
-      }
+      if (!deal) return;
 
-      console.log('[DragEnd] Deal:', deal.name, 'current stage:', deal.stage, 'target stage:', targetCol.stage);
-
-      if (targetCol.isWon) {
-        winDeal.mutate(
-          { dealId: deal.id }, 
-          { 
-            onSuccess: () => {
-              toast.success('🎉 ¡Deal ganado!');
-              refetchDeals();
-            }
+      // Determine new stage value
+      const normalizedName = targetCol.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      
+      const stageMap: Record<string, DealStage> = {
+        'nueva': 'contacted', 'new': 'contacted', 'nuevo': 'contacted',
+        'contactado': 'contacted', 'contacted': 'contacted',
+        'reunion': 'qualified', 'reunión': 'qualified', 'qualified': 'qualified',
+        'propuesta': 'proposal', 'propuesta enviada': 'proposal', 'proposal': 'proposal',
+        'en revision': 'negotiation', 'negociacion': 'negotiation', 'negotiation': 'negotiation',
+        'ganado': 'won', 'ganada': 'won', 'won': 'won',
+        'perdido': 'lost', 'perdida': 'lost', 'lost': 'lost',
+      };
+      
+      const newStage = stageMap[normalizedName] || (targetCol.stage as DealStage) || 'contacted';
+      
+      // Update deal stage
+      updateDealStage.mutate(
+        { dealId: deal.id, stage: newStage },
+        { 
+          onSuccess: () => {
+            toast.success(`Movido a ${targetCol.title}`);
+            refetchDeals();
+          },
+          onError: (err) => {
+            console.error('Error updating deal:', err);
+            toast.error('Error al mover negociación');
           }
-        );
-        return;
-      }
+        }
+      );
+    }
+  };
 
-      if (targetCol.isLost) {
-        loseDeal.mutate(
-          { dealId: deal.id, reason: 'Perdido' },
-          { 
-            onSuccess: () => {
-              toast.info('Deal marcado como perdido');
-              refetchDeals();
-            }
-          }
-        );
-        return;
-      }
-
-      // Update to new stage
-      if (targetCol.stage && deal.stage !== targetCol.stage) {
-        console.log('[DragEnd] Updating deal stage from', deal.stage, 'to', targetCol.stage);
-        updateDealStage.mutate(
-          { dealId: deal.id, stage: targetCol.stage },
-          { 
-            onSuccess: () => {
-              console.log('[DragEnd] Stage updated successfully');
-              toast.success(`Movido a ${targetCol.title}`);
-              refetchDeals();
-            },
-            onError: (error) => {
-              console.error('[DragEnd] Stage update error:', error);
-              toast.error('Error al actualizar etapa');
-            }
-          }
-        );
-      } else {
-        console.log('[DragEnd] No stage update needed:', deal.stage, '===', targetCol.stage);
-      }
+  // Handle creating a deal from a won lead (optional, user chooses)
+  const handleCreateDealFromLead = async () => {
+    if (!leadToConvert || !selectedPipeline) return;
+    
+    setIsConverting(true);
+    try {
+      // Get the first stage of the deals pipeline
+      const dealsPipeline = pipelines.find(p => !p.name.toLowerCase().includes('lead'));
+      const firstDealStage = dealsPipeline?.stages?.[0];
+      
+      // Create the deal directly
+      const { error } = await fromTable('crm_deals').insert({
+        organization_id: (leadToConvert as any).organization_id,
+        name: `Negociación - ${leadToConvert.company_name || leadToConvert.contact_name}`,
+        amount: leadToConvert.estimated_value || 0,
+        stage: 'contacted',
+        stage_id: firstDealStage?.id || null,
+        lead_id: leadToConvert.id,
+        territory: 'ES',
+      });
+      
+      if (error) throw error;
+      
+      toast.success('🚀 Negociación creada desde lead');
+      refetchDeals();
+      setShowConvertModal(false);
+      setLeadToConvert(null);
+    } catch (err) {
+      console.error('Error creating deal:', err);
+      toast.error('Error al crear negociación');
+    } finally {
+      setIsConverting(false);
     }
   };
 
@@ -643,6 +626,46 @@ export default function CRMPipelinePage() {
           onOpenChange={(open) => !open && setSelectedDeal(null)}
         />
       )}
+
+      {/* Conversion Modal: When lead reaches "Won" stage */}
+      <Dialog open={showConvertModal} onOpenChange={setShowConvertModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>🎉 ¡Lead ganado!</DialogTitle>
+            <DialogDescription>
+              El lead ha sido marcado como ganado. ¿Deseas crear una negociación a partir de este lead?
+            </DialogDescription>
+          </DialogHeader>
+          
+          {leadToConvert && (
+            <div className="py-4 space-y-2 text-sm">
+              <p><strong>Empresa:</strong> {leadToConvert.company_name || 'Sin nombre'}</p>
+              <p><strong>Contacto:</strong> {leadToConvert.contact_name}</p>
+              {leadToConvert.estimated_value && (
+                <p><strong>Valor estimado:</strong> €{leadToConvert.estimated_value.toLocaleString()}</p>
+              )}
+            </div>
+          )}
+
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowConvertModal(false);
+                setLeadToConvert(null);
+              }}
+            >
+              No, solo cerrar lead
+            </Button>
+            <Button 
+              onClick={handleCreateDealFromLead}
+              disabled={isConverting}
+            >
+              {isConverting ? 'Creando...' : 'Sí, crear negociación'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
