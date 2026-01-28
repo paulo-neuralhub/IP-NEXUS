@@ -166,51 +166,53 @@ export function SuperAdminBar() {
         </Button>
 
         {/* Simulate Subscription Dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button 
-              variant="ghost" 
-              size="sm"
-              className="text-sidebar-foreground hover:bg-sidebar-accent h-7 text-xs"
-            >
-              <Eye className="h-3 w-3 mr-1" />
-              Simular Plan
-              <ChevronDown className="h-3 w-3 ml-1" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent 
-            align="end" 
-            className="bg-popover border-border text-popover-foreground min-w-[200px]"
-          >
-            {SUBSCRIPTION_OPTIONS.map((plan) => (
-              <DropdownMenuItem
-                key={plan.id}
-                onClick={() => {
-                  simulateSubscription(plan.id);
-                  navigate('/app');
-                }}
-                className="cursor-pointer"
+        <div className="relative">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="text-sidebar-foreground hover:bg-sidebar-accent h-7 text-xs"
               >
-                <span className="mr-2">{plan.icon}</span>
-                Ver como {plan.name}
-                {currentMode?.subscription === plan.id && (
-                  <Crown className="h-3 w-3 ml-auto text-primary" />
-                )}
-              </DropdownMenuItem>
-            ))}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem 
-              onClick={() => {
-                exitToSuperAdmin();
-                setTimeout(() => navigate('/app'), 100);
-              }}
-              className="cursor-pointer text-destructive focus:text-destructive"
+                <Eye className="h-3 w-3 mr-1" />
+                Simular Plan
+                <ChevronDown className="h-3 w-3 ml-1" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent 
+              align="end" 
+              className="bg-popover border-border text-popover-foreground min-w-[200px]"
             >
-              <LogOut className="h-3 w-3 mr-2" />
-              Salir de simulación
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+              {SUBSCRIPTION_OPTIONS.map((plan) => (
+                <DropdownMenuItem
+                  key={plan.id}
+                  onClick={() => {
+                    simulateSubscription(plan.id);
+                    navigate('/app');
+                  }}
+                  className="cursor-pointer"
+                >
+                  <span className="mr-2">{plan.icon}</span>
+                  Ver como {plan.name}
+                  {currentMode?.subscription === plan.id && (
+                    <Crown className="h-3 w-3 ml-auto text-primary" />
+                  )}
+                </DropdownMenuItem>
+              ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem 
+                onClick={() => {
+                  exitToSuperAdmin();
+                  setTimeout(() => navigate('/app'), 100);
+                }}
+                className="cursor-pointer text-destructive focus:text-destructive"
+              >
+                <LogOut className="h-3 w-3 mr-2" />
+                Salir de simulación
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         {/* Collapse button */}
         <Button
