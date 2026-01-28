@@ -13,10 +13,10 @@ export function useCRMTasks(filters?: { account_id?: string; deal_id?: string; s
       let query = fromTable("crm_tasks")
         .select(`
           *, 
-          assigned_to:users!assigned_to(id, full_name),
+          assigned_to_user:users!assigned_to(id, full_name),
           account:crm_accounts!account_id(id, name),
           contact:crm_contacts!contact_id(id, full_name, phone, email),
-          deal:deals!deal_id(id, name)
+          deal:deals!deal_id(id, title)
         `)
         .eq("organization_id", organizationId)
         .order("due_date", { ascending: true, nullsFirst: false });

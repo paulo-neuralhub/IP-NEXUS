@@ -49,13 +49,13 @@ export function PipelineKanbanColumn({
       ref={setNodeRef}
       className={cn(
         'flex flex-col rounded-xl overflow-hidden transition-all w-[300px] flex-shrink-0',
-        'border shadow-sm',
-        'h-[calc(100vh-300px)] min-h-[400px] max-h-[700px]', // Altura fija para el scroll
+        'border shadow-sm bg-card',
         isOver && 'ring-2 ring-primary shadow-lg scale-[1.02]',
         isWon && 'border-green-300 dark:border-green-800',
         isLost && 'border-red-300 dark:border-red-800',
         !isWon && !isLost && 'border-border'
       )}
+      style={{ height: 'calc(100vh - 280px)', minHeight: '400px', maxHeight: '700px' }}
     >
       {/* Color Bar on top - Odoo style */}
       <div 
@@ -106,15 +106,19 @@ export function PipelineKanbanColumn({
         </div>
       </div>
 
-      {/* Content - Scroll visible */}
-      <div className={cn(
-        'flex-1 p-3 overflow-y-auto min-h-0',
-        'scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent hover:scrollbar-thumb-slate-400',
-        isWon && 'bg-green-50/30 dark:bg-green-950/10',
-        isLost && 'bg-red-50/30 dark:bg-red-950/10',
-        !isWon && !isLost && 'bg-muted/20'
-      )}
-      style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
+      {/* Content - Cards area with visible scrollbar */}
+      <div 
+        className={cn(
+          'flex-1 p-3 min-h-0',
+          isWon && 'bg-green-50/30 dark:bg-green-950/10',
+          isLost && 'bg-red-50/30 dark:bg-red-950/10',
+          !isWon && !isLost && 'bg-muted/20'
+        )}
+        style={{ 
+          overflowY: 'auto',
+          scrollbarWidth: 'thin',
+          scrollbarColor: '#94a3b8 #e2e8f0'
+        }}
       >
         <SortableContext items={[]} strategy={verticalListSortingStrategy}>
           <div className="space-y-3 min-h-[120px]">
