@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { fromTable, rpcFn } from "@/lib/supabase";
+import { fromTable, rpcFn, supabase } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 import type { DealFilters, PipelineSummary } from "./types";
@@ -70,8 +70,16 @@ export function useCreateCRMDeal() {
   return useMutation({
     mutationFn: async (deal: Record<string, unknown>) => {
       if (!organizationId) throw new Error("Missing organizationId");
+      
+      // Get current user for default assignment
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { data, error } = await fromTable("crm_deals")
-        .insert({ ...deal, organization_id: organizationId })
+        .insert({ 
+          ...deal, 
+          organization_id: organizationId,
+          assigned_to: deal.assigned_to || user?.id, // Default to current user
+        })
         .select()
         .single();
       if (error) throw error;
