@@ -4,6 +4,7 @@
 // ============================================================
 
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { usePageTitle } from '@/contexts/page-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -22,7 +23,7 @@ import {
 import { 
   Settings, Plus, GripVertical, Edit2, Trash2, 
   Check, X, Users, FileText, AlertTriangle, RefreshCw,
-  Target, Loader2
+  Target, Loader2, ArrowLeft
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { usePipelines, useCreatePipeline, useUpdatePipeline, useDeletePipeline } from '@/hooks/crm/use-pipelines';
@@ -113,6 +114,7 @@ interface PipelineLocal {
 
 export default function PipelineList() {
   usePageTitle('Pipelines');
+  const navigate = useNavigate();
   
   const { data: pipelines, isLoading } = usePipelines();
   const createPipeline = useCreatePipeline();
@@ -180,12 +182,19 @@ export default function PipelineList() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Pipelines</h1>
-          <p className="text-muted-foreground">Configura tus procesos de venta y gestión</p>
+          <p className="text-muted-foreground">Gestiona pipelines y etapas del CRM</p>
         </div>
         <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={() => navigate('/app/crm/kanban')}
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Volver al Kanban
+          </Button>
           <Button variant="outline" onClick={() => setShowTemplateDialog(true)}>
             <Target className="w-4 h-4 mr-2" />
             Desde Plantilla
