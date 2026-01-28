@@ -1,10 +1,11 @@
 /**
  * PipelineCard - Tarjeta visual profesional estilo Odoo/Bitrix
  * Border izquierdo color, badge tipo, valor, avatar, acciones, fechas
+ * Usa useDraggable para arrastre ENTRE columnas (no dentro)
  */
 
 import React, { forwardRef } from 'react';
-import { useSortable } from '@dnd-kit/sortable';
+import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -59,23 +60,24 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-// Componente interno que usa useSortable
-function PipelineCardInner({ item, type, onClick, isDragging }: PipelineCardProps) {
+// Componente interno que usa useDraggable para arrastre ENTRE columnas
+function PipelineCardInner({ item, type, onClick, isDragging: externalDragging }: PipelineCardProps) {
   const {
     attributes,
     listeners,
     setNodeRef,
     transform,
-    transition,
-  } = useSortable({
+    isDragging,
+  } = useDraggable({
     id: item.id,
     data: { type, item },
   });
 
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
+    transform: CSS.Translate.toString(transform),
   };
+
+  const dragging = isDragging || externalDragging;
 
   // Extract data
   const lead = isLead(item) ? item : null;
@@ -127,10 +129,10 @@ function PipelineCardInner({ item, type, onClick, isDragging }: PipelineCardProp
       style={style}
       onClick={handleClick}
       className={cn(
-        'w-full rounded-xl overflow-hidden transition-all duration-200 cursor-grab',
+        'w-full rounded-xl overflow-hidden transition-all duration-200 cursor-grab touch-none',
         'bg-card border shadow-sm',
         'hover:shadow-lg hover:scale-[1.02]',
-        isDragging && 'opacity-70 shadow-2xl ring-2 ring-primary rotate-1 cursor-grabbing',
+        dragging && 'opacity-70 shadow-2xl ring-2 ring-primary rotate-1 cursor-grabbing z-50',
         isOverdue && 'border-destructive/50'
       )}
       {...attributes}
@@ -302,7 +304,7 @@ function PipelineCardInner({ item, type, onClick, isDragging }: PipelineCardProp
 // Exported component with forwardRef for dnd-kit compatibility
 export const PipelineCard = forwardRef<HTMLDivElement, PipelineCardProps>(
   function PipelineCard(props, _ref) {
-    // Note: useSortable creates its own ref, so we use the inner component
+    // Note: useDraggable creates its own ref, so we use the inner component
     return <PipelineCardInner {...props} />;
   }
 );

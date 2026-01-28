@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { DndContext, PointerSensor, closestCenter, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { Plus } from 'lucide-react';
+import { Plus, ArrowLeft, KanbanSquare } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -35,6 +36,7 @@ import {
 import { SortableStageRow } from './crm/SortableStageRow';
 
 export default function CrmSettings() {
+  const navigate = useNavigate();
   const { data: pipelines = [], isLoading } = usePipelines();
   const updatePipeline = useUpdatePipeline();
   const createPipeline = useCreatePipeline();
@@ -155,12 +157,25 @@ export default function CrmSettings() {
 
   return (
     <div className="space-y-6">
+      {/* Header con botón Volver al Kanban */}
       <Card>
         <CardHeader>
-          <CardTitle>CRM · Pipelines y etapas</CardTitle>
-          <CardDescription>
-            Crea pipelines, añade etapas, reordénalas y define cuál es el pipeline predeterminado.
-          </CardDescription>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>CRM · Pipelines y etapas</CardTitle>
+              <CardDescription>
+                Crea pipelines, añade etapas, reordénalas y define cuál es el pipeline predeterminado.
+              </CardDescription>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => navigate('/app/crm/kanban')}
+              className="flex items-center gap-2"
+            >
+              <KanbanSquare className="w-4 h-4" />
+              Volver al Kanban
+            </Button>
+          </div>
         </CardHeader>
       </Card>
 
