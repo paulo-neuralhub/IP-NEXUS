@@ -1,16 +1,22 @@
 /**
  * MatterCommunications - Panel de comunicaciones para expediente
  * Muestra todas las comunicaciones vinculadas al expediente
+ * IMPORTANTE: Abre las comunicaciones en un Sheet sin salir del expediente
  */
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCommunications } from '@/hooks/legal-ops/useCommunications';
+import { useCommunications, useCommunication } from '@/hooks/legal-ops/useCommunications';
 import { CommChannel, Communication } from '@/types/legal-ops';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,9 +26,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import {
   Mail, MessageSquare, Phone, Plus, ChevronDown,
-  ArrowDownLeft, ArrowUpRight, RefreshCw, Globe
+  ArrowDownLeft, ArrowUpRight, RefreshCw, Globe, X
 } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 
@@ -72,13 +78,16 @@ export function MatterCommunications({
   onComposeWhatsApp,
   onCall
 }: MatterCommunicationsProps) {
-  const navigate = useNavigate();
   const [channelFilter, setChannelFilter] = useState<ChannelFilter>('all');
+  const [selectedCommId, setSelectedCommId] = useState<string | null>(null);
 
   const { data: commsResult, isLoading, refetch } = useCommunications({
     matter_id: matterId,
     channel: channelFilter !== 'all' ? channelFilter : undefined
   });
+
+  // Cargar detalle de la comunicación seleccionada
+  const { data: selectedComm, isLoading: isLoadingDetail } = useCommunication(selectedCommId || '');
 
   const communications = commsResult?.data || [];
 
@@ -89,7 +98,8 @@ export function MatterCommunications({
   }, {} as Record<string, number>);
 
   const handleCommunicationClick = (comm: Communication) => {
-    navigate(`/app/communications/${comm.id}`);
+    // Abrir en Sheet sin navegar fuera del expediente
+    setSelectedCommId(comm.id);
   };
 
   const handleNewCommunication = (type: 'email' | 'whatsapp' | 'phone', contact?: MatterContact) => {
@@ -233,6 +243,84 @@ export function MatterCommunications({
           )}
         </ScrollArea>
       </CardContent>
+
+      {/* Sheet para ver detalle de comunicación sin salir del expediente */}
+      <Sheet open={!!selectedCommId} onOpenChange={(open) => !open && setSelectedCommId(null)}>
+        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+          <SheetHeader className="pb-4 border-b">
+            <div className="flex items-center justify-between">
+              <SheetTitle className="flex items-center gap-2">
+                {selectedComm && CHANNEL_ICONS[selectedComm.channel]}
+                {selectedComm?.subject || 'Comunicación'}
+              </SheetTitle>
+            </div>
+          </SheetHeader>
+
+          {isLoadingDetail ? (
+            <div className="p-4 text-center text-muted-foreground">
+              Cargando...
+            </div>
+          ) : selectedComm ? (
+            <div className="py-4 space-y-4">
+              {/* Header info */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge className={cn(CHANNEL_COLORS[selectedComm.channel])}>
+                    {selectedComm.channel.toUpperCase()}
+                  </Badge>
+                  <Badge variant={selectedComm.direction === 'inbound' ? 'secondary' : 'outline'}>
+                    {selectedComm.direction === 'inbound' ? 'Recibido' : 'Enviado'}
+                  </Badge>
+                </div>
+
+                {/* De/Para según dirección */}
+                {selectedComm.direction === 'inbound' ? (
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">De:</span>{' '}
+                    {selectedComm.email_from || selectedComm.whatsapp_from || selectedComm.phone_from || 'Desconocido'}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">Para:</span>{' '}
+                    {selectedComm.email_to?.join(', ') || selectedComm.whatsapp_to || selectedComm.phone_to || 'Destinatario'}
+                  </p>
+                )}
+
+                <p className="text-xs text-muted-foreground">
+                  {format(new Date(selectedComm.received_at || selectedComm.created_at), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })}
+                </p>
+              </div>
+
+              {/* Contenido */}
+              <div className="pt-4 border-t">
+                {selectedComm.body_html ? (
+                  <div 
+                    className="prose prose-sm max-w-none dark:prose-invert"
+                    dangerouslySetInnerHTML={{ __html: selectedComm.body_html }}
+                  />
+                ) : (
+                  <p className="text-sm whitespace-pre-wrap">
+                    {selectedComm.body_preview || '[Sin contenido]'}
+                  </p>
+                )}
+              </div>
+
+              {/* Transcripción si es llamada */}
+              {selectedComm.transcription && (
+                <div className="pt-4 border-t">
+                  <p className="text-sm font-medium mb-2 flex items-center gap-2">
+                    <Phone className="w-4 h-4" />
+                    Transcripción
+                  </p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                    {String(selectedComm.transcription)}
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : null}
+        </SheetContent>
+      </Sheet>
     </Card>
   );
 }
@@ -259,7 +347,7 @@ function CommunicationItem({ communication, onClick }: CommunicationItemProps) {
       onClick={onClick}
       className={cn(
         "p-3 cursor-pointer transition-colors hover:bg-muted/50",
-        !is_read && "bg-blue-50/50 dark:bg-blue-950/20"
+        !is_read && "bg-primary/5"
       )}
     >
       <div className="flex items-start gap-3">
