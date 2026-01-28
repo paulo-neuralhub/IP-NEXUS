@@ -15,10 +15,9 @@ export interface Deal {
   client_id: string | null;
   lead_id: string | null;
   deal_number: string;
-  title: string;
-  description: string | null;
+  name: string;
   stage: DealStage;
-  estimated_value: number | null;
+  amount: number | null;
   probability: number;
   expected_close_date: string | null;
   next_action: string | null;
@@ -27,8 +26,6 @@ export interface Deal {
   won_value: number | null;
   lost_at: string | null;
   lost_reason: string | null;
-  assigned_to: string | null;
-  created_by: string | null;
   created_at: string;
   updated_at: string;
   // Joined data
@@ -43,15 +40,13 @@ export interface Deal {
 
 export interface CreateDealData {
   client_id?: string;
-  title: string;
-  description?: string;
+  name: string;
   stage?: DealStage;
-  estimated_value?: number;
+  amount?: number;
   probability?: number;
   expected_close_date?: string;
   next_action?: string;
   next_action_date?: string;
-  assigned_to?: string;
 }
 
 export function useDeals(filters?: { stage?: DealStage; client_id?: string; exclude_closed?: boolean }) {

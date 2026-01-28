@@ -12,7 +12,7 @@ interface KanbanColumnProps {
   id: string;
   title: string;
   color?: string;
-  items: { id: string; estimated_value?: number | null }[];
+  items: { id: string; estimated_value?: number | null; amount?: number | null }[];
   children: React.ReactNode;
   isDropTarget?: boolean;
 }
@@ -27,7 +27,7 @@ export function KanbanColumn({
 }: KanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
 
-  const totalValue = items.reduce((sum, item) => sum + (item.estimated_value || 0), 0);
+  const totalValue = items.reduce((sum, item) => sum + (item.estimated_value || item.amount || 0), 0);
 
   return (
     <div

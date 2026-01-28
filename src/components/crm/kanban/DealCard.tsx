@@ -96,7 +96,7 @@ export function DealCard({
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <p className="font-medium text-sm truncate flex-1">{deal.title}</p>
+              <p className="font-medium text-sm truncate flex-1">{deal.name}</p>
               {isUrgent && (
                 <Badge variant="destructive" className="text-xs px-1.5 py-0 shrink-0">
                   <AlertTriangle className="w-3 h-3 mr-1" />
@@ -160,7 +160,7 @@ export function DealCard({
       <div className="mb-2">
         <div className="flex items-center justify-between mb-1">
           <span className="text-sm font-semibold text-primary">
-            {(deal.estimated_value || 0).toLocaleString('es-ES')} €
+            {(deal.amount || 0).toLocaleString('es-ES')} €
           </span>
           <span className="text-xs text-muted-foreground">{deal.probability}%</span>
         </div>

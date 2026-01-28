@@ -248,7 +248,7 @@ export default function CRMKanbanPage() {
 
   // Deal actions
   const handleWin = (deal: Deal) => {
-    setWonValue(deal.estimated_value?.toString() || '');
+    setWonValue(deal.amount?.toString() || '');
     setWinModal(deal);
   };
 
@@ -380,7 +380,7 @@ export default function CRMKanbanPage() {
                 <span className="font-semibold text-sm">DEALS</span>
                 <Badge variant="outline">{deals.length}</Badge>
                 <span className="text-xs text-muted-foreground ml-2">
-                  Total: {deals.reduce((sum, d) => sum + (d.estimated_value || 0), 0).toLocaleString('es-ES')} €
+                  Total: {deals.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString('es-ES')} €
                 </span>
               </div>
               <div className="flex gap-3 h-[calc(100%-32px)] overflow-x-auto">
