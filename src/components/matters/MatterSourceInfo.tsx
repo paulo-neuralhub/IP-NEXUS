@@ -120,7 +120,7 @@ export function MatterSourceInfo({ matterId }: Props) {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => navigate(`/app/crm/clients/${source.client!.id}`)}
+              onClick={() => navigate(`/app/legal-ops/clients/${source.client!.id}`)}
             >
               Ver
               <ExternalLink className="h-3 w-3 ml-1" />
