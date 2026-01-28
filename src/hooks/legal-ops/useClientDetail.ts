@@ -77,17 +77,23 @@ export function useClientDetail(clientId: string) {
     queryKey: ['client-detail', clientId],
     queryFn: async (): Promise<ClientDetailData> => {
       if (!organizationId) throw new Error('No organization');
+
+      // DEBUG TEMP: verificar inputs del query
+      console.log('useClientDetail inputs:', { clientId, organizationId });
       
       // 1. Datos del cliente - buscar en crm_accounts (empresas), no en contacts
       const { data: client, error: clientError } = await supabase
         .from('crm_accounts')
         .select(`
           *,
-          responsible_user:users!crm_accounts_owner_id_fkey(id, full_name, avatar_url)
+          assigned_user:users!assigned_to(id, full_name, avatar_url)
         `)
         .eq('id', clientId)
         .eq('organization_id', organizationId)
         .maybeSingle();
+
+      // DEBUG TEMP: ver resultado exacto del query
+      console.log('Query result:', client, clientError);
 
       if (clientError) throw clientError;
       if (!client) throw new Error('Client not found');
@@ -194,11 +200,11 @@ export function useClientDetail(clientId: string) {
         .limit(1)
         .maybeSingle();
 
-      // Handle responsible_user which may be an array from the join
-      const rawUser = client.responsible_user;
-      const responsibleUser = Array.isArray(rawUser) && rawUser.length > 0
-        ? rawUser[0] as { id: string; full_name: string; avatar_url?: string }
-        : null;
+      // assigned_user puede venir como objeto o array (depende de PostgREST)
+      const rawAssignedUser = (client as unknown as Record<string, unknown>).assigned_user;
+      const assignedUser = Array.isArray(rawAssignedUser)
+        ? (rawAssignedUser[0] as { id: string; full_name: string; avatar_url?: string } | undefined) ?? null
+        : (rawAssignedUser as { id: string; full_name: string; avatar_url?: string } | null);
       
       // Cast to any to access dynamic fields
       const clientData = client as Record<string, unknown>;
@@ -217,7 +223,7 @@ export function useClientDetail(clientId: string) {
           notes: client.internal_notes || undefined,
           tags: (clientData.tags as string[]) || undefined,
           created_at: client.created_at,
-          responsible_user: responsibleUser || undefined
+          responsible_user: assignedUser || undefined
         } as ClientFull,
         stats: {
           activeMatters: (matters as Array<{ status?: string }>).filter(m => m.status === 'active').length,

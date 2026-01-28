@@ -8,6 +8,9 @@ import { Client360Page } from "@/components/legal-ops/Client360Page";
 
 export default function CRMV2AccountDetail() {
   const { id } = useParams<{ id: string }>();
+
+  // DEBUG TEMP: verificar ID en URL
+  console.log('Client ID from URL:', id);
   
   if (!id) {
     return (
