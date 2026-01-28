@@ -21,7 +21,7 @@ type InteractionRow = {
 };
 
 export default function CRMV2InteractionsList() {
-  usePageTitle("Interacciones");
+  usePageTitle("Actividades");
   const [params] = useSearchParams();
   const accountId = params.get("account") ?? undefined;
   const [showForm, setShowForm] = useState(false);
@@ -33,8 +33,8 @@ export default function CRMV2InteractionsList() {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Interacciones</h1>
-          <p className="text-muted-foreground">Timeline de comunicaciones (email, call, whatsapp, etc.)</p>
+          <h1 className="text-2xl font-bold text-foreground">Actividades</h1>
+          <p className="text-muted-foreground">Timeline de comunicaciones (email, llamada, WhatsApp, etc.)</p>
         </div>
         <Button onClick={() => setShowForm(true)}>
           <Plus className="w-4 h-4 mr-2" />

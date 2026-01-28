@@ -367,15 +367,16 @@ const App = () => (
                   <Route path="accounts" element={<CRMV2AccountsList />} />
                   <Route path="accounts/:id" element={<CRMV2AccountDetail />} />
                   <Route path="clients/:id" element={<CRMV2AccountDetail />} />
-                  <Route path="contacts" element={<CRMV2ContactsList />} />
+                  <Route path="contacts" element={<Navigate to="/app/crm/clients" replace />} />
                   <Route path="contacts/:id" element={<CRMV2ContactDetail />} />
-                  <Route path="leads" element={<CRMLeadsPage />} />
-                  <Route path="deals" element={<CRMV2DealsList />} />
+                  <Route path="leads" element={<Navigate to="/app/crm/pipeline?view=leads" replace />} />
+                  <Route path="deals" element={<Navigate to="/app/crm/pipeline?view=deals" replace />} />
+                  <Route path="negocios" element={<Navigate to="/app/crm/pipeline?view=deals" replace />} />
                   <Route path="deals/:id" element={<CRMV2DealDetail />} />
                   <Route path="settings" element={<CRMPipelinesPage />} />
                   <Route path="pipelines" element={<CRMPipelinesPage />} />
                   <Route path="activities" element={<CRMV2InteractionsList />} />
-                  <Route path="interactions" element={<CRMV2InteractionsList />} />
+                  <Route path="interactions" element={<Navigate to="/app/crm/activities" replace />} />
                   <Route path="tasks" element={<CRMV2TasksList />} />
                 </Route>
                 <Route path="marketing" element={<MarketingLayout />}>
