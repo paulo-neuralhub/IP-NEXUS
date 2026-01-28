@@ -10380,6 +10380,7 @@ export type Database = {
       crm_leads: {
         Row: {
           assigned_to: string | null
+          closed_at: string | null
           company_name: string | null
           company_tax_id: string | null
           contact_email: string | null
@@ -10391,9 +10392,14 @@ export type Database = {
           converted_to_deal_id: string | null
           created_at: string | null
           created_by: string | null
+          deleted_at: string | null
           estimated_value: number | null
           id: string
           interested_in: string[] | null
+          is_deleted: boolean | null
+          is_won: boolean | null
+          loss_reason: string | null
+          loss_reason_code: string | null
           metadata: Json | null
           next_action: string | null
           next_action_date: string | null
@@ -10408,6 +10414,7 @@ export type Database = {
         }
         Insert: {
           assigned_to?: string | null
+          closed_at?: string | null
           company_name?: string | null
           company_tax_id?: string | null
           contact_email?: string | null
@@ -10419,9 +10426,14 @@ export type Database = {
           converted_to_deal_id?: string | null
           created_at?: string | null
           created_by?: string | null
+          deleted_at?: string | null
           estimated_value?: number | null
           id?: string
           interested_in?: string[] | null
+          is_deleted?: boolean | null
+          is_won?: boolean | null
+          loss_reason?: string | null
+          loss_reason_code?: string | null
           metadata?: Json | null
           next_action?: string | null
           next_action_date?: string | null
@@ -10436,6 +10448,7 @@ export type Database = {
         }
         Update: {
           assigned_to?: string | null
+          closed_at?: string | null
           company_name?: string | null
           company_tax_id?: string | null
           contact_email?: string | null
@@ -10447,9 +10460,14 @@ export type Database = {
           converted_to_deal_id?: string | null
           created_at?: string | null
           created_by?: string | null
+          deleted_at?: string | null
           estimated_value?: number | null
           id?: string
           interested_in?: string[] | null
+          is_deleted?: boolean | null
+          is_won?: boolean | null
+          loss_reason?: string | null
+          loss_reason_code?: string | null
           metadata?: Json | null
           next_action?: string | null
           next_action_date?: string | null
