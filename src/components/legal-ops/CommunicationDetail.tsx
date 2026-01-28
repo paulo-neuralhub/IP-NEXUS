@@ -113,7 +113,7 @@ export function CommunicationDetail({ communicationId }: CommunicationDetailProp
                   Crear tarea
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem className="text-red-600">
+                <DropdownMenuItem className="text-destructive">
                   <Trash2 className="w-4 h-4 mr-2" />
                   Eliminar
                 </DropdownMenuItem>
@@ -129,12 +129,24 @@ export function CommunicationDetail({ communicationId }: CommunicationDetailProp
               <h2 className="text-lg font-semibold">
                 {comm.subject || '[Sin asunto]'}
               </h2>
-              <p className="text-sm text-muted-foreground">
-                De: {comm.email_from || comm.whatsapp_from || 'Desconocido'}
-              </p>
-              {comm.email_to && comm.email_to.length > 0 && (
+              {/* Mostrar De/Para según dirección */}
+              {comm.direction === 'inbound' ? (
+                <p className="text-sm text-muted-foreground">
+                  De: {comm.email_from || comm.whatsapp_from || comm.phone_from || ((comm as unknown as { contact?: { name?: string } }).contact?.name) || 'Desconocido'}
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Para: {comm.email_to?.join(', ') || comm.whatsapp_to || comm.phone_to || ((comm as unknown as { contact?: { name?: string } }).contact?.name) || 'Destinatario'}
+                </p>
+              )}
+              {comm.direction === 'inbound' && comm.email_to && comm.email_to.length > 0 && (
                 <p className="text-sm text-muted-foreground">
                   Para: {comm.email_to.join(', ')}
+                </p>
+              )}
+              {comm.direction === 'outbound' && (comm.email_from || comm.whatsapp_from) && (
+                <p className="text-sm text-muted-foreground">
+                  De: {comm.email_from || comm.whatsapp_from || 'Yo'}
                 </p>
               )}
               <p className="text-xs text-muted-foreground mt-1">
@@ -147,13 +159,13 @@ export function CommunicationDetail({ communicationId }: CommunicationDetailProp
               {effectiveCategory && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <div className="cursor-pointer">
+                    <Button variant="ghost" size="sm" className="p-0 h-auto hover:bg-transparent">
                       <AIClassificationBadge
                         category={effectiveCategory}
                         confidence={comm.ai_confidence}
                         isManual={!!comm.manual_category}
                       />
-                    </div>
+                    </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <div className="px-2 py-1.5 text-xs text-muted-foreground">
@@ -200,7 +212,7 @@ export function CommunicationDetail({ communicationId }: CommunicationDetailProp
 
             {/* Transcripción de audio (si aplica) */}
             {comm.transcription && (
-              <div className="mb-4 p-4 bg-slate-50 rounded-lg dark:bg-slate-900/50">
+              <div className="mb-4 p-4 bg-muted rounded-lg">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Volume2 className="w-4 h-4" />
