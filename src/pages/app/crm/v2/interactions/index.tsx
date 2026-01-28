@@ -1,8 +1,9 @@
 /**
- * CRM Activities - Timeline visual profesional con filtros completos
+ * CRM Timeline Equipo - Timeline visual profesional con filtros completos
+ * Vista de supervisión de actividad global del equipo
  */
 
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { usePageTitle } from "@/contexts/page-context";
 import { useCRMInteractions } from "@/hooks/crm/v2/interactions";
@@ -199,20 +200,23 @@ function ActivityCard({ interaction }: { interaction: InteractionRow }) {
   );
 }
 
-// Chip de filtro activo
-function FilterChip({ label, onRemove }: { label: string; onRemove: () => void }) {
-  return (
-    <Badge variant="secondary" className="gap-1 pr-1 text-xs">
-      {label}
-      <button onClick={onRemove} className="ml-1 hover:bg-muted rounded-full p-0.5">
-        <X className="w-3 h-3" />
-      </button>
-    </Badge>
-  );
-}
+// Chip de filtro activo - con forwardRef para evitar warning
+const FilterChip = React.forwardRef<HTMLDivElement, { label: string; onRemove: () => void }>(
+  ({ label, onRemove }, ref) => {
+    return (
+      <Badge ref={ref} variant="secondary" className="gap-1 pr-1 text-xs">
+        {label}
+        <button onClick={onRemove} className="ml-1 hover:bg-muted rounded-full p-0.5">
+          <X className="w-3 h-3" />
+        </button>
+      </Badge>
+    );
+  }
+);
+FilterChip.displayName = 'FilterChip';
 
 export default function CRMV2InteractionsList() {
-  usePageTitle("Actividades");
+  usePageTitle("Timeline Equipo");
   const [params] = useSearchParams();
   const accountId = params.get("account") ?? undefined;
   const [showForm, setShowForm] = useState(false);
@@ -342,8 +346,8 @@ export default function CRMV2InteractionsList() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Actividades</h1>
-          <p className="text-muted-foreground">Timeline de comunicaciones y acciones</p>
+          <h1 className="text-2xl font-bold text-foreground">Timeline Equipo</h1>
+          <p className="text-muted-foreground">Actividad global del equipo • Vista de supervisión</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="icon" onClick={() => refetch()}>

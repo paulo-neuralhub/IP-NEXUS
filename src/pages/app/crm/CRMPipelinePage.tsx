@@ -373,7 +373,7 @@ export default function CRMPipelinePage() {
   }, [activeId, view, leads, deals]);
 
   return (
-    <div className="flex flex-col gap-4" style={{ height: 'calc(100vh - 180px)' }}>
+    <div className="flex flex-col gap-4 h-full" style={{ minHeight: 'calc(100vh - 180px)' }}>
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -492,12 +492,15 @@ export default function CRMPipelinePage() {
           onDragEnd={handleDragEnd}
         >
           <div 
-            className="flex gap-4 pb-4 flex-1 min-h-0"
+            className="flex gap-4 pb-4 flex-1"
             style={{ 
               overflowX: 'auto', 
               overflowY: 'hidden',
+              height: 'calc(100vh - 280px)',
+              minHeight: '400px',
               scrollbarWidth: 'thin',
-              scrollbarColor: '#94a3b8 transparent'
+              scrollbarColor: '#94a3b8 #f1f5f9',
+              scrollBehavior: 'smooth',
             }}
           >
             {columns.map(col => {

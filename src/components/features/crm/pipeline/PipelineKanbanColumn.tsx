@@ -48,14 +48,14 @@ export function PipelineKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex flex-col rounded-xl overflow-hidden transition-all w-[300px] flex-shrink-0',
-        'border shadow-sm bg-card',
-        isOver && 'ring-2 ring-primary shadow-lg scale-[1.02]',
-        isWon && 'border-green-300 dark:border-green-800',
-        isLost && 'border-red-300 dark:border-red-800',
+        'flex flex-col rounded-xl overflow-hidden transition-all w-[320px] flex-shrink-0',
+        'border shadow-sm bg-slate-50 dark:bg-slate-900/50',
+        isOver && 'ring-2 ring-primary shadow-lg scale-[1.01]',
+        isWon && 'border-green-300 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20',
+        isLost && 'border-red-300 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20',
         !isWon && !isLost && 'border-border'
       )}
-      style={{ height: 'calc(100vh - 280px)', minHeight: '400px', maxHeight: '700px' }}
+      style={{ height: '100%' }}
     >
       {/* Color Bar on top - Odoo style */}
       <div 
@@ -106,35 +106,34 @@ export function PipelineKanbanColumn({
         </div>
       </div>
 
-      {/* Content - Cards area with visible scrollbar */}
+      {/* Content - Cards area with VISIBLE scrollbar */}
       <div 
         className={cn(
-          'flex-1 p-3 min-h-0',
+          'flex-1 p-3 min-h-0 overflow-y-auto',
           isWon && 'bg-green-50/30 dark:bg-green-950/10',
           isLost && 'bg-red-50/30 dark:bg-red-950/10',
-          !isWon && !isLost && 'bg-muted/20'
+          !isWon && !isLost && 'bg-transparent'
         )}
         style={{ 
-          overflowY: 'auto',
           scrollbarWidth: 'thin',
-          scrollbarColor: '#94a3b8 #e2e8f0'
+          scrollbarColor: '#94a3b8 #e2e8f0',
         }}
       >
         <SortableContext items={[]} strategy={verticalListSortingStrategy}>
-          <div className="space-y-3 min-h-[120px]">
+          <div className="space-y-3 min-h-[100px]">
             {children}
           </div>
         </SortableContext>
 
         {count === 0 && (
-          <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-12">
-            <div className="w-14 h-14 rounded-full bg-muted/50 flex items-center justify-center mb-3">
-              <span className="text-2xl">
+          <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-10">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mb-2">
+              <span className="text-xl">
                 {isWon ? '🎉' : isLost ? '😔' : '📭'}
               </span>
             </div>
             <p className="font-medium">Sin elementos</p>
-            <p className="text-xs opacity-70 mt-1">Arrastra aquí para añadir</p>
+            <p className="text-xs opacity-70 mt-0.5">Arrastra aquí</p>
           </div>
         )}
       </div>
