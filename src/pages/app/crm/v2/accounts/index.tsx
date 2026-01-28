@@ -31,12 +31,8 @@ import {
   Phone,
   MessageCircle,
   Mail,
-  User,
-  FileText,
   Star,
   ChevronRight,
-  Briefcase,
-  DollarSign,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -59,14 +55,24 @@ type AccountRow = {
   } | null;
 };
 
-// Colores para clasificación de pago
-const PAYMENT_COLORS: Record<string, { bg: string; text: string; dot: string }> = {
-  excelente: { bg: "bg-green-100 dark:bg-green-950/50", text: "text-green-700 dark:text-green-400", dot: "bg-green-500" },
-  bueno: { bg: "bg-blue-100 dark:bg-blue-950/50", text: "text-blue-700 dark:text-blue-400", dot: "bg-blue-500" },
-  regular: { bg: "bg-yellow-100 dark:bg-yellow-950/50", text: "text-yellow-700 dark:text-yellow-400", dot: "bg-yellow-500" },
-  malo: { bg: "bg-orange-100 dark:bg-orange-950/50", text: "text-orange-700 dark:text-orange-400", dot: "bg-orange-500" },
-  moroso: { bg: "bg-red-100 dark:bg-red-950/50", text: "text-red-700 dark:text-red-400", dot: "bg-red-500" },
-  litigio: { bg: "bg-red-200 dark:bg-red-950", text: "text-red-800 dark:text-red-300", dot: "bg-red-600" },
+// Colores PASTEL suaves para clasificación de pago
+const PAYMENT_COLORS: Record<string, { bg: string; text: string; dot: string; border: string }> = {
+  excelente: { bg: "bg-green-50 dark:bg-green-950/30", text: "text-green-600 dark:text-green-400", dot: "bg-green-400", border: "border-green-200 dark:border-green-800" },
+  bueno: { bg: "bg-blue-50 dark:bg-blue-950/30", text: "text-blue-600 dark:text-blue-400", dot: "bg-blue-400", border: "border-blue-200 dark:border-blue-800" },
+  regular: { bg: "bg-slate-50 dark:bg-slate-900/30", text: "text-slate-600 dark:text-slate-400", dot: "bg-slate-400", border: "border-slate-200 dark:border-slate-700" },
+  malo: { bg: "bg-orange-50 dark:bg-orange-950/30", text: "text-orange-600 dark:text-orange-400", dot: "bg-orange-400", border: "border-orange-200 dark:border-orange-800" },
+  moroso: { bg: "bg-red-50 dark:bg-red-950/30", text: "text-red-600 dark:text-red-400", dot: "bg-red-400", border: "border-red-200 dark:border-red-800" },
+  litigio: { bg: "bg-red-100 dark:bg-red-950/40", text: "text-red-700 dark:text-red-300", dot: "bg-red-500", border: "border-red-300 dark:border-red-800" },
+};
+
+// Colores PASTEL para tipo de cliente
+const CLIENT_TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
+  directo: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
+  agente: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
+  grupo: { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
+  partner: { bg: "bg-cyan-50", text: "text-cyan-700", border: "border-cyan-200" },
+  prospecto: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
+  default: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200" },
 };
 
 function getInitials(name: string): string {
@@ -80,7 +86,7 @@ function getInitials(name: string): string {
 
 function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => void }) {
   const clientTypeName = account.client_type?.name?.toLowerCase() ?? "directo";
-  const clientTypeColor = account.client_type?.color || "#3B82F6";
+  const clientTypeStyle = CLIENT_TYPE_COLORS[clientTypeName] || CLIENT_TYPE_COLORS.default;
   const paymentName = account.payment_classification?.name?.toLowerCase() ?? "regular";
   const paymentStyle = PAYMENT_COLORS[paymentName] || PAYMENT_COLORS.regular;
   const rating = account.rating_stars ?? 0;
@@ -98,116 +104,83 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
       onClick={onClick}
       className={cn(
         "bg-card border rounded-xl overflow-hidden cursor-pointer transition-all duration-200",
-        "hover:shadow-lg hover:scale-[1.01]"
+        "hover:shadow-md hover:scale-[1.005]",
+        "shadow-sm"
       )}
     >
-      <div className="p-5">
-        {/* Header: Type Badge + Rating */}
-        <div className="flex items-start justify-between mb-4">
-          <Badge 
-            className="text-xs font-bold px-2.5 py-1"
-            style={{ 
-              backgroundColor: `${clientTypeColor}20`, 
-              color: clientTypeColor,
-              borderColor: clientTypeColor 
-            }}
-          >
-            {account.client_type?.name?.toUpperCase() || "CLIENTE"}
-          </Badge>
-          <div className="flex items-center gap-0.5">
+      <div className="p-3">
+        {/* Header: Avatar + Name + Rating */}
+        <div className="flex items-start gap-3 mb-3">
+          <div className="w-10 h-10 rounded-lg bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-sm font-bold text-slate-600 dark:text-slate-400 shrink-0">
+            {getInitials(account.name || "?")}
+          </div>
+          <div className="min-w-0 flex-1">
+            <h3 className="font-semibold text-foreground truncate text-sm">
+              {account.name || account.legal_name || "Sin nombre"}
+            </h3>
+            <p className="text-xs text-muted-foreground truncate">
+              {account.legal_name || "—"}
+            </p>
+          </div>
+          <div className="flex items-center gap-0.5 shrink-0">
             {Array.from({ length: 5 }).map((_, i) => (
               <Star
                 key={i}
-                className={cn("w-4 h-4", i < rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/30")}
+                className={cn("w-3 h-3", i < rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/20")}
               />
             ))}
           </div>
         </div>
 
-        {/* Company Name + Avatar */}
-        <div className="flex items-center gap-3 mb-4">
-          <div 
-            className="w-12 h-12 rounded-xl flex items-center justify-center text-white font-bold text-lg shrink-0"
-            style={{ backgroundColor: clientTypeColor }}
-          >
-            {getInitials(account.name || "?")}
-          </div>
-          <div className="min-w-0 flex-1">
-            <h3 className="font-semibold text-foreground truncate text-lg">
-              {account.name || account.legal_name || "Sin nombre"}
-            </h3>
-            <p className="text-sm text-muted-foreground truncate">
-              {account.legal_name || "Sin razón social"}
-            </p>
-          </div>
-        </div>
-
-        {/* Payment Classification */}
-        <div className={cn(
-          "inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold mb-4",
-          paymentStyle.bg, 
-          paymentStyle.text
-        )}>
-          <span className={cn("w-2.5 h-2.5 rounded-full", paymentStyle.dot)} />
-          {account.payment_classification?.name || "Sin clasificar"}
-        </div>
-
-        {/* Tags */}
-        {account.tags && account.tags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-4">
-            {account.tags.slice(0, 4).map((tag, i) => (
-              <Badge key={i} variant="secondary" className="text-xs px-2 py-0.5">
-                {tag}
-              </Badge>
-            ))}
-            {account.tags.length > 4 && (
-              <Badge variant="secondary" className="text-xs px-2 py-0.5">
-                +{account.tags.length - 4}
-              </Badge>
+        {/* Badges Row: Type + Payment */}
+        <div className="flex items-center gap-2 flex-wrap mb-3">
+          <Badge 
+            variant="outline"
+            className={cn(
+              "text-[10px] font-medium px-2 py-0.5 border",
+              clientTypeStyle.bg, 
+              clientTypeStyle.text, 
+              clientTypeStyle.border
             )}
-          </div>
-        )}
+          >
+            {account.client_type?.name || "Cliente"}
+          </Badge>
+          <Badge 
+            variant="outline"
+            className={cn(
+              "text-[10px] font-medium px-2 py-0.5 border flex items-center gap-1",
+              paymentStyle.bg, 
+              paymentStyle.text,
+              paymentStyle.border
+            )}
+          >
+            <span className={cn("w-1.5 h-1.5 rounded-full", paymentStyle.dot)} />
+            {account.payment_classification?.name || "Sin clasificar"}
+          </Badge>
+        </div>
 
-        {/* Separator */}
-        <div className="h-px bg-border mb-4" />
-
-        {/* Stats Mini-Cards */}
-        <div className="grid grid-cols-4 gap-2 mb-4">
-          <div className="bg-muted/50 rounded-lg p-2 text-center">
-            <div className="flex items-center justify-center mb-1">
-              <User className="w-4 h-4 text-muted-foreground" />
-            </div>
-            <span className="text-lg font-bold text-foreground">{stats.contacts}</span>
-            <p className="text-[10px] text-muted-foreground">Contactos</p>
+        {/* Stats Row - Compact Horizontal */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-md px-2 py-1.5 text-center">
+            <span className="text-sm font-semibold text-foreground">{stats.contacts}</span>
+            <p className="text-[9px] text-muted-foreground">Contactos</p>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2 text-center">
-            <div className="flex items-center justify-center mb-1">
-              <FileText className="w-4 h-4 text-muted-foreground" />
-            </div>
-            <span className="text-lg font-bold text-foreground">{stats.matters}</span>
-            <p className="text-[10px] text-muted-foreground">Expedientes</p>
+          <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-md px-2 py-1.5 text-center">
+            <span className="text-sm font-semibold text-foreground">{stats.matters}</span>
+            <p className="text-[9px] text-muted-foreground">Expedientes</p>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2 text-center">
-            <div className="flex items-center justify-center mb-1">
-              <Briefcase className="w-4 h-4 text-muted-foreground" />
-            </div>
-            <span className="text-lg font-bold text-foreground">{stats.deals}</span>
-            <p className="text-[10px] text-muted-foreground">Negociaciones</p>
+          <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-md px-2 py-1.5 text-center">
+            <span className="text-sm font-semibold text-foreground">{stats.deals}</span>
+            <p className="text-[9px] text-muted-foreground">Negociaciones</p>
           </div>
-          <div className="bg-muted/50 rounded-lg p-2 text-center">
-            <div className="flex items-center justify-center mb-1">
-              <DollarSign className="w-4 h-4 text-green-600" />
-            </div>
-            <span className="text-sm font-bold text-green-600">€{Math.round(stats.invoiced / 1000)}K</span>
-            <p className="text-[10px] text-muted-foreground">Facturado</p>
+          <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-md px-2 py-1.5 text-center">
+            <span className="text-sm font-semibold text-green-600">€{Math.round(stats.invoiced / 1000)}K</span>
+            <p className="text-[9px] text-muted-foreground">Facturado</p>
           </div>
         </div>
 
-        {/* Separator */}
-        <div className="h-px bg-border mb-4" />
-
-        {/* Actions */}
-        <div className="flex items-center justify-between">
+        {/* Actions Row */}
+        <div className="flex items-center justify-between pt-2 border-t">
           <TooltipProvider>
             <div className="flex items-center gap-1">
               <Tooltip>
@@ -215,10 +188,10 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+                    className="h-7 w-7 rounded-md bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:bg-primary hover:text-primary-foreground"
                     onClick={(e) => { e.stopPropagation(); }}
                   >
-                    <Phone className="w-4 h-4" />
+                    <Phone className="w-3.5 h-3.5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Llamar</TooltipContent>
@@ -228,10 +201,10 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-lg bg-muted text-muted-foreground hover:bg-green-500 hover:text-white"
+                    className="h-7 w-7 rounded-md bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:bg-green-500 hover:text-white"
                     onClick={(e) => { e.stopPropagation(); }}
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-3.5 h-3.5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>WhatsApp</TooltipContent>
@@ -241,19 +214,19 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 rounded-lg bg-muted text-muted-foreground hover:bg-purple-500 hover:text-white"
+                    className="h-7 w-7 rounded-md bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:bg-purple-500 hover:text-white"
                     onClick={(e) => { e.stopPropagation(); }}
                   >
-                    <Mail className="w-4 h-4" />
+                    <Mail className="w-3.5 h-3.5" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Email</TooltipContent>
               </Tooltip>
             </div>
           </TooltipProvider>
-          <Button variant="default" size="sm" className="gap-1.5">
+          <Button variant="outline" size="sm" className="h-7 text-xs gap-1 border-primary text-primary hover:bg-primary hover:text-primary-foreground">
             Ver ficha
-            <ChevronRight className="w-4 h-4" />
+            <ChevronRight className="w-3 h-3" />
           </Button>
         </div>
       </div>
@@ -341,9 +314,9 @@ export default function CRMV2AccountsList() {
 
       {/* Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-[380px] rounded-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <Skeleton key={i} className="h-[220px] rounded-xl" />
           ))}
         </div>
       ) : rows.length === 0 ? (
@@ -359,7 +332,7 @@ export default function CRMV2AccountsList() {
           </Button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {rows.map((account) => (
             <ClientCard
               key={account.id}
