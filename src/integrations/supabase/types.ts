@@ -45591,20 +45591,10 @@ export type Database = {
           scopes: Json
         }[]
       }
-      win_deal:
-        | {
-            Args: {
-              p_deal_id: string
-              p_notes?: string
-              p_user_id?: string
-              p_won_value?: number
-            }
-            Returns: Json
-          }
-        | {
-            Args: { p_deal_id: string; p_notes?: string; p_won_value?: number }
-            Returns: Json
-          }
+      win_deal: {
+        Args: { p_deal_id: string; p_notes?: string; p_won_value?: number }
+        Returns: Json
+      }
     }
     Enums: {
       ai_confidence_level: "high" | "medium" | "low" | "manual"

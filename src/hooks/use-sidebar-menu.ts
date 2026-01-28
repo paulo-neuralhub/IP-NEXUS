@@ -66,7 +66,6 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
           { label: "Clientes", path: "/app/crm/clients", icon: "Building2" },
           { label: "Timeline Equipo", path: "/app/crm/activities", icon: "Activity" },
           { label: "Tareas", path: "/app/crm/tasks", icon: "CheckSquare", badge: "tasks" },
-          { label: "Configuración", path: "/app/crm/settings", icon: "Settings" },
         ],
         moduleRequires: [],
         modulePopular: true,

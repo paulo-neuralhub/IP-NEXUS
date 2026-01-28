@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -20,6 +21,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 import { InteractionFormModal } from "@/components/features/crm/v2/InteractionFormModal";
 import {
   Phone,
@@ -40,6 +47,9 @@ import {
   CheckCircle2,
   X,
   Filter,
+  ListTodo,
+  Clock,
+  ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format, isToday, isYesterday, parseISO, startOfDay, startOfWeek, startOfMonth } from "date-fns";
@@ -93,7 +103,17 @@ function getDateLabel(dateStr: string): string {
   return format(date, "EEEE d MMMM yyyy", { locale: es }).toUpperCase();
 }
 
-function ActivityCard({ interaction }: { interaction: InteractionRow }) {
+function getInitials(name?: string | null): string {
+  if (!name) return "S";
+  return name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+}
+
+interface ActivityCardProps {
+  interaction: InteractionRow;
+  onOpenDetail: (interaction: InteractionRow) => void;
+}
+
+function ActivityCard({ interaction, onOpenDetail }: ActivityCardProps) {
   const channel = interaction.channel?.toLowerCase() ?? "note";
   const config = CHANNEL_CONFIG[channel] || CHANNEL_CONFIG.note;
   const Icon = config.icon;
@@ -167,30 +187,28 @@ function ActivityCard({ interaction }: { interaction: InteractionRow }) {
 
           {/* Footer */}
           <div className="flex items-center justify-between pt-3 border-t">
+            {/* Usuario que realizó la actividad */}
             <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center">
-                <span className="text-[10px] font-bold text-primary">
-                  {(interaction.created_by_name || "S").charAt(0).toUpperCase()}
-                </span>
-              </div>
-              <span className="text-xs text-muted-foreground">{interaction.created_by_name || "Sistema"}</span>
+              <Avatar className="w-7 h-7">
+                <AvatarFallback className="text-[10px] font-bold bg-primary/10 text-primary">
+                  {getInitials(interaction.created_by_name)}
+                </AvatarFallback>
+              </Avatar>
+              <span className="text-sm font-medium text-foreground">
+                {interaction.created_by_name || "Sistema"}
+              </span>
             </div>
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              {(channel === "call" || channel === "phone") && (
-                <Button variant="ghost" size="sm" className="text-xs h-7 gap-1 hover:bg-blue-100 hover:text-blue-600">
-                  <Phone className="w-3 h-3" />
-                  Rellamar
-                </Button>
-              )}
-              {channel === "email" && (
-                <Button variant="ghost" size="sm" className="text-xs h-7 gap-1 hover:bg-purple-100 hover:text-purple-600">
-                  <ExternalLink className="w-3 h-3" />
-                  Ver
-                </Button>
-              )}
-              <Button variant="ghost" size="sm" className="text-xs h-7 gap-1">
-                <Plus className="w-3 h-3" />
-                Tarea
+            
+            {/* Acciones */}
+            <div className="flex items-center gap-1">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-xs h-7 gap-1 text-primary hover:bg-primary/10"
+                onClick={() => onOpenDetail(interaction)}
+              >
+                Ver detalle
+                <ChevronRight className="w-3 h-3" />
               </Button>
             </div>
           </div>
@@ -200,7 +218,7 @@ function ActivityCard({ interaction }: { interaction: InteractionRow }) {
   );
 }
 
-// Chip de filtro activo - con forwardRef para evitar warning
+// Chip de filtro activo
 const FilterChip = React.forwardRef<HTMLDivElement, { label: string; onRemove: () => void }>(
   ({ label, onRemove }, ref) => {
     return (
@@ -215,17 +233,155 @@ const FilterChip = React.forwardRef<HTMLDivElement, { label: string; onRemove: (
 );
 FilterChip.displayName = 'FilterChip';
 
+// Sheet de detalle de actividad
+interface ActivityDetailSheetProps {
+  interaction: InteractionRow | null;
+  open: boolean;
+  onClose: () => void;
+}
+
+function ActivityDetailSheet({ interaction, open, onClose }: ActivityDetailSheetProps) {
+  if (!interaction) return null;
+  
+  const channel = interaction.channel?.toLowerCase() ?? "note";
+  const config = CHANNEL_CONFIG[channel] || CHANNEL_CONFIG.note;
+  const Icon = config.icon;
+  
+  return (
+    <Sheet open={open} onOpenChange={onClose}>
+      <SheetContent className="w-[500px] sm:max-w-[500px]">
+        <SheetHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center", config.bgColor)}>
+              <Icon className={cn("w-5 h-5", config.color)} />
+            </div>
+            <div>
+              <SheetTitle className="text-left">
+                {interaction.subject || `${config.label} con contacto`}
+              </SheetTitle>
+              <p className="text-sm text-muted-foreground">
+                {interaction.created_at 
+                  ? format(parseISO(interaction.created_at), "PPp", { locale: es })
+                  : "Fecha desconocida"
+                }
+              </p>
+            </div>
+          </div>
+        </SheetHeader>
+
+        <div className="space-y-5 mt-4">
+          {/* Tipo y dirección */}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Badge>{config.label}</Badge>
+            {interaction.direction && (
+              <Badge variant="outline">
+                {interaction.direction === "inbound" ? "⬇️ Entrante" : "⬆️ Saliente"}
+              </Badge>
+            )}
+            {interaction.duration_seconds && (
+              <Badge variant="secondary" className="font-mono">
+                <Clock className="w-3 h-3 mr-1" />
+                {formatDuration(interaction.duration_seconds)}
+              </Badge>
+            )}
+          </div>
+
+          {/* Cliente */}
+          {interaction.account?.name && (
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Cliente</label>
+              <div className="flex items-center gap-2 mt-1">
+                <Building2 className="w-4 h-4 text-primary" />
+                <p className="font-medium">{interaction.account.name}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Contacto */}
+          {interaction.contact?.full_name && (
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Contacto</label>
+              <div className="flex items-center gap-2 mt-1">
+                <User className="w-4 h-4 text-muted-foreground" />
+                <p className="font-medium">{interaction.contact.full_name}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Deal */}
+          {interaction.deal?.name && (
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Negociación</label>
+              <div className="flex items-center gap-2 mt-1">
+                <Briefcase className="w-4 h-4 text-amber-500" />
+                <p className="font-medium">{interaction.deal.name}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Descripción / Notas */}
+          {interaction.content && (
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Descripción</label>
+              <div className="mt-2 bg-muted/50 rounded-lg p-4 border">
+                <p className="whitespace-pre-wrap text-sm">{interaction.content}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Adjuntos */}
+          {interaction.attachments && interaction.attachments.length > 0 && (
+            <div>
+              <label className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Adjuntos</label>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {interaction.attachments.map((att, i) => (
+                  <Badge key={i} variant="outline" className="gap-1">
+                    <Paperclip className="w-3 h-3" />
+                    Archivo {i + 1}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Usuario que realizó */}
+          <div className="pt-4 border-t">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide font-medium">Realizado por</label>
+            <div className="flex items-center gap-3 mt-2">
+              <Avatar className="w-10 h-10">
+                <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                  {getInitials(interaction.created_by_name)}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="font-medium">{interaction.created_by_name || "Sistema"}</p>
+                <p className="text-xs text-muted-foreground">
+                  {interaction.created_at 
+                    ? format(parseISO(interaction.created_at), "PPp", { locale: es })
+                    : ""
+                  }
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+}
+
 export default function CRMV2InteractionsList() {
   usePageTitle("Timeline Equipo");
   const [params] = useSearchParams();
   const accountId = params.get("account") ?? undefined;
-  const [showForm, setShowForm] = useState(false);
+  const [showActivityForm, setShowActivityForm] = useState(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [selectedInteraction, setSelectedInteraction] = useState<InteractionRow | null>(null);
   const [typeFilter, setTypeFilter] = useState<ActivityType>("all");
   const [search, setSearch] = useState("");
   const [dateFilter, setDateFilter] = useState("all");
   const [directionFilter, setDirectionFilter] = useState("all");
   const [accountFilter, setAccountFilter] = useState("all");
-  const [showFilters, setShowFilters] = useState(false);
 
   const { data, isLoading, refetch } = useCRMInteractions(accountId ? { account_id: accountId } : undefined);
   const { data: accounts = [] } = useCRMAccounts();
@@ -353,9 +509,13 @@ export default function CRMV2InteractionsList() {
           <Button variant="outline" size="icon" onClick={() => refetch()}>
             <RefreshCw className="w-4 h-4" />
           </Button>
-          <Button onClick={() => setShowForm(true)}>
+          <Button variant="outline" onClick={() => setShowTaskForm(true)}>
+            <ListTodo className="w-4 h-4 mr-2" />
+            Tarea
+          </Button>
+          <Button onClick={() => setShowActivityForm(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            Nueva
+            Actividad
           </Button>
         </div>
       </div>
@@ -471,7 +631,7 @@ export default function CRMV2InteractionsList() {
           </div>
           <p className="font-medium text-lg">Sin actividades</p>
           <p className="text-sm text-muted-foreground mb-4">No hay actividades registradas con estos filtros.</p>
-          <Button onClick={() => setShowForm(true)}>
+          <Button onClick={() => setShowActivityForm(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Registrar actividad
           </Button>
@@ -495,7 +655,11 @@ export default function CRMV2InteractionsList() {
               {/* Activities */}
               <div className="space-y-3 pl-2 border-l-2 border-primary/20 ml-4">
                 {group.items.map(interaction => (
-                  <ActivityCard key={interaction.id} interaction={interaction} />
+                  <ActivityCard 
+                    key={interaction.id} 
+                    interaction={interaction} 
+                    onOpenDetail={setSelectedInteraction}
+                  />
                 ))}
               </div>
             </div>
@@ -503,7 +667,26 @@ export default function CRMV2InteractionsList() {
         </div>
       )}
 
-      <InteractionFormModal open={showForm} onClose={() => setShowForm(false)} defaultAccountId={accountId} />
+      {/* Modals */}
+      <InteractionFormModal 
+        open={showActivityForm} 
+        onClose={() => setShowActivityForm(false)} 
+        defaultAccountId={accountId} 
+      />
+      
+      {/* TODO: TaskFormModal - por ahora reutiliza el mismo modal de actividad */}
+      <InteractionFormModal 
+        open={showTaskForm} 
+        onClose={() => setShowTaskForm(false)} 
+        defaultAccountId={accountId} 
+      />
+
+      {/* Detail Sheet */}
+      <ActivityDetailSheet 
+        interaction={selectedInteraction}
+        open={!!selectedInteraction}
+        onClose={() => setSelectedInteraction(null)}
+      />
     </div>
   );
 }
