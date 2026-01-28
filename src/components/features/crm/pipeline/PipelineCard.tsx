@@ -216,19 +216,19 @@ export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardPr
               <span className="text-xs text-muted-foreground">Elena Fernández</span>
             </div>
 
-            {/* Actions */}
+            {/* Actions - Iconos con color */}
             <TooltipProvider>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1.5">
                 {phone && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 rounded-lg bg-muted text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+                        className="h-8 w-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white dark:bg-blue-950/50 dark:text-blue-400 dark:hover:bg-blue-600 transition-colors"
                         onClick={handleCall}
                       >
-                        <Phone className="w-3.5 h-3.5" />
+                        <Phone className="w-4 h-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Llamar</TooltipContent>
@@ -240,10 +240,10 @@ export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardPr
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 rounded-lg bg-muted text-muted-foreground hover:bg-green-500 hover:text-white"
+                        className="h-8 w-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-500 hover:text-white dark:bg-green-950/50 dark:text-green-400 dark:hover:bg-green-600 transition-colors"
                         onClick={handleWhatsApp}
                       >
-                        <MessageSquare className="w-3.5 h-3.5" />
+                        <MessageSquare className="w-4 h-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>WhatsApp</TooltipContent>
@@ -255,10 +255,10 @@ export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardPr
                       <Button
                         variant="ghost"
                         size="icon"
-                        className="h-7 w-7 rounded-lg bg-muted text-muted-foreground hover:bg-purple-500 hover:text-white"
+                        className="h-8 w-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-500 hover:text-white dark:bg-purple-950/50 dark:text-purple-400 dark:hover:bg-purple-600 transition-colors"
                         onClick={handleEmail}
                       >
-                        <Mail className="w-3.5 h-3.5" />
+                        <Mail className="w-4 h-4" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Email</TooltipContent>

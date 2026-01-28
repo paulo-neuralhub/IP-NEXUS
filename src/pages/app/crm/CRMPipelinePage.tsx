@@ -373,7 +373,7 @@ export default function CRMPipelinePage() {
   }, [activeId, view, leads, deals]);
 
   return (
-    <div className="h-full flex flex-col gap-4">
+    <div className="h-full flex flex-col gap-4 min-h-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -458,11 +458,11 @@ export default function CRMPipelinePage() {
         <Link to="/app/crm/settings" className="text-primary hover:underline">Configuración</Link>.
       </div>
 
-      {/* Kanban Board */}
+      {/* Kanban Board - Full height with visible scroll */}
       {isLoading ? (
-        <div className="flex gap-4 overflow-x-auto pb-4 flex-1">
+        <div className="flex gap-4 overflow-x-auto pb-4 flex-1 min-h-0">
           {[1, 2, 3, 4, 5].map(i => (
-            <Skeleton key={i} className="w-[280px] h-[400px] flex-shrink-0" />
+            <Skeleton key={i} className="w-[300px] h-[500px] flex-shrink-0" />
           ))}
         </div>
       ) : columns.length === 0 ? (
@@ -488,7 +488,7 @@ export default function CRMPipelinePage() {
           onDragStart={handleDragStart}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-4 overflow-x-auto pb-4 flex-1">
+          <div className="flex gap-4 overflow-x-auto pb-4 flex-1 min-h-0 kanban-scroll">
             {columns.map(col => {
               const items = (itemsByColumn[col.id] || []) as (Lead | Deal)[];
               const totalValue = items.reduce((sum, item) => {
