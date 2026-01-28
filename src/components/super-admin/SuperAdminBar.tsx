@@ -162,7 +162,11 @@ export function SuperAdminBar() {
             ))}
             <DropdownMenuSeparator />
             <DropdownMenuItem 
-              onClick={exitToSuperAdmin}
+              onClick={() => {
+                exitToSuperAdmin();
+                // Navigate to app after exiting simulation
+                setTimeout(() => navigate('/app'), 100);
+              }}
               className="cursor-pointer text-destructive focus:text-destructive"
             >
               <LogOut className="h-3 w-3 mr-2" />
