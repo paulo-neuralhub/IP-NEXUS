@@ -1,5 +1,8 @@
 /**
- * CRM Kanban Page - Vista unificada de Leads y Deals
+ * CRM Kanban Page - Vista UNIFICADA de Leads y Deals en un solo flujo
+ * 
+ * Flujo: NUEVOS → RECONTACTAR → CONTACTADO → CUALIFICADO → PROPUESTA → NEGOCIACIÓN → GANADO/PERDIDO
+ *        ↑ LEADS (fondo azul) ↑         ↑ DEALS (fondo blanco) ↑
  */
 
 import { useState, useMemo } from 'react';
@@ -13,16 +16,13 @@ import {
   useSensors,
   DragStartEvent,
   DragEndEvent,
-  DragOverEvent,
 } from '@dnd-kit/core';
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { useLeads, useUpdateLeadStatus, useApproveLead, useDeleteLead, Lead, LeadStatus } from '@/hooks/crm/useLeads';
 import { useDeals, useUpdateDealStage, useWinDeal, useLoseDeal, Deal, DealStage } from '@/hooks/crm/useDeals';
-import { LeadCard } from '@/components/crm/kanban/LeadCard';
-import { DealCard } from '@/components/crm/kanban/DealCard';
-import { KanbanColumn } from '@/components/crm/kanban/KanbanColumn';
+import { UnifiedCard } from '@/components/crm/kanban/UnifiedCard';
+import { UnifiedKanbanColumn } from '@/components/crm/kanban/UnifiedKanbanColumn';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -51,22 +51,96 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Plus, RefreshCw, ArrowRight, Users, Handshake } from 'lucide-react';
+import { Plus, RefreshCw, Trophy, XCircle } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Columnas de Leads
-const LEAD_COLUMNS: { id: LeadStatus; title: string; color: string }[] = [
-  { id: 'new', title: 'Nuevos', color: 'bg-primary' },
-  { id: 'contacted', title: 'Contactados', color: 'bg-[hsl(var(--ip-pending-text))]' },
-  { id: 'standby', title: 'Stand-by', color: 'bg-muted-foreground' },
-];
+// ══════════════════════════════════════════════════════════════════════════════
+// COLUMNAS UNIFICADAS - Un solo flujo continuo
+// ══════════════════════════════════════════════════════════════════════════════
 
-// Columnas de Deals
-const DEAL_COLUMNS: { id: DealStage; title: string; color: string }[] = [
-  { id: 'contacted', title: 'Contactado', color: 'bg-primary' },
-  { id: 'qualified', title: 'Cualificado', color: 'bg-[hsl(var(--ip-pending-text))]' },
-  { id: 'proposal', title: 'Propuesta', color: 'bg-[hsl(var(--ip-action-whatsapp-text))]' },
-  { id: 'negotiation', title: 'Negociación', color: 'bg-[hsl(var(--ip-success-text))]' },
+type ColumnType = 'lead' | 'deal';
+
+interface UnifiedColumn {
+  id: string;
+  title: string;
+  color: string;
+  bgColor: string;
+  type: ColumnType;
+  leadStatus?: LeadStatus;
+  dealStage?: DealStage;
+  isWon?: boolean;
+  isLost?: boolean;
+}
+
+const UNIFIED_COLUMNS: UnifiedColumn[] = [
+  // LEADS (fondo azul claro)
+  { 
+    id: 'new', 
+    title: 'Nuevos', 
+    color: 'bg-primary', 
+    bgColor: 'bg-blue-50/50',
+    type: 'lead',
+    leadStatus: 'new',
+  },
+  { 
+    id: 'recontact', 
+    title: 'Recontactar', 
+    color: 'bg-[hsl(var(--ip-pending-text))]', 
+    bgColor: 'bg-blue-50/50',
+    type: 'lead',
+    leadStatus: 'contacted', // leads contactados pero aún no aprobados
+  },
+  // DEALS (fondo blanco)
+  { 
+    id: 'contacted', 
+    title: 'Contactado', 
+    color: 'bg-primary', 
+    bgColor: 'bg-background',
+    type: 'deal',
+    dealStage: 'contacted',
+  },
+  { 
+    id: 'qualified', 
+    title: 'Cualificado', 
+    color: 'bg-[hsl(var(--ip-pending-text))]', 
+    bgColor: 'bg-background',
+    type: 'deal',
+    dealStage: 'qualified',
+  },
+  { 
+    id: 'proposal', 
+    title: 'Propuesta', 
+    color: 'bg-[#25D366]', 
+    bgColor: 'bg-background',
+    type: 'deal',
+    dealStage: 'proposal',
+  },
+  { 
+    id: 'negotiation', 
+    title: 'Negociación', 
+    color: 'bg-[hsl(var(--ip-success-text))]', 
+    bgColor: 'bg-background',
+    type: 'deal',
+    dealStage: 'negotiation',
+  },
+  { 
+    id: 'won', 
+    title: '✅ Ganado', 
+    color: 'bg-[hsl(var(--ip-success-text))]', 
+    bgColor: 'bg-[hsl(var(--ip-success-bg))]',
+    type: 'deal',
+    dealStage: 'won',
+    isWon: true,
+  },
+  { 
+    id: 'lost', 
+    title: '❌ Perdido', 
+    color: 'bg-destructive', 
+    bgColor: 'bg-destructive/5',
+    type: 'deal',
+    dealStage: 'lost',
+    isLost: true,
+  },
 ];
 
 // Motivos de pérdida predefinidos
@@ -82,7 +156,7 @@ const LOSS_REASONS = [
 export default function CRMKanbanPage() {
   // Data
   const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads } = useLeads();
-  const { data: deals = [], isLoading: isLoadingDeals, refetch: refetchDeals } = useDeals({ exclude_closed: true });
+  const { data: deals = [], isLoading: isLoadingDeals, refetch: refetchDeals } = useDeals();
 
   // Mutations
   const updateLeadStatus = useUpdateLeadStatus();
@@ -115,58 +189,73 @@ export default function CRMKanbanPage() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
-  // Group leads by status
-  const leadsByStatus = useMemo(() => {
-    const grouped: Record<LeadStatus, Lead[]> = {
-      new: [],
-      contacted: [],
-      standby: [],
-      converted: [],
-    };
-    leads.forEach((lead) => {
-      if (lead.status !== 'converted') {
-        grouped[lead.status].push(lead);
-      }
-    });
-    return grouped;
-  }, [leads]);
+  // ══════════════════════════════════════════════════════════════════════════════
+  // MAPEO DE ITEMS POR COLUMNA
+  // ══════════════════════════════════════════════════════════════════════════════
 
-  // Group deals by stage
-  const dealsByStage = useMemo(() => {
-    const grouped: Record<DealStage, Deal[]> = {
-      contacted: [],
-      qualified: [],
-      proposal: [],
-      negotiation: [],
-      won: [],
-      lost: [],
-    };
-    deals.forEach((deal) => {
-      if (deal.stage !== 'won' && deal.stage !== 'lost') {
-        grouped[deal.stage].push(deal);
+  const itemsByColumn = useMemo(() => {
+    const grouped: Record<string, { type: 'lead' | 'deal'; data: Lead | Deal; value: number | null }[]> = {};
+    
+    UNIFIED_COLUMNS.forEach(col => {
+      grouped[col.id] = [];
+    });
+
+    // Leads activos (no convertidos)
+    leads.forEach(lead => {
+      if (lead.status === 'converted') return;
+      
+      if (lead.status === 'new') {
+        grouped['new'].push({ 
+          type: 'lead', 
+          data: lead, 
+          value: lead.estimated_value 
+        });
+      } else if (lead.status === 'contacted' || lead.status === 'standby') {
+        // Leads contactados van a "Recontactar"
+        grouped['recontact'].push({ 
+          type: 'lead', 
+          data: lead, 
+          value: lead.estimated_value 
+        });
       }
     });
+
+    // Deals
+    deals.forEach(deal => {
+      const colId = deal.stage; // contacted, qualified, proposal, negotiation, won, lost
+      if (grouped[colId]) {
+        grouped[colId].push({ 
+          type: 'deal', 
+          data: deal, 
+          value: deal.amount 
+        });
+      }
+    });
+
     return grouped;
-  }, [deals]);
+  }, [leads, deals]);
 
   // Active item for drag overlay
   const activeItem = useMemo(() => {
     if (!activeId) return null;
+    
     if (activeType === 'lead') {
-      return leads.find((l) => l.id === activeId);
+      const lead = leads.find((l) => l.id === activeId);
+      return lead ? { type: 'lead' as const, data: lead } : null;
     }
-    return deals.find((d) => d.id === activeId);
+    
+    const deal = deals.find((d) => d.id === activeId);
+    return deal ? { type: 'deal' as const, data: deal } : null;
   }, [activeId, activeType, leads, deals]);
 
-  // Handlers
+  // ══════════════════════════════════════════════════════════════════════════════
+  // DRAG HANDLERS
+  // ══════════════════════════════════════════════════════════════════════════════
+
   const handleDragStart = (event: DragStartEvent) => {
     const { active } = event;
     setActiveId(active.id as string);
     setActiveType(active.data.current?.type || null);
-  };
-
-  const handleDragOver = (event: DragOverEvent) => {
-    // Could be used for visual feedback
   };
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -177,39 +266,65 @@ export default function CRMKanbanPage() {
     if (!over) return;
 
     const activeData = active.data.current;
-    const overId = over.id as string;
+    const targetColId = over.id as string;
+    const targetColumn = UNIFIED_COLUMNS.find(c => c.id === targetColId);
 
+    if (!targetColumn) return;
+
+    // ═══ LEAD siendo arrastrado ═══
     if (activeData?.type === 'lead') {
       const lead = activeData.lead as Lead;
-      
-      // Check if dropping on deal columns (approve action)
-      if (DEAL_COLUMNS.some((col) => col.id === overId)) {
+
+      // Lead → columna de DEAL = APROBAR
+      if (targetColumn.type === 'deal') {
+        setDealTitle(`Oportunidad de ${lead.company_name || lead.contact_name}`);
+        setDealValue(lead.estimated_value?.toString() || '');
         setApproveModal(lead);
         return;
       }
 
-      // Moving between lead columns
-      const newStatus = overId as LeadStatus;
-      if (LEAD_COLUMNS.some((col) => col.id === newStatus) && lead.status !== newStatus) {
-        updateLeadStatus.mutate({
-          leadId: lead.id,
-          status: newStatus,
-        });
+      // Lead → otra columna de Lead
+      if (targetColumn.type === 'lead') {
+        const newStatus: LeadStatus = targetColumn.id === 'new' ? 'new' : 'contacted';
+        if (lead.status !== newStatus) {
+          updateLeadStatus.mutate({ leadId: lead.id, status: newStatus });
+        }
       }
-    } else if (activeData?.type === 'deal') {
-      const deal = activeData.deal as Deal;
-      const newStage = overId as DealStage;
+    }
 
-      if (DEAL_COLUMNS.some((col) => col.id === newStage) && deal.stage !== newStage) {
-        updateDealStage.mutate({
-          dealId: deal.id,
-          stage: newStage,
-        });
+    // ═══ DEAL siendo arrastrado ═══
+    if (activeData?.type === 'deal') {
+      const deal = activeData.deal as Deal;
+
+      // No puede mover deal a columnas de Lead
+      if (targetColumn.type === 'lead') {
+        toast.error('No puedes mover un Deal a columnas de Lead');
+        return;
+      }
+
+      // Deal → GANADO
+      if (targetColumn.id === 'won') {
+        handleWin(deal);
+        return;
+      }
+
+      // Deal → PERDIDO
+      if (targetColumn.id === 'lost') {
+        handleLose(deal);
+        return;
+      }
+
+      // Deal → otra etapa
+      if (targetColumn.dealStage && deal.stage !== targetColumn.dealStage) {
+        updateDealStage.mutate({ dealId: deal.id, stage: targetColumn.dealStage });
       }
     }
   };
 
-  // Lead actions
+  // ══════════════════════════════════════════════════════════════════════════════
+  // ACTION HANDLERS
+  // ══════════════════════════════════════════════════════════════════════════════
+
   const handleApprove = (lead: Lead) => {
     setDealTitle(`Oportunidad de ${lead.company_name || lead.contact_name}`);
     setDealValue(lead.estimated_value?.toString() || '');
@@ -246,7 +361,6 @@ export default function CRMKanbanPage() {
     );
   };
 
-  // Deal actions
   const handleWin = (deal: Deal) => {
     setWonValue(deal.amount?.toString() || '');
     setWinModal(deal);
@@ -297,14 +411,18 @@ export default function CRMKanbanPage() {
 
   const isLoading = isLoadingLeads || isLoadingDeals;
 
+  // ══════════════════════════════════════════════════════════════════════════════
+  // RENDER
+  // ══════════════════════════════════════════════════════════════════════════════
+
   return (
     <div className="h-full flex flex-col">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b bg-background">
         <div>
-          <h1 className="text-xl font-semibold">CRM Kanban</h1>
+          <h1 className="text-xl font-semibold">CRM Pipeline</h1>
           <p className="text-sm text-muted-foreground">
-            Gestiona leads y oportunidades de venta
+            Gestiona leads y oportunidades en un solo flujo
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -321,105 +439,76 @@ export default function CRMKanbanPage() {
 
       {/* Kanban Board */}
       <div className="flex-1 overflow-hidden p-4">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCorners}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          <div className="flex gap-4 h-full overflow-x-auto">
-            {/* LEADS Section */}
-            <div className="flex-shrink-0">
-              <div className="flex items-center gap-2 mb-3 px-1">
-                <Users className="w-4 h-4 text-primary" />
-                <span className="font-semibold text-sm">LEADS</span>
-                <Badge variant="outline">{leads.filter(l => l.status !== 'converted').length}</Badge>
-              </div>
-              <div className="flex gap-4 h-[calc(100%-40px)]">
-                {LEAD_COLUMNS.map((column) => (
-                  <div key={column.id} className="w-[280px] flex-shrink-0">
-                    <KanbanColumn
-                      id={column.id}
-                      title={column.title}
-                      color={column.color}
-                      items={leadsByStatus[column.id]}
-                    >
-                      {leadsByStatus[column.id].map((lead) => (
-                        <LeadCard
-                          key={lead.id}
-                          lead={lead}
-                          onApprove={() => handleApprove(lead)}
-                          onDelete={() => handleDelete(lead)}
-                          onCall={() => toast.info(`Llamando a ${lead.contact_phone}`)}
-                          onEmail={() => toast.info(`Email a ${lead.contact_email}`)}
-                        />
-                      ))}
-                    </KanbanColumn>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* SEPARATOR */}
-            <div className="flex flex-col items-center justify-center px-2">
-              <div className="w-px h-full bg-border relative">
-                <div className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 bg-background px-2 py-4 border rounded-lg">
-                  <ArrowRight className="w-5 h-5 text-primary mb-2" />
-                  <span className="text-xs text-muted-foreground writing-mode-vertical">
-                    Aprobar
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* DEALS Section */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-3 px-1">
-                <Handshake className="w-4 h-4 text-[hsl(var(--ip-success-text))]" />
-                <span className="font-semibold text-sm">DEALS</span>
-                <Badge variant="outline">{deals.length}</Badge>
-                <span className="text-xs text-muted-foreground ml-2">
-                  Total: <span className="font-semibold text-foreground">{deals.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString('es-ES')} €</span>
-                </span>
-              </div>
-              <div className="flex gap-4 h-[calc(100%-40px)] overflow-x-auto">
-                {DEAL_COLUMNS.map((column) => (
-                  <div key={column.id} className="w-[280px] flex-shrink-0">
-                    <KanbanColumn
-                      id={column.id}
-                      title={column.title}
-                      color={column.color}
-                      items={dealsByStage[column.id]}
-                    >
-                      {dealsByStage[column.id].map((deal) => (
-                        <DealCard
-                          key={deal.id}
-                          deal={deal}
-                          onWin={() => handleWin(deal)}
-                          onLose={() => handleLose(deal)}
-                          onCall={() => toast.info(`Llamando a ${deal.client?.phone}`)}
-                          onEmail={() => toast.info(`Email a ${deal.client?.email}`)}
-                          onWhatsApp={() => toast.info(`WhatsApp a ${deal.client?.phone}`)}
-                        />
-                      ))}
-                    </KanbanColumn>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center h-full text-muted-foreground">
+            Cargando...
           </div>
+        ) : (
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCorners}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="flex gap-4 h-full overflow-x-auto pb-4">
+              {UNIFIED_COLUMNS.map((column) => {
+                const items = itemsByColumn[column.id] || [];
+                
+                return (
+                  <UnifiedKanbanColumn
+                    key={column.id}
+                    id={column.id}
+                    title={column.title}
+                    color={column.color}
+                    bgColor={column.bgColor}
+                    items={items.map(i => ({ id: i.data.id, value: i.value }))}
+                    isWon={column.isWon}
+                    isLost={column.isLost}
+                  >
+                    {items.map((item) => (
+                      <UnifiedCard
+                        key={item.data.id}
+                        item={{ type: item.type, data: item.data }}
+                        onCall={() => {
+                          const phone = item.type === 'lead' 
+                            ? (item.data as Lead).contact_phone 
+                            : (item.data as Deal).client?.phone;
+                          if (phone) toast.info(`Llamando a ${phone}`);
+                        }}
+                        onEmail={() => {
+                          const email = item.type === 'lead' 
+                            ? (item.data as Lead).contact_email 
+                            : (item.data as Deal).client?.email;
+                          if (email) toast.info(`Email a ${email}`);
+                        }}
+                        onWhatsApp={() => {
+                          const phone = item.type === 'lead' 
+                            ? (item.data as Lead).contact_phone 
+                            : (item.data as Deal).client?.phone;
+                          if (phone) toast.info(`WhatsApp a ${phone}`);
+                        }}
+                        onApprove={item.type === 'lead' ? () => handleApprove(item.data as Lead) : undefined}
+                        onDelete={item.type === 'lead' ? () => handleDelete(item.data as Lead) : undefined}
+                        onWin={item.type === 'deal' ? () => handleWin(item.data as Deal) : undefined}
+                        onLose={item.type === 'deal' ? () => handleLose(item.data as Deal) : undefined}
+                      />
+                    ))}
+                  </UnifiedKanbanColumn>
+                );
+              })}
+            </div>
 
-          {/* Drag Overlay */}
-          <DragOverlay>
-            {activeItem && activeType === 'lead' && (
-              <LeadCard lead={activeItem as Lead} isDragging />
-            )}
-            {activeItem && activeType === 'deal' && (
-              <DealCard deal={activeItem as Deal} isDragging />
-            )}
-          </DragOverlay>
-        </DndContext>
+            {/* Drag Overlay */}
+            <DragOverlay>
+              {activeItem && (
+                <UnifiedCard
+                  item={activeItem}
+                  isDragging
+                />
+              )}
+            </DragOverlay>
+          </DndContext>
+        )}
       </div>
 
       {/* Delete Confirmation Dialog */}
@@ -490,7 +579,10 @@ export default function CRMKanbanPage() {
       <Dialog open={!!winModal} onOpenChange={() => setWinModal(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>🎉 Marcar como Ganado</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-[hsl(var(--ip-success-text))]" />
+              Marcar como Ganado
+            </DialogTitle>
             <DialogDescription>
               Confirma el valor final del deal.
             </DialogDescription>
@@ -521,7 +613,10 @@ export default function CRMKanbanPage() {
       <Dialog open={!!loseModal} onOpenChange={() => setLoseModal(null)}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Marcar como Perdido</DialogTitle>
+            <DialogTitle className="flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-destructive" />
+              Marcar como Perdido
+            </DialogTitle>
             <DialogDescription>
               Indica el motivo de la pérdida para mejorar el análisis.
             </DialogDescription>
