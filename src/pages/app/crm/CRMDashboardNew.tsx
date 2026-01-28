@@ -54,7 +54,7 @@ function getActivityIcon(type: string) {
 }
 
 export default function CRMDashboardNew() {
-  usePageTitle('CRM Dashboard');
+  usePageTitle('Dashboard');
   const navigate = useNavigate();
   const { data: kpis, isLoading } = useCRMDashboardKPIs();
 
@@ -80,7 +80,7 @@ export default function CRMDashboardNew() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Dashboard CRM</h1>
+          <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-sm text-muted-foreground capitalize">{currentMonth}</p>
         </div>
         <Button onClick={() => navigate('/app/crm/pipeline')}>
