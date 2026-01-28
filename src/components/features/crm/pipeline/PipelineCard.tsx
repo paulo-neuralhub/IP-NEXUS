@@ -3,6 +3,7 @@
  * Border izquierdo color, badge tipo, valor, avatar, acciones, fechas
  */
 
+import { forwardRef } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
@@ -13,7 +14,6 @@ import {
   Mail,
   MessageSquare,
   Calendar,
-  User,
   Building2,
   Clock,
   Star,
@@ -59,22 +59,23 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardProps) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-  } = useSortable({
-    id: item.id,
-    data: { type, item },
-  });
+export const PipelineCard = forwardRef<HTMLDivElement, PipelineCardProps>(
+  function PipelineCard({ item, type, onClick, isDragging }, forwardedRef) {
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+    } = useSortable({
+      id: item.id,
+      data: { type, item },
+    });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-  };
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+    };
 
   // Extract data
   const lead = isLead(item) ? item : null;
@@ -120,9 +121,19 @@ export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardPr
     if (email) window.open(`mailto:${email}`, '_blank');
   };
 
+  // Merge refs for forwardRef + dnd-kit
+  const mergedRef = (node: HTMLDivElement | null) => {
+    setNodeRef(node);
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(node);
+    } else if (forwardedRef) {
+      forwardedRef.current = node;
+    }
+  };
+
   return (
     <div
-      ref={setNodeRef}
+      ref={mergedRef}
       style={style}
       onClick={handleClick}
       className={cn(
@@ -294,4 +305,6 @@ export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardPr
       </div>
     </div>
   );
-}
+});
+
+PipelineCard.displayName = 'PipelineCard';
