@@ -26,6 +26,7 @@ export function useVoipEnabled() {
       
       return data?.voip_enabled ?? false;
     },
-    staleTime: 5 * 60 * 1000, // Cache for 5 minutes
+    staleTime: 30 * 1000, // Cache for 30 seconds - quick refresh for VoIP availability
+    refetchOnMount: true,
   });
 }
