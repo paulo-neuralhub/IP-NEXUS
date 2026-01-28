@@ -144,6 +144,8 @@ export function useCreateLead() {
 
 export function useUpdateLeadStatus() {
   const queryClient = useQueryClient();
+  const { currentOrganization } = useOrganization();
+  const orgId = currentOrganization?.id;
 
   return useMutation({
     mutationFn: async ({
@@ -171,12 +173,37 @@ export function useUpdateLeadStatus() {
         throw new Error(result.error || 'Error al actualizar status');
       }
       
-      return result;
+      return { ...result, leadId, status };
+    },
+    // Optimistic update - update UI immediately
+    onMutate: async ({ leadId, status }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['crm-leads'] });
+      
+      // Snapshot the previous value
+      const previousLeads = queryClient.getQueryData(['crm-leads', orgId]);
+      
+      // Optimistically update the cache
+      queryClient.setQueryData(['crm-leads', orgId], (old: Lead[] | undefined) => {
+        if (!old) return old;
+        return old.map(lead => 
+          lead.id === leadId 
+            ? { ...lead, status } 
+            : lead
+        );
+      });
+      
+      return { previousLeads };
     },
     onSuccess: () => {
+      // Invalidate to sync with server
       queryClient.invalidateQueries({ queryKey: ['crm-leads'] });
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousLeads) {
+        queryClient.setQueryData(['crm-leads', orgId], context.previousLeads);
+      }
       toast.error(`Error: ${error.message}`);
     },
   });
