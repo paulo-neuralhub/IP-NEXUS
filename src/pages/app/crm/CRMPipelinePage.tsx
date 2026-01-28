@@ -328,7 +328,7 @@ export default function CRMPipelinePage() {
         { 
           onSuccess: () => {
             toast.success(`Movido a ${targetCol.title}`);
-            refetchLeads();
+            // No refetchLeads() - optimistic update handles it
           },
           onError: (err) => {
             console.error('Error updating lead:', err);
@@ -377,19 +377,15 @@ export default function CRMPipelinePage() {
     
     setIsProcessing(true);
     try {
-      // Get the deals pipeline and its first stage
-      const dealsPipeline = pipelines.find(p => !p.name.toLowerCase().includes('lead'));
-      const firstDealStage = dealsPipeline?.stages?.[0];
-      
-      // Create the deal
+      // Create the deal (without stage_id to avoid FK issues with crm_pipeline_stages)
       const { error } = await fromTable('crm_deals').insert({
         organization_id: (leadToClose as any).organization_id,
         name: `Negociación - ${leadToClose.company_name || leadToClose.contact_name}`,
         amount: leadToClose.estimated_value || 0,
         stage: 'contacted',
-        stage_id: firstDealStage?.id || null,
         lead_id: leadToClose.id,
         territory: 'ES',
+        pipeline_id: pipelines.find(p => p.name === 'Negociaciones')?.id || null,
       });
       
       if (error) throw error;
