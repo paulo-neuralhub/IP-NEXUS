@@ -328,17 +328,17 @@ export default function CRMKanbanPage() {
           onDragOver={handleDragOver}
           onDragEnd={handleDragEnd}
         >
-          <div className="flex gap-4 h-full">
+          <div className="flex gap-4 h-full overflow-x-auto">
             {/* LEADS Section */}
             <div className="flex-shrink-0">
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-3 px-1">
                 <Users className="w-4 h-4 text-primary" />
                 <span className="font-semibold text-sm">LEADS</span>
                 <Badge variant="outline">{leads.filter(l => l.status !== 'converted').length}</Badge>
               </div>
-              <div className="flex gap-3 h-[calc(100%-32px)]">
+              <div className="flex gap-4 h-[calc(100%-40px)]">
                 {LEAD_COLUMNS.map((column) => (
-                  <div key={column.id} className="w-72">
+                  <div key={column.id} className="w-[280px] flex-shrink-0">
                     <KanbanColumn
                       id={column.id}
                       title={column.title}
@@ -375,17 +375,17 @@ export default function CRMKanbanPage() {
 
             {/* DEALS Section */}
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-3">
+              <div className="flex items-center gap-2 mb-3 px-1">
                 <Handshake className="w-4 h-4 text-[hsl(var(--ip-success-text))]" />
                 <span className="font-semibold text-sm">DEALS</span>
                 <Badge variant="outline">{deals.length}</Badge>
                 <span className="text-xs text-muted-foreground ml-2">
-                  Total: {deals.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString('es-ES')} €
+                  Total: <span className="font-semibold text-foreground">{deals.reduce((sum, d) => sum + (d.amount || 0), 0).toLocaleString('es-ES')} €</span>
                 </span>
               </div>
-              <div className="flex gap-3 h-[calc(100%-32px)] overflow-x-auto">
+              <div className="flex gap-4 h-[calc(100%-40px)] overflow-x-auto">
                 {DEAL_COLUMNS.map((column) => (
-                  <div key={column.id} className="w-72 flex-shrink-0">
+                  <div key={column.id} className="w-[280px] flex-shrink-0">
                     <KanbanColumn
                       id={column.id}
                       title={column.title}

@@ -59,14 +59,17 @@ export function KanbanColumn({
       {/* Content */}
       <ScrollArea className="flex-1 p-2">
         <SortableContext items={items.map(i => i.id)} strategy={verticalListSortingStrategy}>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {children}
           </div>
         </SortableContext>
 
         {items.length === 0 && (
-          <div className="text-center text-muted-foreground text-sm py-8">
-            Sin elementos
+          <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-12">
+            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mb-2">
+              <span className="text-xl">📭</span>
+            </div>
+            <p>Sin elementos</p>
           </div>
         )}
       </ScrollArea>
