@@ -19,7 +19,8 @@ import {
   Code, Upload, Wallet, Briefcase, GitBranch, PenTool, Clock, Bell, MessageSquare, 
   Calendar, Folder, FolderKanban, CheckSquare, Phone, Receipt, CreditCard, Coins,
   Eye, FileBarChart, Bot, History, Building2, Handshake, Activity, Cog, ShoppingBag,
-  Search, Package, Circle, Puzzle
+  Search, Package, Circle, Puzzle, Columns3, UserPlus, ListTodo, Send, Wrench,
+  Users2, KanbanSquare
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { 
@@ -46,11 +47,16 @@ interface DynamicSidebarProps {
 // Icon mapping - extensible
 const ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?: React.CSSProperties }>> = {
   LayoutDashboard,
+  LayoutKanban: KanbanSquare,
+  KanbanSquare,
+  Columns3,
   Briefcase,
   FileText,
   Database,
   Radar,
   Users,
+  UserPlus,
+  Users2,
   Megaphone,
   Globe,
   Store,
@@ -71,6 +77,7 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?:
   Folder,
   FolderKanban,
   CheckSquare,
+  ListTodo,
   Phone,
   Receipt,
   CreditCard,
@@ -93,6 +100,8 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string; style?:
   GitBranch,
   Lock,
   Shield,
+  Send,
+  Wrench,
 };
 
 function getIcon(iconName: string): React.ComponentType<{ className?: string; style?: React.CSSProperties }> {
