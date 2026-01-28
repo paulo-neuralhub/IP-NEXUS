@@ -331,7 +331,11 @@ export default function CRMPipelinePage() {
       const statusMap: Record<string, LeadStatus> = {
         'nuevo': 'new', 'new': 'new',
         'contactado': 'contacted', 'contacted': 'contacted',
-        'cualificado': 'contacted', 'propuesta': 'standby',
+        'cualificado': 'contacted', // mapped to contacted since qualified doesn't exist
+        'propuesta': 'contacted', 'proposal': 'contacted',
+        'propuesta enviada': 'contacted',
+        'en revision': 'contacted', 'revision': 'contacted', 'en revisión': 'contacted',
+        'negociacion': 'contacted', 'negociación': 'contacted',
         'stand by': 'standby', 'standby': 'standby', 'recontactar': 'standby',
       };
       

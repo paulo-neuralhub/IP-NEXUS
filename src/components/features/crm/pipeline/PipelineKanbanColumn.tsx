@@ -4,7 +4,6 @@
  */
 
 import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -117,13 +116,13 @@ export function PipelineKanbanColumn({
         style={{ 
           scrollbarWidth: 'thin',
           scrollbarColor: '#94a3b8 #e2e8f0',
+          maxHeight: 'calc(100% - 130px)',
         }}
       >
-        <SortableContext items={[]} strategy={verticalListSortingStrategy}>
-          <div className="space-y-3 min-h-[100px]">
-            {children}
-          </div>
-        </SortableContext>
+        {/* Sin SortableContext - usamos useDroppable en columna + useDraggable en cards */}
+        <div className="space-y-3 min-h-[100px]">
+          {children}
+        </div>
 
         {count === 0 && (
           <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-10">
