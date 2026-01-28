@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   Phone,
   PhoneOff,
@@ -19,6 +20,8 @@ import { toast } from 'sonner';
 import { TransferModal } from '@/components/voip/TransferModal';
 import { Button } from '@/components/ui/button';
 import { useVoipEnabled } from '@/hooks/useVoipEnabled';
+import { useOrganizationSettings, useUpdateOrganizationSettings } from '@/hooks/use-settings';
+import { useSecureCredentialStatus } from '@/hooks/use-secure-credentials';
 
 type CallState = 'idle' | 'connecting' | 'ringing' | 'in_call' | 'on_hold' | 'incoming';
 
@@ -41,6 +44,25 @@ function formatDuration(seconds: number) {
 export function SoftphoneWidget() {
   const { currentOrganization } = useOrganization();
   const { data: voipGloballyEnabled, isLoading: voipLoading } = useVoipEnabled();
+  const { data: orgSettings } = useOrganizationSettings();
+  const updateOrgSettings = useUpdateOrganizationSettings();
+  const secureStatus = useSecureCredentialStatus();
+
+  const tenantVoipEnabled = useMemo(() => {
+    const raw = orgSettings?.integrations?.voip_enabled;
+    return raw === undefined ? true : Boolean(raw);
+  }, [orgSettings?.integrations]);
+
+  const twilioCredentialsConfigured = useMemo(() => {
+    if (!secureStatus.data?.encryption_ready) return false;
+    const items = secureStatus.data?.credentials ?? [];
+    const required = ['account_sid', 'api_key_sid', 'api_key_secret', 'twiml_app_sid'];
+    return required.every((key) =>
+      items.some((i) => i.provider === 'twilio' && i.credential_key === key && i.is_configured)
+    );
+  }, [secureStatus.data]);
+
+  const widgetEnabled = voipGloballyEnabled === true && tenantVoipEnabled;
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showDialpad, setShowDialpad] = useState(true);
@@ -52,8 +74,9 @@ export function SoftphoneWidget() {
   const [contactInfo, setContactInfo] = useState<ContactInfo | null>(null);
   const [transferOpen, setTransferOpen] = useState(false);
 
-  // Only initialize Twilio if VoIP is globally enabled
-  const shouldInitTwilio = voipGloballyEnabled === true;
+  // Only initialize Twilio when globally+tenant enabled AND credentials exist.
+  // This prevents calling the edge function (503) when Twilio isn't configured.
+  const shouldInitTwilio = widgetEnabled && twilioCredentialsConfigured;
   const { device, isReady, error: deviceError, isConfigured } = useTwilioDevice(shouldInitTwilio);
   const { makeCall, hangUp, toggleMute, toggleHold, currentCall, acceptIncoming, rejectIncoming } = useVoipCall(device);
 
@@ -68,6 +91,11 @@ export function SoftphoneWidget() {
 
   // Exponer global click-to-call (abre y prellena, NO llama automático)
   useEffect(() => {
+    if (!widgetEnabled) {
+      delete window.softphoneCall;
+      return;
+    }
+
     window.softphoneCall = (number: string, contactId?: string, contactName?: string) => {
       setPhoneNumber(number);
       setContactInfo(contactId || contactName ? { id: contactId, name: contactName } : null);
@@ -79,7 +107,7 @@ export function SoftphoneWidget() {
     return () => {
       delete window.softphoneCall;
     };
-  }, []);
+  }, [widgetEnabled]);
 
   // Lookup contacto por número (screen-pop)
   const lookupContactByNumber = useCallback(
@@ -220,8 +248,26 @@ export function SoftphoneWidget() {
     [currentCall, currentOrganization?.id, resetCallUi]
   );
 
+  const handleDisableVoipForOrg = useCallback(async () => {
+    try {
+      await updateOrgSettings.mutateAsync({
+        category: 'integrations',
+        updates: { voip_enabled: false },
+      });
+      setIsOpen(false);
+      setIsMinimized(false);
+    } catch {
+      // handled by mutation
+    }
+  }, [updateOrgSettings]);
+
   // Don't render anything if VoIP is globally disabled
-  if (!voipLoading && !voipGloballyEnabled) {
+  if (!voipLoading && voipGloballyEnabled !== true) {
+    return null;
+  }
+
+  // Tenant-level disable (per org)
+  if (!voipLoading && voipGloballyEnabled === true && !tenantVoipEnabled) {
     return null;
   }
 
@@ -312,10 +358,26 @@ export function SoftphoneWidget() {
           </div>
         )}
 
-        {!isConfigured && (
+        {widgetEnabled && !twilioCredentialsConfigured && (
           <div className="rounded-xl border border-warning/30 bg-warning/10 p-3 text-sm text-warning-foreground">
             <p className="font-medium">VoIP no configurado</p>
-            <p className="text-xs mt-1 opacity-80">Configura Twilio en Backoffice → Integraciones para habilitar llamadas.</p>
+            <p className="text-xs mt-1 opacity-80">
+              Añade las credenciales de Twilio en Configuraciones → Integraciones, o desactiva VoIP para que no se intente inicializar.
+            </p>
+
+            <div className="mt-3 flex items-center justify-end gap-2">
+              <Button asChild size="sm" variant="outline">
+                <Link to="/app/settings/integrations">Abrir integraciones</Link>
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleDisableVoipForOrg}
+                disabled={updateOrgSettings.isPending}
+              >
+                {updateOrgSettings.isPending ? 'Desactivando…' : 'Desactivar VoIP'}
+              </Button>
+            </div>
           </div>
         )}
 
