@@ -675,6 +675,8 @@ export default function MatterDetailPage() {
         matterId={id!}
         matterTitle={matter?.title}
         matterReference={matter?.matter_number}
+        matterStatus={matter?.status}
+        matterType={matter?.matter_type}
         clientId={matter?.client_id}
         clientName={matter?.client_name}
         clientPhone={matter?.client_phone}

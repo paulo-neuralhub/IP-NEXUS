@@ -238,14 +238,6 @@ export function SendWhatsAppModal({ open, onOpenChange, contact }: SendWhatsAppM
           </TabsContent>
 
           <TabsContent value="text" className="space-y-3 mt-4">
-            <Alert>
-              <AlertCircle className="h-4 w-4" />
-              <AlertTitle>Ventana 24h</AlertTitle>
-              <AlertDescription>
-                Los mensajes de texto libre solo se pueden enviar dentro de la ventana de 24h tras el último mensaje del cliente.
-              </AlertDescription>
-            </Alert>
-
             <div className="space-y-2">
               <Label>Mensaje</Label>
               <Textarea
