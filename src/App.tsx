@@ -554,7 +554,7 @@ const App = () => (
                 {/* Legal Ops */}
                 <Route path="legal-ops" element={<Navigate to="/app/legal-ops/assistant" replace />} />
                 <Route path="legal-ops/assistant" element={<LegalOpsAssistantPage />} />
-                <Route path="legal-ops/client-360" element={<LegalOpsClient360Page />} />
+                <Route path="legal-ops/client-360/:clientId" element={<LegalOpsClient360Page />} />
                 <Route path="legal-ops/communications" element={<LegalOpsCommunicationsPage />} />
                 <Route path="legal-ops/signatures" element={<SignaturesListPage />} />
                 <Route path="legal-ops/signatures/:id" element={<SignatureDetailPage />} />
