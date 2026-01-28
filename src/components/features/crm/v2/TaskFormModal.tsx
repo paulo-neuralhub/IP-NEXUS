@@ -21,9 +21,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCreateCRMTask } from "@/hooks/crm/v2/tasks";
 import { useCRMAccounts } from "@/hooks/crm/v2/accounts";
 import { useCRMContacts } from "@/hooks/crm/v2/contacts";
+import { useTeamMembers } from "@/hooks/crm/v2/team-members";
 
 const schema = z.object({
   title: z.string().min(1, "El título es obligatorio"),
@@ -32,6 +34,7 @@ const schema = z.object({
   status: z.string().default("pending"),
   due_date: z.string().optional(),
   description: z.string().optional(),
+  assigned_to: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -52,6 +55,7 @@ export function TaskFormModal({ open, onClose, defaultAccountId }: Props) {
   const create = useCreateCRMTask();
   const { data: accounts = [] } = useCRMAccounts();
   const { data: contacts = [] } = useCRMContacts();
+  const { data: teamMembers = [] } = useTeamMembers();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -62,6 +66,7 @@ export function TaskFormModal({ open, onClose, defaultAccountId }: Props) {
       status: "pending",
       due_date: "",
       description: "",
+      assigned_to: "",
     },
   });
 
@@ -78,6 +83,7 @@ export function TaskFormModal({ open, onClose, defaultAccountId }: Props) {
     if (values.contact_id) payload.contact_id = values.contact_id;
     if (values.due_date) payload.due_date = values.due_date;
     if (values.description) payload.description = values.description;
+    if (values.assigned_to) payload.assigned_to = values.assigned_to;
 
     await create.mutateAsync(payload);
     form.reset();
@@ -164,6 +170,33 @@ export function TaskFormModal({ open, onClose, defaultAccountId }: Props) {
               <Label htmlFor="due_date">Fecha vencimiento</Label>
               <Input id="due_date" type="date" {...form.register("due_date")} />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="assigned_to">Asignar a</Label>
+            <Select
+              value={form.watch("assigned_to") ?? ""}
+              onValueChange={(v) => form.setValue("assigned_to", v || undefined)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Seleccionar responsable..." />
+              </SelectTrigger>
+              <SelectContent>
+                {teamMembers.map((member) => (
+                  <SelectItem key={member.id} value={member.id}>
+                    <div className="flex items-center gap-2">
+                      <Avatar className="h-5 w-5">
+                        <AvatarImage src={member.avatar_url ?? undefined} />
+                        <AvatarFallback className="text-xs">
+                          {member.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2) ?? "?"}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span>{member.full_name ?? member.email}</span>
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>

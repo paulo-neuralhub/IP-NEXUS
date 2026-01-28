@@ -8648,6 +8648,7 @@ export type Database = {
       crm_accounts: {
         Row: {
           account_manager_id: string | null
+          assigned_to: string | null
           churn_risk_level: string | null
           client_type_id: string | null
           created_at: string
@@ -8668,6 +8669,7 @@ export type Database = {
         }
         Insert: {
           account_manager_id?: string | null
+          assigned_to?: string | null
           churn_risk_level?: string | null
           client_type_id?: string | null
           created_at?: string
@@ -8688,6 +8690,7 @@ export type Database = {
         }
         Update: {
           account_manager_id?: string | null
+          assigned_to?: string | null
           churn_risk_level?: string | null
           client_type_id?: string | null
           created_at?: string
@@ -8710,6 +8713,13 @@ export type Database = {
           {
             foreignKeyName: "crm_accounts_account_manager_id_fkey"
             columns: ["account_manager_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_assigned_to_fkey"
+            columns: ["assigned_to"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
@@ -9588,6 +9598,7 @@ export type Database = {
       crm_contacts: {
         Row: {
           account_id: string | null
+          assigned_to: string | null
           created_at: string
           email: string | null
           email_opted_in: boolean | null
@@ -9614,6 +9625,7 @@ export type Database = {
         }
         Insert: {
           account_id?: string | null
+          assigned_to?: string | null
           created_at?: string
           email?: string | null
           email_opted_in?: boolean | null
@@ -9640,6 +9652,7 @@ export type Database = {
         }
         Update: {
           account_id?: string | null
+          assigned_to?: string | null
           created_at?: string
           email?: string | null
           email_opted_in?: boolean | null
@@ -9680,6 +9693,13 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "crm_contacts_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "crm_contacts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -9714,6 +9734,7 @@ export type Database = {
           account_id: string | null
           actual_close_date: string | null
           amount: number | null
+          assigned_to: string | null
           client_id: string | null
           close_reason: string | null
           contact_id: string | null
@@ -9754,6 +9775,7 @@ export type Database = {
           account_id?: string | null
           actual_close_date?: string | null
           amount?: number | null
+          assigned_to?: string | null
           client_id?: string | null
           close_reason?: string | null
           contact_id?: string | null
@@ -9794,6 +9816,7 @@ export type Database = {
           account_id?: string | null
           actual_close_date?: string | null
           amount?: number | null
+          assigned_to?: string | null
           client_id?: string | null
           close_reason?: string | null
           contact_id?: string | null
@@ -9844,6 +9867,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "crm_client_360_view"
             referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_deals_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "crm_deals_client_id_fkey"

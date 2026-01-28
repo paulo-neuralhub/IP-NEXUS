@@ -6,8 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search, UserPlus, TrendingUp, Clock, Phone, Mail, MessageCircle } from "lucide-react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Search, UserPlus, TrendingUp, Clock, Phone, Mail, MessageCircle, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { LeadFormModal } from "@/components/features/crm/v2/LeadFormModal";
 
 const STATUS_LABELS: Record<string, string> = {
   new: "Nuevo",
@@ -63,6 +66,7 @@ export default function CRMLeadsPage() {
   usePageTitle("Leads");
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<string | null>(null);
+  const [showForm, setShowForm] = useState(false);
 
   const { data, isLoading } = useCRMLeads({ search: search || undefined, status });
 
@@ -79,7 +83,7 @@ export default function CRMLeadsPage() {
           <h1 className="text-2xl font-bold text-foreground">Leads</h1>
           <p className="text-muted-foreground">Gestiona tus leads y conviértelos en clientes</p>
         </div>
-        <Button variant="outline" className="gap-2" disabled>
+        <Button variant="outline" className="gap-2" onClick={() => setShowForm(true)}>
           <UserPlus className="w-4 h-4" />
           Nuevo Lead
         </Button>
@@ -148,54 +152,77 @@ export default function CRMLeadsPage() {
               <p className="text-sm text-muted-foreground">No hay leads que coincidan con tu búsqueda.</p>
             </div>
           ) : (
-            <div className="divide-y">
-              {leads.map((lead) => (
-                <div key={lead.id} className="p-4 flex flex-col md:flex-row md:items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium text-foreground shrink-0">
-                    {lead.full_name?.charAt(0)?.toUpperCase() ?? "L"}
-                  </div>
-
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="font-medium text-foreground truncate">{lead.full_name}</p>
-                      <LeadStatusBadge status={lead.lead_status} />
-                    </div>
-                    <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-x-2 gap-y-1">
-                      {lead.email ? (
-                        <span className="inline-flex items-center gap-1">
-                          <Mail className="w-3 h-3" />
-                          {lead.email}
-                        </span>
-                      ) : null}
-                      {lead.account?.name ? <span>• {lead.account.name}</span> : null}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between md:justify-end gap-4">
-                    <LeadScoreBadge score={lead.lead_score} />
-                    <div className="text-xs text-muted-foreground inline-flex items-center gap-1 shrink-0">
-                      <Clock className="w-3 h-3" />
-                      {timeAgo(lead.created_at)}
+            <TooltipProvider>
+              <div className="divide-y">
+                {leads.map((lead) => (
+                  <div key={lead.id} className="p-4 flex flex-col md:flex-row md:items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-sm font-medium text-foreground shrink-0">
+                      {lead.full_name?.charAt(0)?.toUpperCase() ?? "L"}
                     </div>
 
-                    <div className="flex items-center gap-1">
-                      <Button size="icon" variant="ghost" disabled={!lead.phone} aria-label="Llamar">
-                        <Phone className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" disabled={!lead.email} aria-label="Email">
-                        <Mail className="w-4 h-4" />
-                      </Button>
-                      <Button size="icon" variant="ghost" disabled={!lead.whatsapp_phone} aria-label="WhatsApp">
-                        <MessageCircle className="w-4 h-4" />
-                      </Button>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="font-medium text-foreground truncate">{lead.full_name}</p>
+                        <LeadStatusBadge status={lead.lead_status} />
+                      </div>
+                      <div className="text-xs text-muted-foreground mt-1 flex flex-wrap gap-x-2 gap-y-1">
+                        {lead.email ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Mail className="w-3 h-3" />
+                            {lead.email}
+                          </span>
+                        ) : null}
+                        {lead.account?.name ? <span>• {lead.account.name}</span> : null}
+                      </div>
+                    </div>
+
+                    {/* Assigned user with tooltip */}
+                    {lead.assigned_user ? (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <Avatar className="h-6 w-6">
+                              <AvatarImage src={lead.assigned_user.avatar_url ?? undefined} />
+                              <AvatarFallback className="text-xs">
+                                {lead.assigned_user.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2) ?? <User className="w-3 h-3" />}
+                              </AvatarFallback>
+                            </Avatar>
+                          </div>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>{lead.assigned_user.full_name ?? "Sin asignar"}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ) : null}
+
+                    <div className="flex items-center justify-between md:justify-end gap-4">
+                      <LeadScoreBadge score={lead.lead_score} />
+                      <div className="text-xs text-muted-foreground inline-flex items-center gap-1 shrink-0">
+                        <Clock className="w-3 h-3" />
+                        {timeAgo(lead.created_at)}
+                      </div>
+
+                      <div className="flex items-center gap-1">
+                        <Button size="icon" variant="ghost" disabled={!lead.phone} aria-label="Llamar">
+                          <Phone className="w-4 h-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" disabled={!lead.email} aria-label="Email">
+                          <Mail className="w-4 h-4" />
+                        </Button>
+                        <Button size="icon" variant="ghost" disabled={!lead.whatsapp_phone} aria-label="WhatsApp">
+                          <MessageCircle className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            </TooltipProvider>
           )}
         </CardContent>
       </Card>
+
+      <LeadFormModal open={showForm} onClose={() => setShowForm(false)} />
     </div>
   );
 }
