@@ -281,7 +281,13 @@ export default function CRMPipelinePage() {
     const itemId = active.id as string;
     const targetColId = over.id as string;
     const targetCol = columns.find(c => c.id === targetColId);
-    if (!targetCol) return;
+    
+    console.log('[DragEnd] itemId:', itemId, 'targetColId:', targetColId, 'targetCol:', targetCol);
+    
+    if (!targetCol) {
+      console.log('[DragEnd] No target column found');
+      return;
+    }
 
     if (view === 'leads') {
       const lead = leads.find(l => l.id === itemId);
@@ -332,7 +338,12 @@ export default function CRMPipelinePage() {
       }
     } else {
       const deal = deals.find(d => d.id === itemId);
-      if (!deal) return;
+      if (!deal) {
+        console.log('[DragEnd] Deal not found:', itemId);
+        return;
+      }
+
+      console.log('[DragEnd] Deal:', deal.name, 'current stage:', deal.stage, 'target stage:', targetCol.stage);
 
       if (targetCol.isWon) {
         winDeal.mutate({ dealId: deal.id }, { onSuccess: () => toast.success('🎉 ¡Deal ganado!') });
@@ -348,11 +359,22 @@ export default function CRMPipelinePage() {
       }
 
       // Update to new stage
-      if (targetCol.stage) {
+      if (targetCol.stage && deal.stage !== targetCol.stage) {
+        console.log('[DragEnd] Updating deal stage from', deal.stage, 'to', targetCol.stage);
         updateDealStage.mutate(
           { dealId: deal.id, stage: targetCol.stage },
-          { onSuccess: () => toast.success(`Movido a ${targetCol.title}`) }
+          { 
+            onSuccess: () => {
+              console.log('[DragEnd] Stage updated successfully');
+              toast.success(`Movido a ${targetCol.title}`);
+            },
+            onError: (error) => {
+              console.error('[DragEnd] Stage update error:', error);
+            }
+          }
         );
+      } else {
+        console.log('[DragEnd] No stage update needed:', deal.stage, '===', targetCol.stage);
       }
     }
   };

@@ -3,6 +3,7 @@
  * Border izquierdo color, badge tipo, valor, avatar, acciones, fechas
  */
 
+import React, { forwardRef } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Button } from '@/components/ui/button';
@@ -58,7 +59,8 @@ function getInitials(name: string): string {
     .toUpperCase();
 }
 
-export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardProps) {
+// Componente interno que usa useSortable
+function PipelineCardInner({ item, type, onClick, isDragging }: PipelineCardProps) {
   const {
     attributes,
     listeners,
@@ -296,3 +298,13 @@ export function PipelineCard({ item, type, onClick, isDragging }: PipelineCardPr
     </div>
   );
 }
+
+// Exported component with forwardRef for dnd-kit compatibility
+export const PipelineCard = forwardRef<HTMLDivElement, PipelineCardProps>(
+  function PipelineCard(props, _ref) {
+    // Note: useSortable creates its own ref, so we use the inner component
+    return <PipelineCardInner {...props} />;
+  }
+);
+
+PipelineCard.displayName = 'PipelineCard';
