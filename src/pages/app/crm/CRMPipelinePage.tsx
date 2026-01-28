@@ -305,12 +305,22 @@ export default function CRMPipelinePage() {
         return;
       }
 
-      // Validate status before updating
+      // Normalize and validate status before updating
       const validStatuses: LeadStatus[] = ['new', 'contacted', 'standby', 'converted'];
-      const newStatus = targetCol.status;
+      
+      // Double-check: mapear el status por si no se mapeó correctamente
+      const statusNormalizer: Record<string, LeadStatus> = {
+        'new': 'new', 'nuevo': 'new',
+        'contacted': 'contacted', 'contactado': 'contacted', 'contacto inicial': 'contacted',
+        'standby': 'standby', 'propuesta': 'standby', 'negociación': 'standby', 'negociacion': 'standby', 'rellamar': 'standby',
+        'converted': 'converted', 'ganado': 'converted', 'cualificado': 'converted',
+      };
+      
+      const rawStatus = targetCol.status as string;
+      const newStatus = statusNormalizer[rawStatus.toLowerCase()] || statusNormalizer[rawStatus] || 'new';
       
       if (!validStatuses.includes(newStatus)) {
-        toast.error(`Status no válido: ${newStatus}`);
+        toast.error(`Status no válido: ${rawStatus}`);
         return;
       }
 
