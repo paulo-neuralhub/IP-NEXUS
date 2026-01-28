@@ -1,3 +1,4 @@
+import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -9,18 +10,28 @@ import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
-export function SortableStageRow({
-  id,
-  stage,
-  onUpdate,
-  onDelete,
-}: {
+type SortableStageRowProps = {
   id: string;
   stage: any;
   onUpdate: (updates: Record<string, any>) => void;
   onDelete: () => void;
-}) {
+};
+
+export const SortableStageRow = React.forwardRef<HTMLDivElement, SortableStageRowProps>(function SortableStageRow(
+  { id, stage, onUpdate, onDelete },
+  ref
+) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+
+  const setRefs = React.useCallback(
+    (node: HTMLDivElement | null) => {
+      setNodeRef(node);
+      if (typeof ref === 'function') ref(node);
+      else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    },
+    [setNodeRef, ref]
+  );
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -37,7 +48,7 @@ export function SortableStageRow({
 
   return (
     <div
-      ref={setNodeRef}
+      ref={setRefs}
       style={style}
       className={cn(
         'rounded-lg border bg-background px-3 py-2 flex items-start md:items-center gap-3',
@@ -112,4 +123,6 @@ export function SortableStageRow({
       </div>
     </div>
   );
-}
+});
+
+SortableStageRow.displayName = 'SortableStageRow';

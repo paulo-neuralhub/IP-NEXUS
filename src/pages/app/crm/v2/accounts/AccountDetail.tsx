@@ -63,7 +63,7 @@ export default function CRMV2AccountDetail() {
     return (
       <div className="space-y-2">
         <p className="text-muted-foreground">Cuenta no encontrada</p>
-        <Button variant="link" onClick={() => navigate("/app/crm/accounts")}>Volver</Button>
+        <Button variant="link" onClick={() => navigate("/app/crm/clients")}>Volver</Button>
       </div>
     );
   }
@@ -72,7 +72,7 @@ export default function CRMV2AccountDetail() {
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/app/crm/accounts")}>
+          <Button variant="ghost" size="icon" onClick={() => navigate("/app/crm/clients")}>
             <ArrowLeft className="w-5 h-5" />
           </Button>
           <div className="min-w-0">
@@ -195,8 +195,8 @@ export default function CRMV2AccountDetail() {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <Button className="w-full" variant="outline" onClick={() => navigate(`/app/crm/interactions?account=${account.id}`)}>
-                Ver interacciones
+              <Button className="w-full" variant="outline" onClick={() => navigate(`/app/crm/activities?account=${account.id}`)}>
+                Ver actividades
               </Button>
               <Button className="w-full" variant="outline" onClick={() => navigate(`/app/crm/tasks?account=${account.id}`)}>
                 Ver tareas
