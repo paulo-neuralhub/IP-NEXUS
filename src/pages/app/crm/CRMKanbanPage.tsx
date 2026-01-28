@@ -22,6 +22,8 @@ import { useLeads, useUpdateLeadStatus, useApproveLead, useDeleteLead, Lead, Lea
 import { useDeals, useUpdateDealStage, useWinDeal, useLoseDeal, Deal, DealStage } from '@/hooks/crm/useDeals';
 import { UnifiedCard } from '@/components/crm/kanban/UnifiedCard';
 import { UnifiedKanbanColumn } from '@/components/crm/kanban/UnifiedKanbanColumn';
+import { LeadDetailModal } from '@/components/crm/modals/LeadDetailModal';
+import { DealDetailSheet } from '@/components/crm/modals/DealDetailSheet';
 import { Button } from '@/components/ui/button';
 import {
   AlertDialog,
@@ -175,6 +177,10 @@ export default function CRMKanbanPage() {
   const [approveModal, setApproveModal] = useState<Lead | null>(null);
   const [winModal, setWinModal] = useState<Deal | null>(null);
   const [loseModal, setLoseModal] = useState<Deal | null>(null);
+
+  // Detail modal states
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
 
   // Form states
   const [dealTitle, setDealTitle] = useState('');
@@ -469,6 +475,13 @@ export default function CRMKanbanPage() {
                       <UnifiedCard
                         key={item.data.id}
                         item={{ type: item.type, data: item.data }}
+                        onClick={() => {
+                          if (item.type === 'lead') {
+                            setSelectedLead(item.data as Lead);
+                          } else {
+                            setSelectedDeal(item.data as Deal);
+                          }
+                        }}
                         onCall={() => {
                           const phone = item.type === 'lead' 
                             ? (item.data as Lead).contact_phone 
@@ -657,6 +670,66 @@ export default function CRMKanbanPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Lead Detail Modal */}
+      <LeadDetailModal
+        lead={selectedLead}
+        open={!!selectedLead}
+        onOpenChange={(open) => !open && setSelectedLead(null)}
+        onCall={() => {
+          if (selectedLead?.contact_phone) toast.info(`Llamando a ${selectedLead.contact_phone}`);
+        }}
+        onEmail={() => {
+          if (selectedLead?.contact_email) toast.info(`Email a ${selectedLead.contact_email}`);
+        }}
+        onWhatsApp={() => {
+          if (selectedLead?.contact_phone) {
+            window.open(`https://wa.me/${selectedLead.contact_phone.replace(/\D/g, '')}`, '_blank');
+          }
+        }}
+        onApprove={() => {
+          if (selectedLead) {
+            setSelectedLead(null);
+            handleApprove(selectedLead);
+          }
+        }}
+        onDelete={() => {
+          if (selectedLead) {
+            setSelectedLead(null);
+            handleDelete(selectedLead);
+          }
+        }}
+      />
+
+      {/* Deal Detail Sheet */}
+      <DealDetailSheet
+        deal={selectedDeal}
+        open={!!selectedDeal}
+        onOpenChange={(open) => !open && setSelectedDeal(null)}
+        onCall={() => {
+          if (selectedDeal?.client?.phone) toast.info(`Llamando a ${selectedDeal.client.phone}`);
+        }}
+        onEmail={() => {
+          if (selectedDeal?.client?.email) toast.info(`Email a ${selectedDeal.client.email}`);
+        }}
+        onWhatsApp={() => {
+          if (selectedDeal?.client?.phone) {
+            window.open(`https://wa.me/${selectedDeal.client.phone.replace(/\D/g, '')}`, '_blank');
+          }
+        }}
+        onWin={() => {
+          if (selectedDeal) {
+            setSelectedDeal(null);
+            handleWin(selectedDeal);
+          }
+        }}
+        onLose={() => {
+          if (selectedDeal) {
+            setSelectedDeal(null);
+            handleLose(selectedDeal);
+          }
+        }}
+      />
     </div>
   );
 }

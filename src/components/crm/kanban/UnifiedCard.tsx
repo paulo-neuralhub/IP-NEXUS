@@ -44,6 +44,7 @@ type CardItem = {
 
 interface UnifiedCardProps {
   item: CardItem;
+  onClick?: () => void;
   onCall?: () => void;
   onEmail?: () => void;
   onWhatsApp?: () => void;
@@ -56,6 +57,7 @@ interface UnifiedCardProps {
 
 export function UnifiedCard({
   item,
+  onClick,
   onCall,
   onEmail,
   onWhatsApp,
@@ -112,14 +114,23 @@ export function UnifiedCard({
   const isUrgent = nextActionDate && differenceInDays(new Date(nextActionDate), new Date()) <= 2;
   const isOverdue = nextActionDate && isPast(new Date(nextActionDate));
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Don't trigger click when dragging or clicking buttons/dropdown
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('[role="menuitem"]')) return;
+    onClick?.();
+  };
+
   return (
     <Card
       ref={setNodeRef}
       style={style}
+      onClick={handleCardClick}
       className={cn(
         'w-full p-3 cursor-grab active:cursor-grabbing transition-all hover:shadow-md',
         isDragging && 'opacity-50 shadow-lg ring-2 ring-primary',
-        isOverdue && 'border-destructive/50 bg-destructive/5'
+        isOverdue && 'border-destructive/50 bg-destructive/5',
+        onClick && 'cursor-pointer'
       )}
     >
       {/* Header */}
