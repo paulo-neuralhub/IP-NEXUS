@@ -162,11 +162,13 @@ export default function CRMPipelinePage() {
     return [];
   }, [selectedPipeline]);
 
-  // Determine view type based on pipeline name or id
+  // Determine view type based on pipeline name - STRICT SEPARATION
   const view: ViewType = useMemo(() => {
     if (!selectedPipeline) return 'deals';
     const name = selectedPipeline.name.toLowerCase();
+    // Lead pipeline: Only shows leads
     if (name.includes('lead')) return 'leads';
+    // Deal pipeline: Only shows deals (Negociaciones, etc.)
     return 'deals';
   }, [selectedPipeline]);
 
@@ -228,31 +230,36 @@ export default function CRMPipelinePage() {
     return view === 'leads' ? FALLBACK_LEAD_COLUMNS : FALLBACK_DEAL_COLUMNS;
   }, [stages, view]);
 
-  // Group items by column
+  // Group items by column - STRICT SEPARATION: Each pipeline shows ONLY its entity type
   const itemsByColumn = useMemo(() => {
     const grouped: Record<string, (Lead | Deal)[]> = {};
     columns.forEach(col => { grouped[col.id] = []; });
     
     if (view === 'leads') {
+      // LEADS ONLY - Never show deals in lead pipeline
       filteredLeads.forEach(lead => {
         const status = lead.status || 'new';
+        // Don't show converted leads - they become deals
         if (status === 'converted') return;
-        // Find matching column
+        // Find matching column by status
         const col = columns.find(c => c.status === status || c.id === status);
         if (col && grouped[col.id]) {
           grouped[col.id].push(lead);
         } else if (grouped[columns[0]?.id]) {
+          // Fallback to first column
           grouped[columns[0].id].push(lead);
         }
       });
     } else {
+      // DEALS ONLY - Never show leads in deal pipeline
       filteredDeals.forEach(deal => {
         const stageValue = deal.stage || 'contacted';
-        // Match by stage name
+        // Match by stage name or id
         const col = columns.find(c => c.id === stageValue || c.stage === stageValue);
         if (col && grouped[col.id]) {
           grouped[col.id].push(deal);
         } else if (grouped[columns[0]?.id]) {
+          // Fallback to first column
           grouped[columns[0].id].push(deal);
         }
       });
@@ -290,6 +297,9 @@ export default function CRMPipelinePage() {
     }
 
     if (view === 'leads') {
+      // ========================================
+      // LEAD PIPELINE - Only handle leads here
+      // ========================================
       const lead = leads.find(l => l.id === itemId);
       if (!lead) {
         console.log('[DragEnd] Lead not found:', itemId);
@@ -299,18 +309,14 @@ export default function CRMPipelinePage() {
       // Normalize stage name for comparison (remove accents)
       const normalizedStageName = targetCol.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
       
-      // Check if this is a deal-like stage (propuesta, negociación) - should convert lead to deal
-      const dealLikeStages = ['propuesta', 'negociacion', 'proposal', 'negotiation'];
-      const isDealStage = dealLikeStages.some(s => normalizedStageName.includes(s));
-      
-      // Check if converting to deal (won stage OR deal-like stage)
-      if (targetCol.isWon || isDealStage) {
-        console.log('[DragEnd] Converting lead to deal - stage:', normalizedStageName);
+      // WON STAGE = Convert lead to deal with confirmation modal idea
+      if (targetCol.isWon) {
+        console.log('[DragEnd] Lead reached WON stage - converting to deal');
         approveLead.mutate(
-          { leadId: lead.id, dealTitle: `Oportunidad de ${lead.company_name || lead.contact_name}` },
+          { leadId: lead.id, dealTitle: `Negociación - ${lead.company_name || lead.contact_name}` },
           { 
             onSuccess: () => {
-              toast.success('🚀 Lead convertido a negociación');
+              toast.success('🎉 ¡Lead ganado! Negociación creada automáticamente');
               refetchLeads();
               refetchDeals();
             },
@@ -323,7 +329,7 @@ export default function CRMPipelinePage() {
         return;
       }
 
-      // Check if discarding (lost stage) - just move to standby
+      // LOST STAGE - Mark as standby/discard
       if (targetCol.isLost) {
         updateLeadStatus.mutate(
           { leadId: lead.id, status: 'standby' },
@@ -337,42 +343,30 @@ export default function CRMPipelinePage() {
         return;
       }
 
-      // Normalize and validate status before updating - ONLY basic lead statuses
+      // NORMAL LEAD STATUS UPDATE - Only valid lead statuses
       const validStatuses: LeadStatus[] = ['new', 'contacted', 'standby', 'converted'];
       
-      // Map stage names to valid lead statuses (NOT deal stages like propuesta/negociacion)
       const statusNormalizer: Record<string, LeadStatus> = {
         'new': 'new', 'nuevo': 'new',
-        'contacted': 'contacted', 'contactado': 'contacted', 'contacto inicial': 'contacted',
+        'contacted': 'contacted', 'contactado': 'contacted', 'contacto inicial': 'contacted', 'contacto': 'contacted',
+        'cualificado': 'contacted', 'qualified': 'contacted',
+        'propuesta': 'standby', 'propuesta enviada': 'standby',
         'standby': 'standby', 'rellamar': 'standby', 'recontactar': 'standby',
-        'converted': 'converted', 'ganado': 'converted', 'cualificado': 'converted',
+        'converted': 'converted', 'ganado': 'converted',
       };
       
       const rawStatus = targetCol.status as string;
       const statusFromCol = rawStatus ? statusNormalizer[rawStatus.toLowerCase()] : null;
       const statusFromName = statusNormalizer[normalizedStageName];
-      const newStatus = statusFromCol || statusFromName || null;
+      const newStatus = statusFromCol || statusFromName || 'new';
       
-      if (!newStatus || !validStatuses.includes(newStatus)) {
-        console.log('[DragEnd] Cannot map to valid lead status, converting to deal:', rawStatus, normalizedStageName);
-        // If can't map to valid lead status, convert to deal
-        approveLead.mutate(
-          { leadId: lead.id, dealTitle: `Oportunidad de ${lead.company_name || lead.contact_name}` },
-          { 
-            onSuccess: () => {
-              toast.success('🚀 Lead convertido a negociación');
-              refetchLeads();
-              refetchDeals();
-            }
-          }
-        );
-        return;
-      }
+      // Validate the status
+      const finalStatus = validStatuses.includes(newStatus) ? newStatus : 'new';
 
-      if (lead.status !== newStatus) {
-        console.log('[DragEnd] Updating lead status from', lead.status, 'to', newStatus);
+      if (lead.status !== finalStatus) {
+        console.log('[DragEnd] Updating lead status from', lead.status, 'to', finalStatus);
         updateLeadStatus.mutate(
-          { leadId: lead.id, status: newStatus },
+          { leadId: lead.id, status: finalStatus },
           { 
             onSuccess: () => {
               toast.success(`Movido a ${targetCol.title}`);
@@ -381,7 +375,7 @@ export default function CRMPipelinePage() {
           }
         );
       } else {
-        console.log('[DragEnd] Lead already has status:', newStatus);
+        console.log('[DragEnd] Lead already has status:', finalStatus);
       }
     } else {
       const deal = deals.find(d => d.id === itemId);

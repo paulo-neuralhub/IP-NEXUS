@@ -65,14 +65,14 @@ const PAYMENT_COLORS: Record<string, { bg: string; text: string; dot: string; bo
   litigio: { bg: "bg-red-100 dark:bg-red-950/40", text: "text-red-700 dark:text-red-300", dot: "bg-red-500", border: "border-red-300 dark:border-red-800" },
 };
 
-// Colores PASTEL para tipo de cliente
-const CLIENT_TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  directo: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200" },
-  agente: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200" },
-  grupo: { bg: "bg-indigo-50", text: "text-indigo-700", border: "border-indigo-200" },
-  partner: { bg: "bg-cyan-50", text: "text-cyan-700", border: "border-cyan-200" },
-  prospecto: { bg: "bg-amber-50", text: "text-amber-700", border: "border-amber-200" },
-  default: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200" },
+// Colores PASTEL para tipo de cliente + borde lateral
+const CLIENT_TYPE_COLORS: Record<string, { bg: string; text: string; border: string; leftBorder: string }> = {
+  directo: { bg: "bg-blue-50", text: "text-blue-700", border: "border-blue-200", leftBorder: "border-l-blue-500" },
+  agente: { bg: "bg-purple-50", text: "text-purple-700", border: "border-purple-200", leftBorder: "border-l-purple-500" },
+  grupo: { bg: "bg-green-50", text: "text-green-700", border: "border-green-200", leftBorder: "border-l-green-500" },
+  partner: { bg: "bg-orange-50", text: "text-orange-700", border: "border-orange-200", leftBorder: "border-l-orange-500" },
+  prospecto: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200", leftBorder: "border-l-slate-400" },
+  default: { bg: "bg-slate-50", text: "text-slate-600", border: "border-slate-200", leftBorder: "border-l-slate-400" },
 };
 
 function getInitials(name: string): string {
@@ -103,9 +103,10 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
     <div
       onClick={onClick}
       className={cn(
-        "bg-card border rounded-xl overflow-hidden cursor-pointer transition-all duration-200",
-        "hover:shadow-md hover:scale-[1.005]",
-        "shadow-sm"
+        "bg-card border border-l-4 rounded-xl overflow-hidden cursor-pointer transition-all duration-200",
+        "hover:shadow-lg hover:scale-[1.01]",
+        "shadow-sm",
+        clientTypeStyle.leftBorder // Borde izquierdo según tipo de cliente
       )}
     >
       <div className="p-3">
@@ -179,19 +180,19 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
           </div>
         </div>
 
-        {/* Actions Row */}
+        {/* Actions Row - Iconos CON COLOR */}
         <div className="flex items-center justify-between pt-2 border-t">
           <TooltipProvider>
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1.5">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-md bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:bg-primary hover:text-primary-foreground"
+                    className="h-8 w-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white dark:bg-blue-950/50 dark:text-blue-400 dark:hover:bg-blue-600 transition-colors"
                     onClick={(e) => { e.stopPropagation(); }}
                   >
-                    <Phone className="w-3.5 h-3.5" />
+                    <Phone className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Llamar</TooltipContent>
@@ -201,10 +202,10 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-md bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:bg-green-500 hover:text-white"
+                    className="h-8 w-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-500 hover:text-white dark:bg-green-950/50 dark:text-green-400 dark:hover:bg-green-600 transition-colors"
                     onClick={(e) => { e.stopPropagation(); }}
                   >
-                    <MessageCircle className="w-3.5 h-3.5" />
+                    <MessageCircle className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>WhatsApp</TooltipContent>
@@ -214,10 +215,10 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-md bg-slate-100 dark:bg-slate-800 text-muted-foreground hover:bg-purple-500 hover:text-white"
+                    className="h-8 w-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-500 hover:text-white dark:bg-purple-950/50 dark:text-purple-400 dark:hover:bg-purple-600 transition-colors"
                     onClick={(e) => { e.stopPropagation(); }}
                   >
-                    <Mail className="w-3.5 h-3.5" />
+                    <Mail className="w-4 h-4" />
                   </Button>
                 </TooltipTrigger>
                 <TooltipContent>Email</TooltipContent>
