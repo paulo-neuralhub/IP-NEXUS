@@ -62,7 +62,7 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
         moduleExpanded: true,
         moduleMenuItems: [
           { label: "Dashboard", path: "/app/crm", icon: "LayoutDashboard" },
-          { label: "Pipeline", path: "/app/crm/pipeline", icon: "KanbanSquare" },
+          { label: "Kanban", path: "/app/crm/kanban", icon: "KanbanSquare" },
           { label: "Clientes", path: "/app/crm/clients", icon: "Building2" },
           { label: "Actividades", path: "/app/crm/activities", icon: "Activity" },
           { label: "Tareas", path: "/app/crm/tasks", icon: "CheckSquare", badge: "tasks" },

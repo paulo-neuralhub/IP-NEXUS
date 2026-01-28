@@ -361,17 +361,11 @@ const App = () => (
                 </Route>
                 <Route path="crm" element={<CRMLayout />}>
                   <Route index element={<CRMDashboardNew />} />
-                  <Route path="pipeline" element={<CRMPipelinePage />} />
-                  <Route path="kanban" element={<CRMKanbanPage />} />
-                  <Route path="clients" element={<CRMV2AccountsList />} />
-                  <Route path="accounts" element={<CRMV2AccountsList />} />
-                  <Route path="accounts/:id" element={<CRMV2AccountDetail />} />
-                  <Route path="clients/:id" element={<CRMV2AccountDetail />} />
-                  <Route path="contacts" element={<Navigate to="/app/crm/clients" replace />} />
-                  <Route path="contacts/:id" element={<CRMV2ContactDetail />} />
-                  <Route path="leads" element={<Navigate to="/app/crm/pipeline?view=leads" replace />} />
-                  <Route path="deals" element={<Navigate to="/app/crm/pipeline?view=deals" replace />} />
-                  <Route path="negocios" element={<Navigate to="/app/crm/pipeline?view=deals" replace />} />
+                  <Route path="kanban" element={<CRMPipelinePage />} />
+                  <Route path="pipeline" element={<Navigate to="/app/crm/kanban" replace />} />
+                  <Route path="leads" element={<Navigate to="/app/crm/kanban?view=leads" replace />} />
+                  <Route path="deals" element={<Navigate to="/app/crm/kanban?view=deals" replace />} />
+                  <Route path="negocios" element={<Navigate to="/app/crm/kanban?view=deals" replace />} />
                   <Route path="deals/:id" element={<CRMV2DealDetail />} />
                   <Route path="settings" element={<CRMPipelinesPage />} />
                   <Route path="pipelines" element={<CRMPipelinesPage />} />

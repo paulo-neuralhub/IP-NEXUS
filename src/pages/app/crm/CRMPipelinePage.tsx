@@ -1,8 +1,8 @@
 /**
- * CRM Pipeline Page - Kanban con selector Leads/Negociaciones
+ * CRM Kanban Page - Kanban dinámico con selector de pipelines desde BD
  */
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePageTitle } from '@/contexts/page-context';
 import {
@@ -19,8 +19,14 @@ import {
 import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,26 +35,40 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useLeads, useUpdateLeadStatus, useApproveLead, Lead, LeadStatus } from '@/hooks/crm/useLeads';
 import { useDeals, useUpdateDealStage, useWinDeal, useLoseDeal, Deal, DealStage } from '@/hooks/crm/useDeals';
+import { useCRMPipelines, CRMPipeline, CRMPipelineStage } from '@/hooks/crm/v2/pipelines';
 import { PipelineKanbanColumn } from '@/components/features/crm/pipeline/PipelineKanbanColumn';
 import { PipelineCard } from '@/components/features/crm/pipeline/PipelineCard';
 import { LeadDetailModal } from '@/components/crm/modals/LeadDetailModal';
 import { DealDetailSheet } from '@/components/crm/modals/DealDetailSheet';
-import { Plus, Search, Filter, RefreshCw, Target, Briefcase, Info } from 'lucide-react';
+import { Plus, Search, Filter, RefreshCw, Info, KanbanSquare, Settings } from 'lucide-react';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
 
 type ViewType = 'leads' | 'deals';
 
-// Columnas para Leads
-const LEAD_COLUMNS = [
+// Tipo unificado para columnas
+type KanbanColumn = {
+  id: string;
+  title: string;
+  color: string;
+  status?: LeadStatus;
+  stage?: DealStage;
+  isWon?: boolean;
+  isLost?: boolean;
+  probability?: number;
+};
+
+// Columnas fallback para Leads (cuando no hay pipeline configurado)
+const FALLBACK_LEAD_COLUMNS: KanbanColumn[] = [
   { id: 'new', title: '🆕 Nuevo', color: '#3B82F6', status: 'new' as LeadStatus },
   { id: 'contacted', title: '📞 Contactar', color: '#8B5CF6', status: 'contacted' as LeadStatus },
   { id: 'standby', title: '🔄 Rellamar', color: '#F59E0B', status: 'standby' as LeadStatus },
-  { id: 'qualified', title: '✅ Cualificado', color: '#22C55E', status: 'qualified' as LeadStatus },
-  { id: 'discard', title: '❌ Descartado', color: '#EF4444', status: 'discard' as LeadStatus },
+  { id: 'qualified', title: '✅ Cualificado', color: '#22C55E', status: 'qualified' as LeadStatus, isWon: true },
+  { id: 'discard', title: '❌ Descartado', color: '#EF4444', status: 'discard' as LeadStatus, isLost: true },
 ];
 
-// Columnas para Negociaciones
-const DEAL_COLUMNS = [
+// Columnas fallback para Negociaciones (cuando no hay pipeline configurado)
+const FALLBACK_DEAL_COLUMNS: KanbanColumn[] = [
   { id: 'contacted', title: '🆕 Nueva', color: '#3B82F6', stage: 'contacted' as DealStage },
   { id: 'qualified', title: '📅 Reunión', color: '#8B5CF6', stage: 'qualified' as DealStage },
   { id: 'proposal', title: '📄 Propuesta', color: '#F59E0B', stage: 'proposal' as DealStage },
@@ -58,17 +78,53 @@ const DEAL_COLUMNS = [
 ];
 
 export default function CRMPipelinePage() {
-  usePageTitle('Pipeline');
+  usePageTitle('Kanban');
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialView = (searchParams.get('view') as ViewType) || 'leads';
   
-  const [view, setView] = useState<ViewType>(initialView);
+  // Load pipelines from database
+  const { data: pipelines = [], isLoading: isLoadingPipelines } = useCRMPipelines();
+  
+  // Selected pipeline state
+  const [selectedPipelineId, setSelectedPipelineId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
   
   // Detail modals
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+
+  // Set default pipeline once loaded
+  useEffect(() => {
+    if (pipelines.length > 0 && !selectedPipelineId) {
+      const urlPipeline = searchParams.get('pipeline');
+      const found = urlPipeline ? pipelines.find(p => p.id === urlPipeline) : null;
+      const defaultPipeline = found || pipelines.find(p => p.is_default) || pipelines[0];
+      if (defaultPipeline) {
+        setSelectedPipelineId(defaultPipeline.id);
+      }
+    }
+  }, [pipelines, selectedPipelineId, searchParams]);
+
+  // Current selected pipeline
+  const selectedPipeline = useMemo(() => {
+    return pipelines.find(p => p.id === selectedPipelineId) || pipelines[0];
+  }, [pipelines, selectedPipelineId]);
+
+  // Get stages from selected pipeline (with fallback)
+  const stages = useMemo(() => {
+    if (selectedPipeline?.stages && selectedPipeline.stages.length > 0) {
+      return selectedPipeline.stages;
+    }
+    return [];
+  }, [selectedPipeline]);
+
+  // Determine view type based on pipeline name or id
+  const view: ViewType = useMemo(() => {
+    if (!selectedPipeline) return 'deals';
+    const name = selectedPipeline.name.toLowerCase();
+    if (name.includes('lead')) return 'leads';
+    return 'deals';
+  }, [selectedPipeline]);
 
   // Data
   const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads } = useLeads();
@@ -107,40 +163,60 @@ export default function CRMPipelinePage() {
     );
   }, [deals, searchQuery]);
 
+  // Build columns from stages or fallback
+  const columns = useMemo(() => {
+    if (stages.length > 0) {
+      return stages.map(stage => ({
+        id: stage.id,
+        title: stage.name,
+        color: stage.color || '#3B82F6',
+        isWon: stage.is_won_stage ?? false,
+        isLost: stage.is_lost_stage ?? false,
+        probability: stage.probability,
+        status: stage.name.toLowerCase().replace(/\s+/g, '_') as LeadStatus,
+        stage: stage.name.toLowerCase().replace(/\s+/g, '_') as DealStage,
+      }));
+    }
+    return view === 'leads' ? FALLBACK_LEAD_COLUMNS : FALLBACK_DEAL_COLUMNS;
+  }, [stages, view]);
+
   // Group items by column
-  const leadsByColumn = useMemo(() => {
-    const grouped: Record<string, Lead[]> = {};
-    LEAD_COLUMNS.forEach(col => { grouped[col.id] = []; });
+  const itemsByColumn = useMemo(() => {
+    const grouped: Record<string, (Lead | Deal)[]> = {};
+    columns.forEach(col => { grouped[col.id] = []; });
     
-    filteredLeads.forEach(lead => {
-      const status = lead.status || 'new';
-      // Map status to column id - skip converted leads
-      if (status === 'converted') return;
-      if (status === 'new') grouped['new']?.push(lead);
-      else if (status === 'contacted') grouped['contacted']?.push(lead);
-      else if (status === 'standby') grouped['standby']?.push(lead);
-      else grouped['discard']?.push(lead);
-    });
+    if (view === 'leads') {
+      filteredLeads.forEach(lead => {
+        const status = lead.status || 'new';
+        if (status === 'converted') return;
+        // Find matching column
+        const col = columns.find(c => c.status === status || c.id === status);
+        if (col && grouped[col.id]) {
+          grouped[col.id].push(lead);
+        } else if (grouped[columns[0]?.id]) {
+          grouped[columns[0].id].push(lead);
+        }
+      });
+    } else {
+      filteredDeals.forEach(deal => {
+        const stageValue = deal.stage || 'contacted';
+        // Match by stage name
+        const col = columns.find(c => c.id === stageValue || c.stage === stageValue);
+        if (col && grouped[col.id]) {
+          grouped[col.id].push(deal);
+        } else if (grouped[columns[0]?.id]) {
+          grouped[columns[0].id].push(deal);
+        }
+      });
+    }
     
     return grouped;
-  }, [filteredLeads]);
+  }, [columns, filteredLeads, filteredDeals, view]);
 
-  const dealsByColumn = useMemo(() => {
-    const grouped: Record<string, Deal[]> = {};
-    DEAL_COLUMNS.forEach(col => { grouped[col.id] = []; });
-    
-    filteredDeals.forEach(deal => {
-      const stage = deal.stage || 'contacted';
-      if (grouped[stage]) grouped[stage].push(deal);
-    });
-    
-    return grouped;
-  }, [filteredDeals]);
-
-  // Handle view change
-  const handleViewChange = (newView: string) => {
-    setView(newView as ViewType);
-    setSearchParams({ view: newView });
+  // Handle pipeline change
+  const handlePipelineChange = (pipelineId: string) => {
+    setSelectedPipelineId(pipelineId);
+    setSearchParams({ pipeline: pipelineId });
   };
 
   // Drag handlers
@@ -156,16 +232,15 @@ export default function CRMPipelinePage() {
 
     const itemId = active.id as string;
     const targetColId = over.id as string;
+    const targetCol = columns.find(c => c.id === targetColId);
+    if (!targetCol) return;
 
     if (view === 'leads') {
       const lead = leads.find(l => l.id === itemId);
       if (!lead) return;
 
-      const targetCol = LEAD_COLUMNS.find(c => c.id === targetColId);
-      if (!targetCol) return;
-
-      // Check if converting to deal
-      if (targetColId === 'qualified') {
+      // Check if converting to deal (won stage)
+      if (targetCol.isWon) {
         approveLead.mutate(
           { leadId: lead.id, dealTitle: `Oportunidad de ${lead.company_name || lead.contact_name}` },
           { onSuccess: () => toast.success('Lead convertido a negociación') }
@@ -183,9 +258,6 @@ export default function CRMPipelinePage() {
       const deal = deals.find(d => d.id === itemId);
       if (!deal) return;
 
-      const targetCol = DEAL_COLUMNS.find(c => c.id === targetColId);
-      if (!targetCol || !targetCol.stage) return;
-
       if (targetCol.isWon) {
         winDeal.mutate({ dealId: deal.id }, { onSuccess: () => toast.success('🎉 ¡Deal ganado!') });
         return;
@@ -199,7 +271,8 @@ export default function CRMPipelinePage() {
         return;
       }
 
-      if (deal.stage !== targetCol.stage) {
+      // Update to new stage
+      if (targetCol.stage) {
         updateDealStage.mutate(
           { dealId: deal.id, stage: targetCol.stage },
           { onSuccess: () => toast.success(`Movido a ${targetCol.title}`) }
@@ -214,9 +287,7 @@ export default function CRMPipelinePage() {
     toast.success('Datos actualizados');
   }, [refetchLeads, refetchDeals]);
 
-  const isLoading = view === 'leads' ? isLoadingLeads : isLoadingDeals;
-  const columns = view === 'leads' ? LEAD_COLUMNS : DEAL_COLUMNS;
-  const itemsByColumn = view === 'leads' ? leadsByColumn : dealsByColumn;
+  const isLoading = isLoadingPipelines || (view === 'leads' ? isLoadingLeads : isLoadingDeals);
 
   // Active item for overlay
   const activeItem = useMemo(() => {
@@ -230,19 +301,39 @@ export default function CRMPipelinePage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          {/* View selector */}
-          <Tabs value={view} onValueChange={handleViewChange}>
-            <TabsList className="grid w-[280px] grid-cols-2">
-              <TabsTrigger value="leads" className="gap-2">
-                <Target className="w-4 h-4" />
-                Leads
-              </TabsTrigger>
-              <TabsTrigger value="deals" className="gap-2">
-                <Briefcase className="w-4 h-4" />
-                Negociaciones
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
+          {/* Pipeline selector dropdown */}
+          <div className="flex items-center gap-2">
+            <KanbanSquare className="w-5 h-5 text-muted-foreground" />
+            <Select value={selectedPipelineId || ''} onValueChange={handlePipelineChange}>
+              <SelectTrigger className="w-[220px]">
+                <SelectValue placeholder="Seleccionar pipeline..." />
+              </SelectTrigger>
+              <SelectContent className="bg-background border shadow-lg z-50">
+                {pipelines.map((pipeline) => (
+                  <SelectItem key={pipeline.id} value={pipeline.id}>
+                    <div className="flex items-center gap-2">
+                      <span>{pipeline.name}</span>
+                      {pipeline.is_default && (
+                        <span className="text-xs bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+                          Por defecto
+                        </span>
+                      )}
+                    </div>
+                  </SelectItem>
+                ))}
+                {pipelines.length === 0 && !isLoadingPipelines && (
+                  <div className="px-2 py-4 text-sm text-muted-foreground text-center">
+                    No hay pipelines configurados
+                  </div>
+                )}
+              </SelectContent>
+            </Select>
+            <Link to="/app/crm/settings">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <Settings className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="flex items-center gap-2">
@@ -279,7 +370,7 @@ export default function CRMPipelinePage() {
           {/* New */}
           <Button>
             <Plus className="w-4 h-4 mr-2" />
-            Nuevo {view === 'leads' ? 'Lead' : 'Deal'}
+            Nuevo
           </Button>
         </div>
       </div>
@@ -287,18 +378,32 @@ export default function CRMPipelinePage() {
       {/* Tip */}
       <div className="flex items-center gap-2 text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2">
         <Info className="w-4 h-4" />
-        {view === 'leads' 
-          ? 'Arrastra a "Cualificado" para convertir en Negociación'
-          : 'Al mover a "Ganado" se abrirá el wizard para crear expediente(s)'
-        }
+        Arrastra las tarjetas entre columnas para cambiar su estado. Las etapas se configuran en{' '}
+        <Link to="/app/crm/settings" className="text-primary hover:underline">Configuración</Link>.
       </div>
 
       {/* Kanban Board */}
       {isLoading ? (
         <div className="flex gap-4 overflow-x-auto pb-4 flex-1">
-          {columns.map(col => (
-            <Skeleton key={col.id} className="w-[280px] h-[400px] flex-shrink-0" />
+          {[1, 2, 3, 4, 5].map(i => (
+            <Skeleton key={i} className="w-[280px] h-[400px] flex-shrink-0" />
           ))}
+        </div>
+      ) : columns.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <KanbanSquare className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-medium mb-2">No hay etapas configuradas</h3>
+            <p className="text-muted-foreground mb-4">
+              Crea un pipeline con etapas en la configuración
+            </p>
+            <Link to="/app/crm/settings">
+              <Button>
+                <Settings className="w-4 h-4 mr-2" />
+                Configurar pipelines
+              </Button>
+            </Link>
+          </div>
         </div>
       ) : (
         <DndContext
@@ -323,8 +428,8 @@ export default function CRMPipelinePage() {
                   color={col.color}
                   count={items.length}
                   totalValue={totalValue}
-                  isWon={'isWon' in col && col.isWon}
-                  isLost={'isLost' in col && col.isLost}
+                  isWon={col.isWon}
+                  isLost={col.isLost}
                 >
                   {items.map(item => (
                     <PipelineCard
