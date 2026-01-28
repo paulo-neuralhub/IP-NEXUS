@@ -360,7 +360,7 @@ export default function CRMPipelinePage() {
         { 
           onSuccess: () => {
             toast.success(`Movido a ${targetCol.title}`);
-            refetchDeals();
+            // No need to refetchDeals() - optimistic update handles it
           },
           onError: (err) => {
             console.error('Error updating deal:', err);

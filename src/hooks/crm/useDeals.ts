@@ -146,6 +146,8 @@ export function useCreateDeal() {
 
 export function useUpdateDealStage() {
   const queryClient = useQueryClient();
+  const { currentOrganization } = useOrganization();
+  const orgId = currentOrganization?.id;
 
   return useMutation({
     mutationFn: async ({
@@ -170,12 +172,37 @@ export function useUpdateDealStage() {
         throw new Error(result.error || 'Error al actualizar stage');
       }
       
-      return result;
+      return { ...result, dealId, stage };
+    },
+    // Optimistic update - update UI immediately
+    onMutate: async ({ dealId, stage }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['crm-deals'] });
+      
+      // Snapshot the previous value
+      const previousDeals = queryClient.getQueryData(['crm-deals', orgId, undefined]);
+      
+      // Optimistically update the cache
+      queryClient.setQueryData(['crm-deals', orgId, undefined], (old: Deal[] | undefined) => {
+        if (!old) return old;
+        return old.map(deal => 
+          deal.id === dealId 
+            ? { ...deal, stage } 
+            : deal
+        );
+      });
+      
+      return { previousDeals };
     },
     onSuccess: () => {
+      // Invalidate to sync with server
       queryClient.invalidateQueries({ queryKey: ['crm-deals'] });
     },
-    onError: (error) => {
+    onError: (error, _variables, context) => {
+      // Rollback on error
+      if (context?.previousDeals) {
+        queryClient.setQueryData(['crm-deals', orgId, undefined], context.previousDeals);
+      }
       toast.error(`Error: ${error.message}`);
     },
   });
