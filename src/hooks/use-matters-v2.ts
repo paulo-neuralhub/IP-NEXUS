@@ -449,6 +449,40 @@ export function useMatterParties(matterId: string) {
 // Mutations
 // ============================================================
 
+/**
+ * Preview matter number WITHOUT incrementing sequence
+ * Use this for form previews while user is selecting options
+ */
+export function usePreviewMatterNumber() {
+  const { currentOrganization } = useOrganization();
+  
+  return useMutation({
+    mutationFn: async ({ 
+      matterType, 
+      jurisdictionCode, 
+      clientId 
+    }: { 
+      matterType: string; 
+      jurisdictionCode: string; 
+      clientId?: string;
+    }) => {
+      const { data, error } = await supabase.rpc('preview_matter_number', {
+        p_organization_id: currentOrganization!.id,
+        p_matter_type: matterType,
+        p_jurisdiction_code: jurisdictionCode,
+        p_client_id: clientId || null,
+      });
+      
+      if (error) throw error;
+      return data as string;
+    },
+  });
+}
+
+/**
+ * Generate matter number WITH sequence increment
+ * Only call this when actually creating the matter
+ */
 export function useGenerateMatterNumber() {
   const { currentOrganization } = useOrganization();
   

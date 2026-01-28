@@ -12,7 +12,8 @@ import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, Sparkles, Building2, Info } from 'lucide-react';
 import { 
   useCreateMatterV2, 
-  useGenerateMatterNumber, 
+  useGenerateMatterNumber,
+  usePreviewMatterNumber,
   useMatterTypes 
 } from '@/hooks/use-matters-v2';
 import { useGenerateInternalReference } from '@/hooks/use-internal-reference-config';
@@ -97,9 +98,10 @@ export default function NewMatterPage() {
   const { data: matterTypes, isLoading: loadingTypes } = useMatterTypes();
   const createMatter = useCreateMatterV2();
   const generateNumber = useGenerateMatterNumber();
+  const previewNumberMutation = usePreviewMatterNumber();
   const generateInternalRef = useGenerateInternalReference();
   
-  const [previewNumber, setPreviewNumber] = useState<string | null>(null);
+  const [previewNumberValue, setPreviewNumberValue] = useState<string | null>(null);
   const [generatingNumber, setGeneratingNumber] = useState(false);
   
   // Fetch clients (contacts with client_token)
@@ -149,19 +151,19 @@ export default function NewMatterPage() {
   useEffect(() => {
     if (watchedType && watchedJurisdiction) {
       setGeneratingNumber(true);
-      generateNumber.mutateAsync({
+      previewNumberMutation.mutateAsync({
         matterType: watchedType,
         jurisdictionCode: watchedJurisdiction,
         clientId: watchedClientId || undefined,
       }).then(number => {
-        setPreviewNumber(number);
+        setPreviewNumberValue(number);
       }).catch(() => {
-        setPreviewNumber(null);
+        setPreviewNumberValue(null);
       }).finally(() => {
         setGeneratingNumber(false);
       });
     } else {
-      setPreviewNumber(null);
+      setPreviewNumberValue(null);
     }
   }, [watchedType, watchedJurisdiction, watchedClientId]);
   
@@ -386,9 +388,9 @@ export default function NewMatterPage() {
                         <Loader2 className="h-4 w-4 animate-spin" />
                         <span className="text-sm">Generando...</span>
                       </div>
-                    ) : previewNumber ? (
+                    ) : previewNumberValue ? (
                       <>
-                        <p className="font-mono text-lg font-semibold text-primary">{previewNumber}</p>
+                        <p className="font-mono text-lg font-semibold text-primary">{previewNumberValue}</p>
                         <p className="text-xs text-muted-foreground mt-1">
                           Formato: TIPO-JUR-FECHA-{selectedClient ? selectedClient.client_token : 'CLI'}-SEQ-CHECK
                         </p>

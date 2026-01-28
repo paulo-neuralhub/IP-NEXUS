@@ -44929,15 +44929,25 @@ export type Database = {
         Args: { p_matter_id: string; p_portal_user_id: string }
         Returns: boolean
       }
-      preview_matter_number: {
-        Args: {
-          p_client_id?: string
-          p_jurisdiction_code: string
-          p_organization_id: string
-          p_type_code: string
-        }
-        Returns: string
-      }
+      preview_matter_number:
+        | {
+            Args: {
+              p_client_id?: string
+              p_jurisdiction_code: string
+              p_matter_type: string
+              p_organization_id: string
+            }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_client_id?: string
+              p_jurisdiction_code: string
+              p_organization_id: string
+              p_type_code: string
+            }
+            Returns: string
+          }
       provision_pack_modules: {
         Args: {
           p_billing_cycle?: string
