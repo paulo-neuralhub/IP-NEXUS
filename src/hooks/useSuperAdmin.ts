@@ -110,24 +110,38 @@ export function useSuperAdmin() {
     tenantId?: string,
     subscription?: string
   ) => {
-    const { data, error } = await supabase.rpc('set_super_admin_mode', {
-      p_mode: mode,
-      p_tenant_id: tenantId || null,
-      p_subscription: subscription || null,
-    });
-
-    const response = data as unknown as SetModeResponse | null;
-
-    if (!error && response?.success) {
-      setCurrentMode({
-        mode,
-        tenantId,
-        subscription: subscription as SuperAdminMode['subscription'],
-        isSuperAdmin: true,
+    try {
+      const { data, error } = await supabase.rpc('set_super_admin_mode', {
+        p_mode: mode,
+        p_tenant_id: tenantId || null,
+        p_subscription: subscription || null,
       });
-    }
 
-    return { data: response, error };
+      const response = data as unknown as SetModeResponse | null;
+
+      if (error) {
+        console.error('Error setting super admin mode:', error);
+        return { data: null, error };
+      }
+
+      if (response?.success) {
+        setCurrentMode({
+          mode,
+          tenantId,
+          tenantName: undefined,
+          subscription: subscription as SuperAdminMode['subscription'],
+          isSuperAdmin: true,
+        });
+        
+        // Force page reload to refresh all context
+        window.location.reload();
+      }
+
+      return { data: response, error };
+    } catch (err) {
+      console.error('Exception in setMode:', err);
+      return { data: null, error: err };
+    }
   }, []);
 
   // Shortcuts for common modes
