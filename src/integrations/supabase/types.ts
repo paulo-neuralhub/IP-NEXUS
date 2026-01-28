@@ -6693,6 +6693,115 @@ export type Database = {
           },
         ]
       }
+      client_contacts: {
+        Row: {
+          client_id: string
+          created_at: string | null
+          created_by: string | null
+          department: string | null
+          email: string | null
+          first_name: string
+          id: string
+          is_active: boolean | null
+          is_billing_contact: boolean | null
+          is_legal_contact: boolean | null
+          is_primary: boolean | null
+          job_title: string | null
+          last_name: string | null
+          metadata: Json | null
+          mobile: string | null
+          notes: string | null
+          organization_id: string
+          phone: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          client_id: string
+          created_at?: string | null
+          created_by?: string | null
+          department?: string | null
+          email?: string | null
+          first_name: string
+          id?: string
+          is_active?: boolean | null
+          is_billing_contact?: boolean | null
+          is_legal_contact?: boolean | null
+          is_primary?: boolean | null
+          job_title?: string | null
+          last_name?: string | null
+          metadata?: Json | null
+          mobile?: string | null
+          notes?: string | null
+          organization_id: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          client_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          department?: string | null
+          email?: string | null
+          first_name?: string
+          id?: string
+          is_active?: boolean | null
+          is_billing_contact?: boolean | null
+          is_legal_contact?: boolean | null
+          is_primary?: boolean | null
+          job_title?: string | null
+          last_name?: string | null
+          metadata?: Json | null
+          mobile?: string | null
+          notes?: string | null
+          organization_id?: string
+          phone?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_contacts_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_contacts_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "client_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_contacts_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       client_documents: {
         Row: {
           client_id: string
@@ -7069,6 +7178,154 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "contacts"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      clients: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          assigned_to: string | null
+          billing_address: Json | null
+          billing_email: string | null
+          city: string | null
+          client_number: string
+          client_type: string | null
+          country: string | null
+          created_at: string | null
+          created_by: string | null
+          currency: string | null
+          email: string | null
+          id: string
+          legal_name: string | null
+          metadata: Json | null
+          mobile: string | null
+          name: string
+          notes: string | null
+          organization_id: string
+          payment_terms: number | null
+          phone: string | null
+          postal_code: string | null
+          source_deal_id: string | null
+          source_lead_id: string | null
+          state: string | null
+          status: string | null
+          tags: string[] | null
+          tax_id: string | null
+          updated_at: string | null
+          vat_number: string | null
+          website: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          assigned_to?: string | null
+          billing_address?: Json | null
+          billing_email?: string | null
+          city?: string | null
+          client_number: string
+          client_type?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          email?: string | null
+          id?: string
+          legal_name?: string | null
+          metadata?: Json | null
+          mobile?: string | null
+          name: string
+          notes?: string | null
+          organization_id: string
+          payment_terms?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          source_deal_id?: string | null
+          source_lead_id?: string | null
+          state?: string | null
+          status?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
+          updated_at?: string | null
+          vat_number?: string | null
+          website?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          assigned_to?: string | null
+          billing_address?: Json | null
+          billing_email?: string | null
+          city?: string | null
+          client_number?: string
+          client_type?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          currency?: string | null
+          email?: string | null
+          id?: string
+          legal_name?: string | null
+          metadata?: Json | null
+          mobile?: string | null
+          name?: string
+          notes?: string | null
+          organization_id?: string
+          payment_terms?: number | null
+          phone?: string | null
+          postal_code?: string | null
+          source_deal_id?: string | null
+          source_lead_id?: string | null
+          state?: string | null
+          status?: string | null
+          tags?: string[] | null
+          tax_id?: string | null
+          updated_at?: string | null
+          vat_number?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "clients_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -8177,6 +8434,132 @@ export type Database = {
           },
         ]
       }
+      crm_activities: {
+        Row: {
+          activity_type: string
+          call_duration: number | null
+          call_recording_url: string | null
+          client_id: string | null
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          deal_id: string | null
+          description: string | null
+          email_message_id: string | null
+          id: string
+          is_completed: boolean | null
+          lead_id: string | null
+          metadata: Json | null
+          new_value: string | null
+          old_value: string | null
+          organization_id: string
+          outcome: string | null
+          scheduled_at: string | null
+          subject: string | null
+        }
+        Insert: {
+          activity_type: string
+          call_duration?: number | null
+          call_recording_url?: string | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deal_id?: string | null
+          description?: string | null
+          email_message_id?: string | null
+          id?: string
+          is_completed?: boolean | null
+          lead_id?: string | null
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          organization_id: string
+          outcome?: string | null
+          scheduled_at?: string | null
+          subject?: string | null
+        }
+        Update: {
+          activity_type?: string
+          call_duration?: number | null
+          call_recording_url?: string | null
+          client_id?: string | null
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          deal_id?: string | null
+          description?: string | null
+          email_message_id?: string | null
+          id?: string
+          is_completed?: boolean | null
+          lead_id?: string | null
+          metadata?: Json | null
+          new_value?: string | null
+          old_value?: string | null
+          organization_id?: string
+          outcome?: string | null
+          scheduled_at?: string | null
+          subject?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_activities_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_deal_id_fkey"
+            columns: ["deal_id"]
+            isOneToOne: false
+            referencedRelation: "crm_deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_activities_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       crm_ai_learning_logs: {
         Row: {
           ai_model: string | null
@@ -9007,21 +9390,28 @@ export type Database = {
           account_id: string | null
           actual_close_date: string | null
           amount: number | null
+          client_id: string | null
           close_reason: string | null
           contact_id: string | null
           created_at: string
+          deal_number: string | null
           expected_close_date: string | null
           id: string
+          lead_id: string | null
+          lost_at: string | null
           lost_reason: string | null
           lost_to_competitor: string | null
           matter_id: string | null
           metadata: Json
           name: string
+          next_action: string | null
+          next_action_date: string | null
           opportunity_type: string | null
           organization_id: string
           owner_id: string | null
           patent_title: string | null
           pipeline_id: string | null
+          probability: number | null
           renewal_date: string | null
           service_type: string | null
           stage: string
@@ -9033,26 +9423,35 @@ export type Database = {
           updated_at: string
           weighted_amount: number | null
           won: boolean | null
+          won_at: string | null
+          won_value: number | null
         }
         Insert: {
           account_id?: string | null
           actual_close_date?: string | null
           amount?: number | null
+          client_id?: string | null
           close_reason?: string | null
           contact_id?: string | null
           created_at?: string
+          deal_number?: string | null
           expected_close_date?: string | null
           id?: string
+          lead_id?: string | null
+          lost_at?: string | null
           lost_reason?: string | null
           lost_to_competitor?: string | null
           matter_id?: string | null
           metadata?: Json
           name: string
+          next_action?: string | null
+          next_action_date?: string | null
           opportunity_type?: string | null
           organization_id: string
           owner_id?: string | null
           patent_title?: string | null
           pipeline_id?: string | null
+          probability?: number | null
           renewal_date?: string | null
           service_type?: string | null
           stage?: string
@@ -9064,26 +9463,35 @@ export type Database = {
           updated_at?: string
           weighted_amount?: number | null
           won?: boolean | null
+          won_at?: string | null
+          won_value?: number | null
         }
         Update: {
           account_id?: string | null
           actual_close_date?: string | null
           amount?: number | null
+          client_id?: string | null
           close_reason?: string | null
           contact_id?: string | null
           created_at?: string
+          deal_number?: string | null
           expected_close_date?: string | null
           id?: string
+          lead_id?: string | null
+          lost_at?: string | null
           lost_reason?: string | null
           lost_to_competitor?: string | null
           matter_id?: string | null
           metadata?: Json
           name?: string
+          next_action?: string | null
+          next_action_date?: string | null
           opportunity_type?: string | null
           organization_id?: string
           owner_id?: string | null
           patent_title?: string | null
           pipeline_id?: string | null
+          probability?: number | null
           renewal_date?: string | null
           service_type?: string | null
           stage?: string
@@ -9095,6 +9503,8 @@ export type Database = {
           updated_at?: string
           weighted_amount?: number | null
           won?: boolean | null
+          won_at?: string | null
+          won_value?: number | null
         }
         Relationships: [
           {
@@ -9110,6 +9520,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "crm_client_360_view"
             referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_deals_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "crm_deals_contact_id_fkey"
@@ -9130,6 +9547,13 @@ export type Database = {
             columns: ["stage_id"]
             isOneToOne: false
             referencedRelation: "crm_pipeline_stages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "crm_leads"
             referencedColumns: ["id"]
           },
           {
@@ -9622,6 +10046,157 @@ export type Database = {
           },
           {
             foreignKeyName: "crm_lead_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      crm_leads: {
+        Row: {
+          assigned_to: string | null
+          company_name: string | null
+          company_tax_id: string | null
+          contact_email: string | null
+          contact_name: string
+          contact_phone: string | null
+          converted_at: string | null
+          converted_by: string | null
+          converted_to_client_id: string | null
+          converted_to_deal_id: string | null
+          created_at: string | null
+          created_by: string | null
+          estimated_value: number | null
+          id: string
+          interested_in: string[] | null
+          metadata: Json | null
+          next_action: string | null
+          next_action_date: string | null
+          notes: string | null
+          organization_id: string
+          source: string | null
+          standby_reason: string | null
+          standby_until: string | null
+          status: string
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          company_name?: string | null
+          company_tax_id?: string | null
+          contact_email?: string | null
+          contact_name: string
+          contact_phone?: string | null
+          converted_at?: string | null
+          converted_by?: string | null
+          converted_to_client_id?: string | null
+          converted_to_deal_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          estimated_value?: number | null
+          id?: string
+          interested_in?: string[] | null
+          metadata?: Json | null
+          next_action?: string | null
+          next_action_date?: string | null
+          notes?: string | null
+          organization_id: string
+          source?: string | null
+          standby_reason?: string | null
+          standby_until?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          company_name?: string | null
+          company_tax_id?: string | null
+          contact_email?: string | null
+          contact_name?: string
+          contact_phone?: string | null
+          converted_at?: string | null
+          converted_by?: string | null
+          converted_to_client_id?: string | null
+          converted_to_deal_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          estimated_value?: number | null
+          id?: string
+          interested_in?: string[] | null
+          metadata?: Json | null
+          next_action?: string | null
+          next_action_date?: string | null
+          notes?: string | null
+          organization_id?: string
+          source?: string | null
+          standby_reason?: string | null
+          standby_until?: string | null
+          status?: string
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_leads_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_converted_by_fkey"
+            columns: ["converted_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_converted_to_client_fk"
+            columns: ["converted_to_client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_converted_to_deal_fk"
+            columns: ["converted_to_deal_id"]
+            isOneToOne: false
+            referencedRelation: "crm_deals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_leads_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_leads_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
@@ -43879,12 +44454,20 @@ export type Database = {
         Returns: number
       }
       expire_trials: { Args: never; Returns: number }
+      generate_client_number: {
+        Args: { p_organization_id: string }
+        Returns: string
+      }
       generate_client_token:
         | { Args: { p_organization_id: string }; Returns: string }
         | {
             Args: { p_client_name: string; p_organization_id: string }
             Returns: string
           }
+      generate_deal_number: {
+        Args: { p_organization_id: string }
+        Returns: string
+      }
       generate_internal_reference: {
         Args: {
           p_client_code?: string
