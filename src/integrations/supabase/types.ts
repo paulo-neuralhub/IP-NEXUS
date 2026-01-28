@@ -44152,6 +44152,15 @@ export type Database = {
         }[]
       }
       apply_docket_rules: { Args: { matter_uuid: string }; Returns: number }
+      approve_lead: {
+        Args: {
+          p_deal_title?: string
+          p_deal_value?: number
+          p_lead_id: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
       approve_workflow: {
         Args: { p_queue_id: string; p_user_id: string }
         Returns: boolean
@@ -44443,6 +44452,10 @@ export type Database = {
         Args: { p_minutes: number; p_tenant_id: string; p_usage_type?: string }
         Returns: boolean
       }
+      delete_lead: {
+        Args: { p_lead_id: string; p_reason?: string; p_user_id?: string }
+        Returns: Json
+      }
       dmetaphone: { Args: { "": string }; Returns: string }
       dmetaphone_alt: { Args: { "": string }; Returns: string }
       estimate_execution_cost: {
@@ -44576,6 +44589,10 @@ export type Database = {
           label: string
           value: number
         }[]
+      }
+      get_crm_dashboard_stats: {
+        Args: { p_organization_id: string }
+        Returns: Json
       }
       get_effective_subscription: { Args: never; Returns: string }
       get_effective_tenant_id: { Args: never; Returns: string }
@@ -44868,6 +44885,15 @@ export type Database = {
         }
         Returns: string
       }
+      lose_deal: {
+        Args: {
+          p_deal_id: string
+          p_reason?: string
+          p_reason_detail?: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
       match_knowledge: {
         Args: {
           match_count?: number
@@ -45085,6 +45111,25 @@ export type Database = {
         Returns: undefined
       }
       update_deadline_statuses: { Args: never; Returns: number }
+      update_deal_stage: {
+        Args: {
+          p_deal_id: string
+          p_new_stage: string
+          p_notes?: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
+      update_lead_status: {
+        Args: {
+          p_lead_id: string
+          p_new_status: string
+          p_standby_reason?: string
+          p_standby_until?: string
+          p_user_id?: string
+        }
+        Returns: Json
+      }
       update_provider_health_after_execution: {
         Args: {
           p_error_code?: string
@@ -45126,6 +45171,15 @@ export type Database = {
           rate_limit_exceeded: boolean
           scopes: Json
         }[]
+      }
+      win_deal: {
+        Args: {
+          p_deal_id: string
+          p_notes?: string
+          p_user_id?: string
+          p_won_value?: number
+        }
+        Returns: Json
       }
     }
     Enums: {
