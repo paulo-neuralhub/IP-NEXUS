@@ -45045,6 +45045,10 @@ export type Database = {
         }[]
       }
       seed_crm_demo_data: { Args: { p_organization_id: string }; Returns: Json }
+      seed_market_demo_data: {
+        Args: { p_organization_id: string }
+        Returns: Json
+      }
       seed_voip_pricing_plans_if_empty: { Args: never; Returns: undefined }
       seed_voip_pricing_plans_if_empty_superadmin: {
         Args: never
