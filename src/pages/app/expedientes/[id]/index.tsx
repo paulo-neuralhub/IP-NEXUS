@@ -8,7 +8,7 @@ import {
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Archive,
   Tag, Clock, Building2, User, FileText, Users, History,
   Mail, Phone, Calendar, CheckSquare, Receipt, FolderOpen,
-  ExternalLink
+  ExternalLink, MessageSquare
 } from 'lucide-react';
 import { useMatterV2, useMatterFilings, useMatterTimeline, useMatterParties, useMatterTypes } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
@@ -31,6 +31,10 @@ import { MatterDeadlinesTab } from '@/components/matters/MatterDeadlinesTab';
 import { MatterTasksTab } from '@/components/matters/MatterTasksTab';
 import { MatterInvoicesTab } from '@/components/matters/MatterInvoicesTab';
 import { MatterCommunicationsTab } from '@/components/matters/MatterCommunicationsTab';
+import { EmailComposeModal } from '@/components/matters/EmailComposeModal';
+import { LogCallModal } from '@/components/matters/LogCallModal';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { toast } from 'sonner';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   draft: { label: 'Borrador', color: 'bg-slate-100 text-slate-700' },
@@ -49,6 +53,8 @@ export default function MatterDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('general');
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [showCallModal, setShowCallModal] = useState(false);
   
   const { data: matter, isLoading, error } = useMatterV2(id!);
   const { data: filings } = useMatterFilings(id!);
@@ -57,6 +63,23 @@ export default function MatterDetailPage() {
   const { data: matterTypes } = useMatterTypes();
   
   usePageTitle(matter?.matter_number || 'Expediente');
+  
+  // Handler para abrir WhatsApp
+  const handleWhatsApp = () => {
+    // TODO: Integrate with WhatsApp when client phone is available
+    toast.info('WhatsApp: Vincula un teléfono al cliente para usar esta función');
+  };
+  
+  // Handler para click-to-call
+  const handleCall = () => {
+    if (window.softphoneCall && matter?.client_name) {
+      // Si hay teléfono del cliente, llamar
+      // Por ahora solo abrimos el modal de log
+      setShowCallModal(true);
+    } else {
+      setShowCallModal(true);
+    }
+  };
   
   if (isLoading) {
     return (
@@ -136,6 +159,51 @@ export default function MatterDetailPage() {
         </div>
         
         <div className="flex items-center gap-2">
+          {/* Quick Actions */}
+          <div className="flex items-center gap-1 mr-2 border-r pr-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => setShowEmailModal(true)}
+                  className="text-primary hover:bg-primary/10"
+                >
+                  <Mail className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Enviar Email</TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleWhatsApp}
+                  className="text-[#25D366] hover:bg-[#25D366]/10"
+                >
+                  <MessageSquare className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>WhatsApp</TooltipContent>
+            </Tooltip>
+            
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  onClick={handleCall}
+                  className="text-success hover:bg-success/10"
+                >
+                  <Phone className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Llamar</TooltipContent>
+            </Tooltip>
+          </div>
+          
           <Button variant="outline" onClick={() => navigate(`/app/expedientes/${id}/editar`)}>
             <Pencil className="h-4 w-4 mr-2" />
             Editar
@@ -582,6 +650,23 @@ export default function MatterDetailPage() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* Modals */}
+      <EmailComposeModal
+        open={showEmailModal}
+        onOpenChange={setShowEmailModal}
+        matterId={id!}
+        matterTitle={matter?.title}
+        recipientEmail={undefined}
+        recipientName={matter?.client_name || undefined}
+      />
+      
+      <LogCallModal
+        open={showCallModal}
+        onOpenChange={setShowCallModal}
+        matterId={id!}
+        contactName={matter?.client_name || undefined}
+      />
     </div>
   );
 }
