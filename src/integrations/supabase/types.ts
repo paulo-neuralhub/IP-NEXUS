@@ -7181,6 +7181,236 @@ export type Database = {
           },
         ]
       }
+      client_tag_categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          organization_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          organization_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          organization_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_tag_categories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tag_categories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "client_tag_categories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tag_categories_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      client_tag_config: {
+        Row: {
+          category_id: string | null
+          color: string | null
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          category_id?: string | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          category_id?: string | null
+          color?: string | null
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_tag_config_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "client_tag_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tag_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tag_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "client_tag_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tag_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      client_tags: {
+        Row: {
+          client_id: string
+          created_at: string | null
+          tag_id: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string | null
+          tag_id: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string | null
+          tag_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_tags_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_tags_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "client_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "client_tag_config"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_type_config: {
+        Row: {
+          code: string
+          color: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          organization_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          code: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          organization_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          organization_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_type_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_type_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "client_type_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_type_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       clients: {
         Row: {
           address_line1: string | null
@@ -7961,6 +8191,74 @@ export type Database = {
           },
         ]
       }
+      contact_role_config: {
+        Row: {
+          code: string
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_unique: boolean | null
+          name: string
+          organization_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_unique?: boolean | null
+          name: string
+          organization_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_unique?: boolean | null
+          name?: string
+          organization_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contact_role_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_role_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "contact_role_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contact_role_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       contacts: {
         Row: {
           address_line1: string | null
@@ -8351,14 +8649,18 @@ export type Database = {
         Row: {
           account_manager_id: string | null
           churn_risk_level: string | null
+          client_type_id: string | null
           created_at: string
           health_score: number | null
           id: string
+          internal_notes: string | null
           last_interaction_at: string | null
           legal_name: string | null
           metadata: Json
           name: string
           organization_id: string
+          payment_classification_id: string | null
+          rating_stars: number | null
           status: string
           tags: string[]
           tier: string
@@ -8367,14 +8669,18 @@ export type Database = {
         Insert: {
           account_manager_id?: string | null
           churn_risk_level?: string | null
+          client_type_id?: string | null
           created_at?: string
           health_score?: number | null
           id?: string
+          internal_notes?: string | null
           last_interaction_at?: string | null
           legal_name?: string | null
           metadata?: Json
           name: string
           organization_id: string
+          payment_classification_id?: string | null
+          rating_stars?: number | null
           status?: string
           tags?: string[]
           tier?: string
@@ -8383,14 +8689,18 @@ export type Database = {
         Update: {
           account_manager_id?: string | null
           churn_risk_level?: string | null
+          client_type_id?: string | null
           created_at?: string
           health_score?: number | null
           id?: string
+          internal_notes?: string | null
           last_interaction_at?: string | null
           legal_name?: string | null
           metadata?: Json
           name?: string
           organization_id?: string
+          payment_classification_id?: string | null
+          rating_stars?: number | null
           status?: string
           tags?: string[]
           tier?: string
@@ -8402,6 +8712,13 @@ export type Database = {
             columns: ["account_manager_id"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_client_type_id_fkey"
+            columns: ["client_type_id"]
+            isOneToOne: false
+            referencedRelation: "client_type_config"
             referencedColumns: ["id"]
           },
           {
@@ -8431,6 +8748,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_payment_classification_id_fkey"
+            columns: ["payment_classification_id"]
+            isOneToOne: false
+            referencedRelation: "payment_classification_config"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -30089,6 +30413,77 @@ export type Database = {
           sort_order?: number | null
         }
         Relationships: []
+      }
+      payment_classification_config: {
+        Row: {
+          alert_level: string | null
+          code: string
+          color: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          name: string
+          organization_id: string
+          sort_order: number | null
+        }
+        Insert: {
+          alert_level?: string | null
+          code: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name: string
+          organization_id: string
+          sort_order?: number | null
+        }
+        Update: {
+          alert_level?: string | null
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          name?: string
+          organization_id?: string
+          sort_order?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_classification_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_classification_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "payment_classification_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_classification_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
       }
       payment_links: {
         Row: {
