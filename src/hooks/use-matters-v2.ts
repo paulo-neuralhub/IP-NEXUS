@@ -381,7 +381,19 @@ export function useMatterTimeline(matterId: string) {
   return useQuery({
     queryKey: ['matter-timeline', matterId],
     queryFn: async () => {
-      // Use legacy 'matter_events' table since matter_timeline (V2) is empty
+      // First try V2 table (matter_timeline)
+      const { data: v2Data, error: v2Error } = await supabase
+        .from('matter_timeline')
+        .select('*')
+        .eq('matter_id', matterId)
+        .order('event_date', { ascending: false });
+      
+      // If V2 has data, use it
+      if (!v2Error && v2Data && v2Data.length > 0) {
+        return v2Data as MatterTimelineEvent[];
+      }
+      
+      // Fallback to legacy 'matter_events' table
       const { data, error } = await supabase
         .from('matter_events')
         .select('*')
@@ -405,7 +417,7 @@ export function useMatterTimeline(matterId: string) {
         filing_id: null,
         document_id: null,
         party_id: null,
-        metadata: {},
+        metadata: e.metadata || {},
         created_by: e.created_by,
         created_at: e.created_at,
         event_date: e.event_date,
