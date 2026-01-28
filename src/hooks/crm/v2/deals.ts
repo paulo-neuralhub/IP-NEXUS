@@ -16,9 +16,11 @@ export function useCRMDeals(filters?: DealFilters) {
           `*,
            pipeline_id,
            stage_id,
+           assigned_to,
            account:crm_accounts!account_id(id, name, tier, health_score),
            contact:crm_contacts!contact_id(id, full_name, email),
-           owner:users!owner_id(id, full_name, avatar_url)
+           owner:users!owner_id(id, full_name, avatar_url),
+           assigned_user:users!assigned_to(id, full_name, avatar_url)
           `
         )
         .eq("organization_id", organizationId)

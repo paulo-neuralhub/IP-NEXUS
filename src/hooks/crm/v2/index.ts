@@ -7,3 +7,5 @@ export * from "./tasks";
 export * from "./ai";
 export * from "./client360";
 export * from "./dashboard";
+export * from "./team-members";
+export * from "./leads";

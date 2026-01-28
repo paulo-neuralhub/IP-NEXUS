@@ -21,10 +21,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCreateCRMDeal } from "@/hooks/crm/v2/deals";
 import { useCRMAccounts } from "@/hooks/crm/v2/accounts";
 import { useCRMContacts } from "@/hooks/crm/v2/contacts";
 import { useCRMPipelines, type CRMPipelineStage } from "@/hooks/crm/v2/pipelines";
+import { useTeamMembers } from "@/hooks/crm/v2/team-members";
 
 const dealSchema = z.object({
   name: z.string().min(1, "El nombre es obligatorio"),
@@ -35,6 +37,7 @@ const dealSchema = z.object({
   amount: z.string().optional(),
   expected_close_date: z.string().optional(),
   notes: z.string().optional(),
+  assigned_to: z.string().optional(),
 });
 
 type DealFormValues = z.infer<typeof dealSchema>;
@@ -61,6 +64,7 @@ export function DealFormModal({
   const { data: accounts = [] } = useCRMAccounts();
   const { data: contacts = [] } = useCRMContacts();
   const { data: pipelines = [] } = useCRMPipelines();
+  const { data: teamMembers = [] } = useTeamMembers();
 
   const defaultPipeline =
     pipelines.find((p) => p.id === defaultPipelineId) || pipelines.find((p) => p.is_default) || pipelines[0];
@@ -78,6 +82,7 @@ export function DealFormModal({
       amount: "",
       expected_close_date: "",
       notes: "",
+      assigned_to: "",
     },
   });
 
@@ -113,6 +118,7 @@ export function DealFormModal({
     }
     if (values.expected_close_date) payload.expected_close_date = values.expected_close_date;
     if (values.notes) payload.metadata = { notes: values.notes };
+    if (values.assigned_to) payload.assigned_to = values.assigned_to;
 
     await createDeal.mutateAsync(payload);
     form.reset();
@@ -236,9 +242,38 @@ export function DealFormModal({
             </div>
           </div>
 
-          <div>
-            <Label htmlFor="expected_close_date">Fecha estimada cierre</Label>
-            <Input id="expected_close_date" type="date" {...form.register("expected_close_date")} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="expected_close_date">Fecha estimada cierre</Label>
+              <Input id="expected_close_date" type="date" {...form.register("expected_close_date")} />
+            </div>
+
+            <div>
+              <Label htmlFor="assigned_to">Asignar a</Label>
+              <Select
+                value={form.watch("assigned_to") ?? ""}
+                onValueChange={(v) => form.setValue("assigned_to", v || undefined)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Seleccionar responsable..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {teamMembers.map((member) => (
+                    <SelectItem key={member.id} value={member.id}>
+                      <div className="flex items-center gap-2">
+                        <Avatar className="h-5 w-5">
+                          <AvatarImage src={member.avatar_url ?? undefined} />
+                          <AvatarFallback className="text-xs">
+                            {member.full_name?.split(" ").map((n) => n[0]).join("").slice(0, 2) ?? "?"}
+                          </AvatarFallback>
+                        </Avatar>
+                        <span>{member.full_name ?? member.email}</span>
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div>

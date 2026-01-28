@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fromTable } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
+import { useToast } from "@/hooks/use-toast";
 
 export function useCRMAccounts(filters?: { search?: string }) {
   const { organizationId } = useOrganization();
@@ -16,6 +17,8 @@ export function useCRMAccounts(filters?: { search?: string }) {
           rating_stars, tags,
           last_interaction_at,
           created_at, updated_at,
+          assigned_to,
+          assigned_user:users!assigned_to(id, full_name, avatar_url),
           client_type:client_type_config(id, name, color),
           payment_classification:payment_classification_config(id, name, color, alert_level)
         `)
@@ -42,6 +45,7 @@ export function useCRMAccount(id: string) {
       const { data, error } = await fromTable("crm_accounts")
         .select(`
           *,
+          assigned_user:users!assigned_to(id, full_name, avatar_url),
           client_type:client_type_config(id, name, color),
           payment_classification:payment_classification_config(id, name, color, alert_level)
         `)
@@ -52,5 +56,31 @@ export function useCRMAccount(id: string) {
       return data;
     },
     enabled: !!organizationId && !!id,
+  });
+}
+
+export function useCreateCRMAccount() {
+  const queryClient = useQueryClient();
+  const { organizationId } = useOrganization();
+  const { toast } = useToast();
+
+  return useMutation({
+    mutationFn: async (account: Record<string, unknown>) => {
+      if (!organizationId) throw new Error("Missing organizationId");
+      const { data, error } = await fromTable("crm_accounts")
+        .insert({ ...account, organization_id: organizationId })
+        .select()
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["crm-accounts"] });
+      toast({ title: "Cuenta creada" });
+    },
+    onError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : "Error desconocido";
+      toast({ title: "Error al crear cuenta", description: message, variant: "destructive" });
+    },
   });
 }

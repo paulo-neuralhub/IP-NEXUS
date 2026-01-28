@@ -1,5 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Progress } from "@/components/ui/progress";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Building2, Calendar, Mail, Paperclip, Phone, User } from "lucide-react";
 
 type Props = {
@@ -9,6 +11,9 @@ type Props = {
   probability?: number;
   expectedCloseDate?: string | null;
   ownerName?: string | null;
+  ownerAvatar?: string | null;
+  assignedUserName?: string | null;
+  assignedUserAvatar?: string | null;
   daysInStage?: number | null;
   staleLevel?: "none" | "warn" | "danger";
   isHot?: boolean;
@@ -31,6 +36,9 @@ export function DealKanbanCard({
   probability,
   expectedCloseDate,
   ownerName,
+  ownerAvatar,
+  assignedUserName,
+  assignedUserAvatar,
   daysInStage,
   staleLevel,
   isHot,
@@ -101,12 +109,35 @@ export function DealKanbanCard({
         ) : null}
       </div>
 
-      {/* Row 4: owner + counts */}
+      {/* Row 4: owner/assigned + counts */}
       <div className="mt-3 flex items-center justify-between gap-3 text-xs">
-        <div className="min-w-0 text-muted-foreground inline-flex items-center gap-1">
-          <User className="h-3.5 w-3.5" />
-          <span className="truncate">{ownerName ?? "—"}</span>
-        </div>
+        <TooltipProvider>
+          <div className="min-w-0 text-muted-foreground inline-flex items-center gap-1.5">
+            {(ownerAvatar || ownerName || assignedUserAvatar || assignedUserName) ? (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center gap-1.5">
+                    <Avatar className="h-5 w-5">
+                      <AvatarImage src={assignedUserAvatar ?? ownerAvatar ?? undefined} />
+                      <AvatarFallback className="text-[10px]">
+                        {(assignedUserName ?? ownerName)?.split(" ").map((n) => n[0]).join("").slice(0, 2) ?? <User className="w-3 h-3" />}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span className="truncate max-w-[80px]">{assignedUserName ?? ownerName ?? "—"}</span>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>{assignedUserName ?? ownerName}</p>
+                </TooltipContent>
+              </Tooltip>
+            ) : (
+              <>
+                <User className="h-3.5 w-3.5" />
+                <span className="truncate">—</span>
+              </>
+            )}
+          </div>
+        </TooltipProvider>
 
         <div className="flex items-center gap-3 text-muted-foreground">
           <span className="inline-flex items-center gap-1" title="Emails">
