@@ -3,7 +3,7 @@
  * Incluye flujos de cierre: Ganado (con confirmación) y Perdido (con motivo)
  */
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { usePageTitle } from '@/contexts/page-context';
 import {
@@ -34,8 +34,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLeads, useUpdateLeadStatus, Lead, LeadStatus } from '@/hooks/crm/useLeads';
-import { useDeals, useUpdateDealStage, Deal, DealStage } from '@/hooks/crm/useDeals';
+import { useLeads, Lead, LeadStatus } from '@/hooks/crm/useLeads';
+import { useDeals, Deal, DealStage } from '@/hooks/crm/useDeals';
 import { useCRMPipelines, CRMPipelineStage } from '@/hooks/crm/v2/pipelines';
 import { PipelineKanbanColumn } from '@/components/features/crm/pipeline/PipelineKanbanColumn';
 import { PipelineCard } from '@/components/features/crm/pipeline/PipelineCard';
@@ -127,6 +127,9 @@ const FALLBACK_DEAL_COLUMNS: KanbanColumn[] = [
 export default function CRMPipelinePage() {
   usePageTitle('Kanban');
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const boardRef = useRef<HTMLDivElement | null>(null);
+  const lastBoardScrollLeftRef = useRef(0);
   
   // Load pipelines from database
   const { data: pipelines = [], isLoading: isLoadingPipelines } = useCRMPipelines();
@@ -187,11 +190,11 @@ export default function CRMPipelinePage() {
   const { data: leads = [], isLoading: isLoadingLeads, refetch: refetchLeads } = useLeads(
     view === 'leads' && selectedPipelineId ? { pipeline_id: selectedPipelineId } : undefined
   );
-  const { data: deals = [], isLoading: isLoadingDeals, refetch: refetchDeals } = useDeals();
+  const { data: deals = [], isLoading: isLoadingDeals, refetch: refetchDeals } = useDeals(
+    view === 'deals' && selectedPipelineId ? { pipeline_id: selectedPipelineId } : undefined
+  );
 
-  // Mutations - SIMPLIFIED: only status/stage updates
-  const updateLeadStatus = useUpdateLeadStatus();
-  const updateDealStage = useUpdateDealStage();
+  // Mutations removed: Kanban unificado actualiza stage_id directamente
 
   // Sensors for drag & drop
   const sensors = useSensors(
@@ -225,7 +228,12 @@ export default function CRMPipelinePage() {
   const columns = useMemo(() => {
     if (stages.length > 0) {
       return stages.map(stage => {
-        const normalizedName = stage.name.toLowerCase().replace(/\s+/g, ' ').trim();
+        const normalizedName = stage.name
+          .toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim();
         return {
           id: stage.id,
           title: stage.name,
@@ -267,13 +275,18 @@ export default function CRMPipelinePage() {
       });
     } else {
       filteredDeals.forEach(deal => {
-        const stageValue = deal.stage || 'contacted';
-        const col = columns.find(c => c.id === stageValue || c.stage === stageValue);
-        if (col && grouped[col.id]) {
-          grouped[col.id].push(deal);
-        } else if (grouped[columns[0]?.id]) {
-          grouped[columns[0].id].push(deal);
+        // NUEVA LÓGICA: preferir stage_id (UUID) si existe
+        const stageId = (deal as any).stage_id as string | null | undefined;
+        if (stageId && grouped[stageId]) {
+          grouped[stageId].push(deal);
+          return;
         }
+
+        // Fallback legacy: agrupar por enum stage
+        const stageValue = deal.stage || 'contacted';
+        const col = columns.find(c => c.stage === stageValue);
+        if (col && grouped[col.id]) grouped[col.id].push(deal);
+        else if (grouped[columns[0]?.id]) grouped[columns[0].id].push(deal);
       });
     }
     
@@ -289,6 +302,7 @@ export default function CRMPipelinePage() {
   // Drag handlers
   const handleDragStart = (event: DragStartEvent) => {
     setActiveId(event.active.id as string);
+    if (boardRef.current) lastBoardScrollLeftRef.current = boardRef.current.scrollLeft;
   };
 
   const handleDragEnd = async (event: DragEndEvent) => {
@@ -354,6 +368,9 @@ export default function CRMPipelinePage() {
           } else {
             toast.success(`Movido a ${targetCol.title}`);
             refetchLeads();
+            requestAnimationFrame(() => {
+              if (boardRef.current) boardRef.current.scrollLeft = lastBoardScrollLeftRef.current;
+            });
           }
         });
     } else {
@@ -361,33 +378,48 @@ export default function CRMPipelinePage() {
       const deal = deals.find(d => d.id === itemId);
       if (!deal) return;
 
-      const normalizedName = targetCol.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
-      
+      // IMPORTANTE: en Kanban unificado, el droppableId ES el stage_id (UUID)
+      const newStageId = targetColId;
+
+      // Mantener compatibilidad: seguir rellenando el enum `stage` según nombre
+      const normalizedName = targetCol.title
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
       const stageMap: Record<string, DealStage> = {
-        'nueva': 'contacted', 'new': 'contacted', 'nuevo': 'contacted',
-        'contactado': 'contacted', 'contacted': 'contacted',
-        'reunion': 'qualified', 'reunión': 'qualified', 'cualificado': 'qualified',
-        'propuesta': 'proposal', 'propuesta enviada': 'proposal',
-        'en revision': 'negotiation', 'negociacion': 'negotiation',
-        'ganado': 'won', 'ganada': 'won', 'won': 'won',
-        'perdido': 'lost', 'perdida': 'lost', 'lost': 'lost',
+        'nueva': 'contacted',
+        'reunion': 'qualified',
+        'reunion agendada': 'qualified',
+        'propuesta': 'proposal',
+        'propuesta enviada': 'proposal',
+        'en revision': 'negotiation',
+        'ganado': 'won',
+        'perdido': 'lost',
       };
-      
+
       const newStage = stageMap[normalizedName] || (targetCol.stage as DealStage) || 'contacted';
-      
-      updateDealStage.mutate(
-        { dealId: deal.id, stage: newStage },
-        { 
-          onSuccess: () => {
-            toast.success(`Movido a ${targetCol.title}`);
-            // No need to refetchDeals() - optimistic update handles it
-          },
-          onError: (err) => {
-            console.error('Error updating deal:', err);
-            toast.error('Error al mover negociación');
-          }
-        }
-      );
+
+      const { error } = await fromTable('crm_deals')
+        .update({ stage_id: newStageId, stage: newStage })
+        .eq('id', deal.id);
+
+      if (error) {
+        console.error('Error updating deal stage_id:', error);
+        toast.error('Error al mover negociación');
+        refetchDeals();
+        return;
+      }
+
+      toast.success(`Movido a ${targetCol.title}`);
+      refetchDeals();
+
+      // restaurar scroll horizontal
+      requestAnimationFrame(() => {
+        if (boardRef.current) boardRef.current.scrollLeft = lastBoardScrollLeftRef.current;
+      });
     }
   };
 
@@ -613,6 +645,7 @@ export default function CRMPipelinePage() {
           onDragEnd={handleDragEnd}
         >
           <div 
+            ref={boardRef}
             className="flex gap-4 pb-4 flex-1"
             style={{ 
               overflowX: 'auto', 

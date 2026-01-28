@@ -12,6 +12,8 @@ export type DealStage = 'contacted' | 'qualified' | 'proposal' | 'negotiation' |
 export interface Deal {
   id: string;
   organization_id: string;
+  pipeline_id?: string | null;
+  stage_id?: string | null;
   client_id: string | null;
   lead_id: string | null;
   deal_number: string;
@@ -49,7 +51,12 @@ export interface CreateDealData {
   next_action_date?: string;
 }
 
-export function useDeals(filters?: { stage?: DealStage; client_id?: string; exclude_closed?: boolean }) {
+export function useDeals(filters?: {
+  stage?: DealStage;
+  client_id?: string;
+  pipeline_id?: string;
+  exclude_closed?: boolean;
+}) {
   const { currentOrganization } = useOrganization();
   const orgId = currentOrganization?.id;
 
@@ -73,6 +80,10 @@ export function useDeals(filters?: { stage?: DealStage; client_id?: string; excl
 
       if (filters?.client_id) {
         query = query.eq('client_id', filters.client_id);
+      }
+
+      if (filters?.pipeline_id) {
+        query = query.eq('pipeline_id', filters.pipeline_id);
       }
 
       if (filters?.exclude_closed) {
