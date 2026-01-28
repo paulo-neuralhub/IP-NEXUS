@@ -152,7 +152,7 @@ export default function CRMPipelinePage() {
   const [showLostModal, setShowLostModal] = useState(false);
   const [leadToClose, setLeadToClose] = useState<Lead | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [isSeedingDeals, setIsSeedingDeals] = useState(false);
+  
 
   // Set default pipeline once loaded
   useEffect(() => {
@@ -521,116 +521,6 @@ export default function CRMPipelinePage() {
     toast.success('Datos actualizados');
   }, [refetchLeads, refetchDeals]);
 
-  const handleSeedDealsDemo = useCallback(async () => {
-    if (!isDemoMode) return;
-    if (!currentOrganization?.id) {
-      toast.error('No hay organización activa');
-      return;
-    }
-    if (view !== 'deals') {
-      toast.error('Cambia al pipeline de negociaciones para cargar deals demo');
-      return;
-    }
-    if (!selectedPipelineId) {
-      toast.error('Selecciona un pipeline');
-      return;
-    }
-    if (columns.length === 0) {
-      toast.error('No hay etapas para este pipeline');
-      return;
-    }
-
-    const normalize = (s: string) =>
-      s
-        .toLowerCase()
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-
-    const colBy = (predicate: (n: string) => boolean) => columns.find((c) => predicate(normalize(c.title)));
-
-    const colNueva = colBy((n) => n.includes('nueva') || n.includes('nuevo'));
-    const colReunion = colBy((n) => n.includes('reunion') || n.includes('reunión') || n.includes('meeting'));
-    const colPropuesta = colBy((n) => n.includes('propuesta'));
-    const colRevision = colBy((n) => n.includes('revision') || n.includes('revisión') || n.includes('negoci'));
-    const colWon = columns.find((c) => c.isWon);
-    const colLost = columns.find((c) => c.isLost);
-
-    if (!colNueva || !colReunion || !colPropuesta || !colRevision || !colWon || !colLost) {
-      toast.error('No pude mapear las etapas del pipeline (revisa nombres/flags won/lost)');
-      return;
-    }
-
-    setIsSeedingDeals(true);
-    try {
-      const seed = [
-        {
-          name: 'Negociación — Registro de Marca (TechVerde)',
-          amount: 15000,
-          stage_id: colNueva.id,
-          stage: 'contacted' as DealStage,
-          probability: colNueva.probability ?? 10,
-        },
-        {
-          name: 'Negociación — Reunión con cliente (BioSalud)',
-          amount: 22000,
-          stage_id: colReunion.id,
-          stage: 'qualified' as DealStage,
-          probability: colReunion.probability ?? 50,
-        },
-        {
-          name: 'Negociación — Propuesta enviada (FarmaPlus)',
-          amount: 28000,
-          stage_id: colPropuesta.id,
-          stage: 'proposal' as DealStage,
-          probability: colPropuesta.probability ?? 60,
-        },
-        {
-          name: 'Negociación — En revisión legal (GlobalLog)',
-          amount: 35000,
-          stage_id: colRevision.id,
-          stage: 'negotiation' as DealStage,
-          probability: colRevision.probability ?? 75,
-        },
-        {
-          name: 'Negociación — Ganada (MueblesCraft)',
-          amount: 12000,
-          stage_id: colWon.id,
-          stage: 'won' as DealStage,
-          probability: 100,
-        },
-        {
-          name: 'Negociación — Perdida (InnovaTech)',
-          amount: 9000,
-          stage_id: colLost.id,
-          stage: 'lost' as DealStage,
-          probability: 0,
-        },
-      ];
-
-      const { error } = await fromTable('crm_deals').insert(
-        seed.map((d) => ({
-          organization_id: currentOrganization.id,
-          pipeline_id: selectedPipelineId,
-          name: d.name,
-          amount: d.amount,
-          stage_id: d.stage_id,
-          stage: d.stage,
-          probability: d.probability,
-        }))
-      );
-      if (error) throw error;
-
-      toast.success('Deals demo creados');
-      await refetchDeals();
-    } catch (err) {
-      console.error('Error seeding demo deals:', err);
-      toast.error('No se pudieron crear deals demo');
-    } finally {
-      setIsSeedingDeals(false);
-    }
-  }, [columns, currentOrganization?.id, isDemoMode, refetchDeals, selectedPipelineId, view]);
 
   const isLoading = isLoadingPipelines || (view === 'leads' ? isLoadingLeads : isLoadingDeals);
 
@@ -712,16 +602,6 @@ export default function CRMPipelinePage() {
             <RefreshCw className="w-4 h-4" />
           </Button>
 
-          {/* Demo seed (solo demo) */}
-          {isDemoMode && view === 'deals' && (
-            <Button
-              variant="outline"
-              onClick={handleSeedDealsDemo}
-              disabled={isSeedingDeals}
-            >
-              {isSeedingDeals ? 'Cargando…' : 'Cargar deals demo'}
-            </Button>
-          )}
 
           {/* New */}
           <Button>
