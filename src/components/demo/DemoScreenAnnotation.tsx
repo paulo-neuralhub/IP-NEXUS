@@ -207,14 +207,25 @@ export function DemoScreenAnnotation({ isActive, onClose }: DemoScreenAnnotation
   if (!isActive) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999]">
-      {/* Canvas para dibujar - pointer-events solo cuando tool != pointer */}
+    <div 
+      className={cn(
+        "fixed inset-0 z-[9999]",
+        tool === 'pointer' ? 'pointer-events-none' : 'pointer-events-auto'
+      )}
+    >
+      {/* Canvas para dibujar */}
       <canvas
         ref={canvasRef}
         className={cn(
-          'absolute inset-0',
-          tool === 'pointer' ? 'pointer-events-none' : 'cursor-crosshair'
+          'absolute inset-0 touch-none',
+          tool === 'pointer' ? 'pointer-events-none' : 'pointer-events-auto cursor-crosshair'
         )}
+        style={{ 
+          touchAction: 'none',
+          // Asegurar que el canvas sea interactivo
+          WebkitUserSelect: 'none',
+          userSelect: 'none',
+        }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
