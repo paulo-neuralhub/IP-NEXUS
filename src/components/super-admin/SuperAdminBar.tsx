@@ -1,8 +1,9 @@
 // ============================================================
 // IP-NEXUS - Super Admin Bar
-// Floating bar for super admin controls
+// Floating bar for super admin controls - Collapsible & Transparent
 // ============================================================
 
+import { useState } from 'react';
 import { useSuperAdmin, SuperAdminModeType } from '@/hooks/useSuperAdmin';
 import { useNavigate } from 'react-router-dom';
 import { 
@@ -10,6 +11,7 @@ import {
   Settings, 
   Play, 
   ChevronDown,
+  ChevronUp,
   Eye,
   LogOut,
   Building2,
@@ -35,6 +37,8 @@ const SUBSCRIPTION_OPTIONS = [
 
 export function SuperAdminBar() {
   const navigate = useNavigate();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const { 
     isSuperAdmin, 
     currentMode, 
@@ -65,8 +69,42 @@ export function SuperAdminBar() {
     }
   };
 
+  // Collapsed state - just a small floating indicator
+  if (isCollapsed) {
+    return (
+      <div 
+        className={cn(
+          "fixed top-2 right-2 z-[100] transition-all duration-300",
+          isHovered ? "opacity-100" : "opacity-30 hover:opacity-100"
+        )}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setIsCollapsed(false)}
+          className="bg-sidebar/80 backdrop-blur-sm border-destructive/50 text-destructive shadow-lg h-8 gap-1"
+        >
+          <Shield className="h-3 w-3" />
+          SA
+          <ChevronDown className="h-3 w-3 ml-1" />
+        </Button>
+      </div>
+    );
+  }
+
   return (
-    <div className="fixed top-0 left-0 right-0 z-[100] bg-sidebar text-sidebar-foreground h-10 flex items-center justify-between px-4 shadow-lg border-b border-border">
+    <div 
+      className={cn(
+        "fixed top-0 left-0 right-0 z-[100] h-10 flex items-center justify-between px-4 shadow-lg border-b transition-all duration-300",
+        isHovered 
+          ? "bg-sidebar text-sidebar-foreground border-border" 
+          : "bg-sidebar/70 text-sidebar-foreground/80 border-border/50 backdrop-blur-sm"
+      )}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       {/* Left: Mode indicator */}
       <div className="flex items-center gap-3">
         <Badge 
@@ -164,7 +202,6 @@ export function SuperAdminBar() {
             <DropdownMenuItem 
               onClick={() => {
                 exitToSuperAdmin();
-                // Navigate to app after exiting simulation
                 setTimeout(() => navigate('/app'), 100);
               }}
               className="cursor-pointer text-destructive focus:text-destructive"
@@ -174,6 +211,17 @@ export function SuperAdminBar() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        {/* Collapse button */}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setIsCollapsed(true)}
+          className="text-sidebar-foreground hover:bg-sidebar-accent h-7 w-7"
+          title="Minimizar barra"
+        >
+          <ChevronUp className="h-3 w-3" />
+        </Button>
       </div>
     </div>
   );

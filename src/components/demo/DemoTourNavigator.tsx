@@ -74,6 +74,7 @@ export function DemoTourNavigator({
   const [isPaused, setIsPaused] = useState(false);
   const [elapsedTime, setElapsedTime] = useState(0);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
 
   const allSteps = getAllSteps();
   const step = getStepById(currentStep);
@@ -151,25 +152,30 @@ export function DemoTourNavigator({
 
   const isClosingStep = step?.id === 13;
 
-  // Minimized floating button
+  // Minimized floating button - almost transparent until hover
   if (viewMode === 'minimized') {
     return (
       <Draggable nodeRef={nodeRef} bounds="parent" handle=".drag-handle">
         <div 
           ref={nodeRef}
-          className="fixed bottom-4 right-4 z-[200]"
+          className={cn(
+            "fixed bottom-4 right-4 z-[200] transition-all duration-300",
+            "opacity-25 hover:opacity-100"
+          )}
         >
-          <Button 
-            onClick={() => setViewMode('compact')} 
-            className="gap-2 bg-primary shadow-lg hover:bg-primary/90"
-            size="lg"
-          >
-            <Play className="h-4 w-4" />
-            Tour Demo ({currentStep}/13)
-            <Badge variant="secondary" className="ml-1">
-              {formatTime(elapsedTime)}
-            </Badge>
-          </Button>
+          <div className="drag-handle cursor-move">
+            <Button 
+              onClick={() => setViewMode('compact')} 
+              className="gap-2 bg-primary/80 backdrop-blur-sm shadow-lg hover:bg-primary"
+              size="sm"
+            >
+              <Play className="h-3 w-3" />
+              Tour ({currentStep}/13)
+              <Badge variant="secondary" className="ml-1 text-[10px]">
+                {formatTime(elapsedTime)}
+              </Badge>
+            </Button>
+          </div>
         </div>
       </Draggable>
     );
@@ -212,7 +218,7 @@ export function DemoTourNavigator({
     );
   }
 
-  // Floating draggable panel (compact or expanded)
+  // Floating draggable panel (compact or expanded) - semi-transparent when not hovered
   return (
     <Draggable 
       nodeRef={nodeRef} 
@@ -223,11 +229,16 @@ export function DemoTourNavigator({
     >
       <div 
         ref={nodeRef}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         className={cn(
-          "fixed z-[200] rounded-xl border-2 border-primary/30 bg-background shadow-2xl",
+          "fixed z-[200] rounded-xl border-2 shadow-2xl transition-all duration-300",
           viewMode === 'compact' 
             ? "bottom-4 right-4 w-[400px]" 
-            : "bottom-4 right-4 w-[700px]"
+            : "bottom-4 right-4 w-[700px]",
+          isHovered 
+            ? "border-primary/30 bg-background opacity-100" 
+            : "border-primary/10 bg-background/80 opacity-60 backdrop-blur-sm hover:opacity-100"
         )}
         style={{ maxHeight: viewMode === 'expanded' ? '80vh' : '50vh' }}
       >
