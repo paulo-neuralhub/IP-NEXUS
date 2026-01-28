@@ -5,7 +5,6 @@
 
 import { useDroppable } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -49,8 +48,9 @@ export function PipelineKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex flex-col h-full rounded-xl overflow-hidden transition-all w-[300px] flex-shrink-0',
+        'flex flex-col rounded-xl overflow-hidden transition-all w-[300px] flex-shrink-0',
         'border shadow-sm',
+        'h-[calc(100vh-300px)] min-h-[400px] max-h-[700px]', // Altura fija para el scroll
         isOver && 'ring-2 ring-primary shadow-lg scale-[1.02]',
         isWon && 'border-green-300 dark:border-green-800',
         isLost && 'border-red-300 dark:border-red-800',
@@ -106,13 +106,16 @@ export function PipelineKanbanColumn({
         </div>
       </div>
 
-      {/* Content */}
-      <ScrollArea className={cn(
-        'flex-1 p-3',
+      {/* Content - Scroll visible */}
+      <div className={cn(
+        'flex-1 p-3 overflow-y-auto min-h-0',
+        'scrollbar-thin scrollbar-thumb-slate-300 scrollbar-track-transparent hover:scrollbar-thumb-slate-400',
         isWon && 'bg-green-50/30 dark:bg-green-950/10',
         isLost && 'bg-red-50/30 dark:bg-red-950/10',
         !isWon && !isLost && 'bg-muted/20'
-      )}>
+      )}
+      style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 transparent' }}
+      >
         <SortableContext items={[]} strategy={verticalListSortingStrategy}>
           <div className="space-y-3 min-h-[120px]">
             {children}
@@ -130,7 +133,7 @@ export function PipelineKanbanColumn({
             <p className="text-xs opacity-70 mt-1">Arrastra aquí para añadir</p>
           </div>
         )}
-      </ScrollArea>
+      </div>
 
       {/* Add button */}
       {onAddItem && !isWon && !isLost && (
