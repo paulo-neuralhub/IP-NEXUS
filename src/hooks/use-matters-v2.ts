@@ -32,6 +32,8 @@ export interface MatterV2 {
   status_date: string | null;
   client_id: string | null;
   client_name: string | null;
+  client_email: string | null;
+  client_phone: string | null;
   jurisdiction: string | null;
   instruction_date: string | null;
   priority_date: string | null;
@@ -176,7 +178,7 @@ export function useMattersV2(filters?: MatterV2Filters) {
       // Map legacy fields to V2 interface
       let query = supabase
         .from('matters')
-        .select('*, client:contacts!matters_client_id_fkey(id, name)')
+        .select('*, client:contacts!matters_client_id_fkey(id, name, email, phone, mobile)')
         .eq('organization_id', currentOrganization!.id)
         .order('created_at', { ascending: false });
       
@@ -215,6 +217,8 @@ export function useMattersV2(filters?: MatterV2Filters) {
         status_date: m.updated_at,
         client_id: m.client_id,
         client_name: m.client?.name || null,
+        client_email: m.client?.email || null,
+        client_phone: m.client?.phone || m.client?.mobile || null,
         jurisdiction: m.jurisdiction,
         instruction_date: m.filing_date,
         priority_date: m.priority_date,
@@ -302,7 +306,7 @@ export function useMatterV2(id: string) {
       // Include client data via join
       const { data: m, error } = await supabase
         .from('matters')
-        .select('*, client:contacts!matters_client_id_fkey(id, name)')
+        .select('*, client:contacts!matters_client_id_fkey(id, name, email, phone, mobile)')
         .eq('id', id)
         .eq('organization_id', currentOrganization!.id)
         .maybeSingle();
@@ -322,6 +326,8 @@ export function useMatterV2(id: string) {
         status_date: m.updated_at,
         client_id: m.client_id,
         client_name: (m as any).client?.name || null,
+        client_email: (m as any).client?.email || null,
+        client_phone: (m as any).client?.phone || (m as any).client?.mobile || null,
         jurisdiction: m.jurisdiction,
         instruction_date: m.filing_date,
         priority_date: m.priority_date,

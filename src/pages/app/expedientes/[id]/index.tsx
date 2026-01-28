@@ -33,6 +33,7 @@ import { MatterInvoicesTab } from '@/components/matters/MatterInvoicesTab';
 import { MatterCommunicationsTab } from '@/components/matters/MatterCommunicationsTab';
 import { EmailComposeModal } from '@/components/matters/EmailComposeModal';
 import { LogCallModal } from '@/components/matters/LogCallModal';
+import { MatterWhatsAppModal } from '@/components/matters/MatterWhatsAppModal';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
@@ -55,6 +56,7 @@ export default function MatterDetailPage() {
   const [activeTab, setActiveTab] = useState('general');
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
+  const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   
   const { data: matter, isLoading, error } = useMatterV2(id!);
   const { data: filings } = useMatterFilings(id!);
@@ -64,10 +66,9 @@ export default function MatterDetailPage() {
   
   usePageTitle(matter?.matter_number || 'Expediente');
   
-  // Handler para abrir WhatsApp
+  // Handler para abrir WhatsApp modal contextual
   const handleWhatsApp = () => {
-    // TODO: Integrate with WhatsApp when client phone is available
-    toast.info('WhatsApp: Vincula un teléfono al cliente para usar esta función');
+    setShowWhatsAppModal(true);
   };
   
   // Handler para click-to-call
@@ -666,6 +667,17 @@ export default function MatterDetailPage() {
         onOpenChange={setShowCallModal}
         matterId={id!}
         contactName={matter?.client_name || undefined}
+      />
+      
+      <MatterWhatsAppModal
+        open={showWhatsAppModal}
+        onOpenChange={setShowWhatsAppModal}
+        matterId={id!}
+        matterTitle={matter?.title}
+        matterReference={matter?.matter_number}
+        clientId={matter?.client_id}
+        clientName={matter?.client_name}
+        clientPhone={matter?.client_phone}
       />
     </div>
   );
