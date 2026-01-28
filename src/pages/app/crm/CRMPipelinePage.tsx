@@ -43,8 +43,7 @@ import { useDeals, Deal, DealStage } from '@/hooks/crm/useDeals';
 import { useCRMPipelines, CRMPipelineStage } from '@/hooks/crm/v2/pipelines';
 import { PipelineKanbanColumn } from '@/components/features/crm/pipeline/PipelineKanbanColumn';
 import { PipelineCard } from '@/components/features/crm/pipeline/PipelineCard';
-import { LeadDetailModal } from '@/components/crm/modals/LeadDetailModal';
-import { DealDetailSheet } from '@/components/crm/modals/DealDetailSheet';
+import { PipelineDetailSheet } from '@/components/features/crm/pipeline/PipelineDetailSheet';
 import { LeadWonModal } from '@/components/crm/modals/LeadWonModal';
 import { LeadLostModal } from '@/components/crm/modals/LeadLostModal';
 import { Plus, Search, Filter, RefreshCw, Info, KanbanSquare, Settings } from 'lucide-react';
@@ -145,9 +144,8 @@ export default function CRMPipelinePage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeId, setActiveId] = useState<string | null>(null);
   
-  // Detail modals
-  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
-  const [selectedDeal, setSelectedDeal] = useState<Deal | null>(null);
+  // Detail sheet - unified for leads and deals
+  const [selectedItem, setSelectedItem] = useState<Lead | Deal | null>(null);
   
   // Closure modals state
   const [showWonModal, setShowWonModal] = useState(false);
@@ -692,10 +690,7 @@ export default function CRMPipelinePage() {
                       key={item.id}
                       item={item}
                       type={view}
-                      onClick={() => {
-                        if (view === 'leads') setSelectedLead(item as Lead);
-                        else setSelectedDeal(item as Deal);
-                      }}
+                      onClick={() => setSelectedItem(item)}
                     />
                   ))}
                 </PipelineKanbanColumn>
@@ -715,22 +710,15 @@ export default function CRMPipelinePage() {
         </DndContext>
       )}
 
-      {/* Detail Modals */}
-      {selectedLead && (
-        <LeadDetailModal
-          lead={selectedLead}
-          open={!!selectedLead}
-          onOpenChange={(open) => !open && setSelectedLead(null)}
-        />
-      )}
-
-      {selectedDeal && (
-        <DealDetailSheet
-          deal={selectedDeal}
-          open={!!selectedDeal}
-          onOpenChange={(open) => !open && setSelectedDeal(null)}
-        />
-      )}
+      {/* Detail Sheet - Unified */}
+      <PipelineDetailSheet
+        item={selectedItem}
+        type={view === 'leads' ? 'lead' : 'deal'}
+        stages={stages as any}
+        open={!!selectedItem}
+        onOpenChange={(open) => !open && setSelectedItem(null)}
+        onRefetch={() => view === 'leads' ? refetchLeads() : refetchDeals()}
+      />
 
       {/* Lead Won Modal - Confirmation required */}
       <LeadWonModal
