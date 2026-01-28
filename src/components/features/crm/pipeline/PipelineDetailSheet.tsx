@@ -138,7 +138,10 @@ export function PipelineDetailSheet({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-[600px] sm:max-w-[600px] p-0 overflow-hidden flex flex-col">
+      <SheetContent 
+        className="w-[500px] sm:max-w-[500px] p-0 overflow-hidden flex flex-col"
+        style={{ position: 'fixed', right: 0, top: 0, height: '100vh' }}
+      >
         
         {/* HEADER con color de etapa */}
         <div 

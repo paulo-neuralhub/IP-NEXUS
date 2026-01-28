@@ -78,18 +78,19 @@ export function useClientDetail(clientId: string) {
     queryFn: async (): Promise<ClientDetailData> => {
       if (!organizationId) throw new Error('No organization');
       
-      // 1. Datos del cliente
+      // 1. Datos del cliente - buscar en crm_accounts (empresas), no en contacts
       const { data: client, error: clientError } = await supabase
-        .from('contacts')
+        .from('crm_accounts')
         .select(`
           *,
-          responsible_user:users!contacts_assigned_to_fkey(id, full_name, avatar_url)
+          responsible_user:users!crm_accounts_owner_id_fkey(id, full_name, avatar_url)
         `)
         .eq('id', clientId)
         .eq('organization_id', organizationId)
-        .single();
+        .maybeSingle();
 
       if (clientError) throw clientError;
+      if (!client) throw new Error('Client not found');
 
       // 2. Estadísticas (en paralelo) - using match() to avoid deep type instantiation
       const mattersRes = await supabase
@@ -193,12 +194,29 @@ export function useClientDetail(clientId: string) {
         .limit(1)
         .maybeSingle();
 
-      const responsibleUser = client.responsible_user as { id: string; full_name: string; avatar_url?: string } | null;
+      // Handle responsible_user which may be an array from the join
+      const rawUser = client.responsible_user;
+      const responsibleUser = Array.isArray(rawUser) && rawUser.length > 0
+        ? rawUser[0] as { id: string; full_name: string; avatar_url?: string }
+        : null;
+      
+      // Cast to any to access dynamic fields
+      const clientData = client as Record<string, unknown>;
 
       return {
         client: {
-          ...client,
-          display_name: client.name || client.company_name,
+          id: client.id,
+          name: client.name || '',
+          display_name: client.name || '',
+          company_name: client.name,
+          tax_id: (clientData.tax_id as string) || undefined,
+          email: (clientData.email as string) || undefined,
+          phone: (clientData.phone as string) || undefined,
+          address_line1: (clientData.address_line1 as string) || undefined,
+          city: (clientData.city as string) || undefined,
+          notes: client.internal_notes || undefined,
+          tags: (clientData.tags as string[]) || undefined,
+          created_at: client.created_at,
           responsible_user: responsibleUser || undefined
         } as ClientFull,
         stats: {
@@ -227,7 +245,7 @@ export function useUpdateClient() {
   return useMutation({
     mutationFn: async ({ clientId, updates }: { clientId: string; updates: Partial<ClientFull> }) => {
       const { error } = await supabase
-        .from('contacts')
+        .from('crm_accounts')
         .update(updates)
         .eq('id', clientId)
         .eq('organization_id', organizationId);
