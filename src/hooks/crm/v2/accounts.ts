@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fromTable } from "@/lib/supabase";
+import { fromTable, supabase } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 
@@ -67,8 +67,16 @@ export function useCreateCRMAccount() {
   return useMutation({
     mutationFn: async (account: Record<string, unknown>) => {
       if (!organizationId) throw new Error("Missing organizationId");
+      
+      // Get current user for default assignment
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { data, error } = await fromTable("crm_accounts")
-        .insert({ ...account, organization_id: organizationId })
+        .insert({ 
+          ...account, 
+          organization_id: organizationId,
+          assigned_to: account.assigned_to || user?.id, // Default to current user
+        })
         .select()
         .single();
       if (error) throw error;

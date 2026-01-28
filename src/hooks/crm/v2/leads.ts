@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fromTable } from "@/lib/supabase";
+import { fromTable, supabase } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 
@@ -62,12 +62,17 @@ export function useCreateCRMLead() {
   return useMutation({
     mutationFn: async (lead: Record<string, unknown>) => {
       if (!organizationId) throw new Error("Missing organizationId");
+      
+      // Get current user for default assignment
+      const { data: { user } } = await supabase.auth.getUser();
+      
       const { data, error } = await fromTable("crm_contacts")
         .insert({ 
           ...lead, 
           organization_id: organizationId,
           is_lead: true,
           lead_status: lead.lead_status ?? "new",
+          assigned_to: lead.assigned_to || user?.id, // Default to current user
         })
         .select()
         .single();
