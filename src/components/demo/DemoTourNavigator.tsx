@@ -23,7 +23,8 @@ import {
   Pause,
   GripVertical,
   Expand,
-  Shrink
+  Shrink,
+  Pen
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -53,9 +54,16 @@ type ViewMode = 'minimized' | 'compact' | 'expanded' | 'docked';
 interface DemoTourNavigatorProps {
   isVisible?: boolean;
   onClose?: () => void;
+  onToggleAnnotation?: () => void;
+  isAnnotationActive?: boolean;
 }
 
-export function DemoTourNavigator({ isVisible = true, onClose }: DemoTourNavigatorProps) {
+export function DemoTourNavigator({ 
+  isVisible = true, 
+  onClose,
+  onToggleAnnotation,
+  isAnnotationActive = false
+}: DemoTourNavigatorProps) {
   const navigate = useNavigate();
   const location = useLocation();
   const nodeRef = useRef<HTMLDivElement>(null);
@@ -273,6 +281,18 @@ export function DemoTourNavigator({ isVisible = true, onClose }: DemoTourNavigat
 
           {/* View controls */}
           <div className="flex items-center gap-1">
+            {/* Annotation button */}
+            {onToggleAnnotation && (
+              <Button
+                variant={isAnnotationActive ? 'default' : 'ghost'}
+                size="icon"
+                className="h-6 w-6"
+                onClick={onToggleAnnotation}
+                title={isAnnotationActive ? 'Cerrar anotación' : 'Dibujar en pantalla'}
+              >
+                <Pen className="h-3 w-3" />
+              </Button>
+            )}
             <Button
               variant="ghost"
               size="icon"

@@ -16,7 +16,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 import { CallManager } from "@/components/telephony/CallManager";
 import { ModuleActivationDialog } from "@/components/modules";
-import { DemoBadge, DemoTourNavigator } from "@/components/demo";
+import { DemoBadge, DemoTourNavigator, DemoScreenAnnotation } from "@/components/demo";
 import { useOrganization } from "@/contexts/organization-context";
 import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
 import { SuperAdminBar } from "@/components/super-admin";
@@ -27,6 +27,7 @@ export function AppLayout() {
   const { isOnline } = useNetworkStatus();
   const [sidebarOpen, setSidebarOpen] = React.useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
+  const [annotationActive, setAnnotationActive] = React.useState(false);
   
   // Super Admin check
   const { isSuperAdmin } = useSuperAdmin();
@@ -105,7 +106,14 @@ export function AppLayout() {
                 {isDemoMode && (
                   <>
                     <DemoBadge prospectCompany={config?.prospect_company} />
-                    <DemoTourNavigator />
+                    <DemoTourNavigator 
+                      onToggleAnnotation={() => setAnnotationActive(v => !v)}
+                      isAnnotationActive={annotationActive}
+                    />
+                    <DemoScreenAnnotation 
+                      isActive={annotationActive} 
+                      onClose={() => setAnnotationActive(false)} 
+                    />
                   </>
                 )}
               </div>
@@ -142,7 +150,14 @@ export function AppLayout() {
                 {isDemoMode && (
                   <>
                     <DemoBadge prospectCompany={config?.prospect_company} />
-                    <DemoTourNavigator />
+                    <DemoTourNavigator 
+                      onToggleAnnotation={() => setAnnotationActive(v => !v)}
+                      isAnnotationActive={annotationActive}
+                    />
+                    <DemoScreenAnnotation 
+                      isActive={annotationActive} 
+                      onClose={() => setAnnotationActive(false)} 
+                    />
                   </>
                 )}
               </div>

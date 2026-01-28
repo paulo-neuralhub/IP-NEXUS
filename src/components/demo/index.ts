@@ -13,3 +13,4 @@ export * from './DemoClosingButton';
 export * from './competitorData';
 export * from './DemoTourNavigator';
 export * from './tourSteps';
+export * from './DemoScreenAnnotation';
