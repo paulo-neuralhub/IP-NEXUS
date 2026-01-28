@@ -58,13 +58,57 @@ type KanbanColumn = {
   probability?: number;
 };
 
+// Mapeo de nombres de etapas en español a códigos del enum
+const STAGE_NAME_TO_STATUS: Record<string, LeadStatus> = {
+  'nuevo': 'new',
+  'new': 'new',
+  'contactado': 'contacted',
+  'contacted': 'contacted',
+  'contacto inicial': 'contacted',
+  'cualificado': 'contacted',
+  'propuesta': 'standby',
+  'propuesta enviada': 'standby',
+  'negociación': 'standby',
+  'negociacion': 'standby',
+  'rellamar': 'standby',
+  'standby': 'standby',
+  'recontactar': 'standby',
+  'ganado': 'converted',
+  'ganada': 'converted',
+  'cliente ganado': 'converted',
+  'converted': 'converted',
+};
+
+const STAGE_NAME_TO_DEAL_STAGE: Record<string, DealStage> = {
+  'nueva': 'contacted',
+  'new': 'contacted',
+  'contactado': 'contacted',
+  'contacted': 'contacted',
+  'reunión': 'qualified',
+  'reunion': 'qualified',
+  'cualificado': 'qualified',
+  'qualified': 'qualified',
+  'propuesta': 'proposal',
+  'propuesta enviada': 'proposal',
+  'proposal': 'proposal',
+  'negociación': 'negotiation',
+  'negociacion': 'negotiation',
+  'negotiation': 'negotiation',
+  'ganado': 'won',
+  'ganada': 'won',
+  'won': 'won',
+  'perdido': 'lost',
+  'perdida': 'lost',
+  'lost': 'lost',
+};
+
 // Columnas fallback para Leads (cuando no hay pipeline configurado)
 const FALLBACK_LEAD_COLUMNS: KanbanColumn[] = [
   { id: 'new', title: '🆕 Nuevo', color: '#3B82F6', status: 'new' as LeadStatus },
   { id: 'contacted', title: '📞 Contactar', color: '#8B5CF6', status: 'contacted' as LeadStatus },
   { id: 'standby', title: '🔄 Rellamar', color: '#F59E0B', status: 'standby' as LeadStatus },
-  { id: 'qualified', title: '✅ Cualificado', color: '#22C55E', status: 'qualified' as LeadStatus, isWon: true },
-  { id: 'discard', title: '❌ Descartado', color: '#EF4444', status: 'discard' as LeadStatus, isLost: true },
+  { id: 'qualified', title: '✅ Cualificado', color: '#22C55E', status: 'converted' as LeadStatus, isWon: true },
+  { id: 'discard', title: '❌ Descartado', color: '#EF4444', status: 'standby' as LeadStatus, isLost: true },
 ];
 
 // Columnas fallback para Negociaciones (cuando no hay pipeline configurado)
@@ -166,16 +210,20 @@ export default function CRMPipelinePage() {
   // Build columns from stages or fallback
   const columns = useMemo(() => {
     if (stages.length > 0) {
-      return stages.map(stage => ({
-        id: stage.id,
-        title: stage.name,
-        color: stage.color || '#3B82F6',
-        isWon: stage.is_won_stage ?? false,
-        isLost: stage.is_lost_stage ?? false,
-        probability: stage.probability,
-        status: stage.name.toLowerCase().replace(/\s+/g, '_') as LeadStatus,
-        stage: stage.name.toLowerCase().replace(/\s+/g, '_') as DealStage,
-      }));
+      return stages.map(stage => {
+        const normalizedName = stage.name.toLowerCase().replace(/\s+/g, ' ').trim();
+        return {
+          id: stage.id,
+          title: stage.name,
+          color: stage.color || '#3B82F6',
+          isWon: stage.is_won_stage ?? false,
+          isLost: stage.is_lost_stage ?? false,
+          probability: stage.probability,
+          // Usar mapeo para obtener el status/stage correcto del enum
+          status: STAGE_NAME_TO_STATUS[normalizedName] || 'new' as LeadStatus,
+          stage: STAGE_NAME_TO_DEAL_STAGE[normalizedName] || 'contacted' as DealStage,
+        };
+      });
     }
     return view === 'leads' ? FALLBACK_LEAD_COLUMNS : FALLBACK_DEAL_COLUMNS;
   }, [stages, view]);
@@ -248,9 +296,27 @@ export default function CRMPipelinePage() {
         return;
       }
 
-      if (lead.status !== targetCol.status) {
+      // Check if discarding (lost stage) - just move to standby
+      if (targetCol.isLost) {
         updateLeadStatus.mutate(
-          { leadId: lead.id, status: targetCol.status },
+          { leadId: lead.id, status: 'standby' },
+          { onSuccess: () => toast.info('Lead descartado') }
+        );
+        return;
+      }
+
+      // Validate status before updating
+      const validStatuses: LeadStatus[] = ['new', 'contacted', 'standby', 'converted'];
+      const newStatus = targetCol.status;
+      
+      if (!validStatuses.includes(newStatus)) {
+        toast.error(`Status no válido: ${newStatus}`);
+        return;
+      }
+
+      if (lead.status !== newStatus) {
+        updateLeadStatus.mutate(
+          { leadId: lead.id, status: newStatus },
           { onSuccess: () => toast.success(`Movido a ${targetCol.title}`) }
         );
       }
