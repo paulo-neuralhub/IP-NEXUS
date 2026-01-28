@@ -291,13 +291,34 @@ export default function CRMPipelinePage() {
 
     if (view === 'leads') {
       const lead = leads.find(l => l.id === itemId);
-      if (!lead) return;
+      if (!lead) {
+        console.log('[DragEnd] Lead not found:', itemId);
+        return;
+      }
 
-      // Check if converting to deal (won stage)
-      if (targetCol.isWon) {
+      // Normalize stage name for comparison (remove accents)
+      const normalizedStageName = targetCol.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim();
+      
+      // Check if this is a deal-like stage (propuesta, negociación) - should convert lead to deal
+      const dealLikeStages = ['propuesta', 'negociacion', 'proposal', 'negotiation'];
+      const isDealStage = dealLikeStages.some(s => normalizedStageName.includes(s));
+      
+      // Check if converting to deal (won stage OR deal-like stage)
+      if (targetCol.isWon || isDealStage) {
+        console.log('[DragEnd] Converting lead to deal - stage:', normalizedStageName);
         approveLead.mutate(
           { leadId: lead.id, dealTitle: `Oportunidad de ${lead.company_name || lead.contact_name}` },
-          { onSuccess: () => toast.success('Lead convertido a negociación') }
+          { 
+            onSuccess: () => {
+              toast.success('🚀 Lead convertido a negociación');
+              refetchLeads();
+              refetchDeals();
+            },
+            onError: (error) => {
+              console.error('[DragEnd] Error converting lead:', error);
+              toast.error('Error al convertir lead');
+            }
+          }
         );
         return;
       }
@@ -306,35 +327,61 @@ export default function CRMPipelinePage() {
       if (targetCol.isLost) {
         updateLeadStatus.mutate(
           { leadId: lead.id, status: 'standby' },
-          { onSuccess: () => toast.info('Lead descartado') }
+          { 
+            onSuccess: () => {
+              toast.info('Lead descartado');
+              refetchLeads();
+            }
+          }
         );
         return;
       }
 
-      // Normalize and validate status before updating
+      // Normalize and validate status before updating - ONLY basic lead statuses
       const validStatuses: LeadStatus[] = ['new', 'contacted', 'standby', 'converted'];
       
-      // Double-check: mapear el status por si no se mapeó correctamente
+      // Map stage names to valid lead statuses (NOT deal stages like propuesta/negociacion)
       const statusNormalizer: Record<string, LeadStatus> = {
         'new': 'new', 'nuevo': 'new',
         'contacted': 'contacted', 'contactado': 'contacted', 'contacto inicial': 'contacted',
-        'standby': 'standby', 'propuesta': 'standby', 'negociación': 'standby', 'negociacion': 'standby', 'rellamar': 'standby',
+        'standby': 'standby', 'rellamar': 'standby', 'recontactar': 'standby',
         'converted': 'converted', 'ganado': 'converted', 'cualificado': 'converted',
       };
       
       const rawStatus = targetCol.status as string;
-      const newStatus = statusNormalizer[rawStatus.toLowerCase()] || statusNormalizer[rawStatus] || 'new';
+      const statusFromCol = rawStatus ? statusNormalizer[rawStatus.toLowerCase()] : null;
+      const statusFromName = statusNormalizer[normalizedStageName];
+      const newStatus = statusFromCol || statusFromName || null;
       
-      if (!validStatuses.includes(newStatus)) {
-        toast.error(`Status no válido: ${rawStatus}`);
+      if (!newStatus || !validStatuses.includes(newStatus)) {
+        console.log('[DragEnd] Cannot map to valid lead status, converting to deal:', rawStatus, normalizedStageName);
+        // If can't map to valid lead status, convert to deal
+        approveLead.mutate(
+          { leadId: lead.id, dealTitle: `Oportunidad de ${lead.company_name || lead.contact_name}` },
+          { 
+            onSuccess: () => {
+              toast.success('🚀 Lead convertido a negociación');
+              refetchLeads();
+              refetchDeals();
+            }
+          }
+        );
         return;
       }
 
       if (lead.status !== newStatus) {
+        console.log('[DragEnd] Updating lead status from', lead.status, 'to', newStatus);
         updateLeadStatus.mutate(
           { leadId: lead.id, status: newStatus },
-          { onSuccess: () => toast.success(`Movido a ${targetCol.title}`) }
+          { 
+            onSuccess: () => {
+              toast.success(`Movido a ${targetCol.title}`);
+              refetchLeads();
+            }
+          }
         );
+      } else {
+        console.log('[DragEnd] Lead already has status:', newStatus);
       }
     } else {
       const deal = deals.find(d => d.id === itemId);
@@ -346,14 +393,27 @@ export default function CRMPipelinePage() {
       console.log('[DragEnd] Deal:', deal.name, 'current stage:', deal.stage, 'target stage:', targetCol.stage);
 
       if (targetCol.isWon) {
-        winDeal.mutate({ dealId: deal.id }, { onSuccess: () => toast.success('🎉 ¡Deal ganado!') });
+        winDeal.mutate(
+          { dealId: deal.id }, 
+          { 
+            onSuccess: () => {
+              toast.success('🎉 ¡Deal ganado!');
+              refetchDeals();
+            }
+          }
+        );
         return;
       }
 
       if (targetCol.isLost) {
         loseDeal.mutate(
           { dealId: deal.id, reason: 'Perdido' },
-          { onSuccess: () => toast.info('Deal marcado como perdido') }
+          { 
+            onSuccess: () => {
+              toast.info('Deal marcado como perdido');
+              refetchDeals();
+            }
+          }
         );
         return;
       }
@@ -367,9 +427,11 @@ export default function CRMPipelinePage() {
             onSuccess: () => {
               console.log('[DragEnd] Stage updated successfully');
               toast.success(`Movido a ${targetCol.title}`);
+              refetchDeals();
             },
             onError: (error) => {
               console.error('[DragEnd] Stage update error:', error);
+              toast.error('Error al actualizar etapa');
             }
           }
         );
