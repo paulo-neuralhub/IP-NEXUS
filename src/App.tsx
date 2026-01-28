@@ -369,6 +369,11 @@ const App = () => (
                   <Route path="deals/:id" element={<CRMV2DealDetail />} />
                   <Route path="settings" element={<CRMPipelinesPage />} />
                   <Route path="pipelines" element={<CRMPipelinesPage />} />
+                  <Route path="clients" element={<CRMV2AccountsList />} />
+                  <Route path="accounts" element={<Navigate to="/app/crm/clients" replace />} />
+                  <Route path="accounts/:id" element={<CRMV2AccountDetail />} />
+                  <Route path="clients/:id" element={<CRMV2AccountDetail />} />
+                  <Route path="contacts" element={<CRMV2ContactsList />} />
                   <Route path="activities" element={<CRMV2InteractionsList />} />
                   <Route path="interactions" element={<Navigate to="/app/crm/activities" replace />} />
                   <Route path="tasks" element={<CRMV2TasksList />} />
