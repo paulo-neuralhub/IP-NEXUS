@@ -4,7 +4,7 @@
  */
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { QuickLeadFormModal } from '@/components/features/crm/pipeline/QuickLeadFormModal';
 import { DealFormModal } from '@/components/features/crm/v2/DealFormModal';
 import { usePageTitle } from '@/contexts/page-context';
@@ -129,6 +129,7 @@ const FALLBACK_DEAL_COLUMNS: KanbanColumn[] = [
 
 export default function CRMPipelinePage() {
   usePageTitle('Kanban');
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { currentOrganization } = useOrganization();
   const { isDemoMode } = useIsDemoMode(currentOrganization?.id, currentOrganization?.slug);
@@ -690,7 +691,13 @@ export default function CRMPipelinePage() {
                       key={item.id}
                       item={item}
                       type={view}
-                      onClick={() => setSelectedItem(item)}
+                      onClick={() => {
+                        if (view === 'leads') {
+                          navigate(`/app/crm/leads/${item.id}`);
+                        } else {
+                          setSelectedItem(item);
+                        }
+                      }}
                     />
                   ))}
                 </PipelineKanbanColumn>
