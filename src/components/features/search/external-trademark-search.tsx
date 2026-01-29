@@ -17,6 +17,7 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const SOURCES = [
   { id: 'euipo' as TrademarkSource, name: 'EUIPO', color: '#003399' },
+  { id: 'oepm' as TrademarkSource, name: 'OEPM', color: '#C60C30' },
   { id: 'tmview' as TrademarkSource, name: 'TMView', color: '#00A651' },
   { id: 'wipo' as TrademarkSource, name: 'WIPO', color: '#0072BC' },
 ];
