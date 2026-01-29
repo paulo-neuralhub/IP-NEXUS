@@ -12340,6 +12340,7 @@ export type Database = {
       }
       deals: {
         Row: {
+          account_id: string | null
           actual_close_date: string | null
           assigned_to: string | null
           closed_at: string | null
@@ -12373,6 +12374,7 @@ export type Database = {
           won_reason: string | null
         }
         Insert: {
+          account_id?: string | null
           actual_close_date?: string | null
           assigned_to?: string | null
           closed_at?: string | null
@@ -12406,6 +12408,7 @@ export type Database = {
           won_reason?: string | null
         }
         Update: {
+          account_id?: string | null
           actual_close_date?: string | null
           assigned_to?: string | null
           closed_at?: string | null
@@ -12439,6 +12442,20 @@ export type Database = {
           won_reason?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
           {
             foreignKeyName: "deals_assigned_to_fkey"
             columns: ["assigned_to"]
@@ -24837,7 +24854,7 @@ export type Database = {
           status?: string | null
           task_id?: string | null
           title: string
-          trigger_date: string
+          trigger_date?: string
           updated_at?: string | null
         }
         Update: {
@@ -26677,6 +26694,7 @@ export type Database = {
       }
       matters: {
         Row: {
+          account_id: string | null
           applicant_id: string | null
           application_number: string | null
           assigned_to: string | null
@@ -26753,6 +26771,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
+          account_id?: string | null
           applicant_id?: string | null
           application_number?: string | null
           assigned_to?: string | null
@@ -26829,6 +26848,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
+          account_id?: string | null
           applicant_id?: string | null
           application_number?: string | null
           assigned_to?: string | null
@@ -26905,6 +26925,20 @@ export type Database = {
           updated_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "matters_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
           {
             foreignKeyName: "matters_applicant_id_fkey"
             columns: ["applicant_id"]
