@@ -76,6 +76,8 @@ import EditMatterPage from "./pages/app/expedientes/[id]/editar";
 import NewMatterPage from "./pages/app/expedientes/nuevo";
 // Calendario Unificado
 import CalendarioPage from "./pages/app/calendario";
+// Tareas Unificadas
+import TareasPage from "./pages/app/tareas";
 import CRMLayout from "./pages/app/crm/CRMLayout";
 import CRMV2Dashboard from "./pages/app/crm/v2/Dashboard";
 import CRMV2AccountsList from "./pages/app/crm/v2/accounts";
@@ -406,6 +408,8 @@ const App = () => (
                 <Route path="expedientes/:id/editar" element={<EditMatterPage />} />
                 {/* Calendario Unificado */}
                 <Route path="calendario" element={<CalendarioPage />} />
+                {/* Tareas Unificadas */}
+                <Route path="tareas" element={<TareasPage />} />
                 <Route path="market" element={<MarketLayout />}>
                   <Route index element={<MarketDashboard />} />
                   <Route path="listings" element={<MarketListings />} />

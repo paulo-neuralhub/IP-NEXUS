@@ -26704,6 +26704,7 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           currency: string | null
+          current_phase: string | null
           custom_fields: Json
           estimated_value: number | null
           expiry_date: string | null
@@ -26745,6 +26746,8 @@ export type Database = {
           official_fees: number | null
           organization_id: string
           owner_name: string | null
+          phase_history: Json | null
+          phase_started_at: string | null
           portfolio_id: string | null
           priority_country: string | null
           priority_date: string | null
@@ -26781,6 +26784,7 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
+          current_phase?: string | null
           custom_fields?: Json
           estimated_value?: number | null
           expiry_date?: string | null
@@ -26822,6 +26826,8 @@ export type Database = {
           official_fees?: number | null
           organization_id: string
           owner_name?: string | null
+          phase_history?: Json | null
+          phase_started_at?: string | null
           portfolio_id?: string | null
           priority_country?: string | null
           priority_date?: string | null
@@ -26858,6 +26864,7 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           currency?: string | null
+          current_phase?: string | null
           custom_fields?: Json
           estimated_value?: number | null
           expiry_date?: string | null
@@ -26899,6 +26906,8 @@ export type Database = {
           official_fees?: number | null
           organization_id?: string
           owner_name?: string | null
+          phase_history?: Json | null
+          phase_started_at?: string | null
           portfolio_id?: string | null
           priority_country?: string | null
           priority_date?: string | null
@@ -43265,6 +43274,80 @@ export type Database = {
           },
         ]
       }
+      workflow_phases: {
+        Row: {
+          code: string
+          color: string | null
+          created_at: string | null
+          default_tasks: Json | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          organization_id: string | null
+          position: number
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          color?: string | null
+          created_at?: string | null
+          default_tasks?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          organization_id?: string | null
+          position: number
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          default_tasks?: Json | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          organization_id?: string | null
+          position?: number
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_phases_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_phases_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "workflow_phases_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_phases_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       workflow_queue: {
         Row: {
           approval_requested_at: string | null
@@ -44575,6 +44658,15 @@ export type Database = {
           p_billing_cycle?: string
           p_organization_id: string
           p_pack_code: string
+        }
+        Returns: Json
+      }
+      advance_matter_phase: {
+        Args: {
+          p_matter_id: string
+          p_new_phase: string
+          p_notes?: string
+          p_user_id?: string
         }
         Returns: Json
       }
