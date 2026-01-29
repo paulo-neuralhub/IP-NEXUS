@@ -74,8 +74,8 @@ export function useCalendarEvents(startDate: Date, endDate: Date, filters: Event
             id,
             title,
             description,
-            due_date,
-            is_fatal,
+            deadline_date,
+            priority,
             deadline_type,
             status,
             matter_id,
@@ -87,8 +87,8 @@ export function useCalendarEvents(startDate: Date, endDate: Date, filters: Event
               crm_accounts(id, name)
             )
           `)
-          .gte('due_date', startDate.toISOString())
-          .lte('due_date', endDate.toISOString())
+          .gte('deadline_date', startDate.toISOString())
+          .lte('deadline_date', endDate.toISOString())
           .eq('status', 'pending');
         
         if (!deadlinesError && deadlines) {
@@ -97,7 +97,7 @@ export function useCalendarEvents(startDate: Date, endDate: Date, filters: Event
             let type: CalendarEvent['type'] = 'deadline';
             let color = EVENT_COLORS.deadline;
             
-            if (d.is_fatal) {
+            if (d.priority === 'fatal') {
               if (!filters.showDeadlinesFatal) return;
               type = 'deadline_fatal';
               color = EVENT_COLORS.deadline_fatal;
@@ -109,11 +109,11 @@ export function useCalendarEvents(startDate: Date, endDate: Date, filters: Event
               if (!filters.showDeadlines) return;
             }
             
-            const dueDate = new Date(d.due_date);
+            const dueDate = new Date(d.deadline_date);
             
             events.push({
               id: `deadline-${d.id}`,
-              title: d.is_fatal ? `⚠️ ${d.title}` : d.title,
+              title: d.priority === 'fatal' ? `⚠️ ${d.title}` : d.title,
               start: dueDate,
               end: dueDate,
               type,

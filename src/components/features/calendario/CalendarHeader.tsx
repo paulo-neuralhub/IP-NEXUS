@@ -16,6 +16,7 @@ interface CalendarHeaderProps {
   onDateChange: (date: Date) => void;
   onSettingsClick: () => void;
   onTodayClick: () => void;
+  onNewEvent: () => void;
 }
 
 export function CalendarHeader({
@@ -25,6 +26,7 @@ export function CalendarHeader({
   onDateChange,
   onSettingsClick,
   onTodayClick,
+  onNewEvent,
 }: CalendarHeaderProps) {
   const navigate = (direction: 'prev' | 'next') => {
     let newDate: Date;
@@ -124,8 +126,8 @@ export function CalendarHeader({
             <Settings className="h-4 w-4" />
           </Button>
           
-          {/* Crear evento - disabled por ahora */}
-          <Button disabled className="gap-2">
+          {/* Crear evento */}
+          <Button onClick={onNewEvent} className="gap-2">
             <Plus className="h-4 w-4" />
             Nuevo evento
           </Button>

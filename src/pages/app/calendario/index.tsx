@@ -3,7 +3,7 @@
 // ============================================
 
 import { useState, useMemo, useCallback } from 'react';
-import { Calendar, dateFnsLocalizer, Views, type View } from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer, Views, type View, type SlotInfo } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, startOfMonth, endOfMonth, addMonths, subMonths } from 'date-fns';
 import { es } from 'date-fns/locale';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -13,6 +13,7 @@ import { CalendarHeader } from '@/components/features/calendario/CalendarHeader'
 import { CalendarSidebar } from '@/components/features/calendario/CalendarSidebar';
 import { CalendarSettingsModal } from '@/components/features/calendario/CalendarSettingsModal';
 import { EventDetailSheet } from '@/components/features/calendario/EventDetailSheet';
+import { CreateEventModal } from '@/components/features/calendario/CreateEventModal';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // Localizer para español
@@ -99,6 +100,8 @@ export default function CalendarioPage() {
   const [filters, setFilters] = useState<EventFilters>(loadSavedFilters);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createModalDate, setCreateModalDate] = useState<Date>(new Date());
   
   // Calcular rango de fechas según la vista actual
   const dateRange = useMemo(() => {
@@ -130,6 +133,16 @@ export default function CalendarioPage() {
     setDate(new Date());
   }, []);
   
+  const handleNewEvent = useCallback(() => {
+    setCreateModalDate(date);
+    setCreateModalOpen(true);
+  }, [date]);
+  
+  const handleSelectSlot = useCallback((slotInfo: SlotInfo) => {
+    setCreateModalDate(slotInfo.start);
+    setCreateModalOpen(true);
+  }, []);
+  
   return (
     <div className="flex flex-col h-[calc(100vh-4rem)]">
       {/* Header */}
@@ -140,6 +153,7 @@ export default function CalendarioPage() {
         onDateChange={handleNavigate}
         onSettingsClick={() => setSettingsOpen(true)}
         onTodayClick={handleTodayClick}
+        onNewEvent={handleNewEvent}
       />
       
       <div className="flex flex-1 overflow-hidden">
@@ -170,6 +184,7 @@ export default function CalendarioPage() {
               date={date}
               onNavigate={handleNavigate}
               onSelectEvent={handleSelectEvent}
+              onSelectSlot={handleSelectSlot}
               eventPropGetter={eventStyleGetter}
               messages={calendarMessages}
               culture="es"
@@ -195,6 +210,13 @@ export default function CalendarioPage() {
         event={selectedEvent}
         open={!!selectedEvent}
         onClose={() => setSelectedEvent(null)}
+      />
+      
+      {/* Modal crear evento */}
+      <CreateEventModal
+        isOpen={createModalOpen}
+        onClose={() => setCreateModalOpen(false)}
+        defaultDate={createModalDate}
       />
     </div>
   );
