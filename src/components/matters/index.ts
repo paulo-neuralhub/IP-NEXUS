@@ -16,6 +16,7 @@ export { AddNoteModal } from './AddNoteModal';
 export { ScheduleMeetingModal } from './ScheduleMeetingModal';
 export { MatterQuickActionsBar } from './MatterQuickActionsBar';
 export { UnifiedMatterTimeline } from './UnifiedMatterTimeline';
+export { SendWhatsAppFromMatterModal } from './SendWhatsAppFromMatterModal';
 
 // Matter tabs
 export { MatterDocumentsTab } from './MatterDocumentsTab';

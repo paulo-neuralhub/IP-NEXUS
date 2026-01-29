@@ -37,6 +37,7 @@ import { AddNoteModal } from '@/components/matters/AddNoteModal';
 import { ScheduleMeetingModal } from '@/components/matters/ScheduleMeetingModal';
 import { MatterQuickActionsBar } from '@/components/matters/MatterQuickActionsBar';
 import { UnifiedMatterTimeline } from '@/components/matters/UnifiedMatterTimeline';
+import { SendWhatsAppFromMatterModal } from '@/components/matters/SendWhatsAppFromMatterModal';
 import { MatterChatModal } from '@/components/matters/MatterChatModal';
 import { WorkflowProgressBar } from '@/components/features/matters/WorkflowProgressBar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
