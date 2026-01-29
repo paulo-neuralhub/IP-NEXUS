@@ -60,6 +60,7 @@ export function useSendWhatsApp() {
       templateVariables?: Record<string, string>;
       contactId?: string;
       interactionId?: string;
+      matterId?: string; // Optional: link to matter for traceability
     }) => {
       if (!currentOrganization?.id) throw new Error('No organization');
 
@@ -73,6 +74,7 @@ export function useSendWhatsApp() {
           template_variables: params.templateVariables,
           contact_id: params.contactId,
           interaction_id: params.interactionId,
+          matter_id: params.matterId, // Pass to edge function for linking
         },
       });
 

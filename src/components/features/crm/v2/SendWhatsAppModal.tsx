@@ -35,9 +35,12 @@ interface SendWhatsAppModalProps {
     whatsapp_phone?: string | null;
     full_name: string;
   };
+  // Optional: Link to matter for traceability
+  matterId?: string;
+  matterReference?: string;
 }
 
-export function SendWhatsAppModal({ open, onOpenChange, contact }: SendWhatsAppModalProps) {
+export function SendWhatsAppModal({ open, onOpenChange, contact, matterId, matterReference }: SendWhatsAppModalProps) {
   const { currentOrganization } = useOrganization();
   const { data: templates = [] } = useWhatsAppTemplates();
   const sendWhatsApp = useSendWhatsApp();
@@ -107,6 +110,7 @@ export function SendWhatsAppModal({ open, onOpenChange, contact }: SendWhatsAppM
           templateCode: selectedTemplate,
           templateVariables,
           contactId: contact?.id,
+          matterId, // Link to matter for traceability
         },
         {
           onSuccess: () => {
@@ -122,8 +126,11 @@ export function SendWhatsAppModal({ open, onOpenChange, contact }: SendWhatsAppM
       {
         toPhone,
         messageType: 'text',
-        textContent,
+        textContent: matterReference 
+          ? `[${matterReference}] ${textContent}` // Prefix with matter reference
+          : textContent,
         contactId: contact?.id,
+        matterId, // Link to matter for traceability
       },
       {
         onSuccess: () => {
@@ -144,8 +151,13 @@ export function SendWhatsAppModal({ open, onOpenChange, contact }: SendWhatsAppM
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <MessageCircle className="h-5 w-5 text-primary" />
+            <MessageCircle className="h-5 w-5 text-[#25D366]" />
             Enviar WhatsApp
+            {matterReference && (
+              <Badge variant="outline" className="font-mono text-xs">
+                {matterReference}
+              </Badge>
+            )}
           </DialogTitle>
         </DialogHeader>
 

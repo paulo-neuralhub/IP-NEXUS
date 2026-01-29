@@ -139,6 +139,7 @@ export function MatterChatModal({
             messageType: 'text',
             textContent: fullMessage,
             contactId: clientId || undefined,
+            matterId, // Link to matter for traceability
           });
         }
       } else {
