@@ -695,7 +695,7 @@ export default function CRMPipelinePage() {
                         if (view === 'leads') {
                           navigate(`/app/crm/leads/${item.id}`);
                         } else {
-                          setSelectedItem(item);
+                          navigate(`/app/crm/deals/${item.id}`);
                         }
                       }}
                     />

@@ -2,6 +2,7 @@ export * from "./types";
 export * from "./accounts";
 export * from "./contacts";
 export * from "./deals";
+export * from "./deal";
 export * from "./interactions";
 export * from "./tasks";
 export * from "./ai";

@@ -90,6 +90,7 @@ import CRMKanbanPage from "./pages/app/crm/CRMKanbanPage";
 import CRMDashboardNew from "./pages/app/crm/CRMDashboardNew";
 import CRMPipelinePage from "./pages/app/crm/CRMPipelinePage";
 import CRMLeadDetailPage from "./pages/app/crm/leads/LeadDetailPage";
+import CRMDealDetailPage from "./pages/app/crm/deals/DealDetailPage";
 import MarketingLayout from "./pages/app/marketing/MarketingLayout";
 import MarketingDashboard from "./pages/app/marketing/MarketingDashboard";
 import TemplateList from "./pages/app/marketing/templates";
@@ -368,7 +369,7 @@ const App = () => (
                   <Route path="leads/:id" element={<CRMLeadDetailPage />} />
                   <Route path="deals" element={<Navigate to="/app/crm/kanban?view=deals" replace />} />
                   <Route path="negocios" element={<Navigate to="/app/crm/kanban?view=deals" replace />} />
-                  <Route path="deals/:id" element={<CRMV2DealDetail />} />
+                  <Route path="deals/:id" element={<CRMDealDetailPage />} />
                   <Route path="settings" element={<CRMPipelinesPage />} />
                   <Route path="pipelines" element={<CRMPipelinesPage />} />
                   <Route path="clients" element={<CRMV2AccountsList />} />
