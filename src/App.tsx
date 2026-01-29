@@ -175,6 +175,10 @@ import LegalDeadlinesPage from "./pages/app/settings/automations/legal-deadlines
 import ExecutionHistoryPage from "./pages/app/settings/automations/history";
 import ReportsPage from "./pages/app/reports";
 import NewReportPage from "./pages/app/reports/NewReport";
+// Reportes V2 (L94)
+import ReportesPage from "./pages/app/reportes";
+import ReporteExpedientesPage from "./pages/app/reportes/expedientes";
+import ReportePlazosPage from "./pages/app/reportes/plazos";
 import MyOfficesPage from "./pages/app/settings/offices";
 import SyncPreferencesPage from "./pages/app/settings/offices/sync";
 import SyncHistoryPage from "./pages/app/settings/offices/history";
@@ -475,6 +479,10 @@ const App = () => (
                 <Route path="alerts" element={<AlertsPage />} />
                 <Route path="alerts/settings" element={<AlertsSettingsPage />} />
                 <Route path="reports/new" element={<NewReportPage />} />
+                {/* Reportes V2 (L94) */}
+                <Route path="reportes" element={<ReportesPage />} />
+                <Route path="reportes/expedientes" element={<ReporteExpedientesPage />} />
+                <Route path="reportes/plazos" element={<ReportePlazosPage />} />
                 <Route path="help" element={<HelpLayout />}>
                   <Route index element={<HelpCenterIndex />} />
                   <Route path="articles" element={<HelpArticlesListPage />} />
