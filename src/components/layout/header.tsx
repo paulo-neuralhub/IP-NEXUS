@@ -8,7 +8,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
 import { usePageTitle } from "@/contexts/page-context";
-import { Bell, Menu, User, ChevronDown, Settings, LogOut, UserCircle } from "lucide-react";
+import { Menu, ChevronDown, Settings, LogOut, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -22,6 +22,7 @@ import { getInitials } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ModuleBadgesRow } from "@/components/modules/ModuleBadgesRow";
 import { NotificationBell } from "@/components/notifications";
+import { GlobalSearchTrigger } from "@/components/search";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -79,8 +80,18 @@ export function Header({ onMenuClick }: HeaderProps) {
             </div>
           </div>
 
+          {/* Center: Global Search */}
+          <div className="hidden flex-1 justify-center md:flex">
+            <GlobalSearchTrigger className="max-w-md" />
+          </div>
+
           {/* Right: Notifications + User */}
           <div className="flex items-center gap-2">
+            {/* Mobile search button */}
+            <div className="md:hidden">
+              <GlobalSearchTrigger variant="compact" />
+            </div>
+            
             {/* Notifications */}
             <NotificationBell />
 
