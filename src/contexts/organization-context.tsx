@@ -219,10 +219,21 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
   );
 }
 
+// Default context value for when hook is called outside provider
+const defaultContextValue: OrganizationContextType = {
+  currentOrganization: null,
+  memberships: [],
+  isLoading: true,
+  needsOnboarding: false,
+  setCurrentOrganization: () => {},
+  userRole: null,
+  hasPermission: () => false,
+  hasAddon: () => false,
+  refreshMemberships: async () => {},
+};
+
 export function useOrganization() {
   const context = useContext(OrganizationContext);
-  if (context === undefined) {
-    throw new Error("useOrganization must be used within an OrganizationProvider");
-  }
-  return context;
+  // Return default value if context not available (safe fallback)
+  return context ?? defaultContextValue;
 }

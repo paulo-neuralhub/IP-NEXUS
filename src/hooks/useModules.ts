@@ -5,8 +5,8 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useOrganization } from '@/hooks/useOrganization';
-import { useCallback, useMemo } from 'react';
+import { useOrganization as useOrganizationContext } from '@/contexts/organization-context';
+import { useCallback, useMemo, useContext } from 'react';
 import { toast } from 'sonner';
 import type {
   PlatformModule,
@@ -72,7 +72,7 @@ interface DBModuleLicense {
 // =============================================
 
 export function useModules() {
-  const { currentOrganization } = useOrganization();
+  const { currentOrganization } = useOrganizationContext();
   const queryClient = useQueryClient();
   const tenantId = currentOrganization?.id;
 
