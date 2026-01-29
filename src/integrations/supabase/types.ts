@@ -7671,12 +7671,21 @@ export type Database = {
       }
       communications: {
         Row: {
+          ai_action_items: Json | null
           ai_category: Database["public"]["Enums"]["comm_category"] | null
           ai_classified_at: string | null
+          ai_commitments: Json | null
           ai_confidence: number | null
+          ai_entities: Json | null
+          ai_key_dates: string[] | null
           ai_model: string | null
           ai_priority: number | null
+          ai_sentiment: number | null
+          ai_sentiment_label: string | null
           ai_subcategory: string | null
+          ai_summary: string | null
+          ai_topics: string[] | null
+          ai_urgency_score: number | null
           archived_at: string | null
           assigned_at: string | null
           assigned_to: string | null
@@ -7727,12 +7736,21 @@ export type Database = {
           whatsapp_type: string | null
         }
         Insert: {
+          ai_action_items?: Json | null
           ai_category?: Database["public"]["Enums"]["comm_category"] | null
           ai_classified_at?: string | null
+          ai_commitments?: Json | null
           ai_confidence?: number | null
+          ai_entities?: Json | null
+          ai_key_dates?: string[] | null
           ai_model?: string | null
           ai_priority?: number | null
+          ai_sentiment?: number | null
+          ai_sentiment_label?: string | null
           ai_subcategory?: string | null
+          ai_summary?: string | null
+          ai_topics?: string[] | null
+          ai_urgency_score?: number | null
           archived_at?: string | null
           assigned_at?: string | null
           assigned_to?: string | null
@@ -7783,12 +7801,21 @@ export type Database = {
           whatsapp_type?: string | null
         }
         Update: {
+          ai_action_items?: Json | null
           ai_category?: Database["public"]["Enums"]["comm_category"] | null
           ai_classified_at?: string | null
+          ai_commitments?: Json | null
           ai_confidence?: number | null
+          ai_entities?: Json | null
+          ai_key_dates?: string[] | null
           ai_model?: string | null
           ai_priority?: number | null
+          ai_sentiment?: number | null
+          ai_sentiment_label?: string | null
           ai_subcategory?: string | null
+          ai_summary?: string | null
+          ai_topics?: string[] | null
+          ai_urgency_score?: number | null
           archived_at?: string | null
           assigned_at?: string | null
           assigned_to?: string | null

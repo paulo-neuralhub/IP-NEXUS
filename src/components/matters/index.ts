@@ -18,6 +18,10 @@ export { MatterQuickActionsBar } from './MatterQuickActionsBar';
 export { UnifiedMatterTimeline } from './UnifiedMatterTimeline';
 export { SendWhatsAppFromMatterModal } from './SendWhatsAppFromMatterModal';
 
+// AI Analysis
+export { AIInsightsBadge, type AIAnalysis } from './AIInsightsBadge';
+export { MatterAISummary } from './MatterAISummary';
+
 // Matter tabs
 export { MatterDocumentsTab } from './MatterDocumentsTab';
 export { MatterDeadlinesTab } from './MatterDeadlinesTab';
