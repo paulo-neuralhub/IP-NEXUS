@@ -9,6 +9,7 @@ import { useIsMobile, useNetworkStatus, useViewportHeight } from "@/hooks/use-mo
 import { MobileBottomNav, OfflineBanner, PWAInstallPrompt } from "@/components/mobile";
 import { ContextualHelpProvider } from "@/components/help/ContextualHelpProvider";
 import { TrialBanner } from "@/components/upgrade/TrialBanner";
+import { AlertBanner } from "@/components/alerts/AlertBanner";
 import { NexusGuideButton } from "@/components/nexus-guide";
 import { GlobalTimer } from "@/components/timetracking";
 import { usePresence } from "@/hooks/use-realtime-collab";
@@ -126,6 +127,7 @@ export function AppLayout() {
                   onToggleCollapsed={() => setSidebarCollapsed(v => !v)}
                 />
                 <div className={sidebarCollapsed ? "ml-16" : "ml-64"}>
+                  <AlertBanner />
                   <TrialBanner />
                   <Header />
                   <main>

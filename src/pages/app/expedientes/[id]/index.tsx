@@ -34,6 +34,7 @@ import { MatterCommunicationsTab } from '@/components/matters/MatterCommunicatio
 import { EmailComposeModal } from '@/components/matters/EmailComposeModal';
 import { LogCallModal } from '@/components/matters/LogCallModal';
 import { MatterChatModal } from '@/components/matters/MatterChatModal';
+import { WorkflowProgressBar } from '@/components/features/matters/WorkflowProgressBar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
@@ -116,6 +117,13 @@ export default function MatterDetailPage() {
   
   return (
     <div className="p-6 space-y-6">
+      {/* Workflow Progress Bar - Metro Map */}
+      <WorkflowProgressBar
+        currentPhase={(matter as any).current_phase || 'F0'}
+        phaseHistory={(matter as any).phase_history || []}
+        className="mb-4"
+      />
+      
       {/* Header */}
       <div className="flex items-start justify-between">
         <div className="flex items-start gap-4">
