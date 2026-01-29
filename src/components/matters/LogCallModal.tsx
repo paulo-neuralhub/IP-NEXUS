@@ -1,9 +1,9 @@
 /**
- * LogCallModal - Modal mejorado para registrar llamada desde expediente
- * Con selector de resultado, tarea de seguimiento y campos condicionales
+ * LogCallModal - Modal mejorado para registrar llamada desde expediente o cliente
+ * Con selector de resultado, tarea de seguimiento, campos condicionales y selector de expediente
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -39,6 +39,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { MatterSelector } from '@/components/features/crm/shared/MatterSelector';
+import { MatterOption } from '@/hooks/use-matter-selector';
 import { useCreateCommunication } from '@/hooks/legal-ops/useCommunications';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
@@ -58,12 +60,18 @@ type FormData = z.infer<typeof schema>;
 interface LogCallModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  matterId: string;
+  // Contexto de expediente (cuando viene de MatterDetailPage)
+  matterId?: string;
   matterReference?: string;
+  // Contexto de cliente (cuando viene de Client360Page)
+  accountId?: string;
+  // Otros
   contactName?: string;
   contactPhone?: string;
   entityType?: 'matter' | 'client' | 'deal';
   entityName?: string;
+  // Control del selector
+  showMatterSelector?: boolean;
 }
 
 const OUTCOMES = [
@@ -80,15 +88,30 @@ const DURATION_PRESETS = [1, 5, 10, 15, 30, 45, 60];
 export function LogCallModal({
   open,
   onOpenChange,
-  matterId,
-  matterReference,
+  matterId: initialMatterId,
+  matterReference: initialMatterReference,
+  accountId,
   contactName,
   contactPhone,
   entityType = 'matter',
   entityName,
+  showMatterSelector = true,
 }: LogCallModalProps) {
   const { toast } = useToast();
   const createComm = useCreateCommunication();
+  
+  // State for matter selection (when coming from client context)
+  const [selectedMatterId, setSelectedMatterId] = useState<string | null>(initialMatterId || null);
+  const [selectedMatterReference, setSelectedMatterReference] = useState<string | null>(initialMatterReference || null);
+
+  // Handle matter selection change
+  const handleMatterChange = (matterId: string | null, matter: MatterOption | null) => {
+    setSelectedMatterId(matterId);
+    setSelectedMatterReference(matter?.reference || null);
+  };
+  
+  // Use either fixed matterId or selected one
+  const effectiveMatterId = initialMatterId || selectedMatterId;
   
   const form = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -102,6 +125,14 @@ export function LogCallModal({
       followUpDescription: '',
     },
   });
+
+  // Reset matter selection when modal opens
+  useEffect(() => {
+    if (open && !initialMatterId) {
+      setSelectedMatterId(null);
+      setSelectedMatterReference(null);
+    }
+  }, [open, initialMatterId]);
 
   const watchCreateFollowUp = form.watch('createFollowUp');
   const watchOutcome = form.watch('outcome');
@@ -128,7 +159,7 @@ export function LogCallModal({
       await createComm.mutateAsync({
         channel: 'phone',
         direction: data.direction,
-        matter_id: matterId,
+        matter_id: effectiveMatterId || undefined,
         subject: `Llamada ${data.direction === 'inbound' ? 'recibida' : 'realizada'}${contactName ? ` - ${contactName}` : ''}`,
         body: fullNotes,
       });
@@ -165,6 +196,28 @@ export function LogCallModal({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {/* Matter Selector - Solo si viene de contexto de cliente */}
+            {showMatterSelector && accountId && !initialMatterId && (
+              <MatterSelector
+                accountId={accountId}
+                value={selectedMatterId}
+                onChange={handleMatterChange}
+                showMatterSelector={true}
+              />
+            )}
+            
+            {/* Badge fijo si viene de expediente */}
+            {!showMatterSelector && initialMatterId && initialMatterReference && (
+              <MatterSelector
+                accountId={null}
+                value={initialMatterId}
+                onChange={() => {}}
+                showMatterSelector={false}
+                fixedMatterId={initialMatterId}
+                fixedMatterReference={initialMatterReference}
+              />
+            )}
+            
             {/* Direction and Outcome in grid */}
             <div className="grid grid-cols-2 gap-3">
               <FormField
@@ -356,9 +409,9 @@ export function LogCallModal({
 
             {/* Footer with entity badge */}
             <div className="flex items-center justify-between pt-2 border-t">
-              {(entityName || matterReference) && (
+              {(entityName || selectedMatterReference || initialMatterReference) && (
                 <Badge variant="outline" className="text-xs">
-                  📁 {entityType === 'matter' ? 'Expediente' : entityType === 'client' ? 'Cliente' : 'Deal'}: {entityName || matterReference}
+                  📁 {entityType === 'matter' ? 'Expediente' : entityType === 'client' ? 'Cliente' : 'Deal'}: {entityName || selectedMatterReference || initialMatterReference}
                 </Badge>
               )}
               

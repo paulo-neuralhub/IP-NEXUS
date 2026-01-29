@@ -1,6 +1,6 @@
 /**
- * EmailComposeModal - Modal mejorado para componer email desde expediente
- * Con selector de plantillas, CC/BCC, formato y firma
+ * EmailComposeModal - Modal mejorado para componer email desde expediente o cliente
+ * Con selector de plantillas, CC/BCC, formato, firma y selector de expediente
  */
 
 import { useState, useEffect } from 'react';
@@ -38,6 +38,9 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
+import { MatterSelector } from '@/components/features/crm/shared/MatterSelector';
+import { MatterOption } from '@/hooks/use-matter-selector';
+import { addReferenceToSubject } from '@/lib/matter-reference';
 import { useCreateCommunication } from '@/hooks/legal-ops/useCommunications';
 import { useToast } from '@/hooks/use-toast';
 import { useOrganization } from '@/contexts/organization-context';
@@ -58,13 +61,19 @@ type FormData = z.infer<typeof schema>;
 interface EmailComposeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  matterId: string;
+  // Contexto de expediente (cuando viene de MatterDetailPage)
+  matterId?: string;
   matterTitle?: string;
   matterReference?: string;
+  // Contexto de cliente (cuando viene de Client360Page)
+  accountId?: string;
+  // Otros
   recipientEmail?: string;
   recipientName?: string;
   entityType?: 'matter' | 'client' | 'deal';
   entityName?: string;
+  // Control del selector
+  showMatterSelector?: boolean;
 }
 
 // Mock templates - in production, fetch from API
@@ -78,13 +87,15 @@ const EMAIL_TEMPLATES = [
 export function EmailComposeModal({
   open,
   onOpenChange,
-  matterId,
+  matterId: initialMatterId,
   matterTitle,
-  matterReference,
+  matterReference: initialMatterReference,
+  accountId,
   recipientEmail,
   recipientName,
   entityType = 'matter',
   entityName,
+  showMatterSelector = true,
 }: EmailComposeModalProps) {
   const { toast } = useToast();
   const { currentOrganization } = useOrganization();
@@ -93,8 +104,28 @@ export function EmailComposeModal({
   const [showCcBcc, setShowCcBcc] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   
+  // State for matter selection (when coming from client context)
+  const [selectedMatterId, setSelectedMatterId] = useState<string | null>(initialMatterId || null);
+  const [selectedMatterReference, setSelectedMatterReference] = useState<string | null>(initialMatterReference || null);
+
+  // Handle matter selection change
+  const handleMatterChange = (matterId: string | null, matter: MatterOption | null) => {
+    setSelectedMatterId(matterId);
+    setSelectedMatterReference(matter?.reference || null);
+    
+    // Update subject with new reference if needed
+    const currentSubject = form.getValues('subject');
+    if (matter?.reference && currentSubject) {
+      form.setValue('subject', addReferenceToSubject(currentSubject, matter.reference));
+    }
+  };
+  
+  // Use either fixed matterId or selected one
+  const effectiveMatterId = initialMatterId || selectedMatterId;
+  const effectiveMatterReference = initialMatterReference || selectedMatterReference;
+  
   // Build default subject with reference
-  const referenceStamp = matterReference ? `[REF: ${matterReference}]` : '';
+  const referenceStamp = effectiveMatterReference ? `[${effectiveMatterReference}]` : '';
   const defaultSubject = matterTitle 
     ? `${referenceStamp} RE: ${matterTitle}`.trim() 
     : referenceStamp;
@@ -131,8 +162,13 @@ export function EmailComposeModal({
       });
       setSelectedTemplate('');
       setShowCcBcc(false);
+      // Reset matter selection if not fixed
+      if (!initialMatterId) {
+        setSelectedMatterId(null);
+        setSelectedMatterReference(null);
+      }
     }
-  }, [open, recipientEmail, defaultSubject]);
+  }, [open, recipientEmail, defaultSubject, initialMatterId]);
 
   const handleTemplateChange = (templateId: string) => {
     setSelectedTemplate(templateId);
@@ -163,7 +199,7 @@ export function EmailComposeModal({
       await createComm.mutateAsync({
         channel: 'email',
         direction: 'outbound',
-        matter_id: matterId,
+        matter_id: effectiveMatterId || undefined,
         email_to: [data.to],
         subject: finalSubject,
         body: bodyWithSignature,
@@ -214,6 +250,28 @@ export function EmailComposeModal({
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            {/* Matter Selector - Solo si viene de contexto de cliente */}
+            {showMatterSelector && accountId && !initialMatterId && (
+              <MatterSelector
+                accountId={accountId}
+                value={selectedMatterId}
+                onChange={handleMatterChange}
+                showMatterSelector={true}
+              />
+            )}
+            
+            {/* Badge fijo si viene de expediente */}
+            {!showMatterSelector && initialMatterId && initialMatterReference && (
+              <MatterSelector
+                accountId={null}
+                value={initialMatterId}
+                onChange={() => {}}
+                showMatterSelector={false}
+                fixedMatterId={initialMatterId}
+                fixedMatterReference={initialMatterReference}
+              />
+            )}
+            
             {/* To field */}
             <FormField
               control={form.control}
@@ -377,9 +435,9 @@ export function EmailComposeModal({
                 </Button>
                 
                 {/* Entity badge */}
-                {(entityName || matterReference) && (
+                {(entityName || effectiveMatterReference) && (
                   <Badge variant="outline" className="text-xs">
-                    📁 {entityType === 'matter' ? 'Expediente' : entityType === 'client' ? 'Cliente' : 'Deal'}: {entityName || matterReference}
+                    📁 {entityType === 'matter' ? 'Expediente' : entityType === 'client' ? 'Cliente' : 'Deal'}: {entityName || effectiveMatterReference}
                   </Badge>
                 )}
               </div>
