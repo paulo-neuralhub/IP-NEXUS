@@ -298,6 +298,8 @@ import KycVerificationPage from "./pages/app/market/kyc/[type]";
 // Portal Pages (Client Portal)
 import PortalIndex from "./pages/portal/PortalIndex";
 import PortalLogin from "./pages/portal/PortalLogin";
+import PortalResetPassword from "./pages/portal/PortalResetPassword";
+import PortalUpdatePassword from "./pages/portal/PortalUpdatePassword";
 import PortalLayout from "./components/portal/PortalLayout";
 import PortalDashboard from "./pages/portal/PortalDashboard";
 import PortalMatters from "./pages/portal/PortalMatters";
@@ -653,6 +655,8 @@ const App = () => (
               {/* CLIENT PORTAL - Public facing for external clients */}
               <Route path="/portal" element={<PortalIndex />} />
               <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLogin /></PortalAuthProvider>} />
+              <Route path="/portal/:slug/reset-password" element={<PortalResetPassword />} />
+              <Route path="/portal/:slug/update-password" element={<PortalUpdatePassword />} />
               <Route path="/portal/:slug" element={<PortalAuthProvider><PortalLayout /></PortalAuthProvider>}>
                 <Route path="dashboard" element={<PortalDashboard />} />
                 <Route path="matters" element={<PortalMatters />} />

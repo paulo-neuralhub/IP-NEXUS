@@ -219,8 +219,8 @@ export default function PortalLogin() {
         <Card className="w-full max-w-md">
           <CardContent className="pt-8 pb-6">
             <div className="text-center space-y-4">
-              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                <CheckCircle className="w-8 h-8 text-green-600" />
+              <div className="mx-auto w-16 h-16 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                <CheckCircle className="w-8 h-8 text-emerald-600" />
               </div>
               <h2 className="text-xl font-semibold">{t('portal.login.check_email')}</h2>
               <p className="text-muted-foreground">
@@ -325,6 +325,16 @@ export default function PortalLogin() {
         </CardContent>
 
         <CardFooter className="flex-col gap-3 text-center text-xs text-muted-foreground">
+          {/* Forgot Password Link */}
+          <Button 
+            type="button" 
+            variant="link" 
+            className="text-sm" 
+            onClick={() => navigate(`/portal/${slug}/reset-password`)}
+          >
+            ¿Olvidaste tu contraseña?
+          </Button>
+          
           {/* Demo Mode Button */}
           <Button 
             type="button" 
