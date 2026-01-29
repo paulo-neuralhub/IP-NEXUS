@@ -2,6 +2,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { euipoService, type EUIPOSearchResult } from '@/lib/services/euipo-service';
 import { tmviewService, type TMViewSearchResult } from '@/lib/services/tmview-service';
 import { wipoService, type WIPOSearchResult } from '@/lib/services/wipo-service';
+import { oepmService, type OEPMSearchResult, type OEPMTrademark } from '@/lib/services/oepm-service';
 
 // ===== EUIPO =====
 export function useEUIPOSearch(params: {
@@ -95,8 +96,40 @@ export function useWIPOCalculateFees() {
   });
 }
 
+// ===== OEPM =====
+export function useOEPMSearch(params: {
+  query?: string;
+  nice_classes?: number[];
+  enabled?: boolean;
+}) {
+  return useQuery({
+    queryKey: ['oepm-search', params.query, params.nice_classes],
+    queryFn: () => oepmService.searchTrademarks({
+      trademark_name: params.query,
+      nice_classes: params.nice_classes,
+    }),
+    enabled: params.enabled !== false && !!params.query,
+  });
+}
+
+export function useOEPMDetails(applicationNumber: string) {
+  return useQuery({
+    queryKey: ['oepm-details', applicationNumber],
+    queryFn: () => oepmService.getTrademarkDetails(applicationNumber),
+    enabled: !!applicationNumber,
+  });
+}
+
+export function useOEPMConflictCheck(markName: string, niceClasses: number[]) {
+  return useQuery({
+    queryKey: ['oepm-conflicts', markName, niceClasses],
+    queryFn: () => oepmService.checkConflicts(markName, niceClasses),
+    enabled: !!markName && niceClasses.length > 0,
+  });
+}
+
 // ===== BÚSQUEDA UNIFICADA =====
-export type TrademarkSource = 'euipo' | 'tmview' | 'wipo';
+export type TrademarkSource = 'euipo' | 'tmview' | 'wipo' | 'oepm';
 
 export interface UnifiedTrademarkResult {
   source: TrademarkSource;
@@ -143,8 +176,14 @@ export function useUnifiedTrademarkSearch(params: {
     enabled: sources.includes('wipo'),
   });
   
-  const isLoading = euipo.isLoading || tmview.isLoading || wipo.isLoading;
-  const error = euipo.error || tmview.error || wipo.error;
+  const oepm = useOEPMSearch({
+    query: params.query,
+    nice_classes: params.nice_classes,
+    enabled: sources.includes('oepm'),
+  });
+  
+  const isLoading = euipo.isLoading || tmview.isLoading || wipo.isLoading || oepm.isLoading;
+  const error = euipo.error || tmview.error || wipo.error || oepm.error;
   
   // Combinar y deduplicar resultados
   const results: UnifiedTrademarkResult[] = [
@@ -160,6 +199,10 @@ export function useUnifiedTrademarkSearch(params: {
       mark_name: m.mark_name,
       applicant_name: m.holder_name,
     })) || []),
+    ...(oepm.data?.trademarks?.map(t => ({ 
+      ...t, 
+      source: 'oepm' as const,
+    })) || []),
   ];
   
   return {
@@ -170,6 +213,7 @@ export function useUnifiedTrademarkSearch(params: {
       euipo: euipo.data as EUIPOSearchResult | undefined,
       tmview: tmview.data as TMViewSearchResult | undefined,
       wipo: wipo.data as WIPOSearchResult | undefined,
+      oepm: oepm.data as OEPMSearchResult | undefined,
     },
   };
 }
