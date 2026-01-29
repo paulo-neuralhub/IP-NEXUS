@@ -3,12 +3,13 @@
  */
 
 import { useState } from 'react';
-import { FileText, Upload, Download, Trash2, Eye, Plus, File } from 'lucide-react';
+import { FileText, Upload, Download, Trash2, Eye, Plus, File, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useMatterDocuments, useDeleteMatterDocument } from '@/hooks/use-matter-documents';
 import { DocumentUploader } from '@/components/features/documents/DocumentUploader';
+import { GenerateDocumentModal } from '@/components/documents/GenerateDocumentModal';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -35,10 +36,12 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 
 interface MatterDocumentsTabProps {
   matterId: string;
+  matterReference?: string;
 }
 
-export function MatterDocumentsTab({ matterId }: MatterDocumentsTabProps) {
+export function MatterDocumentsTab({ matterId, matterReference }: MatterDocumentsTabProps) {
   const [showUploader, setShowUploader] = useState(false);
+  const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const { toast } = useToast();
   
@@ -70,10 +73,16 @@ export function MatterDocumentsTab({ matterId }: MatterDocumentsTabProps) {
             <Badge variant="secondary">{documents.length}</Badge>
           )}
         </CardTitle>
-        <Button size="sm" onClick={() => setShowUploader(!showUploader)}>
-          <Plus className="h-4 w-4 mr-1" />
-          Subir documento
-        </Button>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={() => setShowGenerateModal(true)}>
+            <Sparkles className="h-4 w-4 mr-1" />
+            Generar documento
+          </Button>
+          <Button size="sm" onClick={() => setShowUploader(!showUploader)}>
+            <Plus className="h-4 w-4 mr-1" />
+            Subir
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         {/* Uploader */}
@@ -169,6 +178,14 @@ export function MatterDocumentsTab({ matterId }: MatterDocumentsTabProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Generate Document Modal */}
+      <GenerateDocumentModal
+        open={showGenerateModal}
+        onOpenChange={setShowGenerateModal}
+        matterId={matterId}
+        matterReference={matterReference}
+      />
     </Card>
   );
 }

@@ -153,6 +153,7 @@ import DocumentTemplateBrandingPage from "./pages/app/settings/templates/brandin
 import DocumentTemplateListPage from "./pages/app/settings/templates/[type]";
 import DocumentTemplateEditPage from "./pages/app/settings/templates/[id]/edit";
 import GenerateDocumentPage from "./pages/app/genius/templates/generate";
+import TemplateEditorPage from "./pages/app/genius/templates/editor";
 import DocumentViewPage from "./pages/app/genius/templates/document-view";
 import GeniusAnalysisPage from "./pages/app/genius/analysis";
 import GeniusDocumentsGenPage from "./pages/app/genius/documents-gen";
@@ -450,7 +451,9 @@ const App = () => (
                   <Route path="translator" element={<TranslatorPage />} />
                   <Route path="documents" element={<GeniusDocumentsPage />} />
                   <Route path="templates" element={<DocumentTemplatesPage />} />
-                  <Route path="templates/generate/:templateId" element={<GenerateDocumentPage />} />
+                  <Route path="templates/new" element={<TemplateEditorPage />} />
+                  <Route path="templates/edit/:id" element={<TemplateEditorPage />} />
+                  <Route path="templates/generate/:id" element={<GenerateDocumentPage />} />
                   <Route path="templates/view/:documentId" element={<DocumentViewPage />} />
                 </Route>
                 <Route path="finance" element={<FinanceLayout />}>
