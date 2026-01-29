@@ -33,6 +33,10 @@ import { MatterInvoicesTab } from '@/components/matters/MatterInvoicesTab';
 import { MatterCommunicationsTab } from '@/components/matters/MatterCommunicationsTab';
 import { EmailComposeModal } from '@/components/matters/EmailComposeModal';
 import { LogCallModal } from '@/components/matters/LogCallModal';
+import { AddNoteModal } from '@/components/matters/AddNoteModal';
+import { ScheduleMeetingModal } from '@/components/matters/ScheduleMeetingModal';
+import { MatterQuickActionsBar } from '@/components/matters/MatterQuickActionsBar';
+import { UnifiedMatterTimeline } from '@/components/matters/UnifiedMatterTimeline';
 import { MatterChatModal } from '@/components/matters/MatterChatModal';
 import { WorkflowProgressBar } from '@/components/features/matters/WorkflowProgressBar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
@@ -58,6 +62,8 @@ export default function MatterDetailPage() {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [showMeetingModal, setShowMeetingModal] = useState(false);
   
   const { data: matter, isLoading, error } = useMatterV2(id!);
   const { data: filings } = useMatterFilings(id!);
@@ -122,6 +128,19 @@ export default function MatterDetailPage() {
         currentPhase={(matter as any).current_phase || 'F0'}
         phaseHistory={(matter as any).phase_history || []}
         className="mb-4"
+      />
+      
+      {/* Quick Actions Bar - L98 */}
+      <MatterQuickActionsBar
+        matterId={id!}
+        matterReference={matter.matter_number}
+        accountId={matter.client_id}
+        accountName={matter.client_name}
+        onEmailClick={() => setShowEmailModal(true)}
+        onCallClick={() => setShowCallModal(true)}
+        onWhatsAppClick={() => setShowWhatsAppModal(true)}
+        onNoteClick={() => setShowNoteModal(true)}
+        onMeetingClick={() => setShowMeetingModal(true)}
       />
       
       {/* Header */}
@@ -687,6 +706,20 @@ export default function MatterDetailPage() {
         clientName={matter?.client_name}
         clientPhone={matter?.client_phone}
         clientEmail={matter?.client_email}
+      />
+      
+      <AddNoteModal
+        open={showNoteModal}
+        onOpenChange={setShowNoteModal}
+        matterId={id!}
+        matterReference={matter?.matter_number}
+      />
+      
+      <ScheduleMeetingModal
+        open={showMeetingModal}
+        onOpenChange={setShowMeetingModal}
+        matterId={id!}
+        matterReference={matter?.matter_number}
       />
     </div>
   );

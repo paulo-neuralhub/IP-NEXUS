@@ -12,6 +12,10 @@ export { MatterCommunications } from './MatterCommunications';
 export { MatterCommunicationsTab } from './MatterCommunicationsTab';
 export { EmailComposeModal } from './EmailComposeModal';
 export { LogCallModal } from './LogCallModal';
+export { AddNoteModal } from './AddNoteModal';
+export { ScheduleMeetingModal } from './ScheduleMeetingModal';
+export { MatterQuickActionsBar } from './MatterQuickActionsBar';
+export { UnifiedMatterTimeline } from './UnifiedMatterTimeline';
 
 // Matter tabs
 export { MatterDocumentsTab } from './MatterDocumentsTab';
