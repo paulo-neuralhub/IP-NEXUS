@@ -1,11 +1,12 @@
 // ============================================
 // src/components/ui/collapsible-section.tsx
-// Sección colapsable reutilizable tipo Bitrix24
+// Sección colapsable reutilizable con colores por tipo
 // ============================================
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { sectionColors, type SectionColorScheme } from '@/lib/section-colors';
 
 interface CollapsibleSectionProps {
   title: string;
@@ -15,6 +16,7 @@ interface CollapsibleSectionProps {
   badge?: React.ReactNode;
   className?: string;
   headerClassName?: string;
+  colorScheme?: SectionColorScheme;
   children: React.ReactNode;
 }
 
@@ -26,24 +28,33 @@ export function CollapsibleSection({
   badge,
   className,
   headerClassName,
+  colorScheme,
   children 
 }: CollapsibleSectionProps) {
   const [open, setOpen] = useState(defaultOpen);
+  const colors = colorScheme ? sectionColors[colorScheme] : null;
   
   return (
-    <div className={cn("border rounded-lg bg-card", className)}>
+    <div className={cn(
+      "border rounded-lg bg-card overflow-hidden",
+      colors?.border,
+      className
+    )}>
       <button
         type="button"
         onClick={() => setOpen(!open)}
         className={cn(
-          "w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors rounded-t-lg",
-          !open && "rounded-b-lg",
+          "w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors",
+          open && colors?.bg,
           headerClassName
         )}
       >
         <div className="flex items-center gap-2">
           {icon && (
-            <span className="text-muted-foreground">
+            <span className={cn(
+              "flex-shrink-0",
+              colors?.icon || "text-muted-foreground"
+            )}>
               {icon}
             </span>
           )}
@@ -66,7 +77,7 @@ export function CollapsibleSection({
       </button>
       
       {open && (
-        <div className="p-3 pt-0 border-t">
+        <div className="p-3 pt-2 border-t">
           {children}
         </div>
       )}
