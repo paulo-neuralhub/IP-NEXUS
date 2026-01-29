@@ -14,11 +14,12 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { CollapsibleSection } from '@/components/ui/collapsible-section';
 import {
   Building2, Mail, Phone, Calendar, User, Star,
   AlertTriangle, Briefcase, Clock,
   ArrowLeft, Plus, Receipt, Users, Wallet, PenLine,
-  MessageCircle, MessageSquare
+  MessageCircle, MessageSquare, Edit, Globe
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -167,108 +168,143 @@ export function Client360Page({ clientId }: Client360PageProps) {
               </TabsList>
 
               {/* TAB: GENERAL */}
-              <TabsContent value="general" className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {/* Company Data */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <Building2 className="w-4 h-4" />
-                        Datos de Empresa
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2 text-sm">
-                      {client.tax_id && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">CIF/NIF</span>
-                          <span className="font-medium">{client.tax_id}</span>
-                        </div>
-                      )}
-                      {client.email && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Email</span>
-                          <a href={`mailto:${client.email}`} className="font-medium text-primary hover:underline">
-                            {client.email}
-                          </a>
-                        </div>
-                      )}
-                      {client.phone && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Teléfono</span>
-                          <a href={`tel:${client.phone}`} className="font-medium hover:underline">
-                            {client.phone}
-                          </a>
-                        </div>
-                      )}
-                      {client.address_line1 && (
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground">Dirección</span>
-                          <span className="font-medium text-right">
-                            {client.address_line1}
-                            {client.city && `, ${client.city}`}
-                          </span>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
+              <TabsContent value="general" className="space-y-3">
+                {/* Datos de Empresa */}
+                <CollapsibleSection
+                  title="Datos de Empresa"
+                  icon={<Building2 className="w-4 h-4" />}
+                  actions={
+                    <Button size="sm" variant="ghost" className="h-6 px-2">
+                      <Edit className="w-3 h-3" />
+                    </Button>
+                  }
+                >
+                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm pt-2">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Nombre</span>
+                      <span className="font-medium">{client.display_name || client.company_name}</span>
+                    </div>
+                    {client.tax_id && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">CIF/NIF</span>
+                        <span className="font-medium">{client.tax_id}</span>
+                      </div>
+                    )}
+                    {client.email && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Email</span>
+                        <a href={`mailto:${client.email}`} className="font-medium text-primary hover:underline">
+                          {client.email}
+                        </a>
+                      </div>
+                    )}
+                    {client.phone && (
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Teléfono</span>
+                        <a href={`tel:${client.phone}`} className="font-medium hover:underline">
+                          {client.phone}
+                        </a>
+                      </div>
+                    )}
+                    {client.address_line1 && (
+                      <div className="flex justify-between col-span-2">
+                        <span className="text-muted-foreground">Dirección</span>
+                        <span className="font-medium text-right">
+                          {client.address_line1}
+                          {client.city && `, ${client.city}`}
+                          {client.country && ` (${client.country})`}
+                        </span>
+                      </div>
+                    )}
+                    {crmAccount?.website && (
+                      <div className="flex justify-between col-span-2">
+                        <span className="text-muted-foreground">Web</span>
+                        <a 
+                          href={crmAccount.website.startsWith('http') ? crmAccount.website : `https://${crmAccount.website}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="font-medium text-primary hover:underline flex items-center gap-1"
+                        >
+                          <Globe className="w-3 h-3" />
+                          {crmAccount.website}
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </CollapsibleSection>
 
-                  {/* Financial Summary */}
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <Wallet className="w-4 h-4" />
-                        Resumen Financiero
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="space-y-2 text-sm">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Total facturado</span>
-                        <span className="font-medium">€0</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Cobrado</span>
-                        <span className="font-medium text-emerald-600 dark:text-emerald-400">€0</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Pendiente</span>
-                        <span className="font-medium text-amber-600 dark:text-amber-400">€0</span>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                {/* Resumen Financiero */}
+                <CollapsibleSection
+                  title="Resumen Financiero"
+                  icon={<Wallet className="w-4 h-4" />}
+                  defaultOpen={false}
+                  badge={
+                    <Badge variant="outline" className="h-5 text-xs ml-2">
+                      €0 pendiente
+                    </Badge>
+                  }
+                >
+                  <div className="grid grid-cols-3 gap-4 pt-2">
+                    <div className="text-center p-3 bg-muted/30 rounded-lg">
+                      <p className="text-lg font-semibold">€0</p>
+                      <p className="text-xs text-muted-foreground">Facturado</p>
+                    </div>
+                    <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                      <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">€0</p>
+                      <p className="text-xs text-muted-foreground">Cobrado</p>
+                    </div>
+                    <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
+                      <p className="text-lg font-semibold text-amber-600 dark:text-amber-400">€0</p>
+                      <p className="text-xs text-muted-foreground">Pendiente</p>
+                    </div>
+                  </div>
+                </CollapsibleSection>
 
-                {/* Alerts & Critical Docs */}
+                {/* Alertas Activas */}
                 {alerts.length > 0 && (
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <CardTitle className="text-sm flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 text-amber-500" />
-                        Alertas Activas ({alerts.length})
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
+                  <CollapsibleSection
+                    title="Alertas Activas"
+                    icon={<AlertTriangle className="w-4 h-4 text-amber-500" />}
+                    badge={
+                      <Badge variant="destructive" className="h-5 text-xs ml-2">
+                        {alerts.length}
+                      </Badge>
+                    }
+                  >
+                    <div className="pt-2">
                       <ClientAlerts alerts={alerts} />
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </CollapsibleSection>
                 )}
 
-                {/* Internal Notes */}
-                <Card>
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-sm flex items-center gap-2">
-                      <PenLine className="w-4 h-4" />
-                      Notas Internas
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-muted-foreground">
-                      {client.notes || 'Sin notas internas'}
+                {/* Notas Internas */}
+                <CollapsibleSection
+                  title="Notas Internas"
+                  icon={<PenLine className="w-4 h-4" />}
+                  actions={
+                    <Button size="sm" variant="ghost" className="h-6 px-2">
+                      <Edit className="w-3 h-3" />
+                    </Button>
+                  }
+                  defaultOpen={!!client.notes}
+                >
+                  <div className="pt-2">
+                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                      {client.notes || 'Sin notas internas. Haz clic en editar para añadir.'}
                     </p>
-                  </CardContent>
-                </Card>
+                  </div>
+                </CollapsibleSection>
 
-                {/* Relationships */}
-                <ClientRelationshipsSection clientId={clientId} />
+                {/* Relaciones */}
+                <CollapsibleSection
+                  title="Relaciones"
+                  icon={<Users className="w-4 h-4" />}
+                  defaultOpen={false}
+                >
+                  <div className="pt-2">
+                    <ClientRelationshipsSection clientId={clientId} />
+                  </div>
+                </CollapsibleSection>
               </TabsContent>
 
               {/* TAB: CONTACTS */}
