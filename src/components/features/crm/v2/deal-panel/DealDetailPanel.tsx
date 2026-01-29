@@ -24,6 +24,7 @@ import type { CRMPipelineStage } from "@/hooks/crm/v2/pipelines";
 import { DealTasksSection } from "./DealTasksSection";
 import { QuickActivityDialog } from "./QuickActivityDialog";
 import { StageBadge } from "./StageBadge";
+import { PipelineProgressBar } from "@/components/features/crm/shared/PipelineProgressBar";
 
 type Deal = {
   id: string;
@@ -115,12 +116,42 @@ export function DealDetailPanel({
                 disabled={updateDeal.isPending}
               />
 
-              <div className="mt-2 flex flex-wrap items-center gap-2">
-                <StageBadge label={deal.stage ?? stage?.name ?? "—"} stage={stage} />
-                {deal.expected_close_date ? (
-                  <span className="text-xs text-muted-foreground">Cierre: {deal.expected_close_date}</span>
-                ) : null}
-              </div>
+              {deal.expected_close_date ? (
+                <p className="text-xs text-muted-foreground mt-1">Cierre estimado: {deal.expected_close_date}</p>
+              ) : null}
+            </div>
+          </div>
+
+          {/* Pipeline Progress Bar */}
+          <div className="mt-3 -mx-5 px-5 py-2 bg-muted/30 border-y">
+            <PipelineProgressBar
+              stages={stages}
+              currentStageId={deal.stage_id ?? ""}
+              onStageClick={async (stageId) => {
+                if (stageId !== deal.stage_id) {
+                  await updateDeal.mutateAsync({ id: deal.id, data: { stage_id: stageId } as any });
+                }
+              }}
+            />
+          </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground">Valor</p>
+              <Input
+                value={amountDraft}
+                onChange={(e) => setAmountDraft(e.target.value)}
+                onBlur={() => {
+                  const parsed = amountDraft.trim() ? Number(amountDraft) : null;
+                  if (Number.isNaN(parsed as any)) return;
+                  if ((deal.amount ?? null) !== (parsed as any)) commitInline({ amount: parsed as any });
+                }}
+                placeholder={formatEUR(deal.amount)}
+                disabled={updateDeal.isPending}
+              />
+            </div>
+
+            <div className="space-y-1">
             </div>
 
             <div className="flex items-center gap-2">

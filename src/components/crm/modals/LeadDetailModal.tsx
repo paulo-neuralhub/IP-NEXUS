@@ -35,6 +35,8 @@ import {
 import { format, formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import type { Lead } from '@/hooks/crm/useLeads';
+import { useCRMPipelines } from '@/hooks/crm/v2/pipelines';
+import { PipelineProgressBar } from '@/components/features/crm/shared/PipelineProgressBar';
 
 interface LeadDetailModalProps {
   lead: Lead | null;
@@ -45,6 +47,7 @@ interface LeadDetailModalProps {
   onWhatsApp?: () => void;
   onApprove?: () => void;
   onDelete?: () => void;
+  onStageChange?: (stageId: string) => void;
 }
 
 const SOURCE_LABELS: Record<string, { label: string; icon: typeof Globe }> = {
@@ -66,8 +69,15 @@ export function LeadDetailModal({
   onWhatsApp,
   onApprove,
   onDelete,
+  onStageChange,
 }: LeadDetailModalProps) {
+  const { data: pipelines = [] } = useCRMPipelines();
+  
   if (!lead) return null;
+
+  // Get pipeline stages for this lead
+  const leadPipeline = pipelines.find(p => p.id === lead.pipeline_id);
+  const stages = leadPipeline?.stages ?? [];
 
   const initials = lead.contact_name
     .split(' ')
@@ -129,7 +139,18 @@ export function LeadDetailModal({
           </div>
         </DialogHeader>
 
-        <ScrollArea className="flex-1 max-h-[calc(90vh-220px)]">
+        {/* Pipeline Progress Bar */}
+        {stages.length > 0 && lead.stage_id && (
+          <div className="px-6 py-2 bg-muted/20 border-b">
+            <PipelineProgressBar
+              stages={stages}
+              currentStageId={lead.stage_id}
+              onStageClick={onStageChange}
+            />
+          </div>
+        )}
+
+        <ScrollArea className="flex-1 max-h-[calc(90vh-280px)]">
           <div className="p-6 space-y-6">
             {/* Datos de Contacto */}
             <section>
