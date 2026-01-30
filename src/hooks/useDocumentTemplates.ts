@@ -19,6 +19,7 @@ export interface DocumentTemplate {
   is_system_template: boolean;
   layout: TemplateLayout;
   template_content: string;
+  content_html: string | null; // Full HTML template content
   
   // Visual config
   show_logo: boolean;

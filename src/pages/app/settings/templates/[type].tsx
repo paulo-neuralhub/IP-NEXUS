@@ -52,7 +52,9 @@ export default function TemplateListPage() {
 
   const handlePreview = async (template: DocumentTemplate) => {
     setPreviewTitle(template.name);
-    const html = await generatePreview(template.template_content, undefined, template.layout);
+    // Use content_html which contains the full HTML, fallback to template_content
+    const templateHtml = template.content_html || template.template_content;
+    const html = await generatePreview(templateHtml, undefined, template.layout);
     setPreviewContent(html);
     setPreviewOpen(true);
   };
