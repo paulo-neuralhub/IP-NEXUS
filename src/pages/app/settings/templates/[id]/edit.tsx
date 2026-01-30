@@ -90,20 +90,22 @@ export default function TemplateEditorPage() {
         is_default: template.is_default,
         custom_texts: (template.custom_texts as Record<string, string>) || {},
       });
-      // Generate initial preview
-      handleRefreshPreview(template.template_content);
+      // Generate initial preview - use content_html which has the full HTML
+      handleRefreshPreview(template.content_html || template.template_content);
     }
   }, [template]);
 
   const handleRefreshPreview = useCallback(async (content?: string) => {
     setIsRefreshing(true);
     try {
-      const html = await generatePreview(content || template?.template_content || '');
+      // Use content_html which has the full HTML, fallback to template_content
+      const templateHtml = content || template?.content_html || template?.template_content || '';
+      const html = await generatePreview(templateHtml);
       setPreviewHtml(html);
     } finally {
       setIsRefreshing(false);
     }
-  }, [generatePreview, template?.template_content]);
+  }, [generatePreview, template?.content_html, template?.template_content]);
 
   const handleSave = async () => {
     if (!id) return;
