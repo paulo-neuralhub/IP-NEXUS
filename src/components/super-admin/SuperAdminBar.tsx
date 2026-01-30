@@ -131,6 +131,22 @@ export function SuperAdminBar() {
 
       {/* Right: Controls */}
       <div className="flex items-center gap-2">
+        {/* Exit Demo/Simulate Mode - Visible button when in special mode */}
+        {(currentMode?.mode === 'demo' || currentMode?.mode === 'simulate') && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              exitToSuperAdmin();
+              setTimeout(() => navigate('/app'), 100);
+            }}
+            className="border-destructive text-destructive hover:bg-destructive hover:text-destructive-foreground h-7 text-xs font-medium"
+          >
+            <LogOut className="h-3 w-3 mr-1" />
+            Salir de {currentMode?.mode === 'demo' ? 'Demo' : 'Simulación'}
+          </Button>
+        )}
+
         {/* Backoffice Button */}
         <Button
           variant="ghost"
