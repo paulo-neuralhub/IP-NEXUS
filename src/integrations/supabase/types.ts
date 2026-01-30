@@ -13868,6 +13868,7 @@ export type Database = {
           show_footer: boolean | null
           show_header: boolean | null
           show_logo: boolean | null
+          style: string | null
           tags: string[] | null
           template_content: string
           template_type: string | null
@@ -13914,6 +13915,7 @@ export type Database = {
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          style?: string | null
           tags?: string[] | null
           template_content: string
           template_type?: string | null
@@ -13960,6 +13962,7 @@ export type Database = {
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          style?: string | null
           tags?: string[] | null
           template_content?: string
           template_type?: string | null

@@ -1,4 +1,5 @@
 // src/pages/app/settings/templates/index.tsx
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,9 +7,11 @@ import { Badge } from '@/components/ui/badge';
 import { SectionHeader } from '@/components/help/SectionHeader';
 import { 
   FileText, Receipt, FileCheck, Mail, BarChart3, 
-  Palette, ChevronRight, Settings2, Star
+  Palette, ChevronRight, Settings2, Star, RefreshCw, FileSignature
 } from 'lucide-react';
 import { useDocumentTemplates, DocumentType } from '@/hooks/useDocumentTemplates';
+import { seedDocumentTemplates } from '@/lib/templates/seed-document-templates';
+import { useToast } from '@/hooks/use-toast';
 
 const TEMPLATE_TYPES: { type: DocumentType; label: string; icon: React.ElementType; color: string; description: string }[] = [
   { 
@@ -50,8 +53,25 @@ const TEMPLATE_TYPES: { type: DocumentType; label: string; icon: React.ElementTy
 
 export default function TemplatesDashboardPage() {
   const { templates, isLoading } = useDocumentTemplates();
+  const { toast } = useToast();
+  const [isSeeding, setIsSeeding] = useState(false);
 
-  // Count templates by type
+  const handleSeedTemplates = async () => {
+    setIsSeeding(true);
+    try {
+      const result = await seedDocumentTemplates();
+      toast({
+        title: result.success ? 'Plantillas creadas' : 'Proceso completado con errores',
+        description: `${result.inserted} insertadas, ${result.updated} actualizadas`,
+        variant: result.success ? 'default' : 'destructive',
+      });
+      window.location.reload();
+    } catch (error) {
+      toast({ title: 'Error', description: 'No se pudieron crear las plantillas', variant: 'destructive' });
+    } finally {
+      setIsSeeding(false);
+    }
+  };
   const countsByType = templates.reduce((acc, t) => {
     acc[t.document_type] = (acc[t.document_type] || 0) + 1;
     return acc;
@@ -92,6 +112,23 @@ export default function TemplatesDashboardPage() {
               <Settings2 className="w-4 h-4 mr-2" />
               Configurar
             </Link>
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Seed Button */}
+      <Card className="border-dashed">
+        <CardContent className="flex items-center justify-between py-4">
+          <div className="flex items-center gap-3">
+            <FileSignature className="w-5 h-5 text-muted-foreground" />
+            <div>
+              <div className="font-medium text-sm">Inicializar plantillas del sistema</div>
+              <div className="text-xs text-muted-foreground">Crea las 20 plantillas base (5 estilos × 4 tipos)</div>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" onClick={handleSeedTemplates} disabled={isSeeding}>
+            {isSeeding ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <RefreshCw className="w-4 h-4 mr-2" />}
+            {isSeeding ? 'Creando...' : 'Crear plantillas'}
           </Button>
         </CardContent>
       </Card>
