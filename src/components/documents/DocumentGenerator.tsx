@@ -26,6 +26,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { generateDocumentPDF } from './pdf/generatePDF';
+import { generateDemoVariables, replaceVariables } from '@/utils/documentDemoData';
 
 interface DocumentGeneratorProps {
   isOpen: boolean;
@@ -67,6 +68,8 @@ export function DocumentGenerator({
   const [variables, setVariables] = useState<DocumentVariables>(initialVariables);
   const [tenantSettings, setTenantSettings] = useState<TenantDocumentSettings | null>(null);
   const [templates, setTemplates] = useState<DocumentTemplateConfig[]>([]);
+  const [matterData, setMatterData] = useState<Record<string, unknown> | null>(null);
+  const [clientData, setClientData] = useState<Record<string, unknown> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -75,9 +78,10 @@ export function DocumentGenerator({
     if (isOpen) {
       loadTenantSettings();
       loadTemplates();
+      loadMatterAndClientData();
       generateDocumentNumber();
     }
-  }, [isOpen]);
+  }, [isOpen, matterId, clientId]);
 
   const loadTenantSettings = async () => {
     try {
@@ -107,12 +111,57 @@ export function DocumentGenerator({
     }
   };
 
+  const loadMatterAndClientData = async () => {
+    try {
+      // Load matter data if matterId provided
+      if (matterId) {
+        const { data: matter } = await supabase
+          .from('matters')
+          .select('*')
+          .eq('id', matterId)
+          .single();
+        
+        if (matter) {
+          setMatterData(matter as Record<string, unknown>);
+          
+          // If no clientId provided, get from matter
+          const cId = clientId || matter.client_id;
+          if (cId) {
+            const { data: client } = await supabase
+              .from('contacts')
+              .select('*')
+              .eq('id', cId)
+              .single();
+            
+            if (client) {
+              setClientData(client as Record<string, unknown>);
+            }
+          }
+        }
+      } else if (clientId) {
+        // Load client data if only clientId provided
+        const { data: client } = await supabase
+          .from('contacts')
+          .select('*')
+          .eq('id', clientId)
+          .single();
+        
+        if (client) {
+          setClientData(client as Record<string, unknown>);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading matter/client data:', error);
+    }
+  };
+
   const loadTemplates = async () => {
     try {
       const { data } = await supabase
         .from('document_templates')
         .select('*')
         .eq('is_active', true)
+        .neq('category', 'factura') // Exclude invoices - they go to billing module
         .order('category', { ascending: true });
       
       if (data) {
@@ -132,24 +181,27 @@ export function DocumentGenerator({
     setDocumentNumber(`${prefix}-${year}${month}-${random}`);
   };
 
-  // Reemplazar variables en el contenido
-  const processContent = useCallback((html: string, vars: DocumentVariables) => {
-    let processed = html;
-    Object.entries(vars).forEach(([key, value]) => {
-      if (value) {
-        const regex = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
-        processed = processed.replace(regex, value);
-      }
-    });
-    return processed;
-  }, []);
-
-  // Seleccionar plantilla
+  // Seleccionar plantilla - usar datos demo combinados con datos reales
   const handleSelectTemplate = (template: DocumentTemplateConfig) => {
     setSelectedTemplate(template);
     setTitle(template.name);
-    setContent(processContent(template.contentHtml, variables));
     setSelectedStyle(template.preferredStyleCode);
+    
+    // Generate demo variables combined with real tenant/matter/client data
+    const demoVars = generateDemoVariables(
+      tenantSettings,
+      matterData || undefined,
+      clientData || undefined
+    );
+    
+    // Merge with any initial variables passed as props
+    const mergedVars = { ...demoVars, ...initialVariables };
+    
+    // Replace variables in the template content
+    const processedContent = replaceVariables(template.contentHtml, mergedVars);
+    setContent(processedContent);
+    setVariables(mergedVars);
+    
     setActiveTab('style');
   };
 
