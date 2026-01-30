@@ -58,6 +58,7 @@ import {
 
 import { useWhatsAppConfig } from '@/hooks/whatsapp';
 import { useOrganization } from '@/contexts/organization-context';
+import { WhatsAppQRConnect } from '@/components/whatsapp/WhatsAppQRConnect';
 import type { WhatsAppImplementationRequestForm } from '@/types/whatsapp';
 
 const settingsSchema = z.object({
@@ -319,31 +320,32 @@ export default function WhatsAppSettingsPage() {
                   </li>
                   <li className="flex items-center gap-2">
                     <AlertCircle className="h-4 w-4 text-amber-500" />
-                    Requiere mantener sesión activa
+                    Requiere servidor externo
                   </li>
                   <li className="flex items-center gap-2">
                     <AlertCircle className="h-4 w-4 text-amber-500" />
                     Limitaciones de WhatsApp personal
                   </li>
-                  <li className="flex items-center gap-2">
-                    <AlertCircle className="h-4 w-4 text-amber-500" />
-                    No apto para uso intensivo
-                  </li>
                 </ul>
 
-                <Alert variant="default" className="bg-amber-50 border-amber-200 dark:bg-amber-950/20">
-                  <AlertCircle className="h-4 w-4 text-amber-600" />
-                  <AlertDescription className="text-xs text-amber-700 dark:text-amber-300">
-                    Esta opción está en desarrollo. Recomendamos la API de Meta para uso profesional.
-                  </AlertDescription>
-                </Alert>
-
-                <Button className="w-full" variant="outline" disabled>
+                <Button 
+                  className="w-full" 
+                  variant="outline"
+                  onClick={() => {
+                    const tabs = document.querySelector('[data-value="qr"]');
+                    if (tabs) (tabs as HTMLElement).click();
+                  }}
+                >
                   <QrCode className="h-4 w-4 mr-2" />
-                  Próximamente
+                  Configurar conexión QR
                 </Button>
               </CardContent>
             </Card>
+          </div>
+
+          {/* QR Connection component */}
+          <div className="mt-6">
+            <WhatsAppQRConnect onRequestImplementation={() => setShowRequestDialog(true)} />
           </div>
         </TabsContent>
 

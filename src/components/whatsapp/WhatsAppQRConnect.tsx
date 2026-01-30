@@ -1,11 +1,11 @@
 /**
  * WhatsApp QR Connection Component
  * 
- * Placeholder funcional que muestra UI completa para conexión vía QR.
+ * Placeholder funcional con UI completa para conexión vía QR.
  * Requiere backend externo (whatsapp-web.js en Node.js) para funcionar.
  * 
  * Estados:
- * - not_configured: Sin backend configurado (whatsapp_backend_url vacío)
+ * - not_configured: Sin backend configurado
  * - idle: Listo para generar QR (backend configurado)
  * - loading: Generando QR
  * - qr_ready: QR visible, esperando escaneo
@@ -16,8 +16,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { 
   QrCode, 
   Smartphone, 
@@ -29,7 +32,12 @@ import {
   Wifi,
   WifiOff,
   Info,
-  ExternalLink
+  ExternalLink,
+  Server,
+  Settings,
+  Copy,
+  Check,
+  ChevronDown
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
@@ -60,8 +68,12 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
   const [session, setSession] = useState<WhatsAppSession | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPolling, setIsPolling] = useState(false);
-  const [backendUrl, setBackendUrl] = useState<string | null>(null);
+  const [backendUrl, setBackendUrl] = useState<string>('');
+  const [backendUrlInput, setBackendUrlInput] = useState<string>('');
   const [isChecking, setIsChecking] = useState(true);
+  const [isConfiguring, setIsConfiguring] = useState(false);
+  const [copied, setCopied] = useState(false);
+  const [showTechInfo, setShowTechInfo] = useState(false);
 
   // Check configuration on mount
   useEffect(() => {
@@ -75,7 +87,6 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
     
     setIsChecking(true);
     try {
-      // Check tenant config for backend URL
       const { data: config } = await supabase
         .from('whatsapp_tenant_config')
         .select('*')
@@ -83,19 +94,19 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
         .maybeSingle();
 
       if (config) {
-        // Use type assertion for new fields
         const backendUrlValue = (config as any).whatsapp_backend_url;
         const connectedPhone = (config as any).connected_phone;
         
         if (backendUrlValue) {
           setBackendUrl(backendUrlValue);
+          setBackendUrlInput(backendUrlValue);
           
-          // Check if already connected via QR
-          if (config.integration_type === 'qr_web' && config.meta_status === 'active') {
+          // Check if already connected
+          if (config.integration_type === 'qr_web' && connectedPhone) {
             setStatus('connected');
             setSession({
               id: config.id,
-              phone_number: connectedPhone || 'Conectado',
+              phone_number: connectedPhone,
               status: 'connected',
               last_seen_at: config.updated_at,
             });
@@ -108,22 +119,6 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
       } else {
         setStatus('not_configured');
       }
-
-      // Also check for existing QR session
-      if (user?.id) {
-        const { data: sessionData } = await supabase
-          .from('whatsapp_qr_sessions')
-          .select('*')
-          .eq('organization_id', currentOrganization.id)
-          .eq('user_id', user.id)
-          .eq('status', 'connected')
-          .maybeSingle();
-
-        if (sessionData) {
-          setSession(sessionData as WhatsAppSession);
-          setStatus('connected');
-        }
-      }
     } catch (err) {
       console.error('Error checking config:', err);
       setStatus('not_configured');
@@ -132,22 +127,75 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
     }
   };
 
+  const saveBackendUrl = async () => {
+    if (!backendUrlInput.trim()) {
+      toast.error('Error', {
+        description: 'Introduce la URL del servidor WhatsApp'
+      });
+      return;
+    }
+
+    setIsConfiguring(true);
+    try {
+      // Verify server responds
+      try {
+        const response = await fetch(`${backendUrlInput.trim()}/api/whatsapp/health`, {
+          method: 'GET',
+          signal: AbortSignal.timeout(5000),
+        });
+        
+        if (!response.ok) {
+          throw new Error('Servidor no responde correctamente');
+        }
+      } catch (fetchError) {
+        toast.error('Error de conexión', {
+          description: 'No se pudo conectar con el servidor. Verifica la URL y que esté activo.'
+        });
+        setIsConfiguring(false);
+        return;
+      }
+
+      // Upsert configuration
+      await supabase
+        .from('whatsapp_tenant_config')
+        .upsert({
+          organization_id: currentOrganization?.id,
+          whatsapp_backend_url: backendUrlInput.trim(),
+          integration_type: 'qr_web',
+          updated_at: new Date().toISOString(),
+        } as any);
+
+      setBackendUrl(backendUrlInput.trim());
+      setStatus('idle');
+      
+      toast.success('Configuración guardada', {
+        description: 'El servidor WhatsApp ha sido configurado correctamente'
+      });
+    } catch (err) {
+      console.error('Error saving config:', err);
+      toast.error('Error', {
+        description: 'No se pudo guardar la configuración'
+      });
+    } finally {
+      setIsConfiguring(false);
+    }
+  };
+
   const startQRSession = async () => {
     if (!backendUrl) {
-      // Try edge function as fallback
-      return startQRSessionViaEdgeFunction();
+      toast.error('Error', {
+        description: 'Primero configura la URL del servidor WhatsApp'
+      });
+      return;
     }
 
     setStatus('loading');
     setError(null);
     
     try {
-      // Call external backend to start WhatsApp session
       const response = await fetch(`${backendUrl}/api/whatsapp/qr/start`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           organization_id: currentOrganization?.id,
           user_id: user?.id,
@@ -155,7 +203,7 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
       });
 
       if (!response.ok) {
-        throw new Error('Error iniciando sesión de WhatsApp');
+        throw new Error('Error iniciando sesión');
       }
 
       const data = await response.json();
@@ -168,42 +216,8 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
         throw new Error('No se recibió código QR');
       }
     } catch (err: any) {
-      console.error('Error starting QR session:', err);
-      setError(err.message || 'No se pudo conectar con el servidor de WhatsApp. Verifica que el servicio esté activo.');
-      setStatus('error');
-    }
-  };
-
-  const startQRSessionViaEdgeFunction = async () => {
-    setStatus('loading');
-    setError(null);
-    
-    try {
-      const { data, error: fnError } = await supabase.functions.invoke('whatsapp-qr-start', {
-        body: { 
-          organization_id: currentOrganization?.id,
-          user_id: user?.id 
-        }
-      });
-
-      if (fnError) throw fnError;
-
-      if (data?.error === 'not_available') {
-        setStatus('not_configured');
-        setError('El servicio de conexión QR no está disponible. Requiere configuración de backend externo.');
-        return;
-      }
-
-      if (data?.qrCode) {
-        setQrCode(data.qrCode);
-        setStatus('qr_ready');
-        pollSessionStatusViaEdgeFunction(data.sessionId);
-      } else {
-        throw new Error('No se recibió código QR');
-      }
-    } catch (err: any) {
-      console.error('Error starting QR session:', err);
-      setError(err.message || 'No se pudo iniciar la sesión. Intenta de nuevo.');
+      console.error('Error starting QR:', err);
+      setError('No se pudo conectar con el servidor de WhatsApp');
       setStatus('error');
     }
   };
@@ -211,6 +225,9 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
   const pollSessionStatus = useCallback(async (sessionId: string) => {
     if (isPolling || !backendUrl) return;
     setIsPolling(true);
+
+    let attempts = 0;
+    const maxAttempts = 40; // 2 minutes
 
     const checkStatus = async (): Promise<boolean> => {
       try {
@@ -221,142 +238,80 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
           setStatus('connected');
           setSession(data.session);
           
-          // Save to database
+          // Save to DB
           await supabase
             .from('whatsapp_tenant_config')
             .update({
+              connected_phone: data.session?.phone_number,
               integration_type: 'qr_web',
-              meta_status: 'active',
               updated_at: new Date().toISOString(),
-            })
+            } as any)
             .eq('organization_id', currentOrganization?.id);
+
+          toast.success('¡WhatsApp conectado!', {
+            description: 'Tu WhatsApp está ahora vinculado'
+          });
           
           onConnected?.();
-          toast.success('¡WhatsApp conectado!', {
-            description: 'Tu WhatsApp está ahora vinculado a IP-NEXUS'
-          });
           return true;
         } else if (data.qrCode && data.qrCode !== qrCode) {
           setQrCode(data.qrCode);
         }
         return false;
       } catch (err) {
-        console.error('Error polling status:', err);
         return false;
       }
     };
 
-    // Poll every 3 seconds for 2 minutes
-    for (let i = 0; i < 40; i++) {
+    while (attempts < maxAttempts) {
       const connected = await checkStatus();
       if (connected) {
         setIsPolling(false);
         return;
       }
+      attempts++;
       await new Promise(resolve => setTimeout(resolve, 3000));
     }
 
-    setError('El código QR ha expirado. Genera uno nuevo.');
+    setError('El código QR ha expirado');
     setStatus('error');
     setIsPolling(false);
   }, [qrCode, isPolling, onConnected, backendUrl, currentOrganization?.id]);
 
-  const pollSessionStatusViaEdgeFunction = useCallback(async (sessionId: string) => {
-    if (isPolling) return;
-    setIsPolling(true);
-
-    const checkStatus = async (): Promise<boolean> => {
-      try {
-        const { data, error: fnError } = await supabase.functions.invoke('whatsapp-qr-status', {
-          body: { session_id: sessionId }
-        });
-
-        if (fnError) throw fnError;
-
-        if (data?.status === 'connected') {
-          setStatus('connected');
-          setSession(data.session);
-          onConnected?.();
-          toast.success('¡WhatsApp conectado!', {
-            description: 'Tu WhatsApp está ahora conectado a IP-NEXUS'
-          });
-          return true;
-        } else if (data?.qrCode && data.qrCode !== qrCode) {
-          setQrCode(data.qrCode);
-        }
-        return false;
-      } catch (err) {
-        console.error('Error polling status:', err);
-        return false;
-      }
-    };
-
-    for (let i = 0; i < 40; i++) {
-      const connected = await checkStatus();
-      if (connected) {
-        setIsPolling(false);
-        return;
-      }
-      await new Promise(resolve => setTimeout(resolve, 3000));
-    }
-
-    setError('El código QR ha expirado. Genera uno nuevo.');
-    setStatus('error');
-    setIsPolling(false);
-  }, [qrCode, isPolling, onConnected]);
-
   const disconnectSession = async () => {
     try {
-      // Try external backend first
       if (backendUrl) {
         await fetch(`${backendUrl}/api/whatsapp/qr/disconnect`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ session_id: session?.id }),
-        }).catch(() => {});
-      } else {
-        // Use edge function
-        await supabase.functions.invoke('whatsapp-qr-disconnect', {
-          body: { 
-            session_id: session?.id,
-            organization_id: currentOrganization?.id,
-            user_id: user?.id
-          }
         }).catch(() => {});
       }
 
-      // Update database
-      if (currentOrganization?.id) {
-        await supabase
-          .from('whatsapp_tenant_config')
-          .update({
-            integration_type: 'none',
-            meta_status: 'disconnected',
-            updated_at: new Date().toISOString(),
-          })
-          .eq('organization_id', currentOrganization.id);
-      }
-
-      if (session?.id) {
-        await supabase
-          .from('whatsapp_qr_sessions')
-          .update({ status: 'disconnected' })
-          .eq('id', session.id);
-      }
+      await supabase
+        .from('whatsapp_tenant_config')
+        .update({
+          connected_phone: null,
+          updated_at: new Date().toISOString(),
+        } as any)
+        .eq('organization_id', currentOrganization?.id);
 
       setSession(null);
       setStatus('idle');
       setQrCode(null);
 
-      toast.success('WhatsApp desconectado', {
-        description: 'Tu sesión de WhatsApp ha sido cerrada'
+      toast.success('Desconectado', {
+        description: 'Tu WhatsApp ha sido desvinculado'
       });
-    } catch (err: any) {
-      console.error('Error disconnecting:', err);
-      toast.error('Error al desconectar', {
-        description: err.message
+    } catch (err) {
+      toast.error('Error', {
+        description: 'No se pudo desconectar'
       });
     }
+  };
+
+  const copyWebhookUrl = () => {
+    navigator.clipboard.writeText(`${window.location.origin}/api/whatsapp/webhook`);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (isChecking) {
@@ -384,90 +339,119 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
         {/* Important notice */}
         <Alert>
           <AlertTriangle className="h-4 w-4" />
+          <AlertTitle>Importante</AlertTitle>
           <AlertDescription>
-            <strong>Importante:</strong> Al conectar tu WhatsApp, todos los mensajes 
-            (personales y de trabajo) llegarán a IP-NEXUS. Recomendamos usar un 
-            número dedicado para el negocio.
+            Al conectar tu WhatsApp, todos los mensajes (personales y de trabajo) 
+            llegarán a IP-NEXUS. Recomendamos usar un número dedicado para el negocio.
           </AlertDescription>
         </Alert>
 
         {/* Status: Not configured */}
         {status === 'not_configured' && (
-          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center">
-              <WifiOff className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <div className="text-lg font-medium text-foreground">
-              Servicio no configurado
-            </div>
-            <p className="text-sm text-muted-foreground max-w-md">
-              La conexión vía QR requiere un servicio backend externo que debe ser 
-              configurado por el equipo de IP-NEXUS.
-            </p>
-            <Alert className="max-w-md">
-              <Info className="h-4 w-4" />
-              <AlertDescription className="text-left">
-                <strong>Para activar esta función:</strong>
-                <ul className="list-disc list-inside mt-2 space-y-1 text-sm">
-                  <li>Solicita la implementación en la pestaña "API Profesional"</li>
-                  <li>O contacta a soporte para configurar un servidor WhatsApp dedicado</li>
-                </ul>
+          <div className="space-y-6">
+            <Alert variant="default" className="border-amber-200 bg-amber-50 dark:bg-amber-950/20">
+              <Server className="h-4 w-4 text-amber-600" />
+              <AlertTitle className="text-amber-800 dark:text-amber-200">Configuración requerida</AlertTitle>
+              <AlertDescription className="text-amber-700 dark:text-amber-300">
+                La conexión vía QR requiere un servidor WhatsApp externo. 
+                Puedes configurar tu propio servidor o solicitar implementación profesional.
               </AlertDescription>
             </Alert>
-            {onRequestImplementation && (
+
+            {/* Option 1: Own server */}
+            <div className="rounded-lg border p-4 space-y-4">
+              <div className="flex items-center gap-2 font-medium">
+                <Settings className="h-4 w-4" />
+                Opción 1: Servidor propio
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Si tienes un servidor con whatsapp-web.js configurado, introduce la URL:
+              </p>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="https://whatsapp.tudominio.com"
+                  value={backendUrlInput}
+                  onChange={(e) => setBackendUrlInput(e.target.value)}
+                />
+                <Button onClick={saveBackendUrl} disabled={isConfiguring}>
+                  {isConfiguring ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    'Guardar'
+                  )}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                El servidor debe tener los endpoints: /api/whatsapp/health, /api/whatsapp/qr/start, /api/whatsapp/qr/status/:id
+              </p>
+            </div>
+
+            {/* Option 2: Professional implementation */}
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-3">
+              <div className="flex items-center gap-2 font-medium">
+                <ExternalLink className="h-4 w-4 text-primary" />
+                Opción 2: Implementación profesional
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Deja que el equipo de IP-NEXUS configure todo por ti. 
+                Incluye servidor dedicado, mantenimiento y soporte.
+              </p>
               <Button 
                 variant="outline" 
                 onClick={onRequestImplementation}
-                className="mt-2"
+                className="w-full"
               >
-                <ExternalLink className="h-4 w-4 mr-2" />
-                Solicitar implementación
+                Solicitar implementación →
               </Button>
-            )}
-          </div>
-        )}
+            </div>
 
-        {/* Status: Connected */}
-        {status === 'connected' && session && (
-          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-            <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <CheckCircle className="h-8 w-8 text-green-600" />
-            </div>
-            <div className="text-lg font-medium text-foreground">
-              WhatsApp conectado
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Número: {session.phone_number || 'Conectado'}
-            </p>
-            <div className="flex items-center gap-2">
-              <Badge variant="default" className="bg-green-600">
-                <Wifi className="h-3 w-3 mr-1" />
-                En línea
-              </Badge>
-              {session.last_seen_at && (
-                <span className="text-xs text-muted-foreground">
-                  Última actividad: {new Date(session.last_seen_at).toLocaleString('es-ES')}
-                </span>
-              )}
-            </div>
-            <Button variant="destructive" onClick={disconnectSession} className="mt-4">
-              <XCircle className="h-4 w-4 mr-2" />
-              Desconectar WhatsApp
-            </Button>
+            {/* Technical info */}
+            <Collapsible open={showTechInfo} onOpenChange={setShowTechInfo}>
+              <CollapsibleTrigger asChild>
+                <Button variant="ghost" className="w-full justify-between text-sm">
+                  <span className="flex items-center gap-2">
+                    <Info className="h-4 w-4" />
+                    Información técnica para desarrolladores
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${showTechInfo ? 'rotate-180' : ''}`} />
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-3 pt-2">
+                <div className="rounded-lg bg-muted/50 p-4 space-y-3 text-sm">
+                  <p className="font-medium">Requisitos del servidor:</p>
+                  <ul className="list-disc list-inside space-y-1 text-muted-foreground">
+                    <li>Node.js 18+ con whatsapp-web.js</li>
+                    <li>Puppeteer con Chromium</li>
+                    <li>2GB RAM mínimo</li>
+                    <li>Endpoints REST para QR y mensajes</li>
+                  </ul>
+                  <p className="font-medium">Webhook URL para mensajes entrantes:</p>
+                  <div className="flex items-center gap-2 bg-background rounded-md p-2 border">
+                    <code className="flex-1 text-xs break-all">
+                      {window.location.origin}/api/whatsapp/webhook
+                    </code>
+                    <Button size="sm" variant="ghost" onClick={copyWebhookUrl}>
+                      {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+                    </Button>
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           </div>
         )}
 
         {/* Status: Idle (ready to connect) */}
         {status === 'idle' && (
           <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
-              <Smartphone className="h-8 w-8 text-primary" />
+            <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <Server className="h-8 w-8 text-green-600" />
             </div>
-            <div className="text-lg font-medium text-foreground">
-              Conecta tu WhatsApp
-            </div>
+            <p className="text-lg font-medium">Servidor configurado</p>
+            <p className="text-sm text-muted-foreground">
+              Conectado a: {backendUrl}
+            </p>
             <p className="text-sm text-muted-foreground max-w-md">
-              Escanea el código QR con tu teléfono para vincular tu WhatsApp con IP-NEXUS
+              Haz clic en el botón para generar un código QR
             </p>
             <Button onClick={startQRSession} className="mt-4">
               <QrCode className="h-4 w-4 mr-2" />
@@ -480,7 +464,7 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
         {status === 'loading' && (
           <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
-            <p className="text-lg font-medium text-foreground">Generando código QR...</p>
+            <p className="text-lg font-medium">Generando código QR...</p>
             <p className="text-sm text-muted-foreground">Conectando con el servidor de WhatsApp</p>
           </div>
         )}
@@ -488,9 +472,7 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
         {/* Status: QR Ready */}
         {status === 'qr_ready' && qrCode && (
           <div className="flex flex-col items-center justify-center py-4 text-center space-y-6">
-            <div className="text-lg font-medium text-foreground">
-              Escanea este código QR
-            </div>
+            <p className="text-lg font-medium">Escanea este código QR</p>
             
             {/* QR Code display */}
             <div className="p-4 bg-white rounded-xl shadow-lg">
@@ -529,19 +511,38 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
               </div>
             </div>
 
-            <div className="flex items-center gap-2">
-              <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-              <span className="text-sm text-muted-foreground">Esperando escaneo...</span>
-            </div>
-
             <Button variant="outline" onClick={startQRSession}>
               <RefreshCw className="h-4 w-4 mr-2" />
               Regenerar QR
             </Button>
-
             <p className="text-xs text-muted-foreground">
               El código expira en 2 minutos
             </p>
+          </div>
+        )}
+
+        {/* Status: Connected */}
+        {status === 'connected' && session && (
+          <div className="flex flex-col items-center justify-center py-8 text-center space-y-4">
+            <div className="h-16 w-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <div className="text-lg font-medium text-foreground">
+              WhatsApp conectado
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Número: {session.phone_number}
+            </p>
+            <div className="flex items-center gap-2">
+              <Badge variant="default" className="bg-green-600">
+                <Wifi className="h-3 w-3 mr-1" />
+                En línea
+              </Badge>
+            </div>
+            <Button variant="destructive" onClick={disconnectSession} className="mt-4">
+              <XCircle className="h-4 w-4 mr-2" />
+              Desconectar WhatsApp
+            </Button>
           </div>
         )}
 
@@ -555,7 +556,7 @@ export function WhatsAppQRConnect({ onConnected, onRequestImplementation }: What
               Error de conexión
             </div>
             <p className="text-sm text-muted-foreground max-w-md">
-              {error || 'No se pudo establecer la conexión con WhatsApp'}
+              {error || 'No se pudo establecer la conexión'}
             </p>
             <Button onClick={startQRSession} className="mt-4">
               <RefreshCw className="h-4 w-4 mr-2" />
