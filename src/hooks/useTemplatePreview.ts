@@ -187,7 +187,124 @@ export function useTemplatePreview() {
     customData?: Partial<SampleData>,
     layout?: string
   ): Promise<string> => {
-    const data = { ...DEFAULT_SAMPLE_DATA, ...customData };
+    // Merge custom data with defaults, prioritizing branding data for company
+    const brandingCompanyData = branding ? {
+      name: branding.company_legal_name || DEFAULT_SAMPLE_DATA.company?.name || '',
+      tax_id: branding.company_tax_id || DEFAULT_SAMPLE_DATA.company?.tax_id || '',
+      address: branding.company_address || DEFAULT_SAMPLE_DATA.company?.address || '',
+      city: branding.company_city || DEFAULT_SAMPLE_DATA.company?.city || '',
+      postal_code: branding.company_postal_code || DEFAULT_SAMPLE_DATA.company?.postal_code || '',
+      country: branding.company_country || DEFAULT_SAMPLE_DATA.company?.country || '',
+      phone: branding.company_phone || DEFAULT_SAMPLE_DATA.company?.phone || '',
+      email: branding.company_email || DEFAULT_SAMPLE_DATA.company?.email || '',
+      website: branding.company_website || DEFAULT_SAMPLE_DATA.company?.website || '',
+    } : DEFAULT_SAMPLE_DATA.company;
+
+    const data = { 
+      ...DEFAULT_SAMPLE_DATA, 
+      company: brandingCompanyData,
+      ...customData 
+    };
+
+    // Check if content is a full HTML document (starts with <!DOCTYPE or <html)
+    const isFullHtmlDocument = templateContent.trim().startsWith('<!DOCTYPE') || 
+                                templateContent.trim().startsWith('<html');
+
+    if (isFullHtmlDocument) {
+      // For full HTML documents, just replace variables and return as-is
+      let result = templateContent;
+      
+      // Replace Mustache-style variables: {{variable_name}}
+      result = result.replace(/\{\{(\w+)\}\}/g, (match, key) => {
+        // Map common variable names to our data structure
+        const varMappings: Record<string, string> = {
+          // Company/Empresa
+          empresa_nombre: data.company?.name || '',
+          empresa_direccion: data.company?.address || '',
+          empresa_telefono: data.company?.phone || '',
+          empresa_email: data.company?.email || '',
+          empresa_cif: data.company?.tax_id || '',
+          empresa_web: data.company?.website || '',
+          // Client/Cliente
+          cliente_nombre: data.client?.name || '',
+          cliente_direccion: `${data.client?.address || ''}, ${data.client?.postal_code || ''} ${data.client?.city || ''}`,
+          cliente_cif: data.client?.tax_id || '',
+          cliente_email: data.client?.email || '',
+          // Invoice/Factura
+          factura_numero: data.invoice?.number || '',
+          factura_fecha: data.invoice?.date || '',
+          factura_vencimiento: data.invoice?.due_date || '',
+          subtotal: data.invoice?.subtotal || '',
+          iva_porcentaje: `${data.invoice?.tax_rate || '21'}%`,
+          iva_importe: data.invoice?.tax_amount || '',
+          total_factura: data.invoice?.total || '',
+          metodo_pago: 'Transferencia bancaria',
+          // Quote/Presupuesto
+          presupuesto_numero: data.quote?.number || '',
+          presupuesto_fecha: data.quote?.date || '',
+          total_presupuesto: data.quote?.total || '',
+          proyecto_nombre: data.quote?.description || 'Proyecto de ejemplo',
+          validez_dias: '30',
+          condiciones: 'Pago a 30 días desde la aceptación del presupuesto.',
+          // Letter/Carta
+          destinatario_nombre: 'D. Juan Pérez García',
+          destinatario_cargo: 'Director General',
+          destinatario_empresa: 'Empresa Cliente S.L.',
+          asunto: data.letter?.subject || 'Notificación importante',
+          saludo: 'Estimado/a Sr./Sra.:',
+          cuerpo: data.letter?.body || '<p>Nos dirigimos a usted para informarle sobre los últimos avances en su expediente de propiedad industrial.</p><p>Quedamos a su disposición para cualquier aclaración.</p>',
+          despedida: 'Atentamente,',
+          firmante_nombre: data.signer?.name || '',
+          firmante_cargo: data.signer?.title || '',
+          lugar: data.company?.city || 'Madrid',
+          fecha: new Date().toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' }),
+          // Contract/Contrato
+          contrato_tipo: 'Servicios de Propiedad Industrial',
+          clausula_objeto: 'El presente contrato tiene por objeto la prestación de servicios profesionales de asesoría en materia de Propiedad Industrial.',
+          clausula_honorarios: 'Los honorarios se establecen según la tarifa vigente del despacho.',
+          clausula_duracion: 'El presente contrato tendrá una duración de un año desde su firma.',
+          representante_empresa: data.signer?.name || '',
+          cargo_representante: data.signer?.title || '',
+          // Bank/Banco
+          banco_nombre: branding?.bank_name || 'Banco Santander',
+          banco_iban: branding?.bank_iban || 'ES12 1234 5678 9012 3456 7890',
+          // Notes
+          notas: 'Gracias por confiar en nuestros servicios.',
+        };
+        
+        return varMappings[key] || match;
+      });
+
+      // Handle Mustache-style loops: {{#items}}...{{/items}}
+      result = result.replace(/\{\{#items\}\}([\s\S]*?)\{\{\/items\}\}/g, (match, template) => {
+        const sampleItems = [
+          { descripcion: 'Tasas oficiales de registro - Marca UE', cantidad: '1', precio: '350,00 €', total: '350,00 €' },
+          { descripcion: 'Honorarios profesionales', cantidad: '1', precio: '500,00 €', total: '500,00 €' },
+        ];
+        return sampleItems.map(item => {
+          return template
+            .replace(/\{\{descripcion\}\}/g, item.descripcion)
+            .replace(/\{\{cantidad\}\}/g, item.cantidad)
+            .replace(/\{\{precio\}\}/g, item.precio)
+            .replace(/\{\{total\}\}/g, item.total);
+        }).join('');
+      });
+
+      // Handle Mustache-style loops: {{#servicios}}...{{/servicios}}
+      result = result.replace(/\{\{#servicios\}\}([\s\S]*?)\{\{\/servicios\}\}/g, (match, template) => {
+        const sampleServices = [
+          { descripcion: 'Búsqueda de anterioridades' },
+          { descripcion: 'Preparación y presentación de solicitud' },
+          { descripcion: 'Seguimiento del procedimiento' },
+        ];
+        return sampleServices.map(item => {
+          return template.replace(/\{\{descripcion\}\}/g, item.descripcion);
+        }).join('');
+      });
+
+      return result;
+    }
+
     const processedContent = replaceVariables(templateContent, data);
 
     // If content is empty or just a placeholder, generate default based on layout
