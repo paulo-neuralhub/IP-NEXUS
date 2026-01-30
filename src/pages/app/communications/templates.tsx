@@ -308,7 +308,7 @@ function EmailTemplateCard({ template, onEdit, onDelete, onDuplicate, onPreview 
   return (
     <Card 
       className="hover:shadow-md transition-shadow cursor-pointer"
-      onClick={onEdit}
+      onClick={onPreview}
     >
       <CardContent className="p-4">
         {/* Header */}
