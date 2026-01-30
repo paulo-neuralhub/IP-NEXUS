@@ -44605,6 +44605,412 @@ export type Database = {
           },
         ]
       }
+      whatsapp_conversations: {
+        Row: {
+          assigned_to: string | null
+          client_id: string | null
+          contact_name: string | null
+          contact_phone: string
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          last_message_id: string | null
+          last_message_preview: string | null
+          notes: string | null
+          organization_id: string | null
+          status: string | null
+          tags: string[] | null
+          total_messages: number | null
+          unread_count: number | null
+          updated_at: string | null
+          wa_id: string | null
+        }
+        Insert: {
+          assigned_to?: string | null
+          client_id?: string | null
+          contact_name?: string | null
+          contact_phone: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          last_message_id?: string | null
+          last_message_preview?: string | null
+          notes?: string | null
+          organization_id?: string | null
+          status?: string | null
+          tags?: string[] | null
+          total_messages?: number | null
+          unread_count?: number | null
+          updated_at?: string | null
+          wa_id?: string | null
+        }
+        Update: {
+          assigned_to?: string | null
+          client_id?: string | null
+          contact_name?: string | null
+          contact_phone?: string
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          last_message_id?: string | null
+          last_message_preview?: string | null
+          notes?: string | null
+          organization_id?: string | null
+          status?: string | null
+          tags?: string[] | null
+          total_messages?: number | null
+          unread_count?: number | null
+          updated_at?: string | null
+          wa_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_conversations_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_conversations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      whatsapp_implementation_requests: {
+        Row: {
+          additional_notes: string | null
+          admin_notes: string | null
+          assigned_admin: string | null
+          company_name: string
+          completed_at: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone: string | null
+          contacted_at: string | null
+          created_at: string | null
+          current_whatsapp_number: string | null
+          estimated_monthly_messages: number | null
+          id: string
+          invoice_id: string | null
+          monthly_fee: number | null
+          organization_id: string | null
+          plan_type: string | null
+          quoted_price: number | null
+          requested_at: string | null
+          requested_by: string | null
+          setup_fee: number | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          additional_notes?: string | null
+          admin_notes?: string | null
+          assigned_admin?: string | null
+          company_name: string
+          completed_at?: string | null
+          contact_email: string
+          contact_name: string
+          contact_phone?: string | null
+          contacted_at?: string | null
+          created_at?: string | null
+          current_whatsapp_number?: string | null
+          estimated_monthly_messages?: number | null
+          id?: string
+          invoice_id?: string | null
+          monthly_fee?: number | null
+          organization_id?: string | null
+          plan_type?: string | null
+          quoted_price?: number | null
+          requested_at?: string | null
+          requested_by?: string | null
+          setup_fee?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          additional_notes?: string | null
+          admin_notes?: string | null
+          assigned_admin?: string | null
+          company_name?: string
+          completed_at?: string | null
+          contact_email?: string
+          contact_name?: string
+          contact_phone?: string | null
+          contacted_at?: string | null
+          created_at?: string | null
+          current_whatsapp_number?: string | null
+          estimated_monthly_messages?: number | null
+          id?: string
+          invoice_id?: string | null
+          monthly_fee?: number | null
+          organization_id?: string | null
+          plan_type?: string | null
+          quoted_price?: number | null
+          requested_at?: string | null
+          requested_by?: string | null
+          setup_fee?: number | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_implementation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_implementation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_implementation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_implementation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      whatsapp_messages: {
+        Row: {
+          client_id: string | null
+          contact_name: string | null
+          contact_phone: string
+          content: string | null
+          created_at: string | null
+          direction: string
+          error_message: string | null
+          id: string
+          location_latitude: number | null
+          location_longitude: number | null
+          location_name: string | null
+          media_caption: string | null
+          media_filename: string | null
+          media_mime_type: string | null
+          media_url: string | null
+          message_id: string | null
+          message_type: string
+          organization_id: string | null
+          read_at: string | null
+          read_by: string | null
+          sent_by: string | null
+          session_id: string | null
+          source: string
+          status: string | null
+          timestamp: string
+          wa_id: string
+        }
+        Insert: {
+          client_id?: string | null
+          contact_name?: string | null
+          contact_phone: string
+          content?: string | null
+          created_at?: string | null
+          direction: string
+          error_message?: string | null
+          id?: string
+          location_latitude?: number | null
+          location_longitude?: number | null
+          location_name?: string | null
+          media_caption?: string | null
+          media_filename?: string | null
+          media_mime_type?: string | null
+          media_url?: string | null
+          message_id?: string | null
+          message_type?: string
+          organization_id?: string | null
+          read_at?: string | null
+          read_by?: string | null
+          sent_by?: string | null
+          session_id?: string | null
+          source?: string
+          status?: string | null
+          timestamp?: string
+          wa_id: string
+        }
+        Update: {
+          client_id?: string | null
+          contact_name?: string | null
+          contact_phone?: string
+          content?: string | null
+          created_at?: string | null
+          direction?: string
+          error_message?: string | null
+          id?: string
+          location_latitude?: number | null
+          location_longitude?: number | null
+          location_name?: string | null
+          media_caption?: string | null
+          media_filename?: string | null
+          media_mime_type?: string | null
+          media_url?: string | null
+          message_id?: string | null
+          message_type?: string
+          organization_id?: string | null
+          read_at?: string | null
+          read_by?: string | null
+          sent_by?: string | null
+          session_id?: string | null
+          source?: string
+          status?: string | null
+          timestamp?: string
+          wa_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_messages_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      whatsapp_qr_sessions: {
+        Row: {
+          connected_at: string | null
+          created_at: string | null
+          device_name: string | null
+          disconnected_at: string | null
+          id: string
+          is_active: boolean | null
+          last_seen: string | null
+          organization_id: string | null
+          phone_number: string | null
+          receive_notifications: boolean | null
+          session_data: Json | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          connected_at?: string | null
+          created_at?: string | null
+          device_name?: string | null
+          disconnected_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_seen?: string | null
+          organization_id?: string | null
+          phone_number?: string | null
+          receive_notifications?: boolean | null
+          session_data?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          connected_at?: string | null
+          created_at?: string | null
+          device_name?: string | null
+          disconnected_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_seen?: string | null
+          organization_id?: string | null
+          phone_number?: string | null
+          receive_notifications?: boolean | null
+          session_data?: Json | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_qr_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_qr_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_qr_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_qr_sessions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       whatsapp_sessions: {
         Row: {
           created_at: string | null
@@ -44680,6 +45086,110 @@ export type Database = {
             foreignKeyName: "whatsapp_sessions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      whatsapp_tenant_config: {
+        Row: {
+          auto_reply_enabled: boolean | null
+          auto_reply_message: string | null
+          business_hours_end: string | null
+          business_hours_only: boolean | null
+          business_hours_start: string | null
+          created_at: string | null
+          id: string
+          implementation_notes: string | null
+          implementation_request_date: string | null
+          implementation_requested: boolean | null
+          implementation_status: string | null
+          integration_type: string | null
+          meta_access_token: string | null
+          meta_app_id: string | null
+          meta_business_account_id: string | null
+          meta_phone_number_id: string | null
+          meta_status: string | null
+          meta_webhook_verify_token: string | null
+          notify_email: string | null
+          notify_new_messages: boolean | null
+          organization_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auto_reply_enabled?: boolean | null
+          auto_reply_message?: string | null
+          business_hours_end?: string | null
+          business_hours_only?: boolean | null
+          business_hours_start?: string | null
+          created_at?: string | null
+          id?: string
+          implementation_notes?: string | null
+          implementation_request_date?: string | null
+          implementation_requested?: boolean | null
+          implementation_status?: string | null
+          integration_type?: string | null
+          meta_access_token?: string | null
+          meta_app_id?: string | null
+          meta_business_account_id?: string | null
+          meta_phone_number_id?: string | null
+          meta_status?: string | null
+          meta_webhook_verify_token?: string | null
+          notify_email?: string | null
+          notify_new_messages?: boolean | null
+          organization_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auto_reply_enabled?: boolean | null
+          auto_reply_message?: string | null
+          business_hours_end?: string | null
+          business_hours_only?: boolean | null
+          business_hours_start?: string | null
+          created_at?: string | null
+          id?: string
+          implementation_notes?: string | null
+          implementation_request_date?: string | null
+          implementation_requested?: boolean | null
+          implementation_status?: string | null
+          integration_type?: string | null
+          meta_access_token?: string | null
+          meta_app_id?: string | null
+          meta_business_account_id?: string | null
+          meta_phone_number_id?: string | null
+          meta_status?: string | null
+          meta_webhook_verify_token?: string | null
+          notify_email?: string | null
+          notify_new_messages?: boolean | null
+          organization_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "whatsapp_tenant_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_tenant_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "whatsapp_tenant_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "whatsapp_tenant_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
           },
@@ -47405,6 +47915,10 @@ export type Database = {
           p_user_id?: string
         }
         Returns: Json
+      }
+      mark_whatsapp_conversation_read: {
+        Args: { p_conversation_id: string }
+        Returns: undefined
       }
       match_knowledge: {
         Args: {
