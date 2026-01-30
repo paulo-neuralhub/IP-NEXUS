@@ -161,27 +161,29 @@ export function CommunicationsInbox({ defaultChannel = null, defaultTab = 'all' 
               <TabsTrigger value="starred">Destacados</TabsTrigger>
             </TabsList>
 
-            {/* Filtros de canal */}
-            <div className="flex gap-1 px-4 py-2 border-b overflow-x-auto">
-              <Button
-                variant={channelFilter === null ? 'secondary' : 'ghost'}
-                size="sm"
-                onClick={() => setChannelFilter(null)}
-              >
-                Todos
-              </Button>
-              {(['email', 'whatsapp', 'phone', 'portal'] as CommChannel[]).map(channel => (
+            {/* Channel filters only shown when on unified inbox (no defaultChannel) */}
+            {defaultChannel === null && (
+              <div className="flex gap-1 px-4 py-2 border-b overflow-x-auto">
                 <Button
-                  key={channel}
-                  variant={channelFilter === channel ? 'secondary' : 'ghost'}
+                  variant={channelFilter === null ? 'secondary' : 'ghost'}
                   size="sm"
-                  onClick={() => setChannelFilter(channel)}
+                  onClick={() => setChannelFilter(null)}
                 >
-                  {CHANNEL_ICONS[channel]}
-                  <span className="ml-1 capitalize">{channel}</span>
+                  Todos
                 </Button>
-              ))}
-            </div>
+                {(['email', 'whatsapp', 'phone'] as CommChannel[]).map(channel => (
+                  <Button
+                    key={channel}
+                    variant={channelFilter === channel ? 'secondary' : 'ghost'}
+                    size="sm"
+                    onClick={() => setChannelFilter(channel)}
+                  >
+                    {CHANNEL_ICONS[channel]}
+                    <span className="ml-1 capitalize">{channel}</span>
+                  </Button>
+                ))}
+              </div>
+            )}
 
             <ScrollArea className="h-[calc(100%-140px)]">
               <div className="divide-y">
