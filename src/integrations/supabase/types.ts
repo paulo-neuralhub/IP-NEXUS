@@ -13418,6 +13418,39 @@ export type Database = {
           },
         ]
       }
+      document_styles: {
+        Row: {
+          code: string
+          created_at: string | null
+          css_variables: Json | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          preview_image_url: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          css_variables?: Json | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          preview_image_url?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          css_variables?: Json | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          preview_image_url?: string | null
+        }
+        Relationships: []
+      }
       document_template_variables: {
         Row: {
           created_at: string | null
@@ -13469,6 +13502,7 @@ export type Database = {
           body_sections: Json | null
           category: string
           code: string | null
+          content_html: string | null
           created_at: string | null
           created_by: string | null
           custom_colors: Json | null
@@ -13489,6 +13523,8 @@ export type Database = {
           numbering_suffix: string | null
           organization_id: string | null
           output_format: string | null
+          preferred_style_code: string | null
+          sections: Json | null
           show_footer: boolean | null
           show_header: boolean | null
           show_logo: boolean | null
@@ -13512,6 +13548,7 @@ export type Database = {
           body_sections?: Json | null
           category: string
           code?: string | null
+          content_html?: string | null
           created_at?: string | null
           created_by?: string | null
           custom_colors?: Json | null
@@ -13532,6 +13569,8 @@ export type Database = {
           numbering_suffix?: string | null
           organization_id?: string | null
           output_format?: string | null
+          preferred_style_code?: string | null
+          sections?: Json | null
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
@@ -13555,6 +13594,7 @@ export type Database = {
           body_sections?: Json | null
           category?: string
           code?: string | null
+          content_html?: string | null
           created_at?: string | null
           created_by?: string | null
           custom_colors?: Json | null
@@ -13575,6 +13615,8 @@ export type Database = {
           numbering_suffix?: string | null
           organization_id?: string | null
           output_format?: string | null
+          preferred_style_code?: string | null
+          sections?: Json | null
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
@@ -16796,9 +16838,14 @@ export type Database = {
           ai_model_used: string | null
           ai_prompt_used: string | null
           ai_tokens_used: number | null
+          category: string | null
+          client_id: string | null
           content: string
+          content_html: string | null
+          content_json: Json | null
           created_at: string | null
           created_by: string | null
+          document_number: string | null
           export_format: string | null
           exported_at: string | null
           exported_document_id: string | null
@@ -16807,9 +16854,15 @@ export type Database = {
           matter_id: string | null
           name: string
           organization_id: string
+          parent_document_id: string | null
           parent_id: string | null
+          pdf_url: string | null
+          sent_at: string | null
+          sent_to: string | null
           status: string | null
+          style_code: string | null
           template_id: string | null
+          title: string | null
           updated_at: string | null
           user_feedback: string | null
           user_rating: number | null
@@ -16821,9 +16874,14 @@ export type Database = {
           ai_model_used?: string | null
           ai_prompt_used?: string | null
           ai_tokens_used?: number | null
+          category?: string | null
+          client_id?: string | null
           content: string
+          content_html?: string | null
+          content_json?: Json | null
           created_at?: string | null
           created_by?: string | null
+          document_number?: string | null
           export_format?: string | null
           exported_at?: string | null
           exported_document_id?: string | null
@@ -16832,9 +16890,15 @@ export type Database = {
           matter_id?: string | null
           name: string
           organization_id: string
+          parent_document_id?: string | null
           parent_id?: string | null
+          pdf_url?: string | null
+          sent_at?: string | null
+          sent_to?: string | null
           status?: string | null
+          style_code?: string | null
           template_id?: string | null
+          title?: string | null
           updated_at?: string | null
           user_feedback?: string | null
           user_rating?: number | null
@@ -16846,9 +16910,14 @@ export type Database = {
           ai_model_used?: string | null
           ai_prompt_used?: string | null
           ai_tokens_used?: number | null
+          category?: string | null
+          client_id?: string | null
           content?: string
+          content_html?: string | null
+          content_json?: Json | null
           created_at?: string | null
           created_by?: string | null
+          document_number?: string | null
           export_format?: string | null
           exported_at?: string | null
           exported_document_id?: string | null
@@ -16857,9 +16926,15 @@ export type Database = {
           matter_id?: string | null
           name?: string
           organization_id?: string
+          parent_document_id?: string | null
           parent_id?: string | null
+          pdf_url?: string | null
+          sent_at?: string | null
+          sent_to?: string | null
           status?: string | null
+          style_code?: string | null
           template_id?: string | null
+          title?: string | null
           updated_at?: string | null
           user_feedback?: string | null
           user_rating?: number | null
@@ -16868,6 +16943,13 @@ export type Database = {
           version?: number | null
         }
         Relationships: [
+          {
+            foreignKeyName: "generated_documents_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "contacts"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "generated_documents_created_by_fkey"
             columns: ["created_by"]
@@ -16923,6 +17005,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "generated_documents_parent_document_id_fkey"
+            columns: ["parent_document_id"]
+            isOneToOne: false
+            referencedRelation: "generated_documents"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "generated_documents_parent_id_fkey"
@@ -41599,6 +41688,155 @@ export type Database = {
             foreignKeyName: "tenant_consents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      tenant_document_settings: {
+        Row: {
+          bank_account_holder: string | null
+          bank_iban: string | null
+          bank_name: string | null
+          bank_swift: string | null
+          company_address: string | null
+          company_cif: string | null
+          company_city: string | null
+          company_country: string | null
+          company_email: string | null
+          company_name: string | null
+          company_phone: string | null
+          company_postal_code: string | null
+          company_website: string | null
+          confidentiality_notice: string | null
+          created_at: string | null
+          custom_accent_color: string | null
+          custom_background_color: string | null
+          custom_body_font: string | null
+          custom_footer_text: string | null
+          custom_header_text: string | null
+          custom_primary_color: string | null
+          custom_secondary_color: string | null
+          custom_text_color: string | null
+          custom_title_font: string | null
+          default_payment_terms: string | null
+          default_style_code: string | null
+          default_tax_rate: number | null
+          document_next_number: number | null
+          document_prefix: string | null
+          id: string
+          invoice_next_number: number | null
+          invoice_prefix: string | null
+          logo_max_height: number | null
+          logo_position: string | null
+          logo_url: string | null
+          organization_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bank_account_holder?: string | null
+          bank_iban?: string | null
+          bank_name?: string | null
+          bank_swift?: string | null
+          company_address?: string | null
+          company_cif?: string | null
+          company_city?: string | null
+          company_country?: string | null
+          company_email?: string | null
+          company_name?: string | null
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_website?: string | null
+          confidentiality_notice?: string | null
+          created_at?: string | null
+          custom_accent_color?: string | null
+          custom_background_color?: string | null
+          custom_body_font?: string | null
+          custom_footer_text?: string | null
+          custom_header_text?: string | null
+          custom_primary_color?: string | null
+          custom_secondary_color?: string | null
+          custom_text_color?: string | null
+          custom_title_font?: string | null
+          default_payment_terms?: string | null
+          default_style_code?: string | null
+          default_tax_rate?: number | null
+          document_next_number?: number | null
+          document_prefix?: string | null
+          id?: string
+          invoice_next_number?: number | null
+          invoice_prefix?: string | null
+          logo_max_height?: number | null
+          logo_position?: string | null
+          logo_url?: string | null
+          organization_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bank_account_holder?: string | null
+          bank_iban?: string | null
+          bank_name?: string | null
+          bank_swift?: string | null
+          company_address?: string | null
+          company_cif?: string | null
+          company_city?: string | null
+          company_country?: string | null
+          company_email?: string | null
+          company_name?: string | null
+          company_phone?: string | null
+          company_postal_code?: string | null
+          company_website?: string | null
+          confidentiality_notice?: string | null
+          created_at?: string | null
+          custom_accent_color?: string | null
+          custom_background_color?: string | null
+          custom_body_font?: string | null
+          custom_footer_text?: string | null
+          custom_header_text?: string | null
+          custom_primary_color?: string | null
+          custom_secondary_color?: string | null
+          custom_text_color?: string | null
+          custom_title_font?: string | null
+          default_payment_terms?: string | null
+          default_style_code?: string | null
+          default_tax_rate?: number | null
+          document_next_number?: number | null
+          document_prefix?: string | null
+          id?: string
+          invoice_next_number?: number | null
+          invoice_prefix?: string | null
+          logo_max_height?: number | null
+          logo_position?: string | null
+          logo_url?: string | null
+          organization_id?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_document_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_document_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_document_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_document_settings_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
           },
