@@ -1,11 +1,11 @@
-// ============================================================
-// IP-NEXUS - Module Icons for Header
-// Visual module badges showing subscription status
-// ============================================================
+// =============================================
+// COMPONENTE: ModuleIcons
+// Iconos premium tipo app con gradientes únicos
+// =============================================
 
 import { 
-  Users, 
   Briefcase, 
+  Users, 
   Mail, 
   FileText, 
   Calendar, 
@@ -14,11 +14,11 @@ import {
   Sparkles, 
   BarChart3,
   Bell,
-  Target,
   Megaphone,
   Eye,
   Scale,
   Landmark,
+  LineChart,
   type LucideIcon
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -29,27 +29,27 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 
-// Definición de todos los módulos disponibles
+// Definición de todos los módulos con diseño único
 export const MODULE_DEFINITIONS: Record<string, {
   id: string;
   name: string;
   shortName: string;
   description: string;
   icon: LucideIcon;
-  color: string;
-  bgLight: string;
-  textColor: string;
+  gradient: string;
+  shadowColor: string;
+  bgPattern: string;
 }> = {
-  // Core
+  // === CORE MODULES ===
   expedientes: {
     id: 'expedientes',
     name: 'Expedientes',
     shortName: 'EXP',
     description: 'Gestión de expedientes de PI',
     icon: Briefcase,
-    color: 'from-blue-500 to-blue-600',
-    bgLight: 'bg-blue-50',
-    textColor: 'text-blue-600'
+    gradient: 'from-blue-500 via-blue-600 to-blue-700',
+    shadowColor: 'shadow-blue-500/30',
+    bgPattern: 'radial-gradient(circle at 30% 20%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   crm: {
     id: 'crm',
@@ -57,9 +57,9 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'CRM',
     description: 'Clientes, Leads y Oportunidades',
     icon: Users,
-    color: 'from-green-500 to-green-600',
-    bgLight: 'bg-green-50',
-    textColor: 'text-green-600'
+    gradient: 'from-emerald-400 via-emerald-500 to-emerald-600',
+    shadowColor: 'shadow-emerald-500/30',
+    bgPattern: 'radial-gradient(circle at 70% 20%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   comunicaciones: {
     id: 'comunicaciones',
@@ -67,9 +67,9 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'COM',
     description: 'Email, WhatsApp, Teléfono',
     icon: Mail,
-    color: 'from-purple-500 to-purple-600',
-    bgLight: 'bg-purple-50',
-    textColor: 'text-purple-600'
+    gradient: 'from-violet-500 via-purple-500 to-purple-600',
+    shadowColor: 'shadow-purple-500/30',
+    bgPattern: 'radial-gradient(circle at 50% 10%, rgba(255,255,255,0.25) 0%, transparent 40%)'
   },
   documentos: {
     id: 'documentos',
@@ -77,9 +77,9 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'DOC',
     description: 'Gestión documental y templates',
     icon: FileText,
-    color: 'from-orange-500 to-orange-600',
-    bgLight: 'bg-orange-50',
-    textColor: 'text-orange-600'
+    gradient: 'from-orange-400 via-orange-500 to-red-500',
+    shadowColor: 'shadow-orange-500/30',
+    bgPattern: 'radial-gradient(circle at 20% 80%, rgba(255,255,255,0.15) 0%, transparent 50%)'
   },
   calendario: {
     id: 'calendario',
@@ -87,9 +87,9 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'CAL',
     description: 'Eventos, plazos y citas',
     icon: Calendar,
-    color: 'from-cyan-500 to-cyan-600',
-    bgLight: 'bg-cyan-50',
-    textColor: 'text-cyan-600'
+    gradient: 'from-cyan-400 via-cyan-500 to-teal-500',
+    shadowColor: 'shadow-cyan-500/30',
+    bgPattern: 'radial-gradient(circle at 80% 30%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   facturacion: {
     id: 'facturacion',
@@ -97,21 +97,21 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'FAC',
     description: 'Facturas y presupuestos',
     icon: Receipt,
-    color: 'from-emerald-500 to-emerald-600',
-    bgLight: 'bg-emerald-50',
-    textColor: 'text-emerald-600'
+    gradient: 'from-green-500 via-green-600 to-emerald-600',
+    shadowColor: 'shadow-green-500/30',
+    bgPattern: 'radial-gradient(circle at 40% 90%, rgba(255,255,255,0.15) 0%, transparent 50%)'
   },
   
-  // Avanzados
+  // === PRODUCTOS STANDALONE ===
   docket: {
     id: 'docket',
     name: 'IP-DOCKET',
     shortName: 'DKT',
     description: 'Control de plazos y vencimientos',
     icon: Bell,
-    color: 'from-red-500 to-red-600',
-    bgLight: 'bg-red-50',
-    textColor: 'text-red-600'
+    gradient: 'from-red-500 via-red-600 to-rose-600',
+    shadowColor: 'shadow-red-500/30',
+    bgPattern: 'radial-gradient(circle at 50% 50%, rgba(255,255,255,0.2) 0%, transparent 60%)'
   },
   spider: {
     id: 'spider',
@@ -119,19 +119,19 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'SPD',
     description: 'Vigilancia de marcas',
     icon: Eye,
-    color: 'from-indigo-500 to-indigo-600',
-    bgLight: 'bg-indigo-50',
-    textColor: 'text-indigo-600'
+    gradient: 'from-indigo-500 via-indigo-600 to-violet-600',
+    shadowColor: 'shadow-indigo-500/30',
+    bgPattern: 'radial-gradient(circle at 50% 30%, rgba(255,255,255,0.25) 0%, transparent 50%)'
   },
   genius: {
     id: 'genius',
     name: 'IP-GENIUS',
-    shortName: 'GNS',
-    description: 'Asistente IA',
+    shortName: 'AI',
+    description: 'Asistente IA avanzado',
     icon: Sparkles,
-    color: 'from-amber-500 to-amber-600',
-    bgLight: 'bg-amber-50',
-    textColor: 'text-amber-600'
+    gradient: 'from-amber-400 via-yellow-500 to-orange-500',
+    shadowColor: 'shadow-amber-500/30',
+    bgPattern: 'radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3) 0%, transparent 40%)'
   },
   market: {
     id: 'market',
@@ -139,29 +139,31 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'MKT',
     description: 'Marketplace de PI',
     icon: Globe,
-    color: 'from-teal-500 to-teal-600',
-    bgLight: 'bg-teal-50',
-    textColor: 'text-teal-600'
+    gradient: 'from-teal-400 via-teal-500 to-cyan-600',
+    shadowColor: 'shadow-teal-500/30',
+    bgPattern: 'radial-gradient(circle at 60% 20%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   finance: {
     id: 'finance',
     name: 'IP-FINANCE',
     shortName: 'FIN',
     description: 'Valoración de activos IP',
-    icon: BarChart3,
-    color: 'from-pink-500 to-pink-600',
-    bgLight: 'bg-pink-50',
-    textColor: 'text-pink-600'
+    icon: LineChart,
+    gradient: 'from-pink-500 via-rose-500 to-red-500',
+    shadowColor: 'shadow-pink-500/30',
+    bgPattern: 'radial-gradient(circle at 70% 70%, rgba(255,255,255,0.15) 0%, transparent 50%)'
   },
+  
+  // === AVANZADOS ===
   analytics: {
     id: 'analytics',
     name: 'Analytics',
     shortName: 'ANL',
     description: 'Reportes y análisis avanzado',
-    icon: Target,
-    color: 'from-violet-500 to-violet-600',
-    bgLight: 'bg-violet-50',
-    textColor: 'text-violet-600'
+    icon: BarChart3,
+    gradient: 'from-fuchsia-500 via-fuchsia-600 to-purple-600',
+    shadowColor: 'shadow-fuchsia-500/30',
+    bgPattern: 'radial-gradient(circle at 40% 40%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   marketing: {
     id: 'marketing',
@@ -169,21 +171,21 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'MRK',
     description: 'Campañas y automatización',
     icon: Megaphone,
-    color: 'from-rose-500 to-rose-600',
-    bgLight: 'bg-rose-50',
-    textColor: 'text-rose-600'
+    gradient: 'from-rose-400 via-pink-500 to-fuchsia-500',
+    shadowColor: 'shadow-rose-500/30',
+    bgPattern: 'radial-gradient(circle at 80% 80%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   
-  // Integraciones
+  // === INTEGRACIONES ===
   oepm: {
     id: 'oepm',
     name: 'OEPM',
     shortName: 'OEPM',
     description: 'Oficina Española de Patentes',
     icon: Landmark,
-    color: 'from-yellow-500 to-yellow-600',
-    bgLight: 'bg-yellow-50',
-    textColor: 'text-yellow-600'
+    gradient: 'from-yellow-500 via-amber-500 to-orange-500',
+    shadowColor: 'shadow-yellow-500/30',
+    bgPattern: 'radial-gradient(circle at 50% 20%, rgba(255,255,255,0.25) 0%, transparent 50%)'
   },
   euipo: {
     id: 'euipo',
@@ -191,9 +193,9 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'EUIPO',
     description: 'Oficina de PI de la UE',
     icon: Scale,
-    color: 'from-blue-600 to-blue-700',
-    bgLight: 'bg-blue-50',
-    textColor: 'text-blue-700'
+    gradient: 'from-blue-600 via-blue-700 to-indigo-700',
+    shadowColor: 'shadow-blue-600/30',
+    bgPattern: 'radial-gradient(circle at 30% 70%, rgba(255,255,255,0.15) 0%, transparent 50%)'
   },
   wipo: {
     id: 'wipo',
@@ -201,9 +203,9 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'WIPO',
     description: 'Organización Mundial de PI',
     icon: Globe,
-    color: 'from-sky-500 to-sky-600',
-    bgLight: 'bg-sky-50',
-    textColor: 'text-sky-600'
+    gradient: 'from-sky-500 via-blue-500 to-indigo-500',
+    shadowColor: 'shadow-sky-500/30',
+    bgPattern: 'radial-gradient(circle at 60% 40%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   }
 };
 
@@ -221,7 +223,7 @@ export function ModuleIcon({
   moduleId, 
   isActive, 
   size = 'md',
-  showLabel = false,
+  showLabel = true,
   onClick 
 }: ModuleIconProps) {
   const module = MODULE_DEFINITIONS[moduleId];
@@ -229,17 +231,28 @@ export function ModuleIcon({
   
   const Icon = module.icon;
   
-  const sizeClasses = {
-    sm: 'w-8 h-8',
-    md: 'w-10 h-10',
-    lg: 'w-12 h-12'
+  const sizeConfig = {
+    sm: {
+      container: 'w-10 h-10',
+      icon: 'h-5 w-5',
+      label: 'text-[9px]',
+      radius: 'rounded-xl'
+    },
+    md: {
+      container: 'w-12 h-12',
+      icon: 'h-6 w-6',
+      label: 'text-[10px]',
+      radius: 'rounded-xl'
+    },
+    lg: {
+      container: 'w-14 h-14',
+      icon: 'h-7 w-7',
+      label: 'text-xs',
+      radius: 'rounded-2xl'
+    }
   };
-  
-  const iconSizes = {
-    sm: 'h-4 w-4',
-    md: 'h-5 w-5',
-    lg: 'h-6 w-6'
-  };
+
+  const config = sizeConfig[size];
 
   return (
     <TooltipProvider delayDuration={200}>
@@ -248,59 +261,101 @@ export function ModuleIcon({
           <button
             onClick={onClick}
             className={cn(
-              "flex flex-col items-center gap-1 transition-all duration-200",
-              onClick && "cursor-pointer hover:scale-110",
-              !onClick && "cursor-default"
+              'group relative flex flex-col items-center gap-1 transition-all duration-200',
+              'focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2',
+              isActive ? 'cursor-pointer' : 'cursor-not-allowed'
             )}
+            disabled={!isActive}
           >
-            {/* Icono tipo blasón */}
+            {/* Icono principal - Estilo App Icon */}
             <div
               className={cn(
-                sizeClasses[size],
-                "relative rounded-lg flex items-center justify-center transition-all duration-300",
-                isActive 
-                  ? `bg-gradient-to-br ${module.color} shadow-lg shadow-current/20` 
-                  : "bg-muted/50 border border-border"
+                config.container,
+                config.radius,
+                'relative flex items-center justify-center transition-all duration-300',
+                isActive ? [
+                  `bg-gradient-to-br ${module.gradient}`,
+                  module.shadowColor,
+                  'shadow-lg',
+                  'group-hover:scale-110 group-hover:shadow-xl',
+                  'active:scale-95'
+                ] : [
+                  'bg-muted/60',
+                  'grayscale',
+                  'opacity-50'
+                ]
               )}
+              style={{
+                backgroundImage: isActive ? module.bgPattern : undefined
+              }}
             >
-              {/* Efecto de brillo */}
+              {/* Borde interior sutil */}
+              <div className={cn(
+                'absolute inset-0',
+                config.radius,
+                'border',
+                isActive ? 'border-white/20' : 'border-border/50'
+              )} />
+              
+              {/* Reflejo superior (glass effect) */}
               {isActive && (
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-t from-transparent via-white/10 to-white/20" />
+                <div 
+                  className={cn(
+                    'absolute inset-x-1 top-1 h-1/3',
+                    'rounded-t-lg',
+                    'bg-gradient-to-b from-white/30 to-transparent',
+                    'pointer-events-none'
+                  )}
+                />
               )}
               
-              <Icon 
-                className={cn(
-                  iconSizes[size],
-                  "relative z-10",
-                  isActive ? "text-white" : "text-muted-foreground/50"
-                )} 
-              />
+              {/* Icono */}
+              <Icon className={cn(
+                config.icon,
+                'relative z-10 drop-shadow-sm',
+                isActive ? 'text-white' : 'text-muted-foreground'
+              )} />
               
-              {/* Indicador de activo */}
+              {/* Efecto hover glow */}
               {isActive && (
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-green-400 rounded-full border border-white shadow-sm" />
+                <div className={cn(
+                  'absolute inset-0',
+                  config.radius,
+                  'opacity-0 group-hover:opacity-100',
+                  'bg-white/10',
+                  'transition-opacity duration-200',
+                  'pointer-events-none'
+                )} />
               )}
             </div>
             
-            {/* Label opcional */}
+            {/* Label */}
             {showLabel && (
               <span className={cn(
-                "text-[10px] font-semibold tracking-wide",
-                isActive ? module.textColor : "text-muted-foreground/50"
+                config.label,
+                'font-semibold tracking-wide uppercase',
+                isActive ? 'text-foreground' : 'text-muted-foreground/60'
               )}>
                 {module.shortName}
               </span>
             )}
+            
+            {/* Indicador de inactivo */}
+            {!isActive && (
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-muted rounded-full flex items-center justify-center text-[8px] border border-border shadow-sm">
+                🔒
+              </div>
+            )}
           </button>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-[200px]">
-          <div className="space-y-1">
-            <p className="font-semibold">{module.name}</p>
-            <p className="text-xs text-muted-foreground">{module.description}</p>
-            {!isActive && (
-              <p className="text-xs text-amber-600 font-medium">No incluido en tu plan</p>
-            )}
-          </div>
+        <TooltipContent side="bottom" className="text-center max-w-[180px]">
+          <p className="font-semibold">{module.name}</p>
+          <p className="text-xs text-muted-foreground">{module.description}</p>
+          {!isActive && (
+            <p className="text-xs text-amber-500 mt-1 font-medium">
+              ⬆️ Actualiza tu plan
+            </p>
+          )}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -311,27 +366,93 @@ export function ModuleIcon({
 interface ModuleBarProps {
   activeModules: string[];
   onModuleClick?: (moduleId: string) => void;
+  variant?: 'full' | 'compact' | 'minimal';
 }
 
-export function ModuleBar({ activeModules, onModuleClick }: ModuleBarProps) {
-  // Orden de visualización
-  const moduleOrder: string[] = [
-    'expedientes', 'crm', 'comunicaciones', 'documentos', 'calendario', 'facturacion',
-    'docket', 'spider', 'genius', 'market', 'finance', 'analytics', 'marketing',
-    'oepm', 'euipo', 'wipo'
-  ];
+export function ModuleBar({ 
+  activeModules, 
+  onModuleClick,
+  variant = 'full'
+}: ModuleBarProps) {
+  // Agrupar módulos por categoría
+  const coreModules: string[] = ['expedientes', 'crm', 'comunicaciones', 'documentos', 'calendario', 'facturacion'];
+  const productModules: string[] = ['docket', 'spider', 'genius', 'market', 'finance'];
+  const advancedModules: string[] = ['analytics', 'marketing'];
+  const integrationModules: string[] = ['oepm', 'euipo', 'wipo'];
+
+  // Para variante minimal, solo mostrar activos
+  const modulesToShow = variant === 'minimal' 
+    ? activeModules 
+    : [...coreModules, ...productModules, ...advancedModules, ...integrationModules];
+
+  if (variant === 'compact') {
+    return (
+      <div className="flex items-center gap-2 px-2">
+        {modulesToShow.slice(0, 8).map((moduleId) => (
+          <ModuleIcon
+            key={moduleId}
+            moduleId={moduleId}
+            isActive={activeModules.includes(moduleId)}
+            size="sm"
+            showLabel={false}
+            onClick={() => onModuleClick?.(moduleId)}
+          />
+        ))}
+        {modulesToShow.length > 8 && (
+          <div className="w-10 h-10 rounded-xl bg-muted/60 flex items-center justify-center text-xs font-semibold text-muted-foreground">
+            +{modulesToShow.length - 8}
+          </div>
+        )}
+      </div>
+    );
+  }
 
   return (
-    <div className="flex items-center gap-1.5 px-2 py-1.5 bg-muted/30 rounded-xl border border-border/50">
-      {moduleOrder.map((moduleId) => (
-        <ModuleIcon
-          key={moduleId}
-          moduleId={moduleId}
-          isActive={activeModules.includes(moduleId)}
-          size="sm"
-          onClick={() => onModuleClick?.(moduleId)}
-        />
-      ))}
+    <div className="flex items-center gap-3 px-4 py-2 overflow-x-auto scrollbar-hide">
+      {/* Core */}
+      <div className="flex items-center gap-2">
+        {coreModules.map((moduleId) => (
+          <ModuleIcon
+            key={moduleId}
+            moduleId={moduleId}
+            isActive={activeModules.includes(moduleId)}
+            size="sm"
+            onClick={() => onModuleClick?.(moduleId)}
+          />
+        ))}
+      </div>
+      
+      {/* Separador */}
+      <div className="w-px h-8 bg-border/50 shrink-0" />
+      
+      {/* Productos */}
+      <div className="flex items-center gap-2">
+        {productModules.map((moduleId) => (
+          <ModuleIcon
+            key={moduleId}
+            moduleId={moduleId}
+            isActive={activeModules.includes(moduleId)}
+            size="sm"
+            onClick={() => onModuleClick?.(moduleId)}
+          />
+        ))}
+      </div>
+      
+      {/* Separador */}
+      <div className="w-px h-8 bg-border/50 shrink-0" />
+      
+      {/* Avanzados + Integraciones */}
+      <div className="flex items-center gap-2">
+        {[...advancedModules, ...integrationModules].map((moduleId) => (
+          <ModuleIcon
+            key={moduleId}
+            moduleId={moduleId}
+            isActive={activeModules.includes(moduleId)}
+            size="sm"
+            onClick={() => onModuleClick?.(moduleId)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
@@ -352,17 +473,17 @@ export function ModuleBarCompact({ activeModules }: { activeModules: string[] })
             <div
               key={moduleId}
               className={cn(
-                "w-6 h-6 rounded-md flex items-center justify-center",
-                `bg-gradient-to-br ${module.color}`,
-                "border-2 border-background"
+                "w-7 h-7 rounded-lg flex items-center justify-center",
+                `bg-gradient-to-br ${module.gradient}`,
+                "border-2 border-background shadow-sm"
               )}
             >
-              <Icon className="h-3 w-3 text-white" />
+              <Icon className="h-3.5 w-3.5 text-white" />
             </div>
           );
         })}
         {activeModules.length > 5 && (
-          <div className="w-6 h-6 rounded-md flex items-center justify-center bg-muted border-2 border-background">
+          <div className="w-7 h-7 rounded-lg flex items-center justify-center bg-muted border-2 border-background shadow-sm">
             <span className="text-[10px] font-bold text-muted-foreground">
               +{activeModules.length - 5}
             </span>
@@ -370,8 +491,79 @@ export function ModuleBarCompact({ activeModules }: { activeModules: string[] })
         )}
       </div>
       <span className="text-xs text-muted-foreground hidden sm:inline">
-        {activeCount}/{totalCount} módulos
+        {activeCount}/{totalCount}
       </span>
     </div>
+  );
+}
+
+// Versión para sidebar o dropdown
+export function ModuleGrid({ 
+  activeModules, 
+  onModuleClick 
+}: { 
+  activeModules: string[]; 
+  onModuleClick?: (moduleId: string) => void;
+}) {
+  const allModules = Object.keys(MODULE_DEFINITIONS);
+  
+  return (
+    <div className="grid grid-cols-4 gap-4 p-4">
+      {allModules.map((moduleId) => (
+        <ModuleIcon
+          key={moduleId}
+          moduleId={moduleId}
+          isActive={activeModules.includes(moduleId)}
+          size="lg"
+          onClick={() => onModuleClick?.(moduleId)}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Badge contador de módulos activos
+export function ModuleCountBadge({ 
+  activeModules,
+  onClick 
+}: { 
+  activeModules: string[];
+  onClick?: () => void;
+}) {
+  const total = Object.keys(MODULE_DEFINITIONS).length;
+  const active = activeModules.length;
+  
+  // Mostrar los primeros 4 iconos activos en miniatura
+  const previewModules = activeModules.slice(0, 4);
+  
+  return (
+    <button
+      onClick={onClick}
+      className="flex items-center gap-2 px-3 py-2 rounded-xl bg-muted/60 hover:bg-muted transition-colors"
+    >
+      <div className="flex -space-x-2">
+        {previewModules.map((moduleId) => {
+          const module = MODULE_DEFINITIONS[moduleId];
+          if (!module) return null;
+          const Icon = module.icon;
+          return (
+            <div
+              key={moduleId}
+              className={cn(
+                'w-6 h-6 rounded-lg flex items-center justify-center',
+                `bg-gradient-to-br ${module.gradient}`,
+                'border-2 border-background',
+                'shadow-sm'
+              )}
+            >
+              <Icon className="h-3 w-3 text-white" />
+            </div>
+          );
+        })}
+      </div>
+      <span className="text-xs font-semibold text-muted-foreground">
+        {active}/{total}
+      </span>
+    </button>
   );
 }
