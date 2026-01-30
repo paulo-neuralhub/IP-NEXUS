@@ -176,34 +176,6 @@ export function CommunicationsInbox({ defaultChannel = null, defaultTab = 'all' 
               Destacados
             </Button>
           </div>
-
-          {/* Filtros de canal - SOLO si estamos en inbox unificado */}
-          {defaultChannel === null && (
-            <>
-              <Separator />
-              <div className="flex gap-1 overflow-x-auto">
-                <Button
-                  variant={channelFilter === null ? 'secondary' : 'ghost'}
-                  size="sm"
-                  onClick={() => setChannelFilter(null)}
-                >
-                  Todos
-                </Button>
-                {(['email', 'whatsapp', 'phone'] as CommChannel[]).map(channel => (
-                  <Button
-                    key={channel}
-                    variant={channelFilter === channel ? 'secondary' : 'ghost'}
-                    size="sm"
-                    onClick={() => setChannelFilter(channel)}
-                    className="gap-1"
-                  >
-                    {CHANNEL_ICONS[channel]}
-                    <span className="capitalize">{channel}</span>
-                  </Button>
-                ))}
-              </div>
-            </>
-          )}
         </CardHeader>
 
         <CardContent className="flex-1 p-0 overflow-hidden">
