@@ -9,8 +9,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Loader2, Sparkles, Building2, Info } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, Info } from 'lucide-react';
 import { NiceClassSelectorV2, type NiceSelection } from '@/components/features/docket';
+import { AccountCombobox } from '@/components/features/crm/AccountCombobox';
 import { 
   useCreateMatterV2, 
   useGenerateMatterNumber,
@@ -105,19 +106,19 @@ export default function NewMatterPage() {
   const [previewNumberValue, setPreviewNumberValue] = useState<string | null>(null);
   const [generatingNumber, setGeneratingNumber] = useState(false);
   
-  // Fetch clients (contacts with client_token)
-  const { data: clients, isLoading: loadingClients } = useQuery({
-    queryKey: ['clients-for-matter', currentOrganization?.id],
+  // Fetch accounts with client_token (for preview number generation)
+  const { data: accounts } = useQuery({
+    queryKey: ['accounts-for-matter', currentOrganization?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('contacts')
-        .select('id, name, company_name, client_token')
+      const { data, error } = await (supabase as any)
+        .from('crm_accounts')
+        .select('id, name, client_token')
         .eq('organization_id', currentOrganization!.id)
         .not('client_token', 'is', null)
         .order('name');
       
       if (error) throw error;
-      return data as ContactWithToken[];
+      return data as Array<{id: string; name: string; client_token: string}>;
     },
     enabled: !!currentOrganization?.id,
   });
@@ -147,8 +148,8 @@ export default function NewMatterPage() {
   const watchedJurisdiction = form.watch('jurisdiction_code');
   const watchedClientId = form.watch('client_id');
   
-  // Get selected client info for preview
-  const selectedClient = clients?.find(c => c.id === watchedClientId);
+  // Get selected account info for preview
+  const selectedClient = accounts?.find(c => c.id === watchedClientId);
   
   // Generate preview number when type, jurisdiction or client change
   useEffect(() => {
@@ -335,43 +336,21 @@ export default function NewMatterPage() {
                   )}
                 />
                 
-                {/* Client */}
+                {/* Client - Searchable Combobox */}
                 <FormField
                   control={form.control}
                   name="client_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Cliente</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecciona cliente (opcional)" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {loadingClients ? (
-                            <div className="p-2 text-sm text-muted-foreground">Cargando...</div>
-                          ) : clients?.length === 0 ? (
-                            <div className="p-2 text-sm text-muted-foreground">
-                              No hay clientes con token
-                            </div>
-                          ) : (
-                            clients?.map(client => (
-                              <SelectItem key={client.id} value={client.id}>
-                                <div className="flex items-center gap-2">
-                                  <Building2 className="h-4 w-4 text-muted-foreground" />
-                                  <span>{client.name}</span>
-                                  {client.client_token && (
-                                    <Badge variant="outline" className="text-xs">
-                                      {client.client_token}
-                                    </Badge>
-                                  )}
-                                </div>
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
+                      <FormControl>
+                        <AccountCombobox
+                          value={field.value}
+                          onChange={(id) => field.onChange(id || '')}
+                          placeholder="Buscar cliente por nombre o NIF..."
+                          requireToken={true}
+                        />
+                      </FormControl>
                       <FormDescription>
                         El token del cliente se incluirá en el número de expediente
                       </FormDescription>

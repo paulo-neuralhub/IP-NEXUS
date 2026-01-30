@@ -8854,6 +8854,7 @@ export type Database = {
           account_manager_id: string | null
           assigned_to: string | null
           churn_risk_level: string | null
+          client_token: string | null
           client_type_id: string | null
           created_at: string
           health_score: number | null
@@ -8875,6 +8876,7 @@ export type Database = {
           account_manager_id?: string | null
           assigned_to?: string | null
           churn_risk_level?: string | null
+          client_token?: string | null
           client_type_id?: string | null
           created_at?: string
           health_score?: number | null
@@ -8896,6 +8898,7 @@ export type Database = {
           account_manager_id?: string | null
           assigned_to?: string | null
           churn_risk_level?: string | null
+          client_token?: string | null
           client_type_id?: string | null
           created_at?: string
           health_score?: number | null

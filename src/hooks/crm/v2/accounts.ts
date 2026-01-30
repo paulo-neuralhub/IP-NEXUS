@@ -3,7 +3,7 @@ import { fromTable, supabase } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { useToast } from "@/hooks/use-toast";
 
-export function useCRMAccounts(filters?: { search?: string }) {
+export function useCRMAccounts(filters?: { search?: string; limit?: number }) {
   const { organizationId } = useOrganization();
 
   return useQuery({
@@ -13,6 +13,7 @@ export function useCRMAccounts(filters?: { search?: string }) {
       let query = fromTable("crm_accounts")
         .select(`
           id, name, legal_name, 
+          tax_id, client_token,
           status, tier, health_score, 
           rating_stars, tags,
           last_interaction_at,
@@ -25,13 +26,22 @@ export function useCRMAccounts(filters?: { search?: string }) {
         .eq("organization_id", organizationId)
         .order("name", { ascending: true });
 
-      if (filters?.search) query = query.ilike("name", `%${filters.search}%`);
+      // Search by name OR tax_id (NIF/CIF)
+      if (filters?.search) {
+        query = query.or(`name.ilike.%${filters.search}%,tax_id.ilike.%${filters.search}%,legal_name.ilike.%${filters.search}%`);
+      }
+
+      // Limit results for performance
+      if (filters?.limit) {
+        query = query.limit(filters.limit);
+      }
 
       const { data, error } = await query;
       if (error) throw error;
       return data ?? [];
     },
     enabled: !!organizationId,
+    staleTime: 1000 * 30, // Cache 30s for combobox performance
   });
 }
 
