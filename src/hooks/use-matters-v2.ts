@@ -525,44 +525,110 @@ export function useCreateMatterV2() {
       if (!currentOrganization?.id) {
         throw new Error('No organization selected');
       }
-      
-      // Build clean insert payload - only include known columns
+
+      // NOTE: El ecosistema actual sigue usando la tabla legacy `matters`.
+      // `matter_timeline.matter_id` referencia `matters.id`, por lo que insertar en `matters_v2`
+      // dispara un FK violation cuando se intenta escribir en timeline.
+      // Hasta completar la migración completa a V2, creamos el expediente en `matters`.
+
+      const baseCustomFields: Record<string, unknown> =
+        data.custom_fields && typeof data.custom_fields === 'object' && !Array.isArray(data.custom_fields)
+          ? (data.custom_fields as Record<string, unknown>)
+          : {};
+
+      // Build clean insert payload for legacy `matters`
       const insertData: Record<string, unknown> = {
         organization_id: currentOrganization.id,
-        matter_number: data.matter_number,
-        title: data.title,
-        matter_type: data.matter_type,
-        jurisdiction_primary: data.jurisdiction_primary || null,
-        status: data.status || 'active',
+        // `reference` se usa como referencia interna histórica (p.ej. 2026/TM/005)
         reference: data.reference || null,
+        title: data.title,
+        type: data.matter_type,
+        status: data.status || 'active',
+
+        jurisdiction: data.jurisdiction_primary || null,
+        jurisdiction_code: data.jurisdiction_primary || null,
+
         client_id: data.client_id || null,
         mark_name: data.mark_name || null,
         mark_type: data.mark_type || null,
-        invention_title: data.invention_title || null,
+
         nice_classes: data.nice_classes || null,
         nice_classes_detail: data.nice_classes_detail || null,
         goods_services: data.goods_services || null,
+
         internal_notes: data.internal_notes || null,
-        is_urgent: data.is_urgent ?? false,
-        is_confidential: data.is_confidential ?? false,
         is_archived: false,
+
+        // Guardamos campos V2 que no existen en legacy dentro de custom_fields
+        custom_fields: {
+          ...baseCustomFields,
+          matter_number: data.matter_number,
+          invention_title: data.invention_title || null,
+          is_urgent: data.is_urgent ?? false,
+          is_confidential: data.is_confidential ?? false,
+        },
       };
-      
-      console.log('[useCreateMatterV2] Inserting:', insertData);
-      
+
+      console.log('[useCreateMatterV2] Inserting (legacy matters):', insertData);
+
       const { data: matter, error } = await supabase
-        .from('matters_v2')
+        .from('matters')
         .insert(insertData as any)
-        .select()
+        .select('*, client:contacts!matters_client_id_fkey(id, name, email, phone, mobile)')
         .single();
       
       if (error) {
         console.error('[useCreateMatterV2] Insert Error:', error.message, error.details, error.hint);
         throw new Error(error.message || 'Error al crear expediente');
       }
-      
-      console.log('[useCreateMatterV2] Created:', matter);
-      return matter as unknown as MatterV2;
+
+      const cf = (matter as any)?.custom_fields ?? {};
+
+      // Map legacy row -> MatterV2 so callers can keep using the V2 interface.
+      const mapped: MatterV2 = {
+        id: (matter as any).id,
+        organization_id: (matter as any).organization_id,
+        matter_number:
+          (cf as any)?.matter_number || (matter as any).reference || String((matter as any).id).substring(0, 8),
+        reference: (matter as any).reference,
+        title: (matter as any).title || (matter as any).mark_name || 'Sin título',
+        matter_type: (matter as any).type || data.matter_type,
+        status: (matter as any).status || 'active',
+        status_date: (matter as any).updated_at ?? null,
+        client_id: (matter as any).client_id ?? null,
+        client_name: (matter as any).client?.name || null,
+        client_email: (matter as any).client?.email || null,
+        client_phone: (matter as any).client?.phone || (matter as any).client?.mobile || null,
+        jurisdiction_primary: (matter as any).jurisdiction || (matter as any).jurisdiction_code || null,
+        instruction_date: (matter as any).filing_date ?? null,
+        priority_date: (matter as any).priority_date ?? null,
+        mark_name: (matter as any).mark_name ?? null,
+        mark_type: (matter as any).mark_type ?? null,
+        mark_image_url: (matter as any).mark_image_url ?? null,
+        invention_title: (cf as any)?.invention_title ?? null,
+        nice_classes: (matter as any).nice_classes ?? null,
+        nice_classes_detail: (matter as any).nice_classes_detail ?? null,
+        ipc_classes: null,
+        goods_services: (matter as any).goods_services ?? null,
+        responsible_id: (matter as any).assigned_to ?? null,
+        assistant_id: null,
+        estimated_official_fees: (matter as any).official_fees ?? null,
+        estimated_professional_fees: (matter as any).professional_fees ?? null,
+        currency: (matter as any).currency || 'EUR',
+        is_urgent: (cf as any)?.is_urgent ?? false,
+        is_confidential: (cf as any)?.is_confidential ?? false,
+        is_archived: (matter as any).is_archived ?? false,
+        internal_notes: (matter as any).internal_notes ?? (matter as any).notes ?? null,
+        client_instructions: null,
+        tags: (matter as any).tags || [],
+        custom_fields: (cf as any) || {},
+        created_by: (matter as any).created_by ?? null,
+        created_at: (matter as any).created_at,
+        updated_at: (matter as any).updated_at,
+      };
+
+      console.log('[useCreateMatterV2] Created (legacy matters):', mapped);
+      return mapped;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matters-v2'] });
@@ -575,16 +641,36 @@ export function useUpdateMatterV2() {
   
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: Partial<MatterV2> }) => {
+      // Keep updates in sync with legacy `matters` while V2 migration is incomplete.
+      const updateData: Record<string, unknown> = {
+        title: data.title,
+        status: data.status,
+        type: data.matter_type,
+        jurisdiction: data.jurisdiction_primary,
+        jurisdiction_code: data.jurisdiction_primary,
+        client_id: data.client_id,
+        mark_name: data.mark_name,
+        mark_type: data.mark_type,
+        nice_classes: data.nice_classes,
+        nice_classes_detail: data.nice_classes_detail,
+        goods_services: data.goods_services,
+        internal_notes: data.internal_notes,
+        is_archived: data.is_archived,
+      };
+
+      // Remove undefined keys to avoid overwriting with null unintentionally
+      Object.keys(updateData).forEach((k) => updateData[k] === undefined && delete updateData[k]);
+
       const client: any = supabase;
       const { data: matter, error } = await client
-        .from('matters_v2')
-        .update(data)
+        .from('matters')
+        .update(updateData)
         .eq('id', id)
-        .select()
+        .select('*')
         .single();
       
       if (error) throw error;
-      return matter as MatterV2;
+      return matter as unknown as MatterV2;
     },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['matters-v2'] });
@@ -600,7 +686,7 @@ export function useDeleteMatterV2() {
     mutationFn: async (id: string) => {
       const client: any = supabase;
       const { error } = await client
-        .from('matters_v2')
+        .from('matters')
         .delete()
         .eq('id', id);
       
