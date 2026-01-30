@@ -1,13 +1,12 @@
 import { useState } from 'react';
-import { CommunicationsInbox } from "@/components/legal-ops";
-import { WhatsAppChat } from "@/components/communications";
+import { WhatsAppChat, WhatsAppComposer } from "@/components/communications";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Search, MessageSquare, ArrowLeft, Plus } from "lucide-react";
+import { Search, MessageSquare, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/contexts/organization-context";
@@ -30,6 +29,7 @@ export default function WhatsAppInboxPage() {
   const { currentOrganization } = useOrganization();
   const [selectedContact, setSelectedContact] = useState<WhatsAppContact | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [showComposer, setShowComposer] = useState(false);
   const isMobile = useIsMobile();
 
   // Obtener contactos con conversaciones de WhatsApp
@@ -119,7 +119,11 @@ export default function WhatsAppInboxPage() {
             <MessageSquare className="w-5 h-5 text-[#25D366]" />
             WhatsApp
           </CardTitle>
-          <Button size="sm" className="gap-1 bg-[#25D366] hover:bg-[#128C7E]">
+          <Button 
+            size="sm" 
+            className="gap-1 bg-[#25D366] hover:bg-[#128C7E]"
+            onClick={() => setShowComposer(true)}
+          >
             <Plus className="w-4 h-4" />
             Nuevo
           </Button>
@@ -240,6 +244,13 @@ export default function WhatsAppInboxPage() {
           </Card>
         )}
       </div>
+
+      {/* WhatsApp Composer Modal */}
+      <WhatsAppComposer
+        open={showComposer}
+        onOpenChange={setShowComposer}
+        onSuccess={() => setShowComposer(false)}
+      />
     </div>
   );
 }
