@@ -3,7 +3,7 @@
  */
 
 import { useState } from 'react';
-import { MessageCircle, Search, Filter, Settings } from 'lucide-react';
+import { MessageCircle, Search, Filter, Settings, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
@@ -16,11 +16,13 @@ import { useWhatsAppConversations, useWhatsAppConversation } from '@/hooks/whats
 import { WhatsAppConversationList } from '@/components/whatsapp/WhatsAppConversationList';
 import { WhatsAppChatView } from '@/components/whatsapp/WhatsAppChatView';
 import { WhatsAppEmptyState } from '@/components/whatsapp/WhatsAppEmptyState';
+import { WhatsAppComposer } from '@/components/communications/WhatsAppComposer';
 
 export default function WhatsAppInboxPage() {
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'open' | 'closed'>('all');
+  const [showComposer, setShowComposer] = useState(false);
 
   const { conversations, isLoading, stats } = useWhatsAppConversations();
   const { 
@@ -69,6 +71,10 @@ export default function WhatsAppInboxPage() {
 
           <div className="flex items-center gap-2">
             <Badge variant="secondary">{stats.total} conversaciones</Badge>
+            <Button onClick={() => setShowComposer(true)} size="sm">
+              <Plus className="h-4 w-4 mr-2" />
+              Nuevo
+            </Button>
             <Button variant="outline" size="sm" asChild>
               <Link to="/app/settings/whatsapp">
                 <Settings className="h-4 w-4 mr-2" />
@@ -144,6 +150,13 @@ export default function WhatsAppInboxPage() {
           )}
         </div>
       </div>
+
+      {/* WhatsApp Composer Modal */}
+      <WhatsAppComposer
+        open={showComposer}
+        onOpenChange={setShowComposer}
+        onSuccess={() => setShowComposer(false)}
+      />
     </div>
   );
 }
