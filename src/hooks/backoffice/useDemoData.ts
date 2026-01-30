@@ -76,6 +76,11 @@ export type SeedDemoTenantConfigsResponse =
   | { ok: true; results: Array<{ slug: string; run_id: string }> }
   | { ok: false; error: string };
 
+// L108: Time tracking & Signature requests
+export type SeedDemoTimeSignaturesResponse =
+  | { ok: true; run_id: string; seeded: { time_entries: number; signature_requests: number; billing_rates: number } }
+  | { ok: false; error: string };
+
 export function useSeedDemoData() {
   return useMutation({
     mutationFn: async (organizationId: string): Promise<SeedDemoDataResponse> => {
@@ -234,6 +239,21 @@ export function useSeedDemoTenantConfigs() {
       });
       if (error) throw error;
       return data as SeedDemoTenantConfigsResponse;
+    },
+  });
+}
+
+/**
+ * L108: Seed time entries (400+) and signature requests (10+) for demo orgs
+ */
+export function useSeedDemoTimeSignatures() {
+  return useMutation({
+    mutationFn: async (organizationId: string): Promise<SeedDemoTimeSignaturesResponse> => {
+      const { data, error } = await supabase.functions.invoke("seed-demo-time-signatures", {
+        body: { organization_id: organizationId },
+      });
+      if (error) throw error;
+      return data as SeedDemoTimeSignaturesResponse;
     },
   });
 }
