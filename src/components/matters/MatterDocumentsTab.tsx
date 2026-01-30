@@ -37,9 +37,10 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 interface MatterDocumentsTabProps {
   matterId: string;
   matterReference?: string;
+  clientId?: string;
 }
 
-export function MatterDocumentsTab({ matterId, matterReference }: MatterDocumentsTabProps) {
+export function MatterDocumentsTab({ matterId, matterReference, clientId }: MatterDocumentsTabProps) {
   const [showUploader, setShowUploader] = useState(false);
   const [showGenerateModal, setShowGenerateModal] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -185,6 +186,7 @@ export function MatterDocumentsTab({ matterId, matterReference }: MatterDocument
         onOpenChange={setShowGenerateModal}
         matterId={matterId}
         matterReference={matterReference}
+        clientId={clientId}
       />
     </Card>
   );

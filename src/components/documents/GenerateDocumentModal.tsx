@@ -1,207 +1,227 @@
 /**
- * L104: Generate Document Modal
- * Modal to generate documents from matter detail, with template selection and preview
+ * L104: Generate Document Modal - Enhanced Version
+ * Professional document generation with PI-specific templates and A4 preview
  */
 
 import { useState, useEffect, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
 import { useAuth } from '@/contexts/auth-context';
 import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue
-} from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { 
-  FileText, Sparkles, Loader2, Download, Save, 
-  CheckCircle2, Tag, Scale, Lightbulb, Mail, BarChart, Eye
+import { Spinner } from '@/components/ui/spinner';
+import {
+  FileText, Sparkles, Loader2, Download, Save, Eye, Pencil,
+  FileSignature, AlertTriangle, Shield, RefreshCw, Award, Calculator,
+  ArrowLeft, Receipt, CheckCircle2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { DocumentRichTextEditor } from './DocumentRichTextEditor';
+import { DocumentA4Preview } from './DocumentA4Preview';
+
+// ============================================================
+// BUILT-IN DOCUMENT TEMPLATES FOR PI/LEGAL
+// ============================================================
+
+const BUILTIN_TEMPLATES = [
+  {
+    id: 'poder_representacion',
+    name: 'Poder de representación',
+    description: 'Autorización para actuar en nombre del cliente',
+    icon: FileSignature,
+    category: 'legal',
+  },
+  {
+    id: 'carta_cese',
+    name: 'Carta de cese y desistimiento',
+    description: 'Requerimiento por infracción de derechos',
+    icon: AlertTriangle,
+    category: 'enforcement',
+  },
+  {
+    id: 'informe_vigilancia',
+    name: 'Informe de vigilancia',
+    description: 'Resumen de marcas similares detectadas',
+    icon: Eye,
+    category: 'report',
+  },
+  {
+    id: 'informe_estado',
+    name: 'Informe de estado del expediente',
+    description: 'Resumen actual para el cliente',
+    icon: FileText,
+    category: 'report',
+  },
+  {
+    id: 'contestacion_oposicion',
+    name: 'Contestación a oposición',
+    description: 'Borrador de respuesta a oposición recibida',
+    icon: Shield,
+    category: 'legal',
+  },
+  {
+    id: 'solicitud_renovacion',
+    name: 'Solicitud de instrucciones renovación',
+    description: 'Email al cliente solicitando instrucciones',
+    icon: RefreshCw,
+    category: 'communication',
+  },
+  {
+    id: 'certificado_registro',
+    name: 'Carta de confirmación de registro',
+    description: 'Notificación al cliente de registro exitoso',
+    icon: Award,
+    category: 'communication',
+  },
+  {
+    id: 'presupuesto',
+    name: 'Presupuesto de servicios',
+    description: 'Propuesta económica para el cliente',
+    icon: Calculator,
+    category: 'commercial',
+  },
+];
+
+const CATEGORY_COLORS: Record<string, string> = {
+  legal: 'bg-blue-100 text-blue-700',
+  enforcement: 'bg-red-100 text-red-700',
+  report: 'bg-amber-100 text-amber-700',
+  communication: 'bg-green-100 text-green-700',
+  commercial: 'bg-purple-100 text-purple-700',
+};
+
+// ============================================================
+// COMPONENT
+// ============================================================
 
 interface GenerateDocumentModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   matterId: string;
   matterReference?: string;
-  preselectedTemplateId?: string;
+  clientId?: string;
 }
 
-const CATEGORY_ICONS: Record<string, typeof FileText> = {
-  trademark: Tag,
-  patent: Lightbulb,
-  contract: Scale,
-  correspondence: Mail,
-  report: BarChart,
-  other: FileText,
-};
+type Step = 'select' | 'generating' | 'preview';
 
 export function GenerateDocumentModal({
   open,
   onOpenChange,
   matterId,
   matterReference,
-  preselectedTemplateId,
+  clientId,
 }: GenerateDocumentModalProps) {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { currentOrganization: organization } = useOrganization();
   const { user } = useAuth();
 
-  const [selectedTemplateId, setSelectedTemplateId] = useState(preselectedTemplateId || '');
-  const [customValues, setCustomValues] = useState<Record<string, string>>({});
+  const [step, setStep] = useState<Step>('select');
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
   const [generatedContent, setGeneratedContent] = useState('');
-  const [activeTab, setActiveTab] = useState<'select' | 'preview'>('select');
+  const [isEditing, setIsEditing] = useState(false);
 
   // Reset on open
   useEffect(() => {
     if (open) {
-      setSelectedTemplateId(preselectedTemplateId || '');
-      setCustomValues({});
+      setStep('select');
+      setSelectedTemplateId(null);
       setGeneratedContent('');
-      setActiveTab('select');
+      setIsEditing(false);
     }
-  }, [open, preselectedTemplateId]);
+  }, [open]);
 
-  // Fetch available templates
-  const { data: templates, isLoading: templatesLoading } = useQuery({
-    queryKey: ['document-templates-for-modal', organization?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('document_templates')
-        .select('id, name, description, category, template_type, template_content')
-        .or(`organization_id.is.null,organization_id.eq.${organization?.id}`)
-        .eq('is_active', true)
-        .order('usage_count', { ascending: false });
-
-      if (error) throw error;
-      return data;
-    },
-    enabled: open && !!organization?.id,
-  });
-
-  // Fetch matter details for merge
+  // Fetch matter details
   const { data: matter } = useQuery({
     queryKey: ['matter-for-document', matterId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('matters')
-        .select('*')
+        .select('*, contacts:client_id(name, email, company_name)')
         .eq('id', matterId)
         .single();
-
       if (error) throw error;
       return data;
     },
     enabled: open && !!matterId,
   });
 
+  // Fetch organization settings
+  const { data: orgSettings } = useQuery({
+    queryKey: ['org-settings-for-doc', organization?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('organization_settings')
+        .select('*')
+        .eq('organization_id', organization?.id)
+        .single();
+      return data;
+    },
+    enabled: !!organization?.id,
+  });
+
   // Get selected template
-  const selectedTemplate = useMemo(() => 
-    templates?.find(t => t.id === selectedTemplateId),
-    [templates, selectedTemplateId]
+  const selectedTemplate = useMemo(
+    () => BUILTIN_TEMPLATES.find((t) => t.id === selectedTemplateId),
+    [selectedTemplateId]
   );
 
-  // Build merge data from matter
-  const mergeData = useMemo(() => {
-    if (!matter || !organization) return {};
-
+  // Build context for AI generation
+  const documentContext = useMemo(() => {
+    if (!matter) return {};
+    const client = matter.contacts as { name?: string; email?: string; company_name?: string } | null;
     return {
-      // Client/Account
-      'client.name': (matter as Record<string, unknown>).client_name as string || '',
-      'client.legal_name': '',
-      'client.tax_id': '',
-      'client.address': '',
-      'client.city': '',
-      'client.country': '',
-      'client.email': '',
-      'client.phone': '',
-      // Contact
-      'contact.name': '',
-      'contact.email': '',
-      'contact.phone': '',
-      'contact.position': '',
-      // Matter
-      'matter.reference': matter.reference || '',
-      'matter.title': matter.title || '',
-      'matter.type': matter.mark_type || '',
-      'matter.ip_type': matter.ip_type || '',
-      'matter.jurisdiction': matter.jurisdiction || '',
-      'matter.application_number': matter.application_number || '',
-      'matter.registration_number': matter.registration_number || '',
-      'matter.filing_date': matter.filing_date ? format(new Date(matter.filing_date), 'dd/MM/yyyy') : '',
-      'matter.registration_date': matter.registration_date ? format(new Date(matter.registration_date), 'dd/MM/yyyy') : '',
-      'matter.expiry_date': matter.expiry_date ? format(new Date(matter.expiry_date), 'dd/MM/yyyy') : '',
-      'matter.nice_classes': Array.isArray(matter.nice_classes) ? matter.nice_classes.join(', ') : '',
-      'matter.mark_name': matter.mark_name || '',
-      // Organization
-      'org.name': organization.name || '',
-      'org.address': '', // Would come from org settings
-      'org.phone': '',
-      'org.email': '',
-      // User
-      'user.name': user?.email?.split('@')[0] || '',
-      'user.email': user?.email || '',
-      'user.position': '',
-      // Dates
-      'today': format(new Date(), 'dd/MM/yyyy'),
-      'today.long': format(new Date(), "EEEE, d 'de' MMMM 'de' yyyy", { locale: es }),
-      'year': new Date().getFullYear().toString(),
-      // Special
-      'signature_placeholder': '\n\n_________________________\nFirma\n\n',
-      'page_break': '\n\n---\n\n',
+      matter_reference: matter.reference || matterReference,
+      matter_title: matter.title,
+      matter_type: matter.ip_type,
+      mark_name: matter.mark_name,
+      jurisdiction: matter.jurisdiction,
+      application_number: matter.application_number,
+      registration_number: matter.registration_number,
+      filing_date: matter.filing_date,
+      registration_date: matter.registration_date,
+      expiry_date: matter.expiry_date,
+      nice_classes: matter.nice_classes,
+      client_name: client?.name || client?.company_name || '',
+      client_email: client?.email || '',
+      organization_name: organization?.name || '',
+      user_name: user?.email?.split('@')[0] || '',
+      today: format(new Date(), 'dd/MM/yyyy'),
     };
-  }, [matter, organization, user]);
+  }, [matter, matterReference, organization, user]);
 
-  // Generate preview content
-  const previewContent = useMemo(() => {
-    if (!selectedTemplate?.template_content) return '';
-
-    let content = selectedTemplate.template_content;
-    const allData = { ...mergeData, ...customValues };
-
-    Object.entries(allData).forEach(([key, value]) => {
-      content = content.replace(
-        new RegExp(`\\{\\{${key.replace('.', '\\.')}\\}\\}`, 'g'),
-        String(value)
-      );
-    });
-
-    return content;
-  }, [selectedTemplate, mergeData, customValues]);
-
-  // Generate document mutation (for AI-assisted)
+  // Generate document mutation
   const generateMutation = useMutation({
     mutationFn: async () => {
+      setStep('generating');
       const { data, error } = await supabase.functions.invoke('generate-document-ai', {
         body: {
-          templateId: selectedTemplateId,
+          templateType: selectedTemplateId,
           matterId,
-          variables: { ...mergeData, ...customValues },
+          context: documentContext,
         },
       });
-
       if (error) throw error;
       return data;
     },
     onSuccess: (data) => {
-      setGeneratedContent(data.content);
-      setActiveTab('preview');
-      toast.success('Documento generado con IA');
+      setGeneratedContent(data.content || data.html || '');
+      setStep('preview');
     },
     onError: (error: Error) => {
-      toast.error(`Error: ${error.message}`);
+      toast.error(`Error al generar: ${error.message}`);
+      setStep('select');
     },
   });
 
@@ -209,24 +229,21 @@ export function GenerateDocumentModal({
   const saveMutation = useMutation({
     mutationFn: async () => {
       if (!organization?.id) throw new Error('No organization');
-
-      const content = generatedContent || previewContent;
-
+      
       const { data, error } = await supabase
         .from('generated_documents')
         .insert({
           organization_id: organization.id,
-          template_id: selectedTemplateId,
+          template_id: null,
           matter_id: matterId,
           name: `${selectedTemplate?.name || 'Documento'} - ${format(new Date(), 'dd/MM/yyyy HH:mm')}`,
-          content,
-          variables_input: { ...mergeData, ...customValues },
+          content: generatedContent,
+          variables_input: documentContext,
           status: 'draft',
           created_by: user?.id,
         })
         .select()
         .single();
-
       if (error) throw error;
       return data;
     },
@@ -244,191 +261,200 @@ export function GenerateDocumentModal({
   // Handle template selection
   const handleSelectTemplate = (templateId: string) => {
     setSelectedTemplateId(templateId);
-    setActiveTab('preview');
+    generateMutation.mutate();
+  };
+
+  // Navigate to invoicing
+  const handleCreateInvoice = () => {
+    onOpenChange(false);
+    navigate(`/app/invoicing/new?matter_id=${matterId}${clientId ? `&client_id=${clientId}` : ''}`);
+  };
+
+  // Export to PDF (placeholder - would use jspdf)
+  const handleExportPDF = () => {
+    toast.info('Exportación PDF en desarrollo');
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <FileText className="w-5 h-5 text-primary" />
-            Generar documento
-          </DialogTitle>
-          <DialogDescription>
-            {matterReference && `Expediente: ${matterReference}`}
-          </DialogDescription>
+      <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+        <DialogHeader className="px-6 py-4 border-b">
+          <div className="flex items-center gap-3">
+            {step === 'preview' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setStep('select')}
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            <div>
+              <DialogTitle className="flex items-center gap-2">
+                <FileText className="w-5 h-5 text-primary" />
+                {step === 'select' && 'Generar documento'}
+                {step === 'generating' && 'Generando documento...'}
+                {step === 'preview' && (selectedTemplate?.name || 'Vista previa')}
+              </DialogTitle>
+              {matterReference && (
+                <DialogDescription>Expediente: {matterReference}</DialogDescription>
+              )}
+            </div>
+          </div>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'select' | 'preview')} className="flex-1 flex flex-col overflow-hidden">
-          <TabsList className="grid grid-cols-2 w-[300px]">
-            <TabsTrigger value="select">Seleccionar</TabsTrigger>
-            <TabsTrigger value="preview" disabled={!selectedTemplateId}>Vista previa</TabsTrigger>
-          </TabsList>
-
-          {/* Template Selection */}
-          <TabsContent value="select" className="flex-1 overflow-hidden mt-4">
-            {templatesLoading ? (
-              <div className="grid grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <Skeleton key={i} className="h-24" />
-                ))}
-              </div>
-            ) : (
-              <ScrollArea className="h-[400px] pr-4">
-                <div className="grid grid-cols-2 gap-4">
-                  {templates?.map((template) => {
-                    const CategoryIcon = CATEGORY_ICONS[template.category] || FileText;
-                    const isSelected = template.id === selectedTemplateId;
-
-                    return (
-                      <Card
-                        key={template.id}
-                        className={cn(
-                          "p-4 cursor-pointer transition-all hover:shadow-md",
-                          isSelected && "ring-2 ring-primary bg-primary/5"
-                        )}
-                        onClick={() => handleSelectTemplate(template.id)}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className={cn(
-                            "p-2 rounded-lg",
-                            isSelected ? "bg-primary text-primary-foreground" : "bg-muted"
-                          )}>
-                            <CategoryIcon className="w-4 h-4" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <h4 className="font-medium truncate">{template.name}</h4>
-                              {isSelected && <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />}
-                            </div>
-                            <p className="text-xs text-muted-foreground line-clamp-2 mt-1">
-                              {template.description || 'Sin descripción'}
-                            </p>
-                            <div className="flex gap-2 mt-2">
-                              <Badge variant="outline" className="text-xs">
-                                {template.category}
-                              </Badge>
-                              {template.template_type === 'ai_assisted' && (
-                                <Badge className="text-xs bg-primary/20 text-primary border-0">
-                                  <Sparkles className="w-3 h-3 mr-1" />
-                                  IA
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      </Card>
-                    );
-                  })}
-
-                  {templates?.length === 0 && (
-                    <div className="col-span-2 text-center py-12 text-muted-foreground">
-                      No hay plantillas disponibles
-                    </div>
-                  )}
-                </div>
-              </ScrollArea>
-            )}
-          </TabsContent>
-
-          {/* Preview */}
-          <TabsContent value="preview" className="flex-1 overflow-hidden mt-4">
-            <div className="flex gap-4 h-[400px]">
-              {/* Custom values sidebar */}
-              <div className="w-64 border rounded-lg p-4 overflow-auto">
-                <h4 className="font-medium text-sm mb-3">Datos del documento</h4>
-                <div className="space-y-3">
-                  {/* Show some key auto-filled values */}
-                  {mergeData['client.name'] && (
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Cliente:</span>
-                      <span className="ml-1 font-medium">{mergeData['client.name']}</span>
-                    </div>
-                  )}
-                  {mergeData['matter.reference'] && (
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Referencia:</span>
-                      <span className="ml-1 font-medium">{mergeData['matter.reference']}</span>
-                    </div>
-                  )}
-                  {mergeData['matter.mark_name'] && (
-                    <div className="text-xs">
-                      <span className="text-muted-foreground">Marca:</span>
-                      <span className="ml-1 font-medium">{mergeData['matter.mark_name']}</span>
-                    </div>
-                  )}
-
-                  <div className="border-t pt-3 mt-3">
-                    <Label className="text-xs">Personalizar valores</Label>
-                    <p className="text-xs text-muted-foreground mb-2">
-                      Puedes sobrescribir cualquier campo
-                    </p>
-                    
-                    <div className="space-y-2">
-                      <div>
-                        <Label className="text-xs">Saludo personalizado</Label>
-                        <Input
-                          value={customValues['custom_greeting'] || ''}
-                          onChange={(e) => setCustomValues(prev => ({
-                            ...prev,
-                            'custom_greeting': e.target.value
-                          }))}
-                          placeholder="Ej: Estimado Sr. García"
-                          className="text-xs h-8"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Preview content */}
-              <Card className="flex-1 overflow-auto p-6 bg-muted/30">
-                <div className="max-w-[600px] mx-auto bg-background p-6 shadow-sm rounded border whitespace-pre-wrap font-serif text-sm">
-                  {generatedContent || previewContent || (
-                    <p className="text-muted-foreground text-center">
-                      Selecciona una plantilla para ver la vista previa
-                    </p>
-                  )}
-                </div>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
-
-        <DialogFooter className="border-t pt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
-          </Button>
-
-          {selectedTemplate?.template_type === 'ai_assisted' && activeTab === 'preview' && (
-            <Button
-              variant="outline"
-              onClick={() => generateMutation.mutate()}
-              disabled={generateMutation.isPending}
+        {/* Step: Select Template */}
+        {step === 'select' && (
+          <ScrollArea className="flex-1 px-6 py-4">
+            {/* Invoice shortcut */}
+            <Card
+              className="p-4 mb-6 border-dashed cursor-pointer hover:bg-muted/50 transition-colors"
+              onClick={handleCreateInvoice}
             >
-              {generateMutation.isPending ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <Sparkles className="w-4 h-4 mr-2" />
-              )}
-              Generar con IA
-            </Button>
-          )}
+              <div className="flex items-center gap-4">
+                <div className="p-3 rounded-lg bg-primary/10">
+                  <Receipt className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-medium">Crear factura para este expediente</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Ir al módulo de facturación con los datos pre-rellenados
+                  </p>
+                </div>
+                <Badge variant="outline">Facturación</Badge>
+              </div>
+            </Card>
 
-          <Button
-            onClick={() => saveMutation.mutate()}
-            disabled={!selectedTemplateId || saveMutation.isPending}
-          >
-            {saveMutation.isPending ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4 mr-2" />
-            )}
-            Guardar documento
-          </Button>
-        </DialogFooter>
+            {/* Document templates */}
+            <h3 className="font-medium mb-4">Documentos generados con IA</h3>
+            <div className="grid grid-cols-2 gap-4">
+              {BUILTIN_TEMPLATES.map((template) => {
+                const Icon = template.icon;
+                return (
+                  <Card
+                    key={template.id}
+                    className="p-4 cursor-pointer hover:shadow-md transition-all hover:border-primary/50"
+                    onClick={() => handleSelectTemplate(template.id)}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="p-2 rounded-lg bg-muted">
+                        <Icon className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium">{template.name}</h4>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {template.description}
+                        </p>
+                        <Badge 
+                          variant="secondary" 
+                          className={cn('mt-2 text-xs', CATEGORY_COLORS[template.category])}
+                        >
+                          {template.category}
+                        </Badge>
+                      </div>
+                      <Sparkles className="h-4 w-4 text-primary/50" />
+                    </div>
+                  </Card>
+                );
+              })}
+            </div>
+          </ScrollArea>
+        )}
+
+        {/* Step: Generating */}
+        {step === 'generating' && (
+          <div className="flex-1 flex flex-col items-center justify-center gap-4 py-16">
+            <div className="relative">
+              <div className="absolute inset-0 animate-ping">
+                <Sparkles className="h-12 w-12 text-primary/30" />
+              </div>
+              <Sparkles className="h-12 w-12 text-primary animate-pulse" />
+            </div>
+            <h3 className="text-lg font-medium">Generando documento...</h3>
+            <p className="text-sm text-muted-foreground">
+              Analizando expediente y preparando contenido
+            </p>
+            <Spinner className="mt-4" />
+          </div>
+        )}
+
+        {/* Step: Preview */}
+        {step === 'preview' && (
+          <>
+            {/* Toolbar */}
+            <div className="flex items-center justify-between px-6 py-3 border-b bg-muted/30">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">
+                  {isEditing ? 'Modo edición' : 'Vista previa'}
+                </span>
+                <Badge variant="outline" className="text-xs">
+                  {isEditing ? 'Editando' : 'Solo lectura'}
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setIsEditing(!isEditing)}
+                >
+                  {isEditing ? (
+                    <>
+                      <Eye className="h-4 w-4 mr-2" />
+                      Vista previa
+                    </>
+                  ) : (
+                    <>
+                      <Pencil className="h-4 w-4 mr-2" />
+                      Editar
+                    </>
+                  )}
+                </Button>
+                <Button variant="outline" size="sm" onClick={handleExportPDF}>
+                  <Download className="h-4 w-4 mr-2" />
+                  Exportar PDF
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => saveMutation.mutate()}
+                  disabled={saveMutation.isPending}
+                >
+                  {saveMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  ) : (
+                    <Save className="h-4 w-4 mr-2" />
+                  )}
+                  Guardar en expediente
+                </Button>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-hidden">
+              {isEditing ? (
+                <DocumentRichTextEditor
+                  content={generatedContent}
+                  onChange={setGeneratedContent}
+                  className="h-full"
+                />
+              ) : (
+              <DocumentA4Preview
+                  content={generatedContent}
+                  matterReference={matterReference}
+                  organizationSettings={{
+                    name: organization?.name,
+                    logo_url: (orgSettings?.branding as Record<string, unknown>)?.logo_url as string | undefined,
+                    address: (orgSettings?.general as Record<string, unknown>)?.address as string | undefined,
+                    phone: (orgSettings?.general as Record<string, unknown>)?.phone as string | undefined,
+                    email: (orgSettings?.email as Record<string, unknown>)?.sender_email as string | undefined,
+                    legal_disclaimer: (orgSettings?.general as Record<string, unknown>)?.legal_disclaimer as string | undefined,
+                  }}
+                  className="h-full"
+                />
+              )}
+            </div>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
