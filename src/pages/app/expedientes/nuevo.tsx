@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, Sparkles, Info } from 'lucide-react';
 import { NiceClassSelectorV2, type NiceSelection } from '@/components/features/docket';
-import { AccountCombobox } from '@/components/features/crm/AccountCombobox';
+import { ContactCombobox } from '@/components/features/crm/ContactCombobox';
 import { 
   useCreateMatterV2, 
   useGenerateMatterNumber,
@@ -83,13 +83,7 @@ const formSchema = z.object({
 
 type FormData = z.infer<typeof formSchema>;
 
-// Contact with client token
-interface ContactWithToken {
-  id: string;
-  name: string;
-  company_name: string | null;
-  client_token: string | null;
-}
+type ClientContact = { id: string; name: string; client_token: string | null };
 
 export default function NewMatterPage() {
   usePageTitle('Nuevo Expediente');
@@ -105,22 +99,6 @@ export default function NewMatterPage() {
   
   const [previewNumberValue, setPreviewNumberValue] = useState<string | null>(null);
   const [generatingNumber, setGeneratingNumber] = useState(false);
-  
-  // Fetch accounts (for getting client_token for preview number generation)
-  const { data: accounts } = useQuery({
-    queryKey: ['accounts-for-matter', currentOrganization?.id],
-    queryFn: async () => {
-      const { data, error } = await (supabase as any)
-        .from('crm_accounts')
-        .select('id, name, client_token')
-        .eq('organization_id', currentOrganization!.id)
-        .order('name');
-      
-      if (error) throw error;
-      return data as Array<{id: string; name: string; client_token: string | null}>;
-    },
-    enabled: !!currentOrganization?.id,
-  });
   
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -146,9 +124,25 @@ export default function NewMatterPage() {
   const watchedType = form.watch('matter_type');
   const watchedJurisdiction = form.watch('jurisdiction_code');
   const watchedClientId = form.watch('client_id');
+
+  const { data: selectedClient } = useQuery({
+    queryKey: ["matter-selected-client", currentOrganization?.id, watchedClientId],
+    queryFn: async () => {
+      if (!currentOrganization?.id || !watchedClientId) return null as ClientContact | null;
+      const { data, error } = await supabase
+        .from("contacts")
+        .select("id, name, client_token")
+        .eq("organization_id", currentOrganization.id)
+        .eq("id", watchedClientId)
+        .maybeSingle();
+      if (error) throw error;
+      return (data ?? null) as ClientContact | null;
+    },
+    enabled: !!currentOrganization?.id && !!watchedClientId,
+    staleTime: 1000 * 30,
+  });
   
-  // Get selected account info for preview
-  const selectedClient = accounts?.find(c => c.id === watchedClientId);
+  // selectedClient comes from contacts (FK target)
   
   // Generate preview number when type, jurisdiction or client change
   useEffect(() => {
@@ -346,7 +340,7 @@ export default function NewMatterPage() {
                     <FormItem>
                       <FormLabel>Cliente</FormLabel>
                       <FormControl>
-                        <AccountCombobox
+                        <ContactCombobox
                           value={field.value}
                           onChange={(id) => field.onChange(id || '')}
                           placeholder="Buscar cliente por nombre o NIF..."
