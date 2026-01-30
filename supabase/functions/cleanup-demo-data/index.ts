@@ -39,6 +39,10 @@ const DELETE_ORDER = [
   "contact_list_members",
   "contact_lists",
   "email_templates",
+  // L108: Time tracking & Signatures
+  "time_entries",
+  "signature_requests",
+  "billing_rates",
   // Spider / Filing
   "watchlists",
   "filing_applications",

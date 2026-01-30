@@ -33,6 +33,7 @@ import {
   useSeedDemoTenantsClients,
   useSeedDemoMattersCoverage,
   useSeedDemoUsers,
+  useSeedDemoTimeSignatures,
 } from "@/hooks/backoffice/useDemoData";
 
 import { DemoDataDashboard } from "@/components/backoffice/demo/DemoDataDashboard";
@@ -57,6 +58,7 @@ export default function DemoDataPage() {
   const seedSpiderVigilanceMutation = useSeedDemoSpiderVigilance();
   const seedPortalConfigMutation = useSeedDemoPortalConfig();
   const seedTasksWorkflowsMutation = useSeedDemoTasksWorkflows();
+  const seedTimeSignaturesMutation = useSeedDemoTimeSignatures();
 
   const canRun = !!organizationId;
 
@@ -264,6 +266,23 @@ export default function DemoDataPage() {
     }
   };
 
+  const handleSeedTimeSignatures = async () => {
+    if (!organizationId) {
+      toast.error("Selecciona una organización primero");
+      return;
+    }
+    try {
+      const res = await seedTimeSignaturesMutation.mutateAsync(organizationId);
+      if (res.ok === false) {
+        toast.error(res.error);
+        return;
+      }
+      toast.success(`Time tracking & firmas creados: ${res.seeded.time_entries} entradas, ${res.seeded.signature_requests} solicitudes`);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Error creando time tracking/firmas demo");
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-start justify-between gap-4">
@@ -355,6 +374,25 @@ export default function DemoDataPage() {
             <Button onClick={handleSeedPortalConfig} disabled={seedPortalConfigMutation.isPending} className="w-full">
               <Database className="h-4 w-4 mr-2" />
               {seedPortalConfigMutation.isPending ? "Creando…" : "Seed portal config + access (demo-professional+)"}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Database className="h-5 w-5" />
+              Time Tracking + Firmas digitales (L108)
+            </CardTitle>
+            <CardDescription>
+              Genera 400+ entradas de tiempo (6 meses de actividad), tarifas de facturación y 10+ solicitudes de firma
+              (poderes, encargos, contratos) para la organización actual.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Button onClick={handleSeedTimeSignatures} disabled={!canRun || seedTimeSignaturesMutation.isPending} className="w-full">
+              <Database className="h-4 w-4 mr-2" />
+              {seedTimeSignaturesMutation.isPending ? "Creando…" : "Seed time entries + signatures"}
             </Button>
           </CardContent>
         </Card>

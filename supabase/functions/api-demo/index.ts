@@ -266,6 +266,15 @@ serve(async (req) => {
           });
         }
 
+        // 6) Time entries + signature requests (L108)
+        steps.seed_time_signatures = await callFunction({
+          baseUrl: SUPABASE_URL,
+          anonKey: SUPABASE_ANON_KEY,
+          token,
+          fn: "seed-demo-time-signatures",
+          body: { organization_id: orgId },
+        });
+
         results.push({ slug, organization_id: orgId, steps });
       }
 
@@ -302,6 +311,10 @@ serve(async (req) => {
         counts.invoices = await countTable({ svc, table: "invoices", organizationId: orgId });
         counts.smart_tasks = await countTable({ svc, table: "smart_tasks", organizationId: orgId });
         counts.workflow_executions = await countTable({ svc, table: "workflow_executions", organizationId: orgId });
+        // L108: Time tracking & signatures
+        counts.time_entries = await countTable({ svc, table: "time_entries", organizationId: orgId });
+        counts.signature_requests = await countTable({ svc, table: "signature_requests", organizationId: orgId });
+        counts.billing_rates = await countTable({ svc, table: "billing_rates", organizationId: orgId });
 
         out.push({
           slug,
