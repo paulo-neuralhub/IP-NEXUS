@@ -11,8 +11,10 @@ import {
   X,
   Minimize2,
   Search,
+  Briefcase,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { fromTable } from '@/lib/supabase';
 import { useTwilioDevice } from '@/hooks/useTwilioDevice';
 import { useVoipCall } from '@/hooks/useVoipCall';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,11 +22,13 @@ import { useOrganization } from '@/contexts/organization-context';
 import { toast } from 'sonner';
 import { TransferModal } from '@/components/voip/TransferModal';
 import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
 import { useVoipEnabled } from '@/hooks/useVoipEnabled';
 import { useOrganizationSettings, useUpdateOrganizationSettings } from '@/hooks/use-settings';
 import { useSecureCredentialStatus } from '@/hooks/use-secure-credentials';
 import { useSoftphoneSearch, type SoftphoneSearchResult } from '@/hooks/voip/useSoftphoneSearch';
 import { SoftphoneSearchResults } from '@/components/voip/SoftphoneSearchResults';
+import { ExpedienteClienteSelector } from '@/components/communications/shared/ExpedienteClienteSelector';
 
 type CallState = 'idle' | 'connecting' | 'ringing' | 'in_call' | 'on_hold' | 'incoming';
 
@@ -78,6 +82,10 @@ export function SoftphoneWidget() {
   const [transferOpen, setTransferOpen] = useState(false);
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [selectedFromSearch, setSelectedFromSearch] = useState(false);
+  
+  // State for matter/client association
+  const [selectedMatterId, setSelectedMatterId] = useState<string | null>(null);
+  const [selectedClientId, setSelectedClientId] = useState<string | null>(null);
 
   // Softphone search hook
   const { data: searchResults = [], isLoading: isSearching } = useSoftphoneSearch(
@@ -174,7 +182,45 @@ export function SoftphoneWidget() {
     setIsMuted(false);
     setIsOnHold(false);
     setShowDialpad(true);
+    // Reset association after call ends
+    setSelectedMatterId(null);
+    setSelectedClientId(null);
   }, []);
+
+  // Save call record to communications table
+  const saveCallRecord = useCallback(async (duration: number, status: 'completed' | 'missed' | 'failed') => {
+    if (!currentOrganization?.id) return;
+    
+    const directionText = 'saliente';
+    const statusText = status === 'completed' ? '✓' : status === 'missed' ? '(perdida)' : '(fallida)';
+    const durationFormatted = formatDuration(duration);
+    
+    try {
+      await fromTable('communications').insert({
+        organization_id: currentOrganization.id,
+        channel: 'phone',
+        direction: 'outbound',
+        recipient: phoneNumber,
+        subject: `Llamada ${directionText} a ${contactInfo?.name || phoneNumber} ${statusText}`,
+        body: JSON.stringify({
+          duration,
+          duration_formatted: durationFormatted,
+          status,
+          contact_name: contactInfo?.name,
+        }),
+        status: status === 'completed' ? 'sent' : 'failed',
+        matter_id: selectedMatterId,
+        client_id: selectedClientId,
+        received_at: new Date().toISOString(),
+      });
+      
+      if (status === 'completed') {
+        toast.success('Llamada registrada en el historial');
+      }
+    } catch (error) {
+      console.error('Error saving call record:', error);
+    }
+  }, [currentOrganization?.id, phoneNumber, contactInfo?.name, selectedMatterId, selectedClientId]);
 
   const handleMakeCall = useCallback(async () => {
     if (!voipAvailable) return;
@@ -188,13 +234,23 @@ export function SoftphoneWidget() {
       const call = await makeCall(phoneNumber, contactInfo?.id);
       call.on('ringing', () => setCallState('ringing'));
       call.on('accept', () => setCallState('in_call'));
-      call.on('disconnect', resetCallUi);
-      call.on('cancel', resetCallUi);
-      call.on('error', () => resetCallUi());
+      call.on('disconnect', () => {
+        // Save call record when call ends
+        saveCallRecord(callDuration, 'completed');
+        resetCallUi();
+      });
+      call.on('cancel', () => {
+        saveCallRecord(0, 'missed');
+        resetCallUi();
+      });
+      call.on('error', () => {
+        saveCallRecord(0, 'failed');
+        resetCallUi();
+      });
     } catch {
       resetCallUi();
     }
-  }, [contactInfo?.id, isReady, isConfigured, makeCall, phoneNumber, resetCallUi, voipAvailable]);
+  }, [contactInfo?.id, isReady, isConfigured, makeCall, phoneNumber, resetCallUi, voipAvailable, callDuration, saveCallRecord]);
 
   const handleHangUp = useCallback(() => {
     hangUp();
@@ -588,6 +644,27 @@ export function SoftphoneWidget() {
                   }}
                 />
               )}
+            </div>
+
+            {/* Asociar a expediente o cliente */}
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground flex items-center gap-1">
+                <Briefcase className="h-3 w-3" />
+                Asociar llamada a:
+              </Label>
+              <ExpedienteClienteSelector
+                matterId={selectedMatterId}
+                clientId={selectedClientId}
+                onMatterChange={(id, cliId) => {
+                  setSelectedMatterId(id);
+                  if (cliId) setSelectedClientId(cliId);
+                }}
+                onClientChange={(id) => setSelectedClientId(id)}
+                placeholder="Buscar expediente o cliente..."
+              />
+              <p className="text-[10px] text-muted-foreground">
+                La llamada quedará registrada en el historial
+              </p>
             </div>
 
             <div className="grid grid-cols-3 gap-2">
