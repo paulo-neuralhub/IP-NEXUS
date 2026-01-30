@@ -5,6 +5,7 @@
 
 export { MatterParties } from './MatterParties';
 export { AddPartyModal } from './AddPartyModal';
+export { AddFilingModal } from './AddFilingModal';
 export { ImportPartiesModal } from './ImportPartiesModal';
 
 // Matter communications

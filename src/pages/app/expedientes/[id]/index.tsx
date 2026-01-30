@@ -10,7 +10,7 @@ import {
   Mail, Phone, Calendar, CheckSquare, Receipt, FolderOpen,
   ExternalLink, MessageSquare
 } from 'lucide-react';
-import { useMatterV2, useMatterFilings, useMatterTimeline, useMatterParties, useMatterTypes } from '@/hooks/use-matters-v2';
+import { useMatterV2, useMatterFilings, useMatterTimeline, useMatterParties, useMatterTypes, useDeleteMatterV2 } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +23,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { usePageTitle } from '@/contexts/page-context';
 import { format, formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -40,6 +50,8 @@ import { UnifiedMatterTimeline } from '@/components/matters/UnifiedMatterTimelin
 import { SendWhatsAppFromMatterModal } from '@/components/matters/SendWhatsAppFromMatterModal';
 import { MatterChatModal } from '@/components/matters/MatterChatModal';
 import { WorkflowProgressBar } from '@/components/features/matters/WorkflowProgressBar';
+import { AddFilingModal } from '@/components/matters/AddFilingModal';
+import { AddPartyModal } from '@/components/matters/AddPartyModal';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
@@ -65,6 +77,11 @@ export default function MatterDetailPage() {
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
+  const [showFilingModal, setShowFilingModal] = useState(false);
+  const [showPartyModal, setShowPartyModal] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  
+  const deleteMatter = useDeleteMatterV2();
   
   const { data: matter, isLoading, error } = useMatterV2(id!);
   const { data: filings } = useMatterFilings(id!);
@@ -87,6 +104,22 @@ export default function MatterDetailPage() {
       setShowCallModal(true);
     } else {
       setShowCallModal(true);
+    }
+  };
+  
+  // Handler para archivar expediente
+  const handleArchive = () => {
+    toast.info('Funcionalidad de archivar próximamente');
+  };
+  
+  // Handler para eliminar expediente
+  const handleDelete = async () => {
+    try {
+      await deleteMatter.mutateAsync(id!);
+      toast.success('Expediente eliminado');
+      navigate('/app/expedientes');
+    } catch (error) {
+      toast.error('Error al eliminar expediente');
     }
   };
   
@@ -244,12 +277,15 @@ export default function MatterDetailPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={handleArchive}>
                 <Archive className="h-4 w-4 mr-2" />
                 Archivar
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-destructive">
+              <DropdownMenuItem 
+                className="text-destructive"
+                onClick={() => setShowDeleteDialog(true)}
+              >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Eliminar
               </DropdownMenuItem>
@@ -425,7 +461,7 @@ export default function MatterDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Presentaciones por Jurisdicción</CardTitle>
-              <Button size="sm">
+              <Button size="sm" onClick={() => setShowFilingModal(true)}>
                 Añadir presentación
               </Button>
             </CardHeader>
@@ -487,7 +523,7 @@ export default function MatterDetailPage() {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Partes del Expediente</CardTitle>
-              <Button size="sm">
+              <Button size="sm" onClick={() => setShowPartyModal(true)}>
                 Añadir parte
               </Button>
             </CardHeader>
@@ -722,6 +758,40 @@ export default function MatterDetailPage() {
         matterId={id!}
         matterReference={matter?.matter_number}
       />
+      
+      <AddFilingModal
+        open={showFilingModal}
+        onOpenChange={setShowFilingModal}
+        matterId={id!}
+      />
+      
+      <AddPartyModal
+        open={showPartyModal}
+        onOpenChange={setShowPartyModal}
+        matterId={id!}
+        matterType={matter?.matter_type}
+      />
+      
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>¿Eliminar expediente?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción eliminará permanentemente el expediente "{matter?.matter_number}" y todos sus datos asociados. Esta acción no se puede deshacer.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={handleDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Eliminar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
