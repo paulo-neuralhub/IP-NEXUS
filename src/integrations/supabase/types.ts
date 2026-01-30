@@ -6133,6 +6133,183 @@ export type Database = {
           },
         ]
       }
+      call_logs: {
+        Row: {
+          account_id: string | null
+          ai_action_items: Json | null
+          ai_sentiment: string | null
+          ai_summary: string | null
+          ai_topics: Json | null
+          answered_at: string | null
+          communication_id: string | null
+          contact_id: string | null
+          contact_name: string | null
+          created_at: string | null
+          created_by: string | null
+          direction: string
+          disposition: string | null
+          duration_seconds: number | null
+          ended_at: string | null
+          id: string
+          matter_id: string | null
+          notes: string | null
+          organization_id: string
+          outcome: string | null
+          phone_number: string | null
+          recording_duration_seconds: number | null
+          recording_url: string | null
+          ring_duration_seconds: number | null
+          started_at: string
+          summary: string | null
+          transcription: string | null
+          updated_at: string | null
+          voip_call_id: string | null
+          voip_provider: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          ai_action_items?: Json | null
+          ai_sentiment?: string | null
+          ai_summary?: string | null
+          ai_topics?: Json | null
+          answered_at?: string | null
+          communication_id?: string | null
+          contact_id?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          direction: string
+          disposition?: string | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          matter_id?: string | null
+          notes?: string | null
+          organization_id: string
+          outcome?: string | null
+          phone_number?: string | null
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
+          ring_duration_seconds?: number | null
+          started_at: string
+          summary?: string | null
+          transcription?: string | null
+          updated_at?: string | null
+          voip_call_id?: string | null
+          voip_provider?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          ai_action_items?: Json | null
+          ai_sentiment?: string | null
+          ai_summary?: string | null
+          ai_topics?: Json | null
+          answered_at?: string | null
+          communication_id?: string | null
+          contact_id?: string | null
+          contact_name?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          direction?: string
+          disposition?: string | null
+          duration_seconds?: number | null
+          ended_at?: string | null
+          id?: string
+          matter_id?: string | null
+          notes?: string | null
+          organization_id?: string
+          outcome?: string | null
+          phone_number?: string | null
+          recording_duration_seconds?: number | null
+          recording_url?: string | null
+          ring_duration_seconds?: number | null
+          started_at?: string
+          summary?: string | null
+          transcription?: string | null
+          updated_at?: string | null
+          voip_call_id?: string | null
+          voip_provider?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "call_logs_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "call_logs_communication_id_fkey"
+            columns: ["communication_id"]
+            isOneToOne: false
+            referencedRelation: "communications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "call_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "call_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       capabilities: {
         Row: {
           capability_type: string | null
@@ -13881,6 +14058,134 @@ export type Database = {
           },
         ]
       }
+      email_configs: {
+        Row: {
+          api_endpoint: string | null
+          api_key_encrypted: string | null
+          auto_bcc: string | null
+          created_at: string | null
+          default_from_email: string | null
+          default_from_name: string | null
+          default_reply_to: string | null
+          email_signature_html: string | null
+          email_signature_text: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          last_test_at: string | null
+          last_test_error: string | null
+          last_test_success: boolean | null
+          oauth_access_token_encrypted: string | null
+          oauth_client_id: string | null
+          oauth_client_secret_encrypted: string | null
+          oauth_expires_at: string | null
+          oauth_refresh_token_encrypted: string | null
+          organization_id: string
+          provider: string
+          smtp_host: string | null
+          smtp_password_encrypted: string | null
+          smtp_port: number | null
+          smtp_secure: boolean | null
+          smtp_user: string | null
+          track_clicks: boolean | null
+          track_opens: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          api_endpoint?: string | null
+          api_key_encrypted?: string | null
+          auto_bcc?: string | null
+          created_at?: string | null
+          default_from_email?: string | null
+          default_from_name?: string | null
+          default_reply_to?: string | null
+          email_signature_html?: string | null
+          email_signature_text?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          last_test_at?: string | null
+          last_test_error?: string | null
+          last_test_success?: boolean | null
+          oauth_access_token_encrypted?: string | null
+          oauth_client_id?: string | null
+          oauth_client_secret_encrypted?: string | null
+          oauth_expires_at?: string | null
+          oauth_refresh_token_encrypted?: string | null
+          organization_id: string
+          provider: string
+          smtp_host?: string | null
+          smtp_password_encrypted?: string | null
+          smtp_port?: number | null
+          smtp_secure?: boolean | null
+          smtp_user?: string | null
+          track_clicks?: boolean | null
+          track_opens?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          api_endpoint?: string | null
+          api_key_encrypted?: string | null
+          auto_bcc?: string | null
+          created_at?: string | null
+          default_from_email?: string | null
+          default_from_name?: string | null
+          default_reply_to?: string | null
+          email_signature_html?: string | null
+          email_signature_text?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          last_test_at?: string | null
+          last_test_error?: string | null
+          last_test_success?: boolean | null
+          oauth_access_token_encrypted?: string | null
+          oauth_client_id?: string | null
+          oauth_client_secret_encrypted?: string | null
+          oauth_expires_at?: string | null
+          oauth_refresh_token_encrypted?: string | null
+          organization_id?: string
+          provider?: string
+          smtp_host?: string | null
+          smtp_password_encrypted?: string | null
+          smtp_port?: number | null
+          smtp_secure?: boolean | null
+          smtp_user?: string | null
+          track_clicks?: boolean | null
+          track_opens?: boolean | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "email_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       email_ingestion_queue: {
         Row: {
           attachments: Json | null
@@ -13983,6 +14288,201 @@ export type Database = {
           },
           {
             foreignKeyName: "email_ingestion_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      email_messages: {
+        Row: {
+          account_id: string | null
+          attachments: Json | null
+          auto_routed: boolean | null
+          bcc_emails: string[] | null
+          body_html: string | null
+          body_text: string | null
+          cc_emails: string[] | null
+          click_count: number | null
+          communication_id: string | null
+          contact_id: string | null
+          created_at: string | null
+          created_by: string | null
+          delivered_at: string | null
+          direction: string
+          error_message: string | null
+          from_email: string
+          from_name: string | null
+          has_attachments: boolean | null
+          id: string
+          in_reply_to: string | null
+          matter_id: string | null
+          message_id: string | null
+          open_count: number | null
+          opened_at: string | null
+          organization_id: string
+          reference_stamp: string | null
+          reply_to: string | null
+          retry_count: number | null
+          routing_confidence: number | null
+          routing_reason: string | null
+          sent_at: string | null
+          status: string | null
+          subject: string | null
+          thread_id: string | null
+          to_emails: string[]
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          attachments?: Json | null
+          auto_routed?: boolean | null
+          bcc_emails?: string[] | null
+          body_html?: string | null
+          body_text?: string | null
+          cc_emails?: string[] | null
+          click_count?: number | null
+          communication_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          delivered_at?: string | null
+          direction: string
+          error_message?: string | null
+          from_email: string
+          from_name?: string | null
+          has_attachments?: boolean | null
+          id?: string
+          in_reply_to?: string | null
+          matter_id?: string | null
+          message_id?: string | null
+          open_count?: number | null
+          opened_at?: string | null
+          organization_id: string
+          reference_stamp?: string | null
+          reply_to?: string | null
+          retry_count?: number | null
+          routing_confidence?: number | null
+          routing_reason?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          to_emails?: string[]
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          attachments?: Json | null
+          auto_routed?: boolean | null
+          bcc_emails?: string[] | null
+          body_html?: string | null
+          body_text?: string | null
+          cc_emails?: string[] | null
+          click_count?: number | null
+          communication_id?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          delivered_at?: string | null
+          direction?: string
+          error_message?: string | null
+          from_email?: string
+          from_name?: string | null
+          has_attachments?: boolean | null
+          id?: string
+          in_reply_to?: string | null
+          matter_id?: string | null
+          message_id?: string | null
+          open_count?: number | null
+          opened_at?: string | null
+          organization_id?: string
+          reference_stamp?: string | null
+          reply_to?: string | null
+          retry_count?: number | null
+          routing_confidence?: number | null
+          routing_reason?: string | null
+          sent_at?: string | null
+          status?: string | null
+          subject?: string | null
+          thread_id?: string | null
+          to_emails?: string[]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_messages_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "email_messages_communication_id_fkey"
+            columns: ["communication_id"]
+            isOneToOne: false
+            referencedRelation: "communications"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "email_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "email_messages_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
@@ -19159,6 +19659,74 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "payment_links"
             referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_sequences: {
+        Row: {
+          created_at: string | null
+          format: string | null
+          id: string
+          last_number: number | null
+          organization_id: string
+          prefix: string | null
+          reset_yearly: boolean | null
+          suffix: string | null
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          format?: string | null
+          id?: string
+          last_number?: number | null
+          organization_id: string
+          prefix?: string | null
+          reset_yearly?: boolean | null
+          suffix?: string | null
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          format?: string | null
+          id?: string
+          last_number?: number | null
+          organization_id?: string
+          prefix?: string | null
+          reset_yearly?: boolean | null
+          suffix?: string | null
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "invoice_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -26628,6 +27196,93 @@ export type Database = {
           },
         ]
       }
+      matter_type_configs: {
+        Row: {
+          category: string
+          code: string
+          color: string | null
+          created_at: string | null
+          default_workflow_id: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_system: boolean | null
+          name_en: string | null
+          name_es: string
+          organization_id: string | null
+          sort_order: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          category: string
+          code: string
+          color?: string | null
+          created_at?: string | null
+          default_workflow_id?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          name_en?: string | null
+          name_es: string
+          organization_id?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          default_workflow_id?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_system?: boolean | null
+          name_en?: string | null
+          name_es?: string
+          organization_id?: string | null
+          sort_order?: number | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_type_configs_default_workflow_id_fkey"
+            columns: ["default_workflow_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_definitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_type_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_type_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_type_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_type_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       matter_types: {
         Row: {
           code: string
@@ -28455,6 +29110,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      nice_classes: {
+        Row: {
+          class_number: number
+          color: string | null
+          created_at: string | null
+          description_en: string | null
+          description_es: string | null
+          icon: string | null
+          id: number
+          keywords_en: string[] | null
+          keywords_es: string[] | null
+          title_en: string
+          title_es: string
+          type: string
+        }
+        Insert: {
+          class_number: number
+          color?: string | null
+          created_at?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          icon?: string | null
+          id?: number
+          keywords_en?: string[] | null
+          keywords_es?: string[] | null
+          title_en: string
+          title_es: string
+          type: string
+        }
+        Update: {
+          class_number?: number
+          color?: string | null
+          created_at?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          icon?: string | null
+          id?: number
+          keywords_en?: string[] | null
+          keywords_es?: string[] | null
+          title_en?: string
+          title_es?: string
+          type?: string
+        }
+        Relationships: []
       }
       nice_products: {
         Row: {
@@ -31382,6 +32082,128 @@ export type Database = {
           },
         ]
       }
+      portal_access_tokens: {
+        Row: {
+          allowed_matter_ids: string[] | null
+          contact_id: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          expires_at: string
+          id: string
+          is_active: boolean | null
+          last_ip_address: string | null
+          last_used_at: string | null
+          last_user_agent: string | null
+          name: string | null
+          organization_id: string
+          permissions: Json | null
+          revocation_reason: string | null
+          revoked_at: string | null
+          revoked_by: string | null
+          token_hash: string
+          token_preview: string | null
+          updated_at: string | null
+          use_count: number | null
+        }
+        Insert: {
+          allowed_matter_ids?: string[] | null
+          contact_id: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          expires_at: string
+          id?: string
+          is_active?: boolean | null
+          last_ip_address?: string | null
+          last_used_at?: string | null
+          last_user_agent?: string | null
+          name?: string | null
+          organization_id: string
+          permissions?: Json | null
+          revocation_reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          token_hash: string
+          token_preview?: string | null
+          updated_at?: string | null
+          use_count?: number | null
+        }
+        Update: {
+          allowed_matter_ids?: string[] | null
+          contact_id?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          expires_at?: string
+          id?: string
+          is_active?: boolean | null
+          last_ip_address?: string | null
+          last_used_at?: string | null
+          last_user_agent?: string | null
+          name?: string | null
+          organization_id?: string
+          permissions?: Json | null
+          revocation_reason?: string | null
+          revoked_at?: string | null
+          revoked_by?: string | null
+          token_hash?: string
+          token_preview?: string | null
+          updated_at?: string | null
+          use_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_access_tokens_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_access_tokens_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_access_tokens_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_access_tokens_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "portal_access_tokens_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_access_tokens_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "portal_access_tokens_revoked_by_fkey"
+            columns: ["revoked_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       portal_activity_log: {
         Row: {
           action: string
@@ -31665,6 +32487,239 @@ export type Database = {
             columns: ["portal_id"]
             isOneToOne: false
             referencedRelation: "client_portals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portal_configurations: {
+        Row: {
+          allow_document_upload: boolean | null
+          allow_messaging: boolean | null
+          allowed_file_types: string[] | null
+          created_at: string | null
+          custom_css: string | null
+          favicon_url: string | null
+          footer_text: string | null
+          id: string
+          is_enabled: boolean | null
+          logo_url: string | null
+          max_upload_size_mb: number | null
+          notification_emails: string[] | null
+          notify_on_access: boolean | null
+          notify_on_message: boolean | null
+          notify_on_upload: boolean | null
+          organization_id: string
+          portal_name: string | null
+          portal_subdomain: string | null
+          primary_color: string | null
+          require_email_verification: boolean | null
+          secondary_color: string | null
+          show_deadlines: boolean | null
+          show_invoices: boolean | null
+          show_timeline: boolean | null
+          token_expiry_days: number | null
+          updated_at: string | null
+          welcome_message: string | null
+        }
+        Insert: {
+          allow_document_upload?: boolean | null
+          allow_messaging?: boolean | null
+          allowed_file_types?: string[] | null
+          created_at?: string | null
+          custom_css?: string | null
+          favicon_url?: string | null
+          footer_text?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          logo_url?: string | null
+          max_upload_size_mb?: number | null
+          notification_emails?: string[] | null
+          notify_on_access?: boolean | null
+          notify_on_message?: boolean | null
+          notify_on_upload?: boolean | null
+          organization_id: string
+          portal_name?: string | null
+          portal_subdomain?: string | null
+          primary_color?: string | null
+          require_email_verification?: boolean | null
+          secondary_color?: string | null
+          show_deadlines?: boolean | null
+          show_invoices?: boolean | null
+          show_timeline?: boolean | null
+          token_expiry_days?: number | null
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Update: {
+          allow_document_upload?: boolean | null
+          allow_messaging?: boolean | null
+          allowed_file_types?: string[] | null
+          created_at?: string | null
+          custom_css?: string | null
+          favicon_url?: string | null
+          footer_text?: string | null
+          id?: string
+          is_enabled?: boolean | null
+          logo_url?: string | null
+          max_upload_size_mb?: number | null
+          notification_emails?: string[] | null
+          notify_on_access?: boolean | null
+          notify_on_message?: boolean | null
+          notify_on_upload?: boolean | null
+          organization_id?: string
+          portal_name?: string | null
+          portal_subdomain?: string | null
+          primary_color?: string | null
+          require_email_verification?: boolean | null
+          secondary_color?: string | null
+          show_deadlines?: boolean | null
+          show_invoices?: boolean | null
+          show_timeline?: boolean | null
+          token_expiry_days?: number | null
+          updated_at?: string | null
+          welcome_message?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "portal_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_configurations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      portal_file_access_log: {
+        Row: {
+          accessed_at: string | null
+          action: string
+          contact_id: string | null
+          document_id: string | null
+          error_message: string | null
+          file_name: string | null
+          file_path: string | null
+          file_size_bytes: number | null
+          geo_location: Json | null
+          id: string
+          ip_address: string | null
+          matter_id: string | null
+          organization_id: string
+          portal_token_id: string | null
+          success: boolean | null
+          user_agent: string | null
+        }
+        Insert: {
+          accessed_at?: string | null
+          action: string
+          contact_id?: string | null
+          document_id?: string | null
+          error_message?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          geo_location?: Json | null
+          id?: string
+          ip_address?: string | null
+          matter_id?: string | null
+          organization_id: string
+          portal_token_id?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Update: {
+          accessed_at?: string | null
+          action?: string
+          contact_id?: string | null
+          document_id?: string | null
+          error_message?: string | null
+          file_name?: string | null
+          file_path?: string | null
+          file_size_bytes?: number | null
+          geo_location?: Json | null
+          id?: string
+          ip_address?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          portal_token_id?: string | null
+          success?: boolean | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portal_file_access_log_contact_id_fkey"
+            columns: ["contact_id"]
+            isOneToOne: false
+            referencedRelation: "crm_contacts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_portal_token_id_fkey"
+            columns: ["portal_token_id"]
+            isOneToOne: false
+            referencedRelation: "portal_access_tokens"
             referencedColumns: ["id"]
           },
         ]
@@ -43289,6 +44344,90 @@ export type Database = {
           },
         ]
       }
+      workflow_definitions: {
+        Row: {
+          code: string
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          id: string
+          is_active: boolean | null
+          is_default: boolean | null
+          is_system: boolean | null
+          metadata: Json | null
+          name: string
+          organization_id: string | null
+          updated_at: string | null
+          version: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          is_system?: boolean | null
+          metadata?: Json | null
+          name: string
+          organization_id?: string | null
+          updated_at?: string | null
+          version?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_default?: boolean | null
+          is_system?: boolean | null
+          metadata?: Json | null
+          name?: string
+          organization_id?: string | null
+          updated_at?: string | null
+          version?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_definitions_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_definitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_definitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "workflow_definitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_definitions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       workflow_executions: {
         Row: {
           actions_completed: number | null
@@ -43577,6 +44716,118 @@ export type Database = {
           },
         ]
       }
+      workflow_runs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          created_by: string | null
+          current_step_id: string | null
+          error_message: string | null
+          id: string
+          matter_id: string | null
+          metadata: Json | null
+          organization_id: string
+          started_at: string | null
+          status: string | null
+          updated_at: string | null
+          workflow_definition_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_step_id?: string | null
+          error_message?: string | null
+          id?: string
+          matter_id?: string | null
+          metadata?: Json | null
+          organization_id: string
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          workflow_definition_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          current_step_id?: string | null
+          error_message?: string | null
+          id?: string
+          matter_id?: string | null
+          metadata?: Json | null
+          organization_id?: string
+          started_at?: string | null
+          status?: string | null
+          updated_at?: string | null
+          workflow_definition_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_runs_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_current_step_id_fkey"
+            columns: ["current_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_workflow_definition_id_fkey"
+            columns: ["workflow_definition_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       workflow_schedules: {
         Row: {
           created_at: string | null
@@ -43663,6 +44914,68 @@ export type Database = {
             columns: ["workflow_id"]
             isOneToOne: false
             referencedRelation: "workflow_templates"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workflow_steps: {
+        Row: {
+          auto_actions: Json | null
+          code: string
+          color: string | null
+          created_at: string | null
+          description: string | null
+          icon: string | null
+          id: string
+          is_final: boolean | null
+          is_initial: boolean | null
+          name: string
+          order_index: number
+          required_fields: Json | null
+          sla_hours: number | null
+          updated_at: string | null
+          workflow_definition_id: string
+        }
+        Insert: {
+          auto_actions?: Json | null
+          code: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_final?: boolean | null
+          is_initial?: boolean | null
+          name: string
+          order_index?: number
+          required_fields?: Json | null
+          sla_hours?: number | null
+          updated_at?: string | null
+          workflow_definition_id: string
+        }
+        Update: {
+          auto_actions?: Json | null
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_final?: boolean | null
+          is_initial?: boolean | null
+          name?: string
+          order_index?: number
+          required_fields?: Json | null
+          sla_hours?: number | null
+          updated_at?: string | null
+          workflow_definition_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_steps_workflow_definition_id_fkey"
+            columns: ["workflow_definition_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_definitions"
             referencedColumns: ["id"]
           },
         ]
@@ -43826,6 +45139,70 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      workflow_transitions: {
+        Row: {
+          approval_roles: string[] | null
+          auto_trigger: boolean | null
+          conditions: Json | null
+          created_at: string | null
+          description: string | null
+          from_step_id: string
+          id: string
+          name: string | null
+          requires_approval: boolean | null
+          to_step_id: string
+          workflow_definition_id: string
+        }
+        Insert: {
+          approval_roles?: string[] | null
+          auto_trigger?: boolean | null
+          conditions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          from_step_id: string
+          id?: string
+          name?: string | null
+          requires_approval?: boolean | null
+          to_step_id: string
+          workflow_definition_id: string
+        }
+        Update: {
+          approval_roles?: string[] | null
+          auto_trigger?: boolean | null
+          conditions?: Json | null
+          created_at?: string | null
+          description?: string | null
+          from_step_id?: string
+          id?: string
+          name?: string | null
+          requires_approval?: boolean | null
+          to_step_id?: string
+          workflow_definition_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workflow_transitions_from_step_id_fkey"
+            columns: ["from_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_transitions_to_step_id_fkey"
+            columns: ["to_step_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_steps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workflow_transitions_workflow_definition_id_fkey"
+            columns: ["workflow_definition_id"]
+            isOneToOne: false
+            referencedRelation: "workflow_definitions"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -45340,10 +46717,12 @@ export type Database = {
         }
         Returns: number
       }
-      get_next_invoice_number: {
-        Args: { p_org_id: string; p_series_code?: string }
-        Returns: string
-      }
+      get_next_invoice_number:
+        | { Args: { p_org_id: string; p_prefix?: string }; Returns: string }
+        | {
+            Args: { p_org_id: string; p_series_code?: string }
+            Returns: string
+          }
       get_offices_with_plan_access: {
         Args: { p_plan: string }
         Returns: {
