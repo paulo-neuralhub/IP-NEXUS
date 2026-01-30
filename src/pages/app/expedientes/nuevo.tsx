@@ -216,6 +216,7 @@ export default function NewMatterPage() {
         matter_number: matterNumber,
         title: data.title,
         matter_type: data.matter_type,
+        jurisdiction_primary: data.jurisdiction_code,
         client_id: data.client_id || null,
         reference: internalReference,
         mark_name: data.mark_name || null,

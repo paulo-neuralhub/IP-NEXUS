@@ -424,7 +424,7 @@ export function Client360Page({ clientId }: Client360PageProps) {
                               <p className="font-medium truncate">{matter.title}</p>
                             </div>
                             <div className="text-right text-sm text-muted-foreground">
-                              <p>{matter.jurisdiction}</p>
+                              <p>{matter.jurisdiction_primary}</p>
                               <p>{format(new Date(matter.created_at), 'dd/MM/yyyy')}</p>
                             </div>
                           </button>

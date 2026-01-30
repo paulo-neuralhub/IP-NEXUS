@@ -34,7 +34,7 @@ export interface MatterV2 {
   client_name: string | null;
   client_email: string | null;
   client_phone: string | null;
-  jurisdiction: string | null;
+  jurisdiction_primary: string | null;
   instruction_date: string | null;
   priority_date: string | null;
   mark_name: string | null;
@@ -220,7 +220,7 @@ export function useMattersV2(filters?: MatterV2Filters) {
         client_name: m.client?.name || null,
         client_email: m.client?.email || null,
         client_phone: m.client?.phone || m.client?.mobile || null,
-        jurisdiction: m.jurisdiction,
+        jurisdiction_primary: m.jurisdiction || m.jurisdiction_code || null,
         instruction_date: m.filing_date,
         priority_date: m.priority_date,
         mark_name: m.mark_name,
@@ -228,6 +228,7 @@ export function useMattersV2(filters?: MatterV2Filters) {
         mark_image_url: m.mark_image_url,
         invention_title: m.title,
         nice_classes: m.nice_classes,
+        nice_classes_detail: null,
         ipc_classes: null,
         goods_services: m.goods_services,
         responsible_id: m.assigned_to,
@@ -329,7 +330,7 @@ export function useMatterV2(id: string) {
         client_name: (m as any).client?.name || null,
         client_email: (m as any).client?.email || null,
         client_phone: (m as any).client?.phone || (m as any).client?.mobile || null,
-        jurisdiction: m.jurisdiction,
+        jurisdiction_primary: m.jurisdiction || m.jurisdiction_code || null,
         instruction_date: m.filing_date,
         priority_date: m.priority_date,
         mark_name: m.mark_name,
@@ -337,6 +338,7 @@ export function useMatterV2(id: string) {
         mark_image_url: m.mark_image_url,
         invention_title: m.title,
         nice_classes: m.nice_classes,
+        nice_classes_detail: null,
         ipc_classes: null,
         goods_services: m.goods_services,
         responsible_id: m.assigned_to,
@@ -526,6 +528,7 @@ export function useCreateMatterV2() {
         matter_number: data.matter_number,
         title: data.title,
         matter_type: data.matter_type,
+        jurisdiction_primary: data.jurisdiction_primary || null,
         status: data.status || 'active',
         reference: data.reference || null,
         client_id: data.client_id || null,

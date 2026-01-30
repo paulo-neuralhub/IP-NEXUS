@@ -461,9 +461,9 @@ export default function ExpedientesPage() {
                           )}
                         </TableCell>
                         <TableCell>
-                          {matter.jurisdiction ? (
+                          {matter.jurisdiction_primary ? (
                             <Badge variant="outline" className="font-mono">
-                              {JURISDICTION_LABELS[matter.jurisdiction]?.split(' ')[0] || matter.jurisdiction}
+                              {JURISDICTION_LABELS[matter.jurisdiction_primary]?.split(' ')[0] || matter.jurisdiction_primary}
                             </Badge>
                           ) : (
                             <span className="text-muted-foreground">—</span>

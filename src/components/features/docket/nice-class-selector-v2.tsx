@@ -3,7 +3,7 @@
  * Selector mejorado que permite elegir clases Y productos específicos
  */
 
-import { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { X, Plus, Search, ChevronDown, ChevronRight, Star, Package } from 'lucide-react';
@@ -97,12 +97,20 @@ interface NiceProduct {
   is_common: boolean;
 }
 
-export function NiceClassSelectorV2({ value, onChange, simpleMode = false }: NiceClassSelectorV2Props) {
+export const NiceClassSelectorV2 = React.forwardRef<HTMLDivElement, NiceClassSelectorV2Props>(
+  function NiceClassSelectorV2({ value, onChange, simpleMode = false }, ref) {
   const [isOpen, setIsOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [expandedClass, setExpandedClass] = useState<number | null>(null);
   const [customInput, setCustomInput] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Merge refs
+  const setRefs = (el: HTMLDivElement | null) => {
+    (containerRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+    if (typeof ref === 'function') ref(el);
+    else if (ref) ref.current = el;
+  };
 
   // Fetch products from DB
   const { data: products = [] } = useQuery({
@@ -229,7 +237,7 @@ export function NiceClassSelectorV2({ value, onChange, simpleMode = false }: Nic
   };
 
   return (
-    <div className="space-y-3" ref={containerRef}>
+    <div className="space-y-3" ref={setRefs}>
       {/* Selected classes badges */}
       <div className="flex flex-wrap gap-2">
         {value.map(selection => (
@@ -282,25 +290,25 @@ export function NiceClassSelectorV2({ value, onChange, simpleMode = false }: Nic
             </div>
           </div>
 
-          <ScrollArea className="max-h-80">
+          <ScrollArea className="h-[350px]">
             <div className="p-2">
               {/* Grid of classes */}
               {simpleMode ? (
-                <div className="grid grid-cols-5 gap-1.5">
+                <div className="grid grid-cols-9 gap-1">
                   {filteredClasses.map(c => (
                     <button
                       key={c.number}
                       type="button"
                       onClick={() => toggleClass(c.number)}
                       className={cn(
-                        "flex flex-col items-center p-2 rounded-lg text-center transition-all",
+                        "flex flex-col items-center p-1.5 rounded-lg text-center transition-all",
                         "hover:bg-muted",
                         isClassSelected(c.number) && "bg-primary/10 ring-1 ring-primary"
                       )}
                       title={c.description}
                     >
-                      <span className="text-xl">{CLASS_ICONS[c.number]}</span>
-                      <span className="text-xs font-medium mt-1">{c.number}</span>
+                      <span className="text-lg">{CLASS_ICONS[c.number]}</span>
+                      <span className="text-xs font-medium">{c.number}</span>
                     </button>
                   ))}
                 </div>
@@ -485,7 +493,7 @@ export function NiceClassSelectorV2({ value, onChange, simpleMode = false }: Nic
       )}
     </div>
   );
-}
+});
 
 // Helper to convert legacy format to new format
 export function convertLegacyNiceClasses(classes: number[]): NiceSelection[] {
