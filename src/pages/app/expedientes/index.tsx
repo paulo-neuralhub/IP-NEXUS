@@ -271,14 +271,14 @@ export default function ExpedientesPage() {
           
           <div className="flex items-center gap-3">
             <Select
-              value={filters.jurisdiction || ''}
-              onValueChange={(v) => setFilters(prev => ({ ...prev, jurisdiction: v || undefined }))}
+              value={filters.jurisdiction || 'all'}
+              onValueChange={(v) => setFilters(prev => ({ ...prev, jurisdiction: v === 'all' ? undefined : v }))}
             >
               <SelectTrigger className="w-[140px] h-12 rounded-xl bg-white dark:bg-slate-800">
                 <SelectValue placeholder="Jurisdicción" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todas</SelectItem>
+                <SelectItem value="all">Todas</SelectItem>
                 {jurisdictions?.map((jur) => (
                   <SelectItem key={jur} value={jur}>
                     {JURISDICTION_FLAGS[jur] || '🌐'} {jur}
@@ -288,14 +288,14 @@ export default function ExpedientesPage() {
             </Select>
 
             <Select
-              value={filters.status || ''}
-              onValueChange={(v) => setFilters(prev => ({ ...prev, status: v || undefined }))}
+              value={filters.status || 'all'}
+              onValueChange={(v) => setFilters(prev => ({ ...prev, status: v === 'all' ? undefined : v }))}
             >
               <SelectTrigger className="w-[130px] h-12 rounded-xl bg-white dark:bg-slate-800">
                 <SelectValue placeholder="Estado" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Todos</SelectItem>
+                <SelectItem value="all">Todos</SelectItem>
                 {Object.entries(STATUS_CONFIG).map(([key, config]) => (
                   <SelectItem key={key} value={key}>{config.label}</SelectItem>
                 ))}
