@@ -42,6 +42,7 @@ export interface MatterV2 {
   mark_image_url: string | null;
   invention_title: string | null;
   nice_classes: number[] | null;
+  nice_classes_detail: Array<{classNumber: number; products: string[]; customProducts: string[]}> | null;
   ipc_classes: string[] | null;
   goods_services: string | null;
   responsible_id: string | null;

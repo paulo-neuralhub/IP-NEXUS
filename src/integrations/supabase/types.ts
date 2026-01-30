@@ -27790,6 +27790,7 @@ export type Database = {
           matter_number: string
           matter_type: string
           nice_classes: number[] | null
+          nice_classes_detail: Json | null
           notes_internal: string | null
           opened_at: string | null
           organization_id: string
@@ -27848,6 +27849,7 @@ export type Database = {
           matter_number: string
           matter_type: string
           nice_classes?: number[] | null
+          nice_classes_detail?: Json | null
           notes_internal?: string | null
           opened_at?: string | null
           organization_id: string
@@ -27906,6 +27908,7 @@ export type Database = {
           matter_number?: string
           matter_type?: string
           nice_classes?: number[] | null
+          nice_classes_detail?: Json | null
           notes_internal?: string | null
           opened_at?: string | null
           organization_id?: string

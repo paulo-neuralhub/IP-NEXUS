@@ -10,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, Loader2, Sparkles, Building2, Info } from 'lucide-react';
+import { NiceClassSelectorV2, type NiceSelection } from '@/components/features/docket';
 import { 
   useCreateMatterV2, 
   useGenerateMatterNumber,
@@ -70,7 +71,7 @@ const formSchema = z.object({
   client_id: z.string().optional(),
   mark_name: z.string().optional(),
   invention_title: z.string().optional(),
-  nice_classes: z.string().optional(),
+  // Nice classes ahora es array de NiceSelection, no string
   goods_services: z.string().optional(),
   reference: z.string().optional(),
   client_reference: z.string().optional(),
@@ -130,7 +131,6 @@ export default function NewMatterPage() {
       client_id: '',
       mark_name: '',
       invention_title: '',
-      nice_classes: '',
       goods_services: '',
       reference: '',
       client_reference: '',
@@ -139,6 +139,9 @@ export default function NewMatterPage() {
       is_confidential: false,
     },
   });
+  
+  // State for Nice classes (outside react-hook-form because it's complex object)
+  const [niceSelections, setNiceSelections] = useState<NiceSelection[]>([]);
   
   const watchedType = form.watch('matter_type');
   const watchedJurisdiction = form.watch('jurisdiction_code');
@@ -191,10 +194,21 @@ export default function NewMatterPage() {
         }
       }
       
-      // Parse nice classes
-      const niceClasses = data.nice_classes
-        ? data.nice_classes.split(',').map(c => parseInt(c.trim())).filter(n => !isNaN(n))
-        : undefined;
+      // Extract nice class numbers from selections
+      const niceClassNumbers = niceSelections.map(s => s.classNumber);
+      
+      // Build goods/services text from selections if not manually provided
+      let goodsServicesText = data.goods_services || '';
+      if (!goodsServicesText && niceSelections.length > 0) {
+        const parts = niceSelections.map(s => {
+          const allProducts = [...s.products, ...s.customProducts];
+          if (allProducts.length > 0) {
+            return `Clase ${s.classNumber}: ${allProducts.join('; ')}`;
+          }
+          return `Clase ${s.classNumber}`;
+        });
+        goodsServicesText = parts.join('\n');
+      }
       
       // Create matter
       const matter = await createMatter.mutateAsync({
@@ -205,8 +219,9 @@ export default function NewMatterPage() {
         reference: internalReference,
         mark_name: data.mark_name || null,
         invention_title: data.invention_title || null,
-        nice_classes: niceClasses?.length ? niceClasses : null,
-        goods_services: data.goods_services || null,
+        nice_classes: niceClassNumbers.length ? niceClassNumbers : null,
+        nice_classes_detail: niceSelections.length ? niceSelections : null,
+        goods_services: goodsServicesText || null,
         internal_notes: data.internal_notes || null,
         is_urgent: data.is_urgent,
         is_confidential: data.is_confidential,
@@ -470,19 +485,16 @@ export default function NewMatterPage() {
                     )}
                   />
                   
-                  <FormField
-                    control={form.control}
-                    name="nice_classes"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Clases Nice</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Ej: 9, 35, 42" {...field} />
-                        </FormControl>
-                        <FormDescription>Separadas por comas</FormDescription>
-                      </FormItem>
-                    )}
-                  />
+                  <FormItem>
+                    <FormLabel>Clases Nice</FormLabel>
+                    <NiceClassSelectorV2
+                      value={niceSelections}
+                      onChange={setNiceSelections}
+                    />
+                    <FormDescription>
+                      Selecciona las clases y productos/servicios
+                    </FormDescription>
+                  </FormItem>
                   
                   <FormField
                     control={form.control}
