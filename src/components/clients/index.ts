@@ -4,4 +4,5 @@
 // ============================================
 
 export { ClientActivityTimeline } from './ClientActivityTimeline';
+export { ClientDocumentsTab } from './ClientDocumentsTab';
 export { ClientWhatsAppTimeline } from './ClientWhatsAppTimeline';
