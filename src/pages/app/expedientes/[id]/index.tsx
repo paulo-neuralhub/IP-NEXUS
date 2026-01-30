@@ -8,7 +8,7 @@ import {
   ArrowLeft, Pencil, MoreHorizontal, Trash2, Archive,
   Tag, Clock, Building2, User, FileText, Users, History,
   Mail, Phone, Calendar, CheckSquare, Receipt, FolderOpen,
-  ExternalLink, MessageSquare, FilePlus
+  ExternalLink, MessageSquare
 } from 'lucide-react';
 import { useMatterV2, useMatterFilings, useMatterTimeline, useMatterParties, useMatterTypes, useDeleteMatterV2 } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
@@ -53,7 +53,7 @@ import { WorkflowProgressBar } from '@/components/features/matters/WorkflowProgr
 import { AddFilingModal } from '@/components/matters/AddFilingModal';
 import { AddPartyModal } from '@/components/matters/AddPartyModal';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { DocumentGenerator } from '@/components/documents/DocumentGenerator';
+
 import { toast } from 'sonner';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
@@ -81,7 +81,6 @@ export default function MatterDetailPage() {
   const [showFilingModal, setShowFilingModal] = useState(false);
   const [showPartyModal, setShowPartyModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showDocGenerator, setShowDocGenerator] = useState(false);
   
   const deleteMatter = useDeleteMatterV2();
   
@@ -268,10 +267,6 @@ export default function MatterDetailPage() {
             </Tooltip>
           </div>
           
-          <Button variant="outline" onClick={() => setShowDocGenerator(true)}>
-            <FilePlus className="h-4 w-4 mr-2" />
-            Generar documento
-          </Button>
           <Button variant="outline" onClick={() => navigate(`/app/expedientes/${id}/editar`)}>
             <Pencil className="h-4 w-4 mr-2" />
             Editar
@@ -776,24 +771,6 @@ export default function MatterDetailPage() {
         onOpenChange={setShowPartyModal}
         matterId={id!}
         matterType={matter?.matter_type}
-      />
-      
-      {/* Document Generator Modal */}
-      <DocumentGenerator
-        isOpen={showDocGenerator}
-        onClose={() => setShowDocGenerator(false)}
-        matterId={id}
-        clientId={matter?.client_id}
-        initialVariables={{
-          matter_ref: matter?.matter_number || '',
-          matter_title: matter?.title || '',
-          trademark_name: matter?.mark_name || '',
-          trademark_classes: matter?.nice_classes?.join(', ') || '',
-          client_name: matter?.client_name || '',
-          client_company: matter?.client_name || '',
-          client_address: '',
-          client_cif: '',
-        }}
       />
       
       {/* Delete Confirmation Dialog */}
