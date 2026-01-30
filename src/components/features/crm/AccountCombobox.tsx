@@ -3,8 +3,8 @@
  * L109D: Replaces basic Select with searchable Combobox
  */
 
-import { useState } from 'react';
-import { Check, ChevronsUpDown, Building2, User, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, ChevronsUpDown, Building2, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -33,14 +33,15 @@ interface AccountComboboxProps {
   requireToken?: boolean;
 }
 
-export function AccountCombobox({ 
-  value, 
-  onChange, 
-  placeholder = "Seleccionar cliente...",
-  disabled = false,
-  className,
-  requireToken = false,
-}: AccountComboboxProps) {
+export const AccountCombobox = React.forwardRef<HTMLButtonElement, AccountComboboxProps>(
+  function AccountCombobox({ 
+    value, 
+    onChange, 
+    placeholder = "Seleccionar cliente...",
+    disabled = false,
+    className,
+    requireToken = false,
+  }, ref) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState('');
   
@@ -168,4 +169,6 @@ export function AccountCombobox({
       </PopoverContent>
     </Popover>
   );
-}
+});
+
+AccountCombobox.displayName = 'AccountCombobox';
