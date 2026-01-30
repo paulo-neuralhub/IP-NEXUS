@@ -1,6 +1,8 @@
 // Communications Components
+// Communications Components
 export { AssociateMatterDialog } from './AssociateMatterDialog';
 export { AudioPlayer } from './AudioPlayer';
+export { ClientFolderPicker } from './ClientFolderPicker';
 export { ContactSearch } from './ContactSearch';
 export { EmailComposer } from './EmailComposer';
 export { EmailInbox } from './EmailInbox';
