@@ -512,6 +512,24 @@ export function useGenerateMatterNumber() {
   });
 }
 
+/**
+ * Map short matter type codes (TM, PT, etc.) to legacy DB enum values.
+ * The `matters.type` column only allows: trademark, patent, design, domain, copyright, other, tradename.
+ */
+const MATTER_TYPE_CODE_TO_LEGACY: Record<string, string> = {
+  TM: 'trademark',
+  PT: 'patent',
+  UM: 'patent',          // utility model → patent
+  DS: 'design',
+  DN: 'domain',
+  CP: 'copyright',
+  TN: 'tradename',
+  SW: 'copyright',       // software → copyright
+  GI: 'trademark',       // geographical indication → trademark
+  TR: 'trademark',       // trade secret kept under trademark
+  OTHER: 'other',
+};
+
 export function useCreateMatterV2() {
   const queryClient = useQueryClient();
   const { currentOrganization } = useOrganization();
@@ -531,6 +549,9 @@ export function useCreateMatterV2() {
       // dispara un FK violation cuando se intenta escribir en timeline.
       // Hasta completar la migración completa a V2, creamos el expediente en `matters`.
 
+      // Map V2 type codes (TM, PT, etc.) to legacy enum values
+      const legacyType = MATTER_TYPE_CODE_TO_LEGACY[data.matter_type.toUpperCase()] || 'other';
+
       const baseCustomFields: Record<string, unknown> =
         data.custom_fields && typeof data.custom_fields === 'object' && !Array.isArray(data.custom_fields)
           ? (data.custom_fields as Record<string, unknown>)
@@ -542,7 +563,7 @@ export function useCreateMatterV2() {
         // `reference` se usa como referencia interna histórica (p.ej. 2026/TM/005)
         reference: data.reference || null,
         title: data.title,
-        type: data.matter_type,
+        type: legacyType,
         status: data.status || 'active',
 
         jurisdiction: data.jurisdiction_primary || null,
