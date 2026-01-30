@@ -58,6 +58,7 @@ import {
 
 import { useWhatsAppConfig } from '@/hooks/whatsapp';
 import { useOrganization } from '@/contexts/organization-context';
+import type { WhatsAppImplementationRequestForm } from '@/types/whatsapp';
 
 const settingsSchema = z.object({
   autoReplyEnabled: z.boolean(),
@@ -73,11 +74,11 @@ const requestSchema = z.object({
   companyName: z.string().min(1, 'Requerido'),
   contactName: z.string().min(1, 'Requerido'),
   contactEmail: z.string().email('Email inválido'),
-  contactPhone: z.string().optional(),
+  contactPhone: z.string().default(''),
   planType: z.enum(['standard', 'premium', 'enterprise']),
-  estimatedMonthlyMessages: z.number().optional().nullable(),
-  currentWhatsappNumber: z.string().optional(),
-  additionalNotes: z.string().optional(),
+  estimatedMonthlyMessages: z.number().nullable().default(null),
+  currentWhatsappNumber: z.string().default(''),
+  additionalNotes: z.string().default(''),
 });
 
 type SettingsFormData = z.infer<typeof settingsSchema>;
@@ -133,17 +134,7 @@ export default function WhatsAppSettingsPage() {
   };
 
   const onRequestImplementation = (data: RequestFormData) => {
-    const payload = {
-      company_name: data.company_name,
-      contact_name: data.contact_name,
-      contact_email: data.contact_email,
-      contact_phone: data.contact_phone || '',
-      plan_type: data.plan_type,
-      estimated_monthly_messages: data.estimated_monthly_messages,
-      current_whatsapp_number: data.current_whatsapp_number || '',
-      additional_notes: data.additional_notes || '',
-    };
-    requestImplementation.mutate(payload as any, {
+    requestImplementation.mutate(data as WhatsAppImplementationRequestForm, {
       onSuccess: () => setShowRequestDialog(false),
     });
   };
@@ -370,7 +361,7 @@ export default function WhatsAppSettingsPage() {
                 <form onSubmit={settingsForm.handleSubmit(onSaveSettings)} className="space-y-6">
                   <FormField
                     control={settingsForm.control}
-                    name="auto_reply_enabled"
+                    name="autoReplyEnabled"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
@@ -386,16 +377,17 @@ export default function WhatsAppSettingsPage() {
                     )}
                   />
 
-                  {settingsForm.watch('auto_reply_enabled') && (
+                  {settingsForm.watch('autoReplyEnabled') && (
                     <FormField
                       control={settingsForm.control}
-                      name="auto_reply_message"
+                      name="autoReplyMessage"
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Mensaje de respuesta automática</FormLabel>
                           <FormControl>
                             <Textarea 
                               {...field} 
+                              value={field.value || ''}
                               placeholder="Gracias por contactarnos..."
                               rows={3}
                             />
@@ -408,7 +400,7 @@ export default function WhatsAppSettingsPage() {
 
                   <FormField
                     control={settingsForm.control}
-                    name="business_hours_only"
+                    name="businessHoursOnly"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
@@ -424,28 +416,28 @@ export default function WhatsAppSettingsPage() {
                     )}
                   />
 
-                  {settingsForm.watch('business_hours_only') && (
+                  {settingsForm.watch('businessHoursOnly') && (
                     <div className="grid grid-cols-2 gap-4">
                       <FormField
                         control={settingsForm.control}
-                        name="business_hours_start"
+                        name="businessHoursStart"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Hora de inicio</FormLabel>
                             <FormControl>
-                              <Input type="time" {...field} />
+                              <Input type="time" {...field} value={field.value || ''} />
                             </FormControl>
                           </FormItem>
                         )}
                       />
                       <FormField
                         control={settingsForm.control}
-                        name="business_hours_end"
+                        name="businessHoursEnd"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Hora de fin</FormLabel>
                             <FormControl>
-                              <Input type="time" {...field} />
+                              <Input type="time" {...field} value={field.value || ''} />
                             </FormControl>
                           </FormItem>
                         )}
@@ -477,7 +469,7 @@ export default function WhatsAppSettingsPage() {
                 <form onSubmit={settingsForm.handleSubmit(onSaveSettings)} className="space-y-6">
                   <FormField
                     control={settingsForm.control}
-                    name="notify_new_messages"
+                    name="notifyNewMessages"
                     render={({ field }) => (
                       <FormItem className="flex items-center justify-between rounded-lg border p-4">
                         <div className="space-y-0.5">
@@ -495,7 +487,7 @@ export default function WhatsAppSettingsPage() {
 
                   <FormField
                     control={settingsForm.control}
-                    name="notify_email"
+                    name="notifyEmail"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Email de notificaciones</FormLabel>
@@ -504,6 +496,7 @@ export default function WhatsAppSettingsPage() {
                             type="email" 
                             placeholder="notificaciones@tuempresa.com"
                             {...field} 
+                            value={field.value || ''}
                           />
                         </FormControl>
                         <FormDescription>
@@ -540,7 +533,7 @@ export default function WhatsAppSettingsPage() {
             <form onSubmit={requestForm.handleSubmit(onRequestImplementation)} className="space-y-4">
               <FormField
                 control={requestForm.control}
-                name="company_name"
+                name="companyName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Nombre de la empresa</FormLabel>
@@ -555,7 +548,7 @@ export default function WhatsAppSettingsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={requestForm.control}
-                  name="contact_name"
+                  name="contactName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nombre de contacto</FormLabel>
@@ -568,7 +561,7 @@ export default function WhatsAppSettingsPage() {
                 />
                 <FormField
                   control={requestForm.control}
-                  name="contact_email"
+                  name="contactEmail"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Email</FormLabel>
@@ -584,7 +577,7 @@ export default function WhatsAppSettingsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <FormField
                   control={requestForm.control}
-                  name="contact_phone"
+                  name="contactPhone"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Teléfono (opcional)</FormLabel>
@@ -596,7 +589,7 @@ export default function WhatsAppSettingsPage() {
                 />
                 <FormField
                   control={requestForm.control}
-                  name="plan_type"
+                  name="planType"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Plan deseado</FormLabel>
@@ -619,7 +612,7 @@ export default function WhatsAppSettingsPage() {
 
               <FormField
                 control={requestForm.control}
-                name="current_whatsapp_number"
+                name="currentWhatsappNumber"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Número de WhatsApp actual (opcional)</FormLabel>
@@ -635,7 +628,7 @@ export default function WhatsAppSettingsPage() {
 
               <FormField
                 control={requestForm.control}
-                name="additional_notes"
+                name="additionalNotes"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Notas adicionales (opcional)</FormLabel>
