@@ -1,7 +1,8 @@
 // =============================================
 // COMPONENTE: ComposeMessageDialog
 // Dialog para componer nuevos mensajes (Email, SMS, WhatsApp)
-// Para Email usa EmailComposer con WYSIWYG, para otros canales usa form simple
+// Para Email usa EmailComposer con WYSIWYG
+// Para WhatsApp usa WhatsAppComposer con templates y adjuntos
 // =============================================
 
 import { useState } from 'react';
@@ -25,12 +26,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { 
   useSendSMS, 
-  useSendWhatsApp, 
   useMakeCall 
 } from '@/hooks/legal-ops/useCommunications';
 import { toast } from 'sonner';
 import { CommChannel } from '@/types/legal-ops';
 import { EmailComposer } from '@/components/communications/EmailComposer';
+import { WhatsAppComposer } from '@/components/communications/WhatsAppComposer';
 
 interface ComposeMessageDialogProps {
   open: boolean;
@@ -115,7 +116,21 @@ export function ComposeMessageDialog({
     );
   }
 
-  // Para otros canales usamos el form simple
+  // Para WHATSAPP usamos WhatsAppComposer con templates y adjuntos
+  if (channelType === 'whatsapp') {
+    return (
+      <WhatsAppComposer
+        open={open}
+        onOpenChange={onOpenChange}
+        defaultTo={defaultTo}
+        defaultContactId={defaultContactId}
+        defaultClientId={defaultClientId}
+        defaultMatterId={defaultMatterId}
+      />
+    );
+  }
+
+  // Para otros canales (SMS, Phone) usamos el form simple
   return (
     <SimpleComposeDialog
       open={open}
@@ -140,7 +155,6 @@ function SimpleComposeDialog({
   defaultMatterId,
 }: ComposeMessageDialogProps) {
   const sendSMS = useSendSMS();
-  const sendWhatsApp = useSendWhatsApp();
   const makeCall = useMakeCall();
 
   const [to, setTo] = useState(defaultTo);
@@ -182,14 +196,6 @@ function SimpleComposeDialog({
             ...commonParams,
           });
           toast.success('SMS enviado correctamente');
-          break;
-        case 'whatsapp':
-          await sendWhatsApp.mutateAsync({
-            to,
-            message: body,
-            ...commonParams,
-          });
-          toast.success('WhatsApp enviado correctamente');
           break;
         case 'phone':
           await makeCall.mutateAsync({

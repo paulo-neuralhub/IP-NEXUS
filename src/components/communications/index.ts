@@ -1,5 +1,4 @@
 // Communications Components
-// Communications Components
 export { AssociateMatterDialog } from './AssociateMatterDialog';
 export { AudioPlayer } from './AudioPlayer';
 export { ClientFolderPicker } from './ClientFolderPicker';
@@ -12,4 +11,5 @@ export { TemplatePreviewDialog } from './TemplatePreviewDialog';
 export { TipTapEditor } from './TipTapEditor';
 export { VoiceRecorder } from './VoiceRecorder';
 export { WhatsAppChat } from './WhatsAppChat';
+export { WhatsAppComposer } from './WhatsAppComposer';
 export { WhatsAppTemplateEditor } from './WhatsAppTemplateEditor';
