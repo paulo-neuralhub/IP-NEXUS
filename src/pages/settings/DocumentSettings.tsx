@@ -12,10 +12,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
-import { Upload, Save, Eye, Palette, Building, CreditCard, FileText, Loader2 } from 'lucide-react';
+import { Upload, Save, Eye, Palette, Building, CreditCard, FileText, Loader2, Hash } from 'lucide-react';
 import { StyleSelector } from '@/components/documents/StyleSelector';
 import { A4Preview } from '@/components/documents/A4Preview';
 import { getCustomizedStyle } from '@/config/documentStyles';
+import { DOCUMENT_NUMBER_FORMATS, generateDocumentNumberPreview } from '@/config/documentNumberFormats';
 import { DocumentStyleCode, TenantDocumentSettings, StyleColors } from '@/types/documents';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -55,6 +56,13 @@ export default function DocumentSettings() {
       prefix: 'FAC',
       nextNumber: 1,
     },
+  });
+
+  // Document numbering settings
+  const [numberingSettings, setNumberingSettings] = useState({
+    format: 'PREFIX-YYYY-SEQ',
+    prefix: 'DOC',
+    sequenceByType: false,
   });
 
   // Colores personalizados
@@ -116,6 +124,13 @@ export default function DocumentSettings() {
             },
           });
 
+          // Load document numbering settings
+          setNumberingSettings({
+            format: data.document_number_format || 'PREFIX-YYYY-SEQ',
+            prefix: data.document_number_prefix || 'DOC',
+            sequenceByType: data.document_sequence_by_type || false,
+          });
+
           if (data.custom_primary_color) {
             setUseCustomColors(true);
             setCustomColors({
@@ -169,6 +184,9 @@ export default function DocumentSettings() {
         default_tax_rate: settings.invoiceSettings?.taxRate,
         default_payment_terms: settings.invoiceSettings?.paymentTerms,
         invoice_prefix: settings.invoiceSettings?.prefix,
+        document_number_format: numberingSettings.format,
+        document_number_prefix: numberingSettings.prefix,
+        document_sequence_by_type: numberingSettings.sequenceByType,
         custom_primary_color: useCustomColors ? customColors.primary : null,
         custom_secondary_color: useCustomColors ? customColors.secondary : null,
         custom_accent_color: useCustomColors ? customColors.accent : null,
@@ -275,7 +293,7 @@ export default function DocumentSettings() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className={showPreview ? 'lg:col-span-2' : 'lg:col-span-3'}>
           <Tabs value={activeTab} onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-5">
               <TabsTrigger value="branding" className="flex items-center gap-2">
                 <Palette className="h-4 w-4" />
                 Marca
@@ -283,6 +301,10 @@ export default function DocumentSettings() {
               <TabsTrigger value="company" className="flex items-center gap-2">
                 <Building className="h-4 w-4" />
                 Empresa
+              </TabsTrigger>
+              <TabsTrigger value="numbering" className="flex items-center gap-2">
+                <Hash className="h-4 w-4" />
+                Numeración
               </TabsTrigger>
               <TabsTrigger value="billing" className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4" />
@@ -533,6 +555,100 @@ export default function DocumentSettings() {
                         placeholder="B12345678"
                       />
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            {/* TAB: NUMERACIÓN */}
+            <TabsContent value="numbering" className="space-y-6 mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Numeración de documentos</CardTitle>
+                  <CardDescription>
+                    Configura el formato de numeración automática para tus documentos
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="space-y-2">
+                    <Label>Formato de numeración</Label>
+                    <Select
+                      value={numberingSettings.format}
+                      onValueChange={(v) => setNumberingSettings(prev => ({
+                        ...prev,
+                        format: v
+                      }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {DOCUMENT_NUMBER_FORMATS.map((format) => (
+                          <SelectItem key={format.code} value={format.code}>
+                            <div className="flex flex-col py-1">
+                              <span className="font-medium">{format.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                Ejemplo: {format.example}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      {DOCUMENT_NUMBER_FORMATS.find(f => f.code === numberingSettings.format)?.description}
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Prefijo personalizado</Label>
+                    <Input
+                      value={numberingSettings.prefix}
+                      onChange={(e) => setNumberingSettings(prev => ({
+                        ...prev,
+                        prefix: e.target.value.toUpperCase()
+                      }))}
+                      placeholder="DOC"
+                      maxLength={10}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Se usará como prefijo en los formatos que lo incluyan
+                    </p>
+                  </div>
+
+                  <div className="flex items-center justify-between py-2">
+                    <div className="space-y-1">
+                      <Label>Secuencia por tipo de documento</Label>
+                      <p className="text-xs text-muted-foreground">
+                        Reinicia la numeración para cada tipo (contrato, carta, informe, etc.)
+                      </p>
+                    </div>
+                    <Switch
+                      checked={numberingSettings.sequenceByType}
+                      onCheckedChange={(checked) => setNumberingSettings(prev => ({
+                        ...prev,
+                        sequenceByType: checked
+                      }))}
+                    />
+                  </div>
+
+                  {/* Preview */}
+                  <div className="mt-4 p-4 bg-muted/50 rounded-lg border">
+                    <Label className="text-sm text-muted-foreground">Vista previa del próximo número:</Label>
+                    <div className="mt-2 font-mono text-lg font-semibold">
+                      {generateDocumentNumberPreview(
+                        numberingSettings.format,
+                        {
+                          prefix: numberingSettings.prefix,
+                          type: numberingSettings.sequenceByType ? 'contrato' : undefined,
+                        }
+                      )}
+                    </div>
+                    {numberingSettings.sequenceByType && (
+                      <p className="text-xs text-muted-foreground mt-2">
+                        * Cada tipo de documento tendrá su propia secuencia independiente
+                      </p>
+                    )}
                   </div>
                 </CardContent>
               </Card>

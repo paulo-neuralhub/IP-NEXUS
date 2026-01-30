@@ -79,7 +79,7 @@ export function DocumentGenerator({
       loadTenantSettings();
       loadTemplates();
       loadMatterAndClientData();
-      generateDocumentNumber();
+      generateTempDocumentNumber();
     }
   }, [isOpen, matterId, clientId]);
 
@@ -172,7 +172,8 @@ export function DocumentGenerator({
     }
   };
 
-  const generateDocumentNumber = () => {
+  // Generate a temporary document number (for preview before template selection)
+  const generateTempDocumentNumber = () => {
     const prefix = tenantSettings?.invoiceSettings?.prefix || 'DOC';
     const date = new Date();
     const year = date.getFullYear().toString().slice(-2);
@@ -181,11 +182,47 @@ export function DocumentGenerator({
     setDocumentNumber(`${prefix}-${year}${month}-${random}`);
   };
 
+  // Get the next document number from the database using RPC
+  const getNextDocumentNumber = async (documentType: string): Promise<string> => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const { data: membership } = await supabase
+        .from('memberships')
+        .select('organization_id')
+        .eq('user_id', user.id)
+        .single();
+
+      if (!membership?.organization_id) {
+        throw new Error('No organization found');
+      }
+
+      const { data, error } = await supabase.rpc('get_next_document_number', {
+        p_organization_id: membership.organization_id,
+        p_document_type: documentType || null,
+        p_format: 'PREFIX-YYYY-SEQ' // Default format, will be customized from tenant settings
+      });
+
+      if (error) throw error;
+      return data || `DOC-${Date.now()}`;
+    } catch (error) {
+      console.error('Error getting document number:', error);
+      // Fallback: generate temporary number
+      const date = new Date();
+      return `DOC-${date.getFullYear()}-${String(Math.floor(Math.random() * 10000)).padStart(4, '0')}`;
+    }
+  };
+
   // Seleccionar plantilla - usar datos demo combinados con datos reales
-  const handleSelectTemplate = (template: DocumentTemplateConfig) => {
+  const handleSelectTemplate = async (template: DocumentTemplateConfig) => {
     setSelectedTemplate(template);
     setTitle(template.name);
     setSelectedStyle(template.preferredStyleCode);
+    
+    // Get sequential document number from database
+    const docNumber = await getNextDocumentNumber(template.category);
+    setDocumentNumber(docNumber);
     
     // Generate demo variables combined with real tenant/matter/client data
     const demoVars = generateDemoVariables(
@@ -193,6 +230,9 @@ export function DocumentGenerator({
       matterData || undefined,
       clientData || undefined
     );
+    
+    // Add document number to variables
+    demoVars.document_number = docNumber;
     
     // Merge with any initial variables passed as props
     const mergedVars = { ...demoVars, ...initialVariables };

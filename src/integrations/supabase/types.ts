@@ -13418,6 +13418,65 @@ export type Database = {
           },
         ]
       }
+      document_sequences: {
+        Row: {
+          created_at: string | null
+          document_type: string | null
+          id: string
+          last_number: number | null
+          organization_id: string | null
+          updated_at: string | null
+          year: number
+        }
+        Insert: {
+          created_at?: string | null
+          document_type?: string | null
+          id?: string
+          last_number?: number | null
+          organization_id?: string | null
+          updated_at?: string | null
+          year: number
+        }
+        Update: {
+          created_at?: string | null
+          document_type?: string | null
+          id?: string
+          last_number?: number | null
+          organization_id?: string | null
+          updated_at?: string | null
+          year?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "document_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_sequences_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       document_styles: {
         Row: {
           code: string
@@ -41723,7 +41782,10 @@ export type Database = {
           default_style_code: string | null
           default_tax_rate: number | null
           document_next_number: number | null
+          document_number_format: string | null
+          document_number_prefix: string | null
           document_prefix: string | null
+          document_sequence_by_type: boolean | null
           id: string
           invoice_next_number: number | null
           invoice_prefix: string | null
@@ -41762,7 +41824,10 @@ export type Database = {
           default_style_code?: string | null
           default_tax_rate?: number | null
           document_next_number?: number | null
+          document_number_format?: string | null
+          document_number_prefix?: string | null
           document_prefix?: string | null
+          document_sequence_by_type?: boolean | null
           id?: string
           invoice_next_number?: number | null
           invoice_prefix?: string | null
@@ -41801,7 +41866,10 @@ export type Database = {
           default_style_code?: string | null
           default_tax_rate?: number | null
           document_next_number?: number | null
+          document_number_format?: string | null
+          document_number_prefix?: string | null
           document_prefix?: string | null
+          document_sequence_by_type?: boolean | null
           id?: string
           invoice_next_number?: number | null
           invoice_prefix?: string | null
@@ -47056,6 +47124,14 @@ export type Database = {
           p_organization_id: string
         }
         Returns: number
+      }
+      get_next_document_number: {
+        Args: {
+          p_document_type?: string
+          p_format?: string
+          p_organization_id: string
+        }
+        Returns: string
       }
       get_next_invoice_number:
         | { Args: { p_org_id: string; p_prefix?: string }; Returns: string }
