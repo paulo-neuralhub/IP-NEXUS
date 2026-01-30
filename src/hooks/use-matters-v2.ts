@@ -522,9 +522,13 @@ export function useCreateMatterV2() {
       title: string;
       matter_type: string;
     }) => {
+      if (!currentOrganization?.id) {
+        throw new Error('No organization selected');
+      }
+      
       // Build clean insert payload - only include known columns
       const insertData: Record<string, unknown> = {
-        organization_id: currentOrganization!.id,
+        organization_id: currentOrganization.id,
         matter_number: data.matter_number,
         title: data.title,
         matter_type: data.matter_type,
@@ -546,18 +550,19 @@ export function useCreateMatterV2() {
       
       console.log('[useCreateMatterV2] Inserting:', insertData);
       
-      const client: any = supabase;
-      const { data: matter, error } = await client
+      const { data: matter, error } = await supabase
         .from('matters_v2')
-        .insert(insertData)
+        .insert(insertData as any)
         .select()
         .single();
       
       if (error) {
-        console.error('[useCreateMatterV2] Error:', error);
-        throw error;
+        console.error('[useCreateMatterV2] Insert Error:', error.message, error.details, error.hint);
+        throw new Error(error.message || 'Error al crear expediente');
       }
-      return matter as MatterV2;
+      
+      console.log('[useCreateMatterV2] Created:', matter);
+      return matter as unknown as MatterV2;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['matters-v2'] });

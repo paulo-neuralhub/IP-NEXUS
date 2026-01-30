@@ -106,7 +106,7 @@ export default function NewMatterPage() {
   const [previewNumberValue, setPreviewNumberValue] = useState<string | null>(null);
   const [generatingNumber, setGeneratingNumber] = useState(false);
   
-  // Fetch accounts with client_token (for preview number generation)
+  // Fetch accounts (for getting client_token for preview number generation)
   const { data: accounts } = useQuery({
     queryKey: ['accounts-for-matter', currentOrganization?.id],
     queryFn: async () => {
@@ -114,11 +114,10 @@ export default function NewMatterPage() {
         .from('crm_accounts')
         .select('id, name, client_token')
         .eq('organization_id', currentOrganization!.id)
-        .not('client_token', 'is', null)
         .order('name');
       
       if (error) throw error;
-      return data as Array<{id: string; name: string; client_token: string}>;
+      return data as Array<{id: string; name: string; client_token: string | null}>;
     },
     enabled: !!currentOrganization?.id,
   });
@@ -184,10 +183,12 @@ export default function NewMatterPage() {
       let internalReference = data.reference || null;
       if (!internalReference) {
         try {
+          // Get client token from accounts (may be null if no token or not found)
+          const clientToken = selectedClient?.client_token || undefined;
           internalReference = await generateInternalRef.mutateAsync({
             typeCode: data.matter_type,
             jurisdictionCode: data.jurisdiction_code,
-            clientCode: selectedClient?.client_token || undefined,
+            clientCode: clientToken,
           });
         } catch (err) {
           // If auto-generation fails, continue without it
