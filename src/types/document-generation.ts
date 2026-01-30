@@ -68,8 +68,16 @@ export interface GeneratedDocument {
   organization_id: string;
   template_id: string | null;
   matter_id: string | null;
+  client_id?: string | null;
   name: string;
   content: string;
+  title?: string | null;
+  category?: string | null;
+  style_code?: string | null;
+  document_number?: string | null;
+  content_html?: string | null;
+  content_json?: Record<string, unknown> | null;
+  pdf_url?: string | null;
   variables_input: Record<string, unknown> | null;
   variables_resolved: Record<string, unknown> | null;
   ai_prompt_used: string | null;
@@ -78,22 +86,21 @@ export interface GeneratedDocument {
   generation_time_ms: number | null;
   version: number;
   parent_id: string | null;
+  parent_document_id?: string | null;
   status: GeneratedDocumentStatus;
   exported_document_id: string | null;
   exported_at: string | null;
   export_format: string | null;
   user_rating: number | null;
   user_feedback: string | null;
+  sent_at?: string | null;
+  sent_to?: string | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
-  // Relations
-  template?: DocumentTemplate;
-  matter?: {
-    id: string;
-    title: string;
-    reference?: string;
-  };
+  // Relations - partial types for flexibility in queries
+  template?: Partial<DocumentTemplate> | { id: string; name: string; category: string } | null;
+  matter?: { id: string; title: string; reference?: string } | null;
 }
 
 // Form Data Types

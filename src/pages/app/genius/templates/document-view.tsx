@@ -49,10 +49,8 @@ export default function DocumentViewPage() {
         .eq('id', id)
         .single();
       if (error) throw error;
-      return data as GeneratedDocument & {
-        template: { id: string; name: string; category: string } | null;
-        matter: { id: string; title: string; reference: string } | null;
-      };
+      // Cast to our flexible type
+      return data as unknown as GeneratedDocument;
     },
     enabled: !!id,
   });
