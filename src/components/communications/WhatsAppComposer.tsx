@@ -46,6 +46,8 @@ import {
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
 import { useCommunicationTemplates, CommunicationTemplate, TEMPLATE_CATEGORIES, renderTemplate } from '@/hooks/communications/useCommunicationTemplates';
+import { MatterSelector } from '@/components/matters/MatterSelector';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -64,6 +66,7 @@ interface WhatsAppComposerProps {
   defaultContactId?: string;
   defaultClientId?: string;
   defaultMatterId?: string;
+  defaultMatterName?: string;
   onSuccess?: () => void;
 }
 
@@ -82,6 +85,7 @@ export function WhatsAppComposer({
   defaultContactId,
   defaultClientId,
   defaultMatterId,
+  defaultMatterName,
   onSuccess,
 }: WhatsAppComposerProps) {
   const { currentOrganization } = useOrganization();
@@ -94,6 +98,8 @@ export function WhatsAppComposer({
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [isSending, setIsSending] = useState(false);
+  const [selectedMatterId, setSelectedMatterId] = useState<string | null>(defaultMatterId || null);
+  const [linkToMatter, setLinkToMatter] = useState(!!defaultMatterId);
 
   // Template state
   const [showTemplates, setShowTemplates] = useState(false);
@@ -121,8 +127,10 @@ export function WhatsAppComposer({
       setTemplateVariables({});
       setSelectedCategory('');
       setTemplateSearch('');
+      setSelectedMatterId(defaultMatterId || null);
+      setLinkToMatter(!!defaultMatterId);
     }
-  }, [open, defaultTo]);
+  }, [open, defaultTo, defaultMatterId]);
 
   // Focus textarea on mount
   useEffect(() => {
@@ -253,7 +261,7 @@ export function WhatsAppComposer({
           media_type: attachments[0]?.type,
           contact_id: selectedContact?.id || defaultContactId,
           client_id: defaultClientId,
-          matter_id: defaultMatterId,
+          matter_id: linkToMatter ? selectedMatterId : null,
           template_id: selectedTemplate?.id,
         },
       });
@@ -325,6 +333,33 @@ export function WhatsAppComposer({
                   <X className="w-3 h-3" />
                 </button>
               </div>
+            )}
+          </div>
+
+          {/* Asociar a Expediente */}
+          <div className="space-y-2">
+            <Label className="text-sm">Asociar a expediente</Label>
+            {defaultMatterId ? (
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="link-matter-wa"
+                  checked={linkToMatter}
+                  onCheckedChange={(checked) => setLinkToMatter(!!checked)}
+                />
+                <label htmlFor="link-matter-wa" className="text-sm flex-1 cursor-pointer">
+                  Asociar a: <span className="font-medium">{defaultMatterName || 'Expediente seleccionado'}</span>
+                </label>
+              </div>
+            ) : (
+              <MatterSelector
+                value={selectedMatterId}
+                onChange={(id) => {
+                  setSelectedMatterId(id);
+                  setLinkToMatter(!!id);
+                }}
+                placeholder="Seleccionar expediente (opcional)"
+                showClearOption
+              />
             )}
           </div>
 

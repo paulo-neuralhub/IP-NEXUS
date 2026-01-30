@@ -38,6 +38,8 @@ import { useOrganization } from '@/contexts/organization-context';
 import { useEmailSignatures } from '@/hooks/communications/useEmailSignatures';
 import { TipTapEditor } from './TipTapEditor';
 import { ContactSearch } from './ContactSearch';
+import { MatterSelector } from '@/components/matters/MatterSelector';
+import { Checkbox } from '@/components/ui/checkbox';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -62,6 +64,7 @@ interface EmailComposerProps {
   defaultSubject?: string;
   defaultBody?: string;
   matterId?: string;
+  matterName?: string;
   contactId?: string;
   clientId?: string;
   onSuccess?: () => void;
@@ -75,7 +78,8 @@ export function EmailComposer({
   defaultTo = [],
   defaultSubject = '',
   defaultBody = '',
-  matterId,
+  matterId: propMatterId,
+  matterName,
   contactId,
   clientId,
   onSuccess,
@@ -94,6 +98,8 @@ export function EmailComposer({
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [showCcBcc, setShowCcBcc] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedMatterId, setSelectedMatterId] = useState<string | null>(propMatterId || null);
+  const [linkToMatter, setLinkToMatter] = useState(!!propMatterId);
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -105,13 +111,15 @@ export function EmailComposer({
       setBody(defaultBody);
       setAttachments([]);
       setShowCcBcc(false);
+      setSelectedMatterId(propMatterId || null);
+      setLinkToMatter(!!propMatterId);
       
       // Pre-select default signature
       if (defaultSignature) {
         setSelectedSignatureId(defaultSignature.id);
       }
     }
-  }, [open, defaultTo, defaultSubject, defaultBody, defaultSignature]);
+  }, [open, defaultTo, defaultSubject, defaultBody, defaultSignature, propMatterId]);
 
   const selectedSignature = signatures?.find(s => s.id === selectedSignatureId);
 
@@ -192,7 +200,7 @@ export function EmailComposer({
           subject,
           body_html: finalBody,
           attachments: attachments.map(a => ({ name: a.name, url: a.url })),
-          matter_id: matterId,
+          matter_id: linkToMatter ? selectedMatterId : null,
           contact_id: contactId || to.find(t => t.id)?.id,
           client_id: clientId,
         },
@@ -276,6 +284,33 @@ export function EmailComposer({
               </div>
             </>
           )}
+
+          {/* Asociar a Expediente */}
+          <div className="space-y-2">
+            <Label className="text-sm">Asociar a expediente</Label>
+            {propMatterId ? (
+              <div className="flex items-center gap-3">
+                <Checkbox
+                  id="link-matter"
+                  checked={linkToMatter}
+                  onCheckedChange={(checked) => setLinkToMatter(!!checked)}
+                />
+                <label htmlFor="link-matter" className="text-sm flex-1 cursor-pointer">
+                  Asociar a: <span className="font-medium">{matterName || 'Expediente seleccionado'}</span>
+                </label>
+              </div>
+            ) : (
+              <MatterSelector
+                value={selectedMatterId}
+                onChange={(id) => {
+                  setSelectedMatterId(id);
+                  setLinkToMatter(!!id);
+                }}
+                placeholder="Seleccionar expediente (opcional)"
+                showClearOption
+              />
+            )}
+          </div>
 
           {/* Asunto */}
           <div className="space-y-1">

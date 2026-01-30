@@ -40,3 +40,6 @@ export { MatterOfficeCheckModal } from './MatterOfficeCheckModal';
 
 // Matter source info
 export { MatterSourceInfo } from './MatterSourceInfo';
+
+// Matter selector
+export { MatterSelector, type MatterOption } from './MatterSelector';
