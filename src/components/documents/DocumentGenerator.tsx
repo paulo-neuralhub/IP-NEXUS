@@ -391,36 +391,25 @@ export function DocumentGenerator({
                 <div className="space-y-6">
                   <h3 className="font-medium">Seleccionar plantilla</h3>
                   
-                  {/* Special Card for Invoices - Redirects to Billing */}
-                  <Card className="border-amber-200 bg-amber-50 dark:bg-amber-950/20 dark:border-amber-800">
-                    <CardContent className="p-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <div className="flex items-center gap-3">
-                          <div className="p-2 bg-amber-100 dark:bg-amber-900 rounded-lg">
-                            <Receipt className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                          </div>
-                          <div>
-                            <h4 className="font-medium text-sm">Facturas</h4>
-                            <p className="text-xs text-muted-foreground">
-                              Las facturas se generan desde el módulo de Facturación
-                            </p>
-                          </div>
-                        </div>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => {
-                            onClose();
-                            navigate(matterId ? `/app/facturacion/nueva?matterId=${matterId}` : '/app/facturacion/nueva');
-                          }}
-                          className="border-amber-300 text-amber-700 hover:bg-amber-100 dark:border-amber-700 dark:text-amber-400 dark:hover:bg-amber-900"
-                        >
-                          <ArrowRight className="w-4 h-4 mr-1" />
-                          Ir a Facturación
-                        </Button>
-                      </div>
-                    </CardContent>
-                  </Card>
+                  {/* Compact notice for invoices - NOT a big card */}
+                  <div className="flex items-center justify-between p-3 rounded-lg border border-amber-200 bg-amber-50/50 dark:bg-amber-950/20 dark:border-amber-800/50 text-sm">
+                    <div className="flex items-center gap-2">
+                      <Receipt className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      <span className="text-muted-foreground">¿Crear factura?</span>
+                    </div>
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      className="h-7 text-amber-700 dark:text-amber-400 hover:text-amber-800"
+                      onClick={() => {
+                        onClose();
+                        navigate(matterId ? `/app/facturacion/nueva?matterId=${matterId}` : '/app/facturacion/nueva');
+                      }}
+                    >
+                      Ir a Facturación
+                      <ArrowRight className="w-3 h-3 ml-1" />
+                    </Button>
+                  </div>
 
                   {/* Templates by category (excluding invoices) */}
                   {TEMPLATE_CATEGORIES.map((category) => {
@@ -501,22 +490,52 @@ export function DocumentGenerator({
               </TabsContent>
 
               <TabsContent value="edit" className="flex-1 m-0 p-4 overflow-auto">
-                <DocumentEditor
-                  content={content}
-                  onChange={setContent}
-                  placeholder="Escribe el contenido del documento..."
-                />
+                {content ? (
+                  <DocumentEditor
+                    content={content}
+                    onChange={setContent}
+                    placeholder="Escribe el contenido del documento..."
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center h-full py-12 text-center">
+                    <FileText className="h-12 w-12 text-muted-foreground/30 mb-4" />
+                    <p className="text-muted-foreground font-medium">Selecciona una plantilla primero</p>
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="mt-3"
+                      onClick={() => setActiveTab('template')}
+                    >
+                      Ir a Plantillas
+                    </Button>
+                  </div>
+                )}
               </TabsContent>
 
               <TabsContent value="preview" className="flex-1 m-0 p-4 overflow-auto">
                 <div className="space-y-4">
                   <p className="text-sm text-muted-foreground">
-                    Vista previa del documento con el estilo seleccionado.
+                    Vista previa con el estilo seleccionado. Los cambios se reflejan en tiempo real.
                   </p>
-                  <Button variant="outline" onClick={() => setActiveTab('edit')}>
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar contenido
-                  </Button>
+                  {content ? (
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" onClick={() => setActiveTab('edit')}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Editar contenido
+                      </Button>
+                      <Button 
+                        size="sm"
+                        onClick={() => handleSave('final')}
+                        disabled={isSaving}
+                      >
+                        Finalizar documento
+                      </Button>
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground text-sm">
+                      Selecciona una plantilla para ver la vista previa
+                    </p>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
@@ -524,15 +543,29 @@ export function DocumentGenerator({
 
           {/* Panel derecho - Preview A4 */}
           <div className="flex-1 overflow-auto bg-muted/30">
-            <A4Preview
-              ref={previewRef}
-              content={content || '<p>El contenido del documento aparecerá aquí...</p>'}
-              style={currentStyle}
-              tenantSettings={tenantSettings || undefined}
-              title={title}
-              documentNumber={documentNumber}
-              documentDate={documentDate}
-            />
+            {content ? (
+              <A4Preview
+                ref={previewRef}
+                content={content}
+                style={currentStyle}
+                tenantSettings={tenantSettings || undefined}
+                title={title}
+                documentNumber={documentNumber}
+                documentDate={documentDate}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center max-w-sm">
+                  <FileText className="h-16 w-16 mx-auto text-muted-foreground/20 mb-4" />
+                  <h3 className="font-medium text-muted-foreground mb-2">
+                    Selecciona una plantilla
+                  </h3>
+                  <p className="text-sm text-muted-foreground/70">
+                    El documento completo aparecerá aquí con datos de ejemplo del tenant
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

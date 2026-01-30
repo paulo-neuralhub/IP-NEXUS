@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { FileText, Download, Trash2, Eye, Plus, File, Receipt, ArrowRight, Sparkles } from 'lucide-react';
+import { FileText, Download, Trash2, Eye, Plus, File, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -152,34 +152,7 @@ export function MatterDocumentsTab({
         </CollapsibleContent>
       </Collapsible>
 
-      {/* Invoice redirect card */}
-      <Card className="border-warning/50 bg-warning/10">
-        <CardContent className="p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-warning/20 rounded-lg">
-                <Receipt className="h-5 w-5 text-warning" />
-              </div>
-              <div>
-                <h4 className="font-medium">¿Necesitas crear una factura?</h4>
-                <p className="text-sm text-muted-foreground">
-                  Las facturas se gestionan desde el módulo de Facturación
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate(`/app/facturacion/nueva${matterId ? `?matterId=${matterId}` : ''}`)}
-            >
-              Ir a Facturación
-              <ArrowRight className="h-4 w-4 ml-1" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Documents list */}
+      {/* Documents list - NO invoice card here, it's inside the modal now */}
       {isLoading ? (
         <Card>
           <CardContent className="py-8">
