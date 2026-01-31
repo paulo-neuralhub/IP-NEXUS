@@ -1,6 +1,6 @@
 // ============================================================
 // IP-NEXUS - WIZARD COMPONENTS INDEX
-// L129: Barrel exports for matter wizard components
+// L129/L131: Barrel exports for matter wizard components
 // ============================================================
 
 export { WizardSteps, type WizardStep } from './WizardSteps';
@@ -12,5 +12,6 @@ export { ReviewStep } from './ReviewStep';
 export { NiceClassSelector } from './NiceClassSelector';
 export { NiceClassSelectorPro } from './NiceClassSelectorPro';
 export { NiceClassWithProductsSelector, type NiceSelection } from './NiceClassWithProductsSelector';
+export { NiceClassSelectorDB } from './NiceClassSelectorDB';
 export { ClientSelector } from './ClientSelector';
 export { CreateClientDialog } from './CreateClientDialog';
