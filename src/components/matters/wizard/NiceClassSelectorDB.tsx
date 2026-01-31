@@ -20,7 +20,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
-import { useNiceClassesWithProducts, NICE_CLASS_ICONS } from '@/hooks/use-nice-classes';
+import { useNiceClassesWithProducts } from '@/hooks/use-nice-classes';
+import { NiceIcon } from './NiceIconMap';
 
 // Selected products structure: { classNumber: string[] }
 export interface NiceSelection {
@@ -161,7 +162,7 @@ export function NiceClassSelectorDB({ value, onChange, disabled }: NiceClassSele
   const getClassInfo = (classNum: number) => {
     const clase = niceClasses?.find(c => c.class_number === classNum);
     return {
-      icon: clase?.icon || NICE_CLASS_ICONS[classNum] || '📦',
+      iconName: clase?.icon || null,
       title: clase?.title_es || `Clase ${classNum}`,
     };
   };
@@ -205,7 +206,7 @@ export function NiceClassSelectorDB({ value, onChange, disabled }: NiceClassSele
                   return (
                     <div key={classNum} className="text-sm bg-muted/50 rounded-lg p-2">
                       <div className="flex items-center gap-2 font-medium">
-                        <span>{info.icon}</span>
+                        <NiceIcon iconName={info.iconName} classNumber={Number(classNum)} className="h-4 w-4 text-muted-foreground" />
                         <span>Clase {classNum}: {info.title}</span>
                         <Badge variant="secondary" className="text-xs ml-auto">
                           {products.length} productos
@@ -295,7 +296,6 @@ export function NiceClassSelectorDB({ value, onChange, disabled }: NiceClassSele
                   const isExpanded = expandedClasses.includes(clase.class_number);
                   const hasSelection = selectedProducts.length > 0;
                   const isProduct = clase.category === 'products';
-                  const icon = clase.icon || NICE_CLASS_ICONS[clase.class_number] || '📦';
 
                   return (
                     <Collapsible 
@@ -319,7 +319,7 @@ export function NiceClassSelectorDB({ value, onChange, disabled }: NiceClassSele
                           ) : (
                             <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                           )}
-                          <span className="text-xl shrink-0">{icon}</span>
+                          <NiceIcon iconName={clase.icon} classNumber={clase.class_number} className="h-5 w-5 text-muted-foreground shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2">
                               <Badge variant="outline" className="font-mono text-xs shrink-0">
