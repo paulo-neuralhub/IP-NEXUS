@@ -41,7 +41,7 @@ import { EmailComposeModal } from '@/components/matters/EmailComposeModal';
 import { LogCallModal } from '@/components/matters/LogCallModal';
 import { AddNoteModal } from '@/components/matters/AddNoteModal';
 import { ScheduleMeetingModal } from '@/components/matters/ScheduleMeetingModal';
-import { UnifiedMatterTimeline } from '@/components/matters/UnifiedMatterTimeline';
+import { TimelineProfesional } from '@/components/matters/TimelineProfesional';
 import { SendWhatsAppFromMatterModal } from '@/components/matters/SendWhatsAppFromMatterModal';
 import { MatterChatModal } from '@/components/matters/MatterChatModal';
 import { AddFilingModal } from '@/components/matters/AddFilingModal';
@@ -459,33 +459,12 @@ export default function MatterDetailPage() {
                 <MatterInvoicesTab matterId={id!} clientId={matter.client_id} />
               </TabsContent>
 
-              {/* Timeline Tab */}
+              {/* Timeline Tab - Professional style */}
               <TabsContent value="timeline">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Historial Completo</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {!timeline?.length ? (
-                      <p className="text-muted-foreground text-center py-8">
-                        Sin actividad registrada
-                      </p>
-                    ) : (
-                      <ScrollArea className="h-[600px]">
-                        <div className="space-y-4 pr-4">
-                          {timeline.map((event, index) => (
-                            <TimelineEventRow 
-                              key={event.id} 
-                              event={event} 
-                              isLast={index === timeline.length - 1}
-                              onNavigateTab={setActiveTab}
-                            />
-                          ))}
-                        </div>
-                      </ScrollArea>
-                    )}
-                  </CardContent>
-                </Card>
+                <TimelineProfesional 
+                  matterId={id!} 
+                  maxHeight="700px"
+                />
               </TabsContent>
             </Tabs>
           </div>
