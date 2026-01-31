@@ -1,10 +1,9 @@
 // ============================================================
 // IP-NEXUS - DETAILS FORM COMPONENT
-// L129: Matter details form for wizard step 2 with improved UX
+// L130: Matter details form with Nice class + products selector
 // ============================================================
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import {
   Building2,
   FileText,
@@ -14,14 +13,12 @@ import {
   Tag,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { supabase } from '@/integrations/supabase/client';
-import { useOrganization } from '@/contexts/organization-context';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ClientSelector } from './ClientSelector';
-import { NiceClassSelectorPro } from './NiceClassSelectorPro';
+import { NiceClassWithProductsSelector, type NiceSelection } from './NiceClassWithProductsSelector';
 import { CreateClientDialog } from './CreateClientDialog';
 
 export interface MatterDetailsData {
@@ -35,6 +32,7 @@ export interface MatterDetailsData {
   is_urgent: boolean;
   is_confidential: boolean;
   nice_classes: number[];
+  nice_classes_detail?: NiceSelection; // New: class -> products mapping
 }
 
 interface DetailsFormProps {
@@ -145,10 +143,17 @@ export function DetailsForm({
           </div>
 
           <div className="space-y-2">
-            <Label>Clases Nice</Label>
-            <NiceClassSelectorPro
-              value={data.nice_classes || []}
-              onChange={(classes) => onChange({ nice_classes: classes })}
+            <Label>Clases Nice y Productos</Label>
+            <NiceClassWithProductsSelector
+              value={data.nice_classes_detail || {}}
+              onChange={(selection) => {
+                // Update both: legacy nice_classes (array of numbers) and new detail
+                const classNumbers = Object.keys(selection).map(Number).sort((a, b) => a - b);
+                onChange({
+                  nice_classes: classNumbers,
+                  nice_classes_detail: selection,
+                });
+              }}
             />
           </div>
         </>

@@ -11,5 +11,6 @@ export { DetailsForm, type MatterDetailsData } from './DetailsForm';
 export { ReviewStep } from './ReviewStep';
 export { NiceClassSelector } from './NiceClassSelector';
 export { NiceClassSelectorPro } from './NiceClassSelectorPro';
+export { NiceClassWithProductsSelector, type NiceSelection } from './NiceClassWithProductsSelector';
 export { ClientSelector } from './ClientSelector';
 export { CreateClientDialog } from './CreateClientDialog';
