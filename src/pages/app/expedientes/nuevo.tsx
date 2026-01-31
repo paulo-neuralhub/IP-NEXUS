@@ -248,6 +248,7 @@ export default function NewMatterPage() {
                   data={detailsData}
                   onChange={handleDetailsChange}
                   matterType={selectedType}
+                  jurisdiction={selectedJurisdictions[0]}
                   previewNumber={previewNumber || undefined}
                   isGeneratingNumber={generatingNumber}
                 />
