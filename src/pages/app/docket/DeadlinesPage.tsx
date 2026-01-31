@@ -1,18 +1,15 @@
 // ============================================================
 // IP-NEXUS - DEADLINES PAGE (Redesigned)
-// L125: Expert-level UX with semantic colors, grouping, and actions
+// L125/L126: Expert-level UX with unified data source
 // ============================================================
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Calendar, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useDeadlines, useDeadlineStats } from '@/hooks/useDeadlines';
+import { useDeadlines } from '@/hooks/useDeadlines';
 import { usePageTitle } from '@/hooks/use-page-title';
 import { useNavigate } from 'react-router-dom';
 import { differenceInDays, addDays } from 'date-fns';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { useQueryClient } from '@tanstack/react-query';
 import { DeadlineCalendar } from '@/components/deadlines/DeadlineCalendar';
 import { DeadlineKPIs } from '@/components/deadlines/DeadlineKPIs';
 import { DeadlineFilters } from '@/components/deadlines/DeadlineFilters';
@@ -21,65 +18,97 @@ import { DeadlineGroupedList } from '@/components/deadlines/DeadlineGroupedList'
 export default function DeadlinesPage() {
   usePageTitle('Plazos y Deadlines');
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   
   const [view, setView] = useState<'list' | 'calendar'>('list');
   const [filter, setFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'date' | 'priority'>('date');
 
-  // Fetch deadlines and stats
+  // Single source of truth - fetch all deadlines
   const { deadlines = [], isLoading, markAsCompleted, extendDeadline } = useDeadlines({});
-  const { data: stats, isLoading: statsLoading } = useDeadlineStats();
 
-  // Calculate local stats for filters
-  const filterStats = useMemo(() => {
-    const overdue = deadlines.filter(
-      (d) => d.status !== 'completed' && differenceInDays(new Date(d.deadline_date), new Date()) < 0
-    ).length;
-    const urgent = deadlines.filter((d) => {
-      if (d.status === 'completed') return false;
-      const days = differenceInDays(new Date(d.deadline_date), new Date());
+  // Calculate ALL stats from the same data source
+  const stats = useMemo(() => {
+    const now = new Date();
+    const activeDeadlines = deadlines.filter(d => d.status !== 'completed');
+    
+    const overdue = activeDeadlines.filter(d => {
+      const days = differenceInDays(new Date(d.deadline_date), now);
+      return days < 0;
+    }).length;
+    
+    const today = activeDeadlines.filter(d => {
+      const days = differenceInDays(new Date(d.deadline_date), now);
+      return days === 0;
+    }).length;
+    
+    const urgent = activeDeadlines.filter(d => {
+      const days = differenceInDays(new Date(d.deadline_date), now);
       return days >= 0 && days <= 7;
     }).length;
-    const completed = deadlines.filter((d) => d.status === 'completed').length;
+    
+    const upcoming = activeDeadlines.filter(d => {
+      const days = differenceInDays(new Date(d.deadline_date), now);
+      return days > 7 && days <= 30;
+    }).length;
+    
+    const thisMonth = activeDeadlines.filter(d => {
+      const date = new Date(d.deadline_date);
+      return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
+    }).length;
+    
+    const completed = deadlines.filter(d => d.status === 'completed').length;
 
-    return { total: deadlines.length, overdue, urgent, completed };
+    return { 
+      total: deadlines.length, 
+      overdue, 
+      today,
+      urgent, 
+      upcoming, 
+      thisMonth,
+      completed 
+    };
   }, [deadlines]);
 
-  // Filter and sort deadlines
+  // Filter deadlines based on selected filter - using same logic as stats
   const filteredDeadlines = useMemo(() => {
+    const now = new Date();
     let result = [...deadlines];
 
     switch (filter) {
       case 'overdue':
-        result = result.filter(
-          (d) => d.status !== 'completed' && differenceInDays(new Date(d.deadline_date), new Date()) < 0
-        );
+        result = result.filter(d => {
+          if (d.status === 'completed') return false;
+          const days = differenceInDays(new Date(d.deadline_date), now);
+          return days < 0;
+        });
         break;
       case 'urgent':
-        result = result.filter((d) => {
+        result = result.filter(d => {
           if (d.status === 'completed') return false;
-          const days = differenceInDays(new Date(d.deadline_date), new Date());
+          const days = differenceInDays(new Date(d.deadline_date), now);
           return days >= 0 && days <= 7;
         });
         break;
       case 'upcoming':
-        result = result.filter((d) => {
+        result = result.filter(d => {
           if (d.status === 'completed') return false;
-          const days = differenceInDays(new Date(d.deadline_date), new Date());
+          const days = differenceInDays(new Date(d.deadline_date), now);
           return days > 7;
         });
         break;
       case 'completed':
-        result = result.filter((d) => d.status === 'completed');
+        result = result.filter(d => d.status === 'completed');
         break;
       case 'thisMonth':
-        result = result.filter((d) => {
+        result = result.filter(d => {
           if (d.status === 'completed') return false;
           const date = new Date(d.deadline_date);
-          const now = new Date();
           return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear();
         });
+        break;
+      case 'all':
+      default:
+        // Return all, but sort completed at the end
         break;
     }
 
@@ -117,12 +146,20 @@ export default function DeadlinesPage() {
     navigate(`/app/docket/${matterId}`);
   };
 
-  // KPI stats
+  // KPI stats for the cards - use unified stats
   const kpiStats = {
-    overdue: stats?.overdue || 0,
-    urgent: stats?.urgent || 0,
-    upcoming: stats?.upcoming || 0,
-    thisMonth: stats?.thisMonth || 0,
+    overdue: stats.overdue,
+    urgent: stats.urgent,
+    upcoming: stats.upcoming,
+    thisMonth: stats.thisMonth,
+  };
+
+  // Filter stats for the filter buttons - use unified stats
+  const filterStats = {
+    total: stats.total,
+    overdue: stats.overdue,
+    urgent: stats.urgent,
+    completed: stats.completed,
   };
 
   return (
@@ -156,7 +193,7 @@ export default function DeadlinesPage() {
       {/* KPIs */}
       <DeadlineKPIs
         stats={kpiStats}
-        isLoading={statsLoading}
+        isLoading={isLoading}
         activeFilter={filter}
         onFilterChange={setFilter}
       />
