@@ -496,6 +496,12 @@ export default function MatterDetailPage() {
               matter={matter}
               stats={stats || undefined}
               lastActivityDate={lastActivityDate}
+              onEmailClick={() => setShowEmailModal(true)}
+              onWhatsAppClick={() => setShowWhatsAppModal(true)}
+              onCallClick={handleCall}
+              onAddDeadline={() => setActiveTab('deadlines')}
+              onUploadDocument={() => setActiveTab('documents')}
+              onNewInvoice={() => setActiveTab('invoices')}
             />
           </div>
         </div>
