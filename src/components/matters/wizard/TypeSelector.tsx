@@ -74,8 +74,8 @@ export function TypeSelector({ types, selectedType, onSelect, isLoading }: TypeS
         <p className="text-muted-foreground">Selecciona el tipo de derecho de propiedad intelectual</p>
       </div>
 
-      {/* Popular Types - Large Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
+      {/* Popular Types - Compact Cards */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-6">
         {popularTypes.map((type) => {
           const config = TYPE_CONFIG[type.code] || { icon: '📁', description: '', popular: false };
           const isSelected = selectedType === type.code;
@@ -90,24 +90,21 @@ export function TypeSelector({ types, selectedType, onSelect, isLoading }: TypeS
                 type="button"
                 onClick={() => onSelect(type.code)}
                 className={cn(
-                  "w-full p-6 rounded-xl border-2 transition-all text-left relative",
+                  "w-full p-4 rounded-xl border-2 transition-all text-left relative",
                   "hover:shadow-md hover:border-primary/50",
                   isSelected
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                     : "border-border bg-card"
                 )}
               >
-                <span className="text-4xl mb-3 block">{config.icon}</span>
-                <h3 className="font-semibold text-lg mb-1">{type.name_es}</h3>
-                <p className="text-sm text-muted-foreground line-clamp-2">
+                <span className="text-2xl mb-2 block">{config.icon}</span>
+                <h3 className="font-semibold text-sm mb-0.5">{type.name_es}</h3>
+                <p className="text-xs text-muted-foreground line-clamp-2">
                   {config.description}
                 </p>
                 {isSelected && (
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-primary text-primary-foreground">
-                      <Check className="h-3 w-3 mr-1" />
-                      Seleccionado
-                    </Badge>
+                  <div className="absolute top-2 right-2">
+                    <Check className="h-4 w-4 text-primary" />
                   </div>
                 )}
               </button>

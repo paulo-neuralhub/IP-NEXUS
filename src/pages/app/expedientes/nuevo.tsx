@@ -64,6 +64,7 @@ export default function NewMatterPage() {
     internal_notes: '',
     is_urgent: false,
     is_confidential: false,
+    nice_classes: [],
   });
   
   // Preview number state

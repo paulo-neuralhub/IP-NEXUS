@@ -46,6 +46,7 @@ interface ReviewStepProps {
     internal_notes: string;
     is_urgent: boolean;
     is_confidential: boolean;
+    nice_classes?: number[];
   };
   matterType: string;
   matterTypeInfo?: MatterType;
@@ -158,6 +159,23 @@ export function ReviewStep({
                   Invención
                 </p>
                 <p className="font-medium">{formData.invention_title}</p>
+              </div>
+            )}
+
+            {/* Nice Classes (if trademark) */}
+            {formData.nice_classes && formData.nice_classes.length > 0 && (
+              <div className="md:col-span-2">
+                <p className="text-muted-foreground mb-1 flex items-center gap-1">
+                  <Tag className="h-3 w-3" />
+                  Clases Nice
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {formData.nice_classes.map((num) => (
+                    <Badge key={num} variant="secondary" className="font-mono">
+                      {num}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             )}
 
