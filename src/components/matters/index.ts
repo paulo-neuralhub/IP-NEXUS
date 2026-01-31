@@ -43,3 +43,12 @@ export { MatterSourceInfo } from './MatterSourceInfo';
 
 // Matter selector
 export { MatterSelector, type MatterOption } from './MatterSelector';
+
+// Duplicate detection
+export { DuplicateChecker, type DuplicateCheck } from './DuplicateChecker';
+
+// Matter detail components
+export { MatterDetailHeader } from './MatterDetailHeader';
+export { MatterDetailSidebar } from './MatterDetailSidebar';
+export { TimelineProfesional } from './TimelineProfesional';
+export { WorkflowCards } from './WorkflowCards';

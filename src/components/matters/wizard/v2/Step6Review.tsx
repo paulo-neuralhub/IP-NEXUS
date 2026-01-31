@@ -1,6 +1,6 @@
 // ============================================================
 // IP-NEXUS - STEP 6: REVIEW & CREATE (V2)
-// L132: Final review before matter creation
+// L132: Final review before matter creation with duplicate detection
 // ============================================================
 
 import { motion } from 'framer-motion';
@@ -12,6 +12,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import { DuplicateChecker } from '@/components/matters/DuplicateChecker';
 import type { MatterWizardState } from './types';
 
 interface Step6ReviewProps {
@@ -38,6 +39,9 @@ export function Step6Review({ wizardData, previewNumber, clientName }: Step6Revi
 
   // Calculate totals
   const totalFees = step5.feeLines.reduce((sum, f) => sum + (f.amount * f.quantity), 0);
+
+  // Get first priority for duplicate check
+  const firstPriority = step4.priorities[0];
 
   return (
     <motion.div
@@ -76,6 +80,18 @@ export function Step6Review({ wizardData, previewNumber, clientName }: Step6Revi
           </div>
         </CardContent>
       </Card>
+
+      {/* DUPLICATE CHECKER */}
+      <DuplicateChecker
+        markName={step3.markName}
+        clientId={step2.clientId}
+        jurisdiction={step1.jurisdictions[0]}
+        niceClasses={step3.niceClasses}
+        priorityNumber={firstPriority?.number}
+        priorityCountry={firstPriority?.country}
+        priorityDate={firstPriority?.date}
+        matterType={step1.matterType}
+      />
 
       {/* SUMMARY GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -198,11 +214,11 @@ export function Step6Review({ wizardData, previewNumber, clientName }: Step6Revi
             {checks.map((check, i) => (
               <div key={i} className="flex items-center gap-2 text-sm">
                 {check.valid ? (
-                  <Check className="h-4 w-4 text-green-600" />
+                  <Check className="h-4 w-4 text-success" />
                 ) : check.warning ? (
-                  <AlertCircle className="h-4 w-4 text-amber-500" />
+                  <AlertCircle className="h-4 w-4 text-warning" />
                 ) : (
-                  <AlertCircle className="h-4 w-4 text-red-500" />
+                  <AlertCircle className="h-4 w-4 text-destructive" />
                 )}
                 <span className={cn(
                   check.valid ? 'text-foreground' : 'text-muted-foreground'
@@ -216,7 +232,7 @@ export function Step6Review({ wizardData, previewNumber, clientName }: Step6Revi
       </Card>
 
       {!allValid && (
-        <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+        <div className="flex items-center gap-2 p-3 bg-warning/10 border border-warning/30 rounded-lg text-warning-foreground text-sm">
           <AlertCircle className="h-4 w-4" />
           Completa los campos obligatorios antes de crear el expediente
         </div>
