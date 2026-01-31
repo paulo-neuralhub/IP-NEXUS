@@ -1,6 +1,6 @@
 // ============================================================
 // IP-NEXUS - DETAILS FORM COMPONENT
-// L130: Matter details form with Nice class + products selector
+// L131: Matter details form with DB-backed Nice class selector
 // ============================================================
 
 import { useState } from 'react';
@@ -18,8 +18,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { ClientSelector } from './ClientSelector';
-import { NiceClassWithProductsSelector, type NiceSelection } from './NiceClassWithProductsSelector';
+import { NiceClassSelectorDB } from './NiceClassSelectorDB';
 import { CreateClientDialog } from './CreateClientDialog';
+import type { NiceSelection } from './NiceClassWithProductsSelector';
 
 export interface MatterDetailsData {
   title: string;
@@ -144,7 +145,7 @@ export function DetailsForm({
 
           <div className="space-y-2">
             <Label>Clases Nice y Productos</Label>
-            <NiceClassWithProductsSelector
+            <NiceClassSelectorDB
               value={data.nice_classes_detail || {}}
               onChange={(selection) => {
                 // Update both: legacy nice_classes (array of numbers) and new detail
