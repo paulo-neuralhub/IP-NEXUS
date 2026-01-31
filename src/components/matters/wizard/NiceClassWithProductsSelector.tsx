@@ -1006,8 +1006,8 @@ export function NiceClassWithProductsSelector({ value, onChange, disabled }: Nic
             )}
           </div>
 
-          {/* Class List */}
-          <ScrollArea className="flex-1 px-6 mt-3">
+          {/* Class List - Fixed height for scroll */}
+          <div className="flex-1 min-h-0 px-6 mt-3 overflow-y-auto" style={{ maxHeight: 'calc(90vh - 320px)' }}>
             <div className="space-y-2 pb-4">
               {filteredClasses.map((clase) => {
                 const selectedProducts = tempSelected[clase.number] || [];
@@ -1148,7 +1148,7 @@ export function NiceClassWithProductsSelector({ value, onChange, disabled }: Nic
                 </div>
               )}
             </div>
-          </ScrollArea>
+          </div>
 
           {/* Footer */}
           <DialogFooter className="px-6 py-4 border-t bg-muted/30">
