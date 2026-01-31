@@ -32,25 +32,25 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { MatterV2 } from '@/hooks/use-matters-v2';
 
-// Type configuration
-const TYPE_CONFIG: Record<string, { label: string; icon: string; gradient: string }> = {
-  TM_NAT: { label: 'Marca Nacional', icon: '®️', gradient: 'from-blue-600 via-blue-700 to-indigo-800' },
-  TM_EU: { label: 'Marca UE', icon: '®️', gradient: 'from-indigo-600 via-indigo-700 to-violet-800' },
-  TM_INT: { label: 'Marca Internacional', icon: '®️', gradient: 'from-violet-600 via-violet-700 to-purple-800' },
-  PT_NAT: { label: 'Patente Nacional', icon: '⚙️', gradient: 'from-purple-600 via-purple-700 to-fuchsia-800' },
-  PT_EU: { label: 'Patente Europea', icon: '⚙️', gradient: 'from-fuchsia-600 via-fuchsia-700 to-pink-800' },
-  PT_PCT: { label: 'Patente PCT', icon: '⚙️', gradient: 'from-pink-600 via-pink-700 to-rose-800' },
-  UM: { label: 'Modelo Utilidad', icon: '🔧', gradient: 'from-amber-600 via-amber-700 to-orange-800' },
-  DS_NAT: { label: 'Diseño Nacional', icon: '✏️', gradient: 'from-rose-600 via-rose-700 to-red-800' },
-  DS_EU: { label: 'Diseño Comunitario', icon: '✏️', gradient: 'from-red-600 via-red-700 to-rose-800' },
-  DOM: { label: 'Dominio', icon: '🌐', gradient: 'from-teal-600 via-teal-700 to-cyan-800' },
-  NC: { label: 'Nombre Comercial', icon: '🏢', gradient: 'from-emerald-600 via-emerald-700 to-green-800' },
-  OPO: { label: 'Oposición', icon: '⚖️', gradient: 'from-orange-600 via-orange-700 to-amber-800' },
-  VIG: { label: 'Vigilancia', icon: '👁️', gradient: 'from-cyan-600 via-cyan-700 to-teal-800' },
-  LIT: { label: 'Litigio', icon: '🏛️', gradient: 'from-slate-600 via-slate-700 to-gray-800' },
-  trademark: { label: 'Marca', icon: '®️', gradient: 'from-blue-600 via-blue-700 to-indigo-800' },
-  patent: { label: 'Patente', icon: '⚙️', gradient: 'from-purple-600 via-purple-700 to-fuchsia-800' },
-  design: { label: 'Diseño', icon: '✏️', gradient: 'from-rose-600 via-rose-700 to-red-800' },
+// Type configuration - colors for icon accents only
+const TYPE_CONFIG: Record<string, { label: string; icon: string; borderColor: string; textColor: string; bgLight: string }> = {
+  TM_NAT: { label: 'Marca Nacional', icon: '®️', borderColor: 'border-blue-200 dark:border-blue-800', textColor: 'text-blue-600', bgLight: 'bg-blue-50 dark:bg-blue-950' },
+  TM_EU: { label: 'Marca UE', icon: '®️', borderColor: 'border-indigo-200 dark:border-indigo-800', textColor: 'text-indigo-600', bgLight: 'bg-indigo-50 dark:bg-indigo-950' },
+  TM_INT: { label: 'Marca Internacional', icon: '®️', borderColor: 'border-violet-200 dark:border-violet-800', textColor: 'text-violet-600', bgLight: 'bg-violet-50 dark:bg-violet-950' },
+  PT_NAT: { label: 'Patente Nacional', icon: '⚙️', borderColor: 'border-purple-200 dark:border-purple-800', textColor: 'text-purple-600', bgLight: 'bg-purple-50 dark:bg-purple-950' },
+  PT_EU: { label: 'Patente Europea', icon: '⚙️', borderColor: 'border-fuchsia-200 dark:border-fuchsia-800', textColor: 'text-fuchsia-600', bgLight: 'bg-fuchsia-50 dark:bg-fuchsia-950' },
+  PT_PCT: { label: 'Patente PCT', icon: '⚙️', borderColor: 'border-pink-200 dark:border-pink-800', textColor: 'text-pink-600', bgLight: 'bg-pink-50 dark:bg-pink-950' },
+  UM: { label: 'Modelo Utilidad', icon: '🔧', borderColor: 'border-amber-200 dark:border-amber-800', textColor: 'text-amber-600', bgLight: 'bg-amber-50 dark:bg-amber-950' },
+  DS_NAT: { label: 'Diseño Nacional', icon: '✏️', borderColor: 'border-rose-200 dark:border-rose-800', textColor: 'text-rose-600', bgLight: 'bg-rose-50 dark:bg-rose-950' },
+  DS_EU: { label: 'Diseño Comunitario', icon: '✏️', borderColor: 'border-red-200 dark:border-red-800', textColor: 'text-red-600', bgLight: 'bg-red-50 dark:bg-red-950' },
+  DOM: { label: 'Dominio', icon: '🌐', borderColor: 'border-teal-200 dark:border-teal-800', textColor: 'text-teal-600', bgLight: 'bg-teal-50 dark:bg-teal-950' },
+  NC: { label: 'Nombre Comercial', icon: '🏢', borderColor: 'border-emerald-200 dark:border-emerald-800', textColor: 'text-emerald-600', bgLight: 'bg-emerald-50 dark:bg-emerald-950' },
+  OPO: { label: 'Oposición', icon: '⚖️', borderColor: 'border-orange-200 dark:border-orange-800', textColor: 'text-orange-600', bgLight: 'bg-orange-50 dark:bg-orange-950' },
+  VIG: { label: 'Vigilancia', icon: '👁️', borderColor: 'border-cyan-200 dark:border-cyan-800', textColor: 'text-cyan-600', bgLight: 'bg-cyan-50 dark:bg-cyan-950' },
+  LIT: { label: 'Litigio', icon: '🏛️', borderColor: 'border-slate-200 dark:border-slate-700', textColor: 'text-slate-600', bgLight: 'bg-slate-100 dark:bg-slate-800' },
+  trademark: { label: 'Marca', icon: '®️', borderColor: 'border-blue-200 dark:border-blue-800', textColor: 'text-blue-600', bgLight: 'bg-blue-50 dark:bg-blue-950' },
+  patent: { label: 'Patente', icon: '⚙️', borderColor: 'border-purple-200 dark:border-purple-800', textColor: 'text-purple-600', bgLight: 'bg-purple-50 dark:bg-purple-950' },
+  design: { label: 'Diseño', icon: '✏️', borderColor: 'border-rose-200 dark:border-rose-800', textColor: 'text-rose-600', bgLight: 'bg-rose-50 dark:bg-rose-950' },
 };
 
 // Workflow phases
@@ -155,211 +155,187 @@ export function MatterDetailHeader({
   const isStarred = (matter.custom_fields as any)?.is_starred || false;
 
   return (
-    <div className="relative overflow-hidden">
-      {/* Gradient Background */}
-      <div className={cn(
-        "absolute inset-0 bg-gradient-to-br",
-        typeConfig.gradient
-      )} />
-      
-      {/* Decorative Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/20 rounded-full -translate-y-1/2 translate-x-1/2" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full translate-y-1/2 -translate-x-1/2" />
-      </div>
+    <div className="bg-background border-b">
 
-      <div className="relative z-10 px-6 py-6">
-        {/* Top Bar */}
-        <div className="flex items-center justify-between mb-6">
-          <Button
-            variant="secondary"
-            onClick={() => navigate('/app/expedientes')}
-            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 shadow-sm backdrop-blur-sm"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Volver a Expedientes
-          </Button>
+      {/* Top Bar - Navigation */}
+      <div className="flex items-center justify-between px-6 py-3 border-b">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate('/app/expedientes')}
+          className="text-muted-foreground hover:text-foreground -ml-2"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Expedientes
+        </Button>
 
-          <div className="flex items-center gap-2">
-            {/* Quick Actions */}
-            <div className="flex items-center gap-1 mr-2 border-r border-white/20 pr-3">
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onEmailClick}
-                    className="text-white/80 hover:text-white hover:bg-white/10"
-                  >
-                    <Mail className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Enviar Email</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onWhatsAppClick}
-                    className="text-white/80 hover:text-white hover:bg-white/10"
-                  >
-                    <MessageCircle className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>WhatsApp</TooltipContent>
-              </Tooltip>
-
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onCallClick}
-                    className="text-white/80 hover:text-white hover:bg-white/10"
-                  >
-                    <Phone className="h-4 w-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Llamar</TooltipContent>
-              </Tooltip>
-            </div>
+        <div className="flex items-center gap-2">
+          {/* Quick Actions */}
+          <div className="flex items-center gap-1 mr-2 border-r pr-3">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={onEmailClick} className="h-8 w-8">
+                  <Mail className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Enviar Email</TooltipContent>
+            </Tooltip>
 
             <Tooltip>
               <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => toggleFavorite.mutate()}
-                  className="text-white/80 hover:text-white hover:bg-white/10"
-                >
-                  <Star className={cn("h-4 w-4", isStarred && "fill-yellow-400 text-yellow-400")} />
+                <Button variant="ghost" size="icon" onClick={onWhatsAppClick} className="h-8 w-8">
+                  <MessageCircle className="h-4 w-4" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>{isStarred ? 'Quitar de favoritos' : 'Añadir a favoritos'}</TooltipContent>
+              <TooltipContent>WhatsApp</TooltipContent>
             </Tooltip>
 
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => navigate(`/app/expedientes/${matter.id}/editar`)}
-              className="bg-white/10 hover:bg-white/20 text-white border-white/20"
-            >
-              <Edit className="h-4 w-4 mr-2" />
-              Editar
-            </Button>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-white/80 hover:text-white hover:bg-white/10"
-                >
-                  <MoreHorizontal className="h-4 w-4" />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button variant="ghost" size="icon" onClick={onCallClick} className="h-8 w-8">
+                  <Phone className="h-4 w-4" />
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Copy className="h-4 w-4 mr-2" /> Duplicar expediente
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Download className="h-4 w-4 mr-2" /> Exportar PDF
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Share2 className="h-4 w-4 mr-2" /> Compartir
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <Archive className="h-4 w-4 mr-2" /> Archivar
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive" onClick={onDeleteClick}>
-                  <Trash2 className="h-4 w-4 mr-2" /> Eliminar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent>Llamar</TooltipContent>
+            </Tooltip>
           </div>
-        </div>
 
-        {/* Main Info */}
-        <div className="flex items-start gap-6 mb-8">
-          {/* Type Icon */}
-          <div className="w-20 h-20 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-4xl shadow-xl">
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => toggleFavorite.mutate()}
+                className="h-8 w-8"
+              >
+                <Star className={cn("h-4 w-4", isStarred && "fill-amber-400 text-amber-400")} />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>{isStarred ? 'Quitar de favoritos' : 'Añadir a favoritos'}</TooltipContent>
+          </Tooltip>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => navigate(`/app/expedientes/${matter.id}/editar`)}
+          >
+            <Edit className="h-4 w-4 mr-2" />
+            Editar
+          </Button>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="h-8 w-8">
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem>
+                <Copy className="h-4 w-4 mr-2" /> Duplicar expediente
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Download className="h-4 w-4 mr-2" /> Exportar PDF
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Share2 className="h-4 w-4 mr-2" /> Compartir
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <Archive className="h-4 w-4 mr-2" /> Archivar
+              </DropdownMenuItem>
+              <DropdownMenuItem className="text-destructive" onClick={onDeleteClick}>
+                <Trash2 className="h-4 w-4 mr-2" /> Eliminar
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Main Info Section */}
+      <div className="px-6 py-6">
+        <div className="flex items-start gap-5">
+          {/* Type Icon - with subtle color accent */}
+          <div className={cn(
+            "w-16 h-16 rounded-2xl flex items-center justify-center text-3xl shrink-0 border-2",
+            typeConfig.bgLight,
+            typeConfig.borderColor
+          )}>
             {typeConfig.icon}
           </div>
 
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {/* Number and Badges */}
-            <div className="flex items-center gap-3 mb-2">
-              <span className="text-2xl font-bold text-white">
+            <div className="flex flex-wrap items-center gap-2 mb-1">
+              <span className="font-mono text-sm text-muted-foreground">
                 {matter.matter_number || matter.reference}
               </span>
-              <Badge variant="secondary" className="bg-white/20 text-white border-white/30">
+              <Badge variant="secondary" className={cn("text-xs", typeConfig.bgLight, typeConfig.textColor)}>
                 {typeConfig.label}
               </Badge>
               <Badge 
-                variant="secondary"
+                variant={statusConfig.variant === 'success' ? 'default' : 'secondary'}
                 className={cn(
-                  "border-transparent",
-                  statusConfig.variant === 'success' && "bg-emerald-500/80 text-white",
-                  statusConfig.variant === 'warning' && "bg-amber-500/80 text-white",
-                  statusConfig.variant === 'destructive' && "bg-red-500/80 text-white",
-                  statusConfig.variant === 'default' && "bg-white/20 text-white"
+                  "text-xs",
+                  statusConfig.variant === 'success' && "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300",
+                  statusConfig.variant === 'warning' && "bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300",
+                  statusConfig.variant === 'destructive' && "bg-red-100 text-red-700 dark:bg-red-900/50 dark:text-red-300"
                 )}
               >
-                {statusConfig.variant === 'success' && <CheckCircle2 className="h-3 w-3 mr-1" />}
+                {statusConfig.variant === 'success' && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-green-500 mr-1.5" />
+                )}
                 {statusConfig.label}
               </Badge>
               {isOverdue && (
-                <Badge variant="destructive" className="bg-red-500 animate-pulse">
+                <Badge variant="destructive" className="text-xs animate-pulse">
                   <AlertTriangle className="h-3 w-3 mr-1" />
-                  VENCIDO
+                  Vencido
                 </Badge>
               )}
               {isUrgent && !isOverdue && (
-                <Badge variant="destructive" className="bg-amber-500">
+                <Badge className="text-xs bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
                   <Clock className="h-3 w-3 mr-1" />
-                  {daysRemaining === 0 ? 'HOY' : `${daysRemaining}d`}
+                  {daysRemaining === 0 ? 'Hoy' : `${daysRemaining}d`}
                 </Badge>
               )}
             </div>
 
             {/* Title */}
-            <h1 className="text-xl font-semibold text-white mb-3">
+            <h1 className="text-2xl font-bold text-foreground mb-2 truncate">
               {matter.title || matter.mark_name || 'Sin título'}
             </h1>
 
-            {/* Subtitle with Client and Jurisdiction */}
-            <div className="flex items-center gap-4 text-white/80 text-sm">
+            {/* Metadata */}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <Building2 className="h-4 w-4" />
                 {matter.client_name || 'Sin cliente'}
               </span>
               <span className="flex items-center gap-1.5">
-                {jurisdictionConfig.flag}
+                <span className="text-base">{jurisdictionConfig.flag}</span>
                 {jurisdictionConfig.name}
               </span>
               {matter.nice_classes && matter.nice_classes.length > 0 && (
                 <span className="flex items-center gap-1.5">
-                  <span className="font-medium">Clases:</span>
-                  {matter.nice_classes.join(', ')}
+                  Clases: {matter.nice_classes.join(', ')}
                 </span>
               )}
             </div>
           </div>
         </div>
+      </div>
 
-        {/* =============================================== */}
-        {/* WORKFLOW METRO MAP */}
-        {/* =============================================== */}
-        <div className="bg-white/10 backdrop-blur-sm rounded-xl border border-white/20 p-4">
+      {/* =============================================== */}
+      {/* WORKFLOW METRO MAP - In separate Card */}
+      {/* =============================================== */}
+      <div className="px-6 pb-4">
+        <div className="bg-muted/30 rounded-xl border p-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-white/80" />
-              <span className="text-sm font-medium text-white">Progreso del Expediente</span>
+              <Zap className="h-4 w-4 text-muted-foreground" />
+              <span className="text-sm font-medium">Progreso del Expediente</span>
             </div>
-            <span className="text-sm text-white/70">
+            <span className="text-sm text-muted-foreground">
               {Math.round(progressPercent)}% completado
             </span>
           </div>
@@ -367,11 +343,14 @@ export function MatterDetailHeader({
           {/* Metro Map */}
           <div className="relative h-16">
             {/* Base Line */}
-            <div className="absolute top-4 left-4 right-4 h-1 bg-white/20 rounded-full" />
+            <div className="absolute top-4 left-4 right-4 h-1 bg-border rounded-full" />
             
             {/* Progress Line */}
             <div 
-              className="absolute top-4 left-4 h-1 bg-white rounded-full transition-all duration-500"
+              className={cn(
+                "absolute top-4 left-4 h-1 rounded-full transition-all duration-500",
+                typeConfig.textColor.replace('text-', 'bg-')
+              )}
               style={{ width: `calc(${progressPercent}% - 32px)` }}
             />
 
@@ -388,16 +367,20 @@ export function MatterDetailHeader({
                       <div className="flex flex-col items-center cursor-pointer">
                         <div
                           className={cn(
-                            "w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300",
-                            isCompleted && "bg-white text-blue-600",
-                            isCurrent && "bg-white text-blue-600 ring-4 ring-white/30 shadow-lg scale-110",
-                            isFuture && "bg-white/30 text-white/60"
+                            "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-all duration-300 border-2",
+                            isCompleted && "bg-green-500 border-green-500 text-white",
+                            isCurrent && cn(
+                              "bg-background border-2",
+                              typeConfig.borderColor,
+                              typeConfig.textColor,
+                              "ring-4 ring-offset-2",
+                              typeConfig.bgLight.replace('bg-', 'ring-').replace(' dark:', ' dark:ring-')
+                            ),
+                            isFuture && "bg-muted border-border text-muted-foreground"
                           )}
                         >
                           {isCompleted ? (
-                            <CheckCircle2 className="h-4 w-4" />
-                          ) : isCurrent ? (
-                            <Zap className="h-4 w-4" />
+                            <CheckCircle2 className="h-3 w-3" />
                           ) : (
                             <span>{index}</span>
                           )}
@@ -405,7 +388,7 @@ export function MatterDetailHeader({
                         <span
                           className={cn(
                             "text-[10px] mt-1.5 whitespace-nowrap",
-                            isCurrent ? "text-white font-medium" : "text-white/60"
+                            isCurrent ? "text-foreground font-medium" : "text-muted-foreground"
                           )}
                         >
                           {phase.shortLabel}
@@ -423,18 +406,14 @@ export function MatterDetailHeader({
           </div>
 
           {/* Current Phase Highlight */}
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-4 pt-3 border-t flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-white" />
-              <span className="text-sm text-white">
+              <div className={cn("w-2 h-2 rounded-full", typeConfig.textColor.replace('text-', 'bg-'))} />
+              <span className="text-sm">
                 Fase actual: <strong>{PHASES[phaseIndex]?.label || 'Desconocida'}</strong>
               </span>
             </div>
-            <Button
-              size="sm"
-              variant="secondary"
-              className="bg-white/20 hover:bg-white/30 text-white border-white/20"
-            >
+            <Button size="sm" variant="outline">
               Avanzar fase <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
           </div>

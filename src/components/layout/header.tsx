@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { getInitials } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { ModuleBadgesRow } from "@/components/modules/ModuleBadgesRow";
 import { NotificationBell } from "@/components/notifications";
 import { GlobalSearchTrigger } from "@/components/search";
 
@@ -129,9 +128,6 @@ export function Header({ onMenuClick }: HeaderProps) {
             </DropdownMenu>
           </div>
         </div>
-
-        {/* Module badges row */}
-        <ModuleBadgesRow />
       </header>
     </TooltipProvider>
   );
