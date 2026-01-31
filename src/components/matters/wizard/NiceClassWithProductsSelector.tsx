@@ -17,7 +17,8 @@ import { Label } from '@/components/ui/label';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { useNiceClasses, useNiceProducts, NICE_CLASS_ICONS } from '@/hooks/use-nice-classes';
+import { useNiceClasses, useNiceProducts } from '@/hooks/use-nice-classes';
+import { NiceIcon } from './NiceIconMap';
 
 // Selection type: classNumber -> array of product names (strings)
 export interface NiceSelection {
@@ -347,7 +348,6 @@ function ClassAccordion({
   onAddCustomTerm,
   highlighted,
 }: ClassAccordionProps) {
-  const icon = NICE_CLASS_ICONS[classNumber] || '📦';
   const selectedCount = selectedProducts.length;
   const hasSelection = selectedCount > 0;
 
@@ -374,7 +374,7 @@ function ClassAccordion({
         ) : (
           <ChevronRight className="h-4 w-4 shrink-0" />
         )}
-        <span className="text-xl">{icon}</span>
+        <NiceIcon iconName={null} classNumber={classNumber} className="h-5 w-5 text-muted-foreground" />
         <div className="flex-1 min-w-0">
           <span className="font-medium">Clase {classNumber}</span>
           <span className="text-muted-foreground ml-2 text-sm truncate">{title}</span>
