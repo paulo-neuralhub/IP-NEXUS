@@ -172,12 +172,12 @@ export function MatterDetailHeader({
         {/* Top Bar */}
         <div className="flex items-center justify-between mb-6">
           <Button
-            variant="ghost"
+            variant="secondary"
             onClick={() => navigate('/app/expedientes')}
-            className="text-white/80 hover:text-white hover:bg-white/10"
+            className="bg-white/20 hover:bg-white/30 text-white border border-white/30 shadow-sm backdrop-blur-sm"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Expedientes
+            Volver a Expedientes
           </Button>
 
           <div className="flex items-center gap-2">
