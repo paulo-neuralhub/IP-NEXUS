@@ -68,7 +68,14 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
         .from('matter_deadlines')
         .select(`
           *,
-          matter:matters(id, reference, title, type, jurisdiction)
+          matter:matters(
+            id, 
+            reference, 
+            title, 
+            type, 
+            jurisdiction,
+            client:contacts!matters_client_id_fkey(id, name:nombre_fiscal)
+          )
         `)
         .eq('organization_id', currentOrganization.id)
         .order('deadline_date', { ascending: true });
