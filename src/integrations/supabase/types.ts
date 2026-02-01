@@ -6442,6 +6442,99 @@ export type Database = {
           },
         ]
       }
+      classification_sync_logs: {
+        Row: {
+          classification_system: Database["public"]["Enums"]["classification_system"]
+          completed_at: string | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          records_added: number | null
+          records_deleted: number | null
+          records_updated: number | null
+          started_at: string
+          status: string
+          version_after: string
+          version_before: string | null
+        }
+        Insert: {
+          classification_system: Database["public"]["Enums"]["classification_system"]
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          records_added?: number | null
+          records_deleted?: number | null
+          records_updated?: number | null
+          started_at?: string
+          status?: string
+          version_after: string
+          version_before?: string | null
+        }
+        Update: {
+          classification_system?: Database["public"]["Enums"]["classification_system"]
+          completed_at?: string | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          records_added?: number | null
+          records_deleted?: number | null
+          records_updated?: number | null
+          started_at?: string
+          status?: string
+          version_after?: string
+          version_before?: string | null
+        }
+        Relationships: []
+      }
+      classification_systems: {
+        Row: {
+          code: Database["public"]["Enums"]["classification_system"]
+          created_at: string | null
+          current_version: string
+          description: string | null
+          id: string
+          is_active: boolean | null
+          last_sync_at: string | null
+          name: string
+          next_sync_at: string | null
+          source_url: string
+          sync_status: string | null
+          updated_at: string | null
+          version_date: string
+        }
+        Insert: {
+          code: Database["public"]["Enums"]["classification_system"]
+          created_at?: string | null
+          current_version: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          name: string
+          next_sync_at?: string | null
+          source_url: string
+          sync_status?: string | null
+          updated_at?: string | null
+          version_date: string
+        }
+        Update: {
+          code?: Database["public"]["Enums"]["classification_system"]
+          created_at?: string | null
+          current_version?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean | null
+          last_sync_at?: string | null
+          name?: string
+          next_sync_at?: string | null
+          source_url?: string
+          sync_status?: string | null
+          updated_at?: string | null
+          version_date?: string
+        }
+        Relationships: []
+      }
       client_ai_billing_rules: {
         Row: {
           alert_email: string | null
@@ -19847,6 +19940,181 @@ export type Database = {
         }
         Relationships: []
       }
+      ipc_classes: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          section_id: string
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          section_id: string
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          section_id?: string
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipc_classes_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "ipc_sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipc_groups: {
+        Row: {
+          code: string
+          created_at: string | null
+          hierarchy_level: number | null
+          id: string
+          is_active: boolean | null
+          is_main_group: boolean | null
+          parent_group_id: string | null
+          subclass_id: string
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          hierarchy_level?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_main_group?: boolean | null
+          parent_group_id?: string | null
+          subclass_id: string
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          hierarchy_level?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_main_group?: boolean | null
+          parent_group_id?: string | null
+          subclass_id?: string
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipc_groups_parent_group_id_fkey"
+            columns: ["parent_group_id"]
+            isOneToOne: false
+            referencedRelation: "ipc_groups"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ipc_groups_subclass_id_fkey"
+            columns: ["subclass_id"]
+            isOneToOne: false
+            referencedRelation: "ipc_subclasses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ipc_sections: {
+        Row: {
+          code: string
+          created_at: string | null
+          description_es: string | null
+          id: string
+          is_active: boolean | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description_es?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description_es?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      ipc_subclasses: {
+        Row: {
+          class_id: string
+          code: string
+          created_at: string | null
+          definition_es: string | null
+          id: string
+          is_active: boolean | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          class_id: string
+          code: string
+          created_at?: string | null
+          definition_es?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          class_id?: string
+          code?: string
+          created_at?: string | null
+          definition_es?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ipc_subclasses_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "ipc_classes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ipo_alert_configs: {
         Row: {
           alert_type: string
@@ -23296,6 +23564,121 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locarno_classes: {
+        Row: {
+          class_number: number
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          note_es: string | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          class_number: number
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          note_es?: string | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          class_number?: number
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          note_es?: string | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      locarno_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          item_number: string
+          subclass_id: string
+          term_en: string | null
+          term_es: string
+          version: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          item_number: string
+          subclass_id: string
+          term_en?: string | null
+          term_es: string
+          version?: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          item_number?: string
+          subclass_id?: string
+          term_en?: string | null
+          term_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locarno_items_subclass_id_fkey"
+            columns: ["subclass_id"]
+            isOneToOne: false
+            referencedRelation: "locarno_subclasses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      locarno_subclasses: {
+        Row: {
+          class_id: string
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          class_id: string
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          class_id?: string
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "locarno_subclasses_class_id_fkey"
+            columns: ["class_id"]
+            isOneToOne: false
+            referencedRelation: "locarno_classes"
             referencedColumns: ["id"]
           },
         ]
@@ -42713,6 +43096,121 @@ export type Database = {
         }
         Relationships: []
       }
+      vienna_categories: {
+        Row: {
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      vienna_divisions: {
+        Row: {
+          category_id: string
+          code: string
+          created_at: string | null
+          id: string
+          is_active: boolean | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          category_id: string
+          code: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          category_id?: string
+          code?: string
+          created_at?: string | null
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vienna_divisions_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "vienna_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vienna_sections: {
+        Row: {
+          auxiliary_code: string | null
+          code: string
+          created_at: string | null
+          division_id: string
+          id: string
+          is_active: boolean | null
+          title_en: string | null
+          title_es: string
+          version: string
+        }
+        Insert: {
+          auxiliary_code?: string | null
+          code: string
+          created_at?: string | null
+          division_id: string
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es: string
+          version?: string
+        }
+        Update: {
+          auxiliary_code?: string | null
+          code?: string
+          created_at?: string | null
+          division_id?: string
+          id?: string
+          is_active?: boolean | null
+          title_en?: string | null
+          title_es?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vienna_sections_division_id_fkey"
+            columns: ["division_id"]
+            isOneToOne: false
+            referencedRelation: "vienna_divisions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       vision_analyses: {
         Row: {
           analysis_type: string
@@ -47207,6 +47705,53 @@ export type Database = {
           entity_type: string
         }[]
       }
+      search_ipc_groups: {
+        Args: { p_limit?: number; p_query: string; p_section?: string }
+        Returns: {
+          class_code: string
+          full_code: string
+          id: string
+          relevance: number
+          section_code: string
+          subclass_code: string
+          title: string
+        }[]
+      }
+      search_locarno_items: {
+        Args: { p_class_number?: number; p_limit?: number; p_query: string }
+        Returns: {
+          class_number: number
+          class_title: string
+          id: string
+          item_number: string
+          relevance: number
+          subclass_code: string
+          term: string
+        }[]
+      }
+      search_nice_items: {
+        Args: { p_class_numbers?: number[]; p_limit?: number; p_query: string }
+        Returns: {
+          basic_number: string
+          class_number: number
+          class_title: string
+          id: string
+          relevance: number
+          term: string
+        }[]
+      }
+      search_vienna_sections: {
+        Args: { p_category_code?: string; p_limit?: number; p_query: string }
+        Returns: {
+          category_code: string
+          category_title: string
+          division_code: string
+          id: string
+          relevance: number
+          section_code: string
+          title: string
+        }[]
+      }
       secure_credentials_status: {
         Args: { p_organization_id: string }
         Returns: {
@@ -47365,6 +47910,7 @@ export type Database = {
     }
     Enums: {
       ai_confidence_level: "high" | "medium" | "low" | "manual"
+      classification_system: "nice" | "ipc" | "locarno" | "vienna"
       client_doc_type:
         | "poder_general"
         | "poder_especial"
@@ -47721,6 +48267,7 @@ export const Constants = {
   public: {
     Enums: {
       ai_confidence_level: ["high", "medium", "low", "manual"],
+      classification_system: ["nice", "ipc", "locarno", "vienna"],
       client_doc_type: [
         "poder_general",
         "poder_especial",
