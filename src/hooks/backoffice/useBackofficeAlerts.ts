@@ -9,13 +9,15 @@ export function useActiveBackofficeAlerts(params?: { priority?: AlertPriority; l
   return useQuery({
     queryKey: ["backoffice-active-alerts", params],
     queryFn: async () => {
+      // Query spider_alerts directly (v_active_alerts view uses security_invoker now)
       let q = supabase
-        .from("v_active_alerts")
+        .from("spider_alerts")
         .select("*")
+        .in("status", ["new", "in_review", "pending"])
         .order("created_at", { ascending: false })
         .limit(params?.limit ?? 50);
 
-      if (params?.priority) q = q.eq("priority", params.priority);
+      if (params?.priority) q = q.eq("severity", params.priority);
 
       const { data, error } = await q;
       if (error) throw error;
@@ -29,9 +31,11 @@ export function useActiveBackofficeAlertsCount() {
   return useQuery({
     queryKey: ["backoffice-active-alerts-count"],
     queryFn: async () => {
+      // Query spider_alerts directly
       const { count, error } = await supabase
-        .from("v_active_alerts")
-        .select("id", { count: "exact", head: true });
+        .from("spider_alerts")
+        .select("id", { count: "exact", head: true })
+        .in("status", ["new", "in_review", "pending"]);
       if (error) throw error;
       return count ?? 0;
     },

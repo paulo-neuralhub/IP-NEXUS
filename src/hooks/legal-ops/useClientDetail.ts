@@ -78,8 +78,7 @@ export function useClientDetail(clientId: string) {
     queryFn: async (): Promise<ClientDetailData> => {
       if (!organizationId) throw new Error('No organization');
 
-      // DEBUG TEMP: verificar inputs del query
-      console.log('useClientDetail inputs:', { clientId, organizationId });
+      // DEBUG logging removed for production
       
       // 1. Datos del cliente - buscar en crm_accounts (empresas), no en contacts
       const { data: client, error: clientError } = await supabase
@@ -91,9 +90,6 @@ export function useClientDetail(clientId: string) {
         .eq('id', clientId)
         .eq('organization_id', organizationId)
         .maybeSingle();
-
-      // DEBUG TEMP: ver resultado exacto del query
-      console.log('Query result:', client, clientError);
 
       if (clientError) throw clientError;
       if (!client) throw new Error('Client not found');

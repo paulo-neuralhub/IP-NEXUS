@@ -1,18 +1,18 @@
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
 import type { BackofficeVoipGlobalStats } from '@/types/voip';
 
+/**
+ * Hook to fetch global VOIP statistics
+ * NOTE: View v_voip_global_stats was dropped (voip_calls table doesn't exist yet)
+ * Returns null until VOIP module is implemented
+ */
 export function useBackofficeVoipStats() {
   return useQuery({
     queryKey: ['backoffice-voip-stats'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('v_voip_global_stats')
-        .select('*')
-        .limit(1)
-        .maybeSingle();
-      if (error) throw error;
-      return (data ?? null) as BackofficeVoipGlobalStats | null;
+    queryFn: async (): Promise<BackofficeVoipGlobalStats | null> => {
+      // VOIP module not yet implemented - return null
+      // When voip_calls table is created, this can query the view again
+      return null;
     },
   });
 }

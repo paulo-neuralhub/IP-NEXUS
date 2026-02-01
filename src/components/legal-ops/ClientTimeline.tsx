@@ -100,8 +100,7 @@ export function ClientTimeline({ clientId }: ClientTimelineProps) {
 
   const handleQuickComment = () => {
     if (!quickComment.trim()) return;
-    // TODO: Implementar envío de comentario rápido
-    console.log('Quick comment:', quickComment);
+    // TODO: Implement quick comment submission
     setQuickComment('');
   };
 

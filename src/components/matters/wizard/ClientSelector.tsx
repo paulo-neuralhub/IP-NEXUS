@@ -45,8 +45,6 @@ export function ClientSelector({ value, onChange, onCreateNew }: ClientSelectorP
     queryKey: ['clients-for-wizard', currentOrganization?.id],
     queryFn: async (): Promise<Client[]> => {
       if (!currentOrganization?.id) return [];
-      
-      console.log('🔍 Fetching clients for org:', currentOrganization.id);
       const client: any = supabase;
       
       // Query contacts that are clients (client_type is set or lifecycle_stage indicates client)
@@ -62,7 +60,6 @@ export function ClientSelector({ value, onChange, onCreateNew }: ClientSelectorP
         throw error;
       }
       
-      console.log('✅ Clients loaded:', data?.length);
       return data || [];
     },
     enabled: !!currentOrganization?.id,
