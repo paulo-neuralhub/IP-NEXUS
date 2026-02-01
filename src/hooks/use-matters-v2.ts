@@ -530,6 +530,20 @@ const MATTER_TYPE_CODE_TO_LEGACY: Record<string, string> = {
   OTHER: 'other',
 };
 
+/**
+ * Normalize jurisdiction codes to match the `jurisdictions` table.
+ * Some UI components use WO for WIPO, etc.
+ */
+const normalizeJurisdictionCode = (code: string | null | undefined): string | null => {
+  if (!code) return null;
+  const upperCode = code.toUpperCase();
+  // Map UI codes to DB codes
+  const JURISDICTION_MAP: Record<string, string> = {
+    WO: 'WIPO',  // UI uses WO, DB uses WIPO
+  };
+  return JURISDICTION_MAP[upperCode] || upperCode;
+};
+
 export function useCreateMatterV2() {
   const queryClient = useQueryClient();
   const { currentOrganization } = useOrganization();
@@ -557,6 +571,9 @@ export function useCreateMatterV2() {
           ? (data.custom_fields as Record<string, unknown>)
           : {};
 
+      // Normalize jurisdiction code to match DB
+      const normalizedJurisdiction = normalizeJurisdictionCode(data.jurisdiction_primary);
+
       // Build clean insert payload for legacy `matters`
       const insertData: Record<string, unknown> = {
         organization_id: currentOrganization.id,
@@ -566,8 +583,8 @@ export function useCreateMatterV2() {
         type: legacyType,
         status: data.status || 'active',
 
-        jurisdiction: data.jurisdiction_primary || null,
-        jurisdiction_code: data.jurisdiction_primary || null,
+        jurisdiction: normalizedJurisdiction,
+        jurisdiction_code: normalizedJurisdiction,
 
         client_id: data.client_id || null,
         mark_name: data.mark_name || null,
