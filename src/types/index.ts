@@ -120,3 +120,9 @@ export * from './market.types';
 
 // Jurisdiction Types
 export * from './jurisdiction';
+
+// Service Types (PROMPT 4D)
+export * from './services';
+
+// Workflow Types (PROMPT 4D)
+export * from './workflow';
