@@ -27035,6 +27035,101 @@ export type Database = {
           },
         ]
       }
+      matter_phase_data: {
+        Row: {
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          created_by: string | null
+          data: Json
+          id: string
+          is_complete: boolean | null
+          matter_id: string
+          organization_id: string
+          phase_code: string
+          updated_at: string | null
+        }
+        Insert: {
+          checklist?: Json | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data?: Json
+          id?: string
+          is_complete?: boolean | null
+          matter_id: string
+          organization_id: string
+          phase_code: string
+          updated_at?: string | null
+        }
+        Update: {
+          checklist?: Json | null
+          completed_at?: string | null
+          completed_by?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          data?: Json
+          id?: string
+          is_complete?: boolean | null
+          matter_id?: string
+          organization_id?: string
+          phase_code?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_phase_data_completed_by_fkey"
+            columns: ["completed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matter_phase_history: {
         Row: {
           changed_at: string | null
@@ -46960,6 +47055,29 @@ export type Database = {
           version_b_value: string
         }[]
       }
+      complete_phase: {
+        Args: { p_matter_id: string; p_phase_code: string }
+        Returns: {
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          created_by: string | null
+          data: Json
+          id: string
+          is_complete: boolean | null
+          matter_id: string
+          organization_id: string
+          phase_code: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "matter_phase_data"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       complete_test_run: { Args: { p_run_id: string }; Returns: boolean }
       create_alert: {
         Args: {
@@ -47310,6 +47428,29 @@ export type Database = {
           operational_status: string
           region: string
         }[]
+      }
+      get_or_create_phase_data: {
+        Args: { p_matter_id: string; p_phase_code: string }
+        Returns: {
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          created_by: string | null
+          data: Json
+          id: string
+          is_complete: boolean | null
+          matter_id: string
+          organization_id: string
+          phase_code: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "matter_phase_data"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       get_organization_jurisdictions: {
         Args: { p_organization_id: string }
@@ -47860,6 +48001,34 @@ export type Database = {
           p_user_id?: string
         }
         Returns: Json
+      }
+      update_phase_data: {
+        Args: {
+          p_checklist?: Json
+          p_data: Json
+          p_matter_id: string
+          p_phase_code: string
+        }
+        Returns: {
+          checklist: Json | null
+          completed_at: string | null
+          completed_by: string | null
+          created_at: string | null
+          created_by: string | null
+          data: Json
+          id: string
+          is_complete: boolean | null
+          matter_id: string
+          organization_id: string
+          phase_code: string
+          updated_at: string | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "matter_phase_data"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       update_provider_health_after_execution: {
         Args: {
