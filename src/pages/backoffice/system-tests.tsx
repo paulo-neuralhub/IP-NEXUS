@@ -77,16 +77,23 @@ export default function SystemTestsPage() {
   const queryClient = useQueryClient();
 
   // Fetch previous test runs
+  // NOTE: system_test_summary view was dropped (system_test_results table doesn't exist)
+  // This query returns empty array until the test infrastructure is implemented
   const { data: previousRuns, isLoading: loadingRuns } = useQuery({
     queryKey: ["system-test-runs"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("system_test_summary")
-        .select("*")
-        .order("started_at", { ascending: false })
-        .limit(10);
-      if (error) throw error;
-      return data;
+      // Return empty array - test summary view not available
+      return [] as Array<{
+        run_id: string;
+        started_at: string;
+        completed_at: string;
+        total_tests: number;
+        passed: number;
+        failed: number;
+        warnings: number;
+        skipped: number;
+        overall_status: string;
+      }>;
     },
   });
 

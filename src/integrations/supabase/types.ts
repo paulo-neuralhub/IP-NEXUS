@@ -110,13 +110,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "access_audit_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "access_audit_log_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -196,13 +189,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "access_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       active_sessions: {
@@ -275,13 +261,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "active_sessions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -429,13 +408,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "activities_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -613,13 +585,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "activity_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -833,13 +798,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ai_agent_sessions_context_organization_id_fkey"
-            columns: ["context_organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "ai_agent_sessions_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -939,13 +897,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_budget_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -1072,13 +1023,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_budget_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -1262,13 +1206,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ai_conversations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "ai_conversations_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -1338,13 +1275,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_cost_history_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -1459,13 +1389,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_generated_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "ai_generated_documents_parent_id_fkey"
@@ -2573,13 +2496,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "ai_rate_limits_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       ai_request_logs: {
@@ -2681,13 +2597,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_request_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "ai_request_logs_provider_id_fkey"
@@ -2895,13 +2804,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_task_rag_config_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -3357,13 +3259,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "ai_transaction_ledger_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "ai_transaction_ledger_provider_id_fkey"
             columns: ["provider_id"]
             isOneToOne: false
@@ -3440,13 +3335,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_translation_glossaries_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -3543,13 +3431,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "ai_translations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       ai_usage: {
@@ -3622,13 +3503,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_usage_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "ai_usage_user_id_fkey"
@@ -3725,13 +3599,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "ai_usage_aggregates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       ai_usage_events: {
@@ -3813,13 +3680,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_usage_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "ai_usage_events_user_id_fkey"
@@ -3909,13 +3769,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "alert_configurations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4098,13 +3951,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "analytics_daily_metrics_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       analytics_events: {
@@ -4190,13 +4036,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "analytics_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       analytics_feature_usage: {
@@ -4251,13 +4090,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "analytics_feature_usage_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4322,13 +4154,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "analytics_subscription_events_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4406,13 +4231,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "analytics_tenant_metrics_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       api_connections: {
@@ -4473,13 +4291,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "api_connections_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4567,13 +4378,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "api_keys_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       api_logs: {
@@ -4653,13 +4457,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "api_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -4782,13 +4579,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "audio_transcriptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       audit_logs: {
@@ -4855,13 +4645,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "audit_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "audit_logs_user_id_fkey"
@@ -5043,13 +4826,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "automation_rules_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       automations: {
@@ -5136,13 +4912,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "automations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       availability_exceptions: {
@@ -5200,13 +4969,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "availability_exceptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "availability_exceptions_user_id_fkey"
@@ -5278,13 +5040,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "availability_slots_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "availability_slots_user_id_fkey"
@@ -5585,13 +5340,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "billing_clients_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       billing_events: {
@@ -5664,13 +5412,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "billing_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -5757,13 +5498,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "billing_rates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "billing_rates_user_id_fkey"
@@ -5873,13 +5607,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "blockchain_timestamps_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       calendar_connections: {
@@ -5970,13 +5697,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "calendar_connections_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "calendar_connections_user_id_fkey"
@@ -6116,13 +5836,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "calendar_integrations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "calendar_integrations_user_id_fkey"
@@ -6301,13 +6014,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "call_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       capabilities: {
@@ -6419,13 +6125,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "capability_usage_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -6861,13 +6560,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "client_ai_billing_rules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       client_contacts: {
@@ -6969,13 +6661,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_contacts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -7144,13 +6829,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "client_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "client_documents_parent_document_id_fkey"
             columns: ["parent_document_id"]
             isOneToOne: false
@@ -7248,13 +6926,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "client_folder_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "client_folder_documents_uploaded_by_fkey"
             columns: ["uploaded_by"]
             isOneToOne: false
@@ -7331,13 +7002,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_folders_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "client_folders_parent_id_fkey"
@@ -7428,13 +7092,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_portals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -7532,13 +7189,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "client_relationships_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "client_relationships_related_client_id_fkey"
             columns: ["related_client_id"]
             isOneToOne: false
@@ -7590,13 +7240,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_tag_categories_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -7659,13 +7302,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_tag_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -7767,13 +7403,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "client_type_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -7916,13 +7545,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "clients_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       communication_attachments: {
@@ -8026,13 +7648,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "communication_channels_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       communication_templates: {
@@ -8117,13 +7732,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "communication_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -8381,13 +7989,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "communications_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "communications_reply_comm_id_fkey"
             columns: ["reply_comm_id"]
             isOneToOne: false
@@ -8476,13 +8077,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "compliance_checks_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       consent_audit_log: {
@@ -8546,13 +8140,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "consent_audit_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -8667,13 +8254,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "contact_lists_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       contact_role_config: {
@@ -8734,13 +8314,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contact_role_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -8972,13 +8545,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "contacts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "contacts_parent_client_id_fkey"
             columns: ["parent_client_id"]
             isOneToOne: false
@@ -9036,13 +8602,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contextual_guide_progress_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "contextual_guide_progress_user_id_fkey"
@@ -9120,13 +8679,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_account_health_history_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -9242,13 +8794,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_accounts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "crm_accounts_payment_classification_id_fkey"
@@ -9376,13 +8921,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_activities_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       crm_ai_learning_logs: {
@@ -9490,13 +9028,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_ai_learning_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -9641,13 +9172,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_ai_recommendations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -9806,13 +9330,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_automation_approvals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       crm_automation_executions: {
@@ -9895,13 +9412,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_automation_executions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -10071,13 +9581,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_automations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "crm_automations_template_id_fkey"
             columns: ["template_id"]
             isOneToOne: false
@@ -10210,13 +9713,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_contacts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -10437,13 +9933,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_deals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "crm_deals_owner_id_fkey"
             columns: ["owner_id"]
             isOneToOne: false
@@ -10550,13 +10039,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_email_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -10703,13 +10185,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_email_tracking_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       crm_interactions: {
@@ -10808,13 +10283,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_interactions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       crm_lead_events: {
@@ -10888,13 +10356,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_lead_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -11068,13 +10529,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_leads_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "crm_leads_pipeline_id_fkey"
             columns: ["pipeline_id"]
             isOneToOne: false
@@ -11197,13 +10651,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_message_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -11441,13 +10888,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_pipelines_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       crm_tasks: {
@@ -11555,13 +10995,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_tasks_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -11771,13 +11204,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_voip_calls_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "crm_voip_calls_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -11919,13 +11345,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_whatsapp_messages_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       crm_whatsapp_templates: {
@@ -12025,13 +11444,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_whatsapp_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -12149,13 +11561,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "dashboards_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       data_connectors: {
@@ -12232,13 +11637,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "data_connectors_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       data_exports: {
@@ -12314,13 +11712,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "data_exports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -12401,13 +11792,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "data_imports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       data_retention_policies: {
@@ -12471,13 +11855,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "data_retention_policies_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -12580,13 +11957,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deadline_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "deadline_alerts_recipient_id_fkey"
@@ -12696,13 +12066,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "deadline_notifications_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "deadline_notifications_user_id_fkey"
@@ -12954,13 +12317,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "deadline_types_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       deals: {
@@ -13145,13 +12501,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "deals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "deals_pipeline_id_fkey"
             columns: ["pipeline_id"]
             isOneToOne: false
@@ -13258,13 +12607,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "demo_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -13410,13 +12752,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "demo_sessions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       document_chunks: {
@@ -13474,13 +12809,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "document_chunks_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -13548,13 +12876,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "document_embeddings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -13680,13 +13001,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "document_entities_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -13818,13 +13132,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "document_extractions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "document_extractions_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
@@ -13882,13 +13189,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "document_sequences_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -14188,13 +13488,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "document_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       document_validity_alerts: {
@@ -14268,13 +13561,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "document_validity_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -14436,13 +13722,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "documents_previous_version_id_fkey"
             columns: ["previous_version_id"]
             isOneToOne: false
@@ -14595,13 +13874,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "email_campaigns_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "email_campaigns_template_id_fkey"
@@ -14795,13 +14067,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "email_configs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       email_ingestion_queue: {
@@ -14903,13 +14168,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "email_ingestion_queue_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -15099,13 +14357,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "email_messages_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       email_queue: {
@@ -15185,13 +14436,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "email_queue_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -15326,13 +14570,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "email_signatures_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       email_templates: {
@@ -15449,13 +14686,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "email_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       email_unsubscribes: {
@@ -15527,13 +14757,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "email_unsubscribes_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -15711,13 +14934,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "expenses_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       exports: {
@@ -15801,13 +15017,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "exports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       extraction_suggestion_log: {
@@ -15888,13 +15097,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "extraction_suggestion_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -16039,13 +15241,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "file_imports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -16231,13 +15426,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "filing_applications_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "filing_applications_power_of_attorney_id_fkey"
             columns: ["power_of_attorney_id"]
             isOneToOne: false
@@ -16406,13 +15594,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "filing_drafts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -16597,13 +15778,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "filing_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -16874,13 +16048,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "finance_portfolios_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       finance_valuation_parameters: {
@@ -17084,13 +16251,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "finance_valuations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "finance_valuations_portfolio_id_fkey"
             columns: ["portfolio_id"]
             isOneToOne: false
@@ -17248,13 +16408,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "fiscal_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       gazette_sources: {
@@ -17393,13 +16546,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "gdpr_requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -17570,13 +16716,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "generated_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "generated_documents_parent_document_id_fkey"
             columns: ["parent_document_id"]
             isOneToOne: false
@@ -17682,13 +16821,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "generated_reports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "generated_reports_template_id_fkey"
@@ -17799,13 +16931,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "genius_generated_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -18015,13 +17140,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "genius_trademark_comparisons_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       help_announcement_reads: {
@@ -18190,13 +17308,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "help_article_feedback_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "help_article_feedback_user_id_fkey"
@@ -18488,13 +17599,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "help_rule_execution_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "help_rule_execution_log_rule_id_fkey"
             columns: ["rule_id"]
             isOneToOne: false
@@ -18684,13 +17788,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "help_search_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "help_search_logs_user_id_fkey"
@@ -18951,13 +18048,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "holiday_calendars_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       holidays: {
@@ -19089,13 +18179,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "import_files_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       import_jobs: {
@@ -19182,13 +18265,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "import_jobs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "import_jobs_parent_job_id_fkey"
             columns: ["parent_job_id"]
             isOneToOne: false
@@ -19271,13 +18347,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "import_mapping_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -19381,13 +18450,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "import_review_queue_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "import_review_queue_reviewed_by_fkey"
@@ -19511,13 +18573,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "import_snapshots_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       import_sources: {
@@ -19596,13 +18651,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "import_sources_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -19694,13 +18742,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "import_sync_configs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "import_sync_configs_source_id_fkey"
             columns: ["source_id"]
             isOneToOne: false
@@ -19770,13 +18811,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "import_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -19930,13 +18964,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "imports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       internal_reference_config: {
@@ -20007,13 +19034,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "internal_reference_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       internal_reference_sequences: {
@@ -20059,13 +19079,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "internal_reference_sequences_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -20134,13 +19147,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invitations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -20312,13 +19318,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "invoice_payments_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "invoice_payments_payment_link_id_fkey"
             columns: ["payment_link_id"]
             isOneToOne: false
@@ -20385,13 +19384,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invoice_sequences_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -20477,13 +19469,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invoice_series_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -20742,13 +19727,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "invoices_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -23331,13 +22309,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "jurisdiction_rules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       jurisdictions: {
@@ -24197,13 +23168,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "legalops_ai_feedback_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       legalops_ai_interactions: {
@@ -24333,13 +23297,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "legalops_ai_interactions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -25762,13 +24719,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "market_users_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       market_verification_documents: {
@@ -25958,13 +24908,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matter_activity_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "matter_activity_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -26057,13 +25000,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_comments_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "matter_comments_parent_id_fkey"
@@ -26213,13 +25149,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_costs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "matter_costs_service_fee_id_fkey"
@@ -26431,13 +25360,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "matter_deadlines_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       matter_documents: {
@@ -26620,13 +25542,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matter_documents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "matter_documents_parent_document_id_fkey"
             columns: ["parent_document_id"]
             isOneToOne: false
@@ -26726,13 +25641,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "matter_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       matter_family_relations: {
@@ -26804,13 +25712,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_family_relations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "matter_family_relations_parent_matter_id_fkey"
@@ -27045,13 +25946,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_filings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "matter_filings_parent_filing_id_fkey"
@@ -27424,13 +26318,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "matter_numbering_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       matter_parties: {
@@ -27632,13 +26519,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_parties_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "matter_parties_source_relationship_id_fkey"
@@ -27864,13 +26744,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "matter_phase_history_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       matter_relationships: {
@@ -28009,13 +26882,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "matter_sequences_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       matter_tasks: {
@@ -28126,13 +26992,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_tasks_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -28264,13 +27123,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_timeline_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -28447,13 +27299,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matter_type_configs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -28900,13 +27745,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matters_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "matters_portfolio_id_fkey"
             columns: ["portfolio_id"]
             isOneToOne: false
@@ -29179,13 +28017,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "matters_v2_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "matters_v2_responsible_id_fkey"
             columns: ["responsible_id"]
             isOneToOne: false
@@ -29243,13 +28074,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "memberships_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "memberships_role_id_fkey"
@@ -29332,13 +28156,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "metrics_cache_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       migration_agents: {
@@ -29420,13 +28237,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "migration_agents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -29516,13 +28326,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "migration_connections_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -29614,13 +28417,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "migration_files_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "migration_files_project_id_fkey"
@@ -29867,13 +28663,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "migration_projects_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       migration_scraping_sessions: {
@@ -30079,13 +28868,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "migration_syncs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       migration_templates: {
@@ -30182,13 +28964,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "module_usage_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -30293,13 +29068,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "monitored_deadlines_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "monitored_deadlines_watch_result_id_fkey"
@@ -30667,13 +29435,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "notifications_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "notifications_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -30767,13 +29528,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "oauth_applications_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -30895,13 +29649,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ocr_results_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -31056,13 +29803,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "office_documents_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       office_file_imports: {
@@ -31160,13 +29900,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "office_file_imports_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "office_file_imports_uploaded_by_fkey"
@@ -31314,13 +30047,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "office_import_review_queue_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -31576,13 +30302,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "office_request_logs_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       office_status_mappings: {
@@ -31799,13 +30518,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "onboarding_progress_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       onboarding_tips: {
@@ -31993,13 +30705,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "organization_branding_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       organization_capabilities: {
@@ -32060,13 +30765,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_capabilities_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -32131,13 +30829,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_jurisdictions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -32238,13 +30929,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "organization_module_licenses_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       organization_settings: {
@@ -32311,13 +30995,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -32406,13 +31083,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "organization_subscriptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "organization_subscriptions_plan_id_fkey"
@@ -32640,13 +31310,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "payment_classification_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       payment_links: {
@@ -32723,13 +31386,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payment_links_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -32831,13 +31487,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "payments_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "payments_subscription_id_fkey"
@@ -33004,13 +31653,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "pipelines_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -33473,13 +32115,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "portal_access_tokens_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "portal_access_tokens_revoked_by_fkey"
             columns: ["revoked_by"]
             isOneToOne: false
@@ -33654,13 +32289,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "portal_approvals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "portal_approvals_portal_id_fkey"
@@ -33885,13 +32513,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "portal_configurations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       portal_file_access_log: {
@@ -33991,13 +32612,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "portal_file_access_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "portal_file_access_log_portal_token_id_fkey"
@@ -34298,13 +32912,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "portal_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       portal_shared_content: {
@@ -34442,13 +33049,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "portal_signatures_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "portal_signatures_portal_id_fkey"
@@ -34632,13 +33232,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "portfolio_valuations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       portfolios: {
@@ -34705,13 +33298,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "portfolios_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "portfolios_owner_id_fkey"
@@ -34870,13 +33456,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "predictive_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "predictive_alerts_resolved_by_fkey"
@@ -35282,13 +33861,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "provisions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "provisions_quote_id_fkey"
             columns: ["quote_id"]
             isOneToOne: false
@@ -35612,13 +34184,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "quotes_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       rag_chunks: {
@@ -35893,13 +34458,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "rag_knowledge_bases_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       rag_queries: {
@@ -35982,13 +34540,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "rag_queries_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -36084,13 +34635,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "regulatory_submissions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -36268,13 +34812,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "renewal_schedule_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       report_definitions: {
@@ -36375,13 +34912,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "report_definitions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       report_executions: {
@@ -36451,13 +34981,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "report_executions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "report_executions_report_id_fkey"
@@ -36543,13 +35066,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "report_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       resource_permissions: {
@@ -36617,13 +35133,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "resource_permissions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "resource_permissions_permission_id_fkey"
@@ -36763,13 +35272,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "retention_policies_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -37223,13 +35725,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "rfq_requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "rfq_requests_requester_id_fkey"
             columns: ["requester_id"]
             isOneToOne: false
@@ -37534,13 +36029,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "roles_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       saved_searches: {
@@ -37626,13 +36114,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "saved_searches_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       scheduled_exports: {
@@ -37708,13 +36189,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "scheduled_exports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "scheduled_exports_report_id_fkey"
@@ -37807,13 +36281,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "scheduled_reports_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "scheduled_reports_template_id_fkey"
             columns: ["template_id"]
             isOneToOne: false
@@ -37882,13 +36349,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "scim_sync_logs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "scim_sync_logs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -37953,13 +36413,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "search_history_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       search_synonyms: {
@@ -38011,13 +36464,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "search_synonyms_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -38073,13 +36519,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "secure_credentials_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -38153,13 +36592,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "security_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -38236,13 +36668,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sent_emails_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -38383,13 +36808,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "service_catalog_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -38543,13 +36961,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "service_fees_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -38781,13 +37192,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "settings_audit_log_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -39025,13 +37429,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "signature_requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       similarity_analyses: {
@@ -39117,13 +37514,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "similarity_analyses_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -39276,13 +37666,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "smart_tasks_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "smart_tasks_parent_task_id_fkey"
             columns: ["parent_task_id"]
             isOneToOne: false
@@ -39413,13 +37796,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "spider_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "spider_alerts_read_by_fkey"
             columns: ["read_by"]
             isOneToOne: false
@@ -39519,13 +37895,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "spider_connector_credentials_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -39844,13 +38213,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "spider_jobs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "spider_jobs_watchlist_id_fkey"
             columns: ["watchlist_id"]
             isOneToOne: false
@@ -40037,13 +38399,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sso_configurations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -40232,13 +38587,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "stripe_customers_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       stripe_invoices: {
@@ -40346,13 +38694,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "stripe_invoices_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "stripe_invoices_stripe_subscription_record_id_fkey"
             columns: ["stripe_subscription_record_id"]
             isOneToOne: false
@@ -40434,13 +38775,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "stripe_payment_attempts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "stripe_payment_attempts_stripe_invoice_record_id_fkey"
@@ -40640,13 +38974,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "stripe_subscriptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "stripe_subscriptions_stripe_customer_record_id_fkey"
             columns: ["stripe_customer_record_id"]
             isOneToOne: false
@@ -40760,13 +39087,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "subscription_history_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "subscription_history_previous_plan_id_fkey"
@@ -41166,13 +39486,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "subscriptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "subscriptions_plan_id_fkey"
             columns: ["plan_id"]
             isOneToOne: false
@@ -41230,13 +39543,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "super_admin_sessions_simulated_tenant_id_fkey"
-            columns: ["simulated_tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "super_admin_sessions_super_admin_id_fkey"
@@ -41434,13 +39740,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "support_tickets_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "support_tickets_resolved_by_fkey"
             columns: ["resolved_by"]
             isOneToOne: false
@@ -41530,13 +39829,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "sync_history_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       sync_jobs: {
@@ -41622,13 +39914,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "sync_jobs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -41735,13 +40020,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "system_alerts_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "v_pending_events"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "system_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -41761,13 +40039,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "system_alerts_resolved_by_fkey"
@@ -41937,13 +40208,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -42190,13 +40454,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "teams_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "teams_parent_team_id_fkey"
             columns: ["parent_team_id"]
             isOneToOne: false
@@ -42325,13 +40582,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "telephony_daily_metrics_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -42569,13 +40819,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "telephony_usage_logs_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "telephony_usage_logs_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -42645,13 +40888,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_addons_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -42743,13 +40979,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_ai_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -42869,13 +41098,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "tenant_branding_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       tenant_consents: {
@@ -42970,13 +41192,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_consents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -43129,13 +41344,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "tenant_document_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       tenant_modules: {
@@ -43199,13 +41407,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_modules_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -43280,13 +41481,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_office_addons_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -43377,13 +41571,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "tenant_subscriptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "tenant_subscriptions_price_id_fkey"
             columns: ["price_id"]
             isOneToOne: false
@@ -43464,13 +41651,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "tenant_sync_config_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       tenant_telephony_balance: {
@@ -43543,13 +41723,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_telephony_balance_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -43636,13 +41809,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "tenant_telephony_purchases_tenant_id_fkey"
-            columns: ["tenant_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -43833,13 +41999,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "time_entries_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "time_entries_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -43933,13 +42092,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "trademark_visuals_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       usage_metrics: {
@@ -43988,13 +42140,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "usage_metrics_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -44066,13 +42211,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "usage_records_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       user_consents: {
@@ -44136,13 +42274,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_consents_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -44219,13 +42350,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_feedback_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "user_feedback_resolved_by_fkey"
@@ -44327,13 +42451,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_notification_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "user_notification_settings_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -44410,13 +42527,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "user_presence_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "user_presence_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
@@ -44486,13 +42596,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_sessions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "user_sessions_user_id_fkey"
@@ -44681,13 +42784,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "vision_analyses_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       voip_invoices: {
@@ -44798,13 +42894,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "voip_invoices_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "voip_invoices_subscription_id_fkey"
             columns: ["subscription_id"]
             isOneToOne: false
@@ -44884,13 +42973,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "voip_phone_numbers_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -45106,13 +43188,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "voip_settings_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       voip_subscriptions: {
@@ -45188,13 +43263,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "voip_subscriptions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "voip_subscriptions_plan_id_fkey"
@@ -45322,13 +43390,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "voip_usage_records_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "voip_usage_records_subscription_id_fkey"
@@ -45508,13 +43569,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "watch_results_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "watch_results_related_deal_id_fkey"
             columns: ["related_deal_id"]
             isOneToOne: false
@@ -45684,13 +43738,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "watchlists_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -45869,13 +43916,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "webhooks_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       whatsapp_conversations: {
@@ -45964,13 +44004,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "whatsapp_conversations_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -46071,13 +44104,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "whatsapp_implementation_requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -46195,13 +44221,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "whatsapp_messages_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       whatsapp_qr_sessions: {
@@ -46275,13 +44294,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "whatsapp_qr_sessions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       whatsapp_sessions: {
@@ -46354,13 +44366,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "whatsapp_sessions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -46464,13 +44469,6 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "whatsapp_tenant_config_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: true
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -46608,13 +44606,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "workflow_definitions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       workflow_executions: {
@@ -46690,13 +44681,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workflow_executions_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "workflow_executions_workflow_id_fkey"
@@ -46833,13 +44817,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "workflow_phases_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       workflow_queue: {
@@ -46951,13 +44928,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "workflow_queue_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "workflow_queue_workflow_id_fkey"
             columns: ["workflow_id"]
             isOneToOne: false
@@ -47063,13 +45033,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "workflow_runs_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "workflow_runs_workflow_definition_id_fkey"
             columns: ["workflow_definition_id"]
             isOneToOne: false
@@ -47151,13 +45114,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "workflow_schedules_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "workflow_schedules_workflow_id_fkey"
@@ -47383,13 +45339,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "workflow_templates_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       workflow_transitions: {
@@ -47518,13 +45467,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "workflow_variables_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
     }
@@ -47596,13 +45538,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ai_usage_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -47722,13 +45657,6 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "crm_accounts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
       }
       ipo_expiring_credentials: {
@@ -47794,13 +45722,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "matters_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -47869,13 +45790,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "signature_requests_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
         ]
       }
@@ -47974,224 +45888,137 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "system_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
-      }
-      system_test_summary: {
-        Row: {
-          completed_at: string | null
-          failed: number | null
-          pass_rate: number | null
-          passed: number | null
-          run_id: string | null
-          skipped: number | null
-          started_at: string | null
-          total_duration_ms: number | null
-          total_tests: number | null
-          warnings: number | null
-        }
-        Relationships: []
       }
       v_active_alerts: {
         Row: {
-          acknowledged_at: string | null
-          acknowledged_by: string | null
-          alert_data: Json | null
+          action_url: string | null
+          actioned_at: string | null
+          actioned_by: string | null
           alert_type: string | null
-          alert_type_name: string | null
-          alert_type_suggested_action: string | null
-          assigned_at: string | null
-          assigned_to: string | null
-          assigned_to_email: string | null
           created_at: string | null
-          email_sent: boolean | null
-          email_sent_at: string | null
-          event_id: string | null
-          expires_at: string | null
+          data: Json | null
           id: string | null
+          matter_id: string | null
           message: string | null
+          notified_at: string | null
+          notified_via: string[] | null
           organization_id: string | null
-          organization_name: string | null
-          priority: string | null
-          resolution_notes: string | null
-          resolved_at: string | null
-          resolved_by: string | null
+          read_at: string | null
+          read_by: string | null
+          severity: string | null
           status: string | null
-          suggested_action: string | null
           title: string | null
-          updated_at: string | null
+          watch_result_id: string | null
+          watchlist_id: string | null
+        }
+        Insert: {
+          action_url?: string | null
+          actioned_at?: string | null
+          actioned_by?: string | null
+          alert_type?: string | null
+          created_at?: string | null
+          data?: Json | null
+          id?: string | null
+          matter_id?: string | null
+          message?: string | null
+          notified_at?: string | null
+          notified_via?: string[] | null
+          organization_id?: string | null
+          read_at?: string | null
+          read_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title?: string | null
+          watch_result_id?: string | null
+          watchlist_id?: string | null
+        }
+        Update: {
+          action_url?: string | null
+          actioned_at?: string | null
+          actioned_by?: string | null
+          alert_type?: string | null
+          created_at?: string | null
+          data?: Json | null
+          id?: string | null
+          matter_id?: string | null
+          message?: string | null
+          notified_at?: string | null
+          notified_via?: string[] | null
+          organization_id?: string | null
+          read_at?: string | null
+          read_by?: string | null
+          severity?: string | null
+          status?: string | null
+          title?: string | null
+          watch_result_id?: string | null
+          watchlist_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "system_alerts_acknowledged_by_fkey"
-            columns: ["acknowledged_by"]
+            foreignKeyName: "spider_alerts_actioned_by_fkey"
+            columns: ["actioned_by"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "system_alerts_assigned_to_fkey"
-            columns: ["assigned_to"]
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "system_alerts_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "system_events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_alerts_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "system_events_log"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_alerts_event_id_fkey"
-            columns: ["event_id"]
-            isOneToOne: false
-            referencedRelation: "v_pending_events"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "system_alerts_organization_id_fkey"
+            foreignKeyName: "spider_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "backoffice_tenant_crm"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "system_alerts_organization_id_fkey"
+            foreignKeyName: "spider_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organization_usage_stats"
             referencedColumns: ["organization_id"]
           },
           {
-            foreignKeyName: "system_alerts_organization_id_fkey"
+            foreignKeyName: "spider_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "system_alerts_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "system_alerts_resolved_by_fkey"
-            columns: ["resolved_by"]
+            foreignKeyName: "spider_alerts_read_by_fkey"
+            columns: ["read_by"]
             isOneToOne: false
             referencedRelation: "users"
             referencedColumns: ["id"]
           },
-        ]
-      }
-      v_event_stats: {
-        Row: {
-          action_required_count: number | null
-          event_category: string | null
-          event_count: number | null
-          event_date: string | null
-          resolved_count: number | null
-          severity: string | null
-        }
-        Relationships: []
-      }
-      v_pending_events: {
-        Row: {
-          action_status: string | null
-          created_at: string | null
-          description: string | null
-          event_category: string | null
-          event_data: Json | null
-          event_type: string | null
-          event_type_description: string | null
-          event_type_name: string | null
-          id: string | null
-          ip_address: unknown
-          organization_id: string | null
-          organization_name: string | null
-          related_entity_id: string | null
-          related_entity_type: string | null
-          request_id: string | null
-          requires_action: boolean | null
-          resolution_notes: string | null
-          resolved_at: string | null
-          resolved_by: string | null
-          search_vector: unknown
-          severity: string | null
-          source: string | null
-          tags: string[] | null
-          title: string | null
-          user_agent: string | null
-          user_id: string | null
-        }
-        Relationships: [
           {
-            foreignKeyName: "system_events_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: "spider_alerts_watch_result_id_fkey"
+            columns: ["watch_result_id"]
             isOneToOne: false
-            referencedRelation: "backoffice_tenant_crm"
+            referencedRelation: "watch_results"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "system_events_organization_id_fkey"
-            columns: ["organization_id"]
+            foreignKeyName: "spider_alerts_watchlist_id_fkey"
+            columns: ["watchlist_id"]
             isOneToOne: false
-            referencedRelation: "organization_usage_stats"
-            referencedColumns: ["organization_id"]
-          },
-          {
-            foreignKeyName: "system_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "organizations"
+            referencedRelation: "watchlists"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "system_events_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
         ]
-      }
-      v_voip_billing_summary: {
-        Row: {
-          current_minutes_included: number | null
-          current_minutes_used: number | null
-          current_overage_minutes: number | null
-          lifetime_amount_cents: number | null
-          lifetime_calls: number | null
-          lifetime_minutes: number | null
-          month_margin_cents: number | null
-          month_total_calls: number | null
-          month_total_cost_cents: number | null
-          month_total_minutes: number | null
-          month_total_price_cents: number | null
-          organization_id: string | null
-          organization_name: string | null
-          plan_code: string | null
-          plan_name: string | null
-          subscription_status: string | null
-          twilio_phone_number: string | null
-        }
-        Relationships: []
       }
       v_voip_calls_with_contact: {
         Row: {
@@ -48304,13 +46131,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "crm_voip_calls_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
-          },
-          {
             foreignKeyName: "crm_voip_calls_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
@@ -48318,24 +46138,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      v_voip_global_stats: {
-        Row: {
-          active_organizations: number | null
-          business_orgs: number | null
-          current_period: string | null
-          margin_percentage: number | null
-          pay_as_you_go_orgs: number | null
-          pro_orgs: number | null
-          starter_orgs: number | null
-          total_calls: number | null
-          total_cost_cents: number | null
-          total_margin_cents: number | null
-          total_minutes: number | null
-          total_revenue_cents: number | null
-          unlimited_orgs: number | null
-        }
-        Relationships: []
       }
       v_voip_user_stats: {
         Row: {
@@ -48369,13 +46171,6 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "crm_voip_calls_organization_id_fkey"
-            columns: ["organization_id"]
-            isOneToOne: false
-            referencedRelation: "v_voip_billing_summary"
-            referencedColumns: ["organization_id"]
           },
           {
             foreignKeyName: "crm_voip_calls_user_id_fkey"

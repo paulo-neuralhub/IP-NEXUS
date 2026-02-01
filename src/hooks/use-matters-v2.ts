@@ -590,8 +590,6 @@ export function useCreateMatterV2() {
         },
       };
 
-      console.log('[useCreateMatterV2] Inserting (legacy matters):', insertData);
-
       const { data: matter, error } = await supabase
         .from('matters')
         .insert(insertData as any)
@@ -648,7 +646,6 @@ export function useCreateMatterV2() {
         updated_at: (matter as any).updated_at,
       };
 
-      console.log('[useCreateMatterV2] Created (legacy matters):', mapped);
       return mapped;
     },
     onSuccess: () => {
