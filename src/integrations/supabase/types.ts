@@ -13971,6 +13971,8 @@ export type Database = {
           ai_system_prompt: string | null
           ai_temperature: number | null
           ai_user_prompt_template: string | null
+          auto_generate_on_phase: string | null
+          available_languages: string[] | null
           average_rating: number | null
           based_on_template_id: string | null
           body_sections: Json | null
@@ -13982,14 +13984,19 @@ export type Database = {
           custom_colors: Json | null
           custom_texts: Json | null
           description: string | null
+          display_order: number | null
           document_type: string | null
           footer_content: Json | null
+          format: string | null
           header_content: Json | null
           id: string
           is_active: boolean | null
           is_default: boolean | null
           is_public: boolean | null
+          is_required_for: string[] | null
           is_system_template: boolean | null
+          jurisdiction_id: string | null
+          last_modified_by: string | null
           layout: string | null
           name: string
           numbering_digits: number | null
@@ -13998,18 +14005,24 @@ export type Database = {
           organization_id: string | null
           output_format: string | null
           preferred_style_code: string | null
+          requires_signature: boolean | null
+          right_type: string | null
           sections: Json | null
           show_footer: boolean | null
           show_header: boolean | null
           show_logo: boolean | null
+          signature_type: string | null
           style: string | null
           tags: string[] | null
           template_content: string
+          template_file_url: string | null
           template_type: string | null
           times_used: number | null
           type_config: Json | null
+          typical_phase: string | null
           updated_at: string | null
           usage_count: number | null
+          variable_codes: string[] | null
           variables: Json | null
         }
         Insert: {
@@ -14018,6 +14031,8 @@ export type Database = {
           ai_system_prompt?: string | null
           ai_temperature?: number | null
           ai_user_prompt_template?: string | null
+          auto_generate_on_phase?: string | null
+          available_languages?: string[] | null
           average_rating?: number | null
           based_on_template_id?: string | null
           body_sections?: Json | null
@@ -14029,14 +14044,19 @@ export type Database = {
           custom_colors?: Json | null
           custom_texts?: Json | null
           description?: string | null
+          display_order?: number | null
           document_type?: string | null
           footer_content?: Json | null
+          format?: string | null
           header_content?: Json | null
           id?: string
           is_active?: boolean | null
           is_default?: boolean | null
           is_public?: boolean | null
+          is_required_for?: string[] | null
           is_system_template?: boolean | null
+          jurisdiction_id?: string | null
+          last_modified_by?: string | null
           layout?: string | null
           name: string
           numbering_digits?: number | null
@@ -14045,18 +14065,24 @@ export type Database = {
           organization_id?: string | null
           output_format?: string | null
           preferred_style_code?: string | null
+          requires_signature?: boolean | null
+          right_type?: string | null
           sections?: Json | null
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          signature_type?: string | null
           style?: string | null
           tags?: string[] | null
           template_content: string
+          template_file_url?: string | null
           template_type?: string | null
           times_used?: number | null
           type_config?: Json | null
+          typical_phase?: string | null
           updated_at?: string | null
           usage_count?: number | null
+          variable_codes?: string[] | null
           variables?: Json | null
         }
         Update: {
@@ -14065,6 +14091,8 @@ export type Database = {
           ai_system_prompt?: string | null
           ai_temperature?: number | null
           ai_user_prompt_template?: string | null
+          auto_generate_on_phase?: string | null
+          available_languages?: string[] | null
           average_rating?: number | null
           based_on_template_id?: string | null
           body_sections?: Json | null
@@ -14076,14 +14104,19 @@ export type Database = {
           custom_colors?: Json | null
           custom_texts?: Json | null
           description?: string | null
+          display_order?: number | null
           document_type?: string | null
           footer_content?: Json | null
+          format?: string | null
           header_content?: Json | null
           id?: string
           is_active?: boolean | null
           is_default?: boolean | null
           is_public?: boolean | null
+          is_required_for?: string[] | null
           is_system_template?: boolean | null
+          jurisdiction_id?: string | null
+          last_modified_by?: string | null
           layout?: string | null
           name?: string
           numbering_digits?: number | null
@@ -14092,18 +14125,24 @@ export type Database = {
           organization_id?: string | null
           output_format?: string | null
           preferred_style_code?: string | null
+          requires_signature?: boolean | null
+          right_type?: string | null
           sections?: Json | null
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          signature_type?: string | null
           style?: string | null
           tags?: string[] | null
           template_content?: string
+          template_file_url?: string | null
           template_type?: string | null
           times_used?: number | null
           type_config?: Json | null
+          typical_phase?: string | null
           updated_at?: string | null
           usage_count?: number | null
+          variable_codes?: string[] | null
           variables?: Json | null
         }
         Relationships: [
@@ -14119,6 +14158,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_templates_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "jurisdictions"
             referencedColumns: ["id"]
           },
           {
@@ -14229,6 +14275,53 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      document_versions: {
+        Row: {
+          change_summary: string | null
+          created_at: string | null
+          created_by: string | null
+          document_id: string
+          file_hash: string | null
+          file_name: string
+          file_size: number | null
+          id: string
+          storage_path: string
+          version_number: number
+        }
+        Insert: {
+          change_summary?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_id: string
+          file_hash?: string | null
+          file_name: string
+          file_size?: number | null
+          id?: string
+          storage_path: string
+          version_number: number
+        }
+        Update: {
+          change_summary?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          document_id?: string
+          file_hash?: string | null
+          file_name?: string
+          file_size?: number | null
+          id?: string
+          storage_path?: string
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_versions_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -26350,60 +26443,138 @@ export type Database = {
       matter_documents: {
         Row: {
           category: string | null
+          correspondent: string | null
+          correspondent_reference: string | null
           created_at: string | null
+          created_by: string | null
+          created_in_phase: string | null
           description: string | null
           document_date: string | null
+          document_type: string | null
           expiry_date: string | null
           extraction_id: string | null
           extraction_status: string | null
+          file_extension: string | null
+          file_hash: string | null
+          file_name: string | null
           file_path: string
           file_size: number | null
           id: string
+          internal_notes: string | null
+          is_confidential: boolean | null
           is_official: boolean | null
+          language: string | null
           matter_id: string
           mime_type: string | null
           name: string
+          notes: string | null
           ocr_text: string | null
           organization_id: string
+          parent_document_id: string | null
+          received_date: string | null
+          requires_signature: boolean | null
+          sent_date: string | null
+          signature_status: string | null
+          signed_at: string | null
+          signed_by: string | null
+          status: string | null
+          storage_path: string | null
+          tags: string[] | null
+          template_id: string | null
+          updated_at: string | null
           uploaded_by: string | null
+          version: number | null
+          visible_to_client: boolean | null
         }
         Insert: {
           category?: string | null
+          correspondent?: string | null
+          correspondent_reference?: string | null
           created_at?: string | null
+          created_by?: string | null
+          created_in_phase?: string | null
           description?: string | null
           document_date?: string | null
+          document_type?: string | null
           expiry_date?: string | null
           extraction_id?: string | null
           extraction_status?: string | null
+          file_extension?: string | null
+          file_hash?: string | null
+          file_name?: string | null
           file_path: string
           file_size?: number | null
           id?: string
+          internal_notes?: string | null
+          is_confidential?: boolean | null
           is_official?: boolean | null
+          language?: string | null
           matter_id: string
           mime_type?: string | null
           name: string
+          notes?: string | null
           ocr_text?: string | null
           organization_id: string
+          parent_document_id?: string | null
+          received_date?: string | null
+          requires_signature?: boolean | null
+          sent_date?: string | null
+          signature_status?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          status?: string | null
+          storage_path?: string | null
+          tags?: string[] | null
+          template_id?: string | null
+          updated_at?: string | null
           uploaded_by?: string | null
+          version?: number | null
+          visible_to_client?: boolean | null
         }
         Update: {
           category?: string | null
+          correspondent?: string | null
+          correspondent_reference?: string | null
           created_at?: string | null
+          created_by?: string | null
+          created_in_phase?: string | null
           description?: string | null
           document_date?: string | null
+          document_type?: string | null
           expiry_date?: string | null
           extraction_id?: string | null
           extraction_status?: string | null
+          file_extension?: string | null
+          file_hash?: string | null
+          file_name?: string | null
           file_path?: string
           file_size?: number | null
           id?: string
+          internal_notes?: string | null
+          is_confidential?: boolean | null
           is_official?: boolean | null
+          language?: string | null
           matter_id?: string
           mime_type?: string | null
           name?: string
+          notes?: string | null
           ocr_text?: string | null
           organization_id?: string
+          parent_document_id?: string | null
+          received_date?: string | null
+          requires_signature?: boolean | null
+          sent_date?: string | null
+          signature_status?: string | null
+          signed_at?: string | null
+          signed_by?: string | null
+          status?: string | null
+          storage_path?: string | null
+          tags?: string[] | null
+          template_id?: string | null
+          updated_at?: string | null
           uploaded_by?: string | null
+          version?: number | null
+          visible_to_client?: boolean | null
         }
         Relationships: [
           {
@@ -26454,6 +26625,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_documents_parent_document_id_fkey"
+            columns: ["parent_document_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_documents_template_id_fkey"
+            columns: ["template_id"]
+            isOneToOne: false
+            referencedRelation: "document_templates"
+            referencedColumns: ["id"]
           },
           {
             foreignKeyName: "matter_documents_uploaded_by_fkey"
