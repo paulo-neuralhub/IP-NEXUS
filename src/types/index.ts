@@ -117,3 +117,6 @@ export interface AIModel {
 
 // IP-MARKET Types
 export * from './market.types';
+
+// Jurisdiction Types
+export * from './jurisdiction';

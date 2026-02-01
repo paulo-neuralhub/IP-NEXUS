@@ -22866,6 +22866,89 @@ export type Database = {
           },
         ]
       }
+      jurisdiction_field_configs: {
+        Row: {
+          created_at: string | null
+          display_order: number | null
+          field_description: string | null
+          field_group: string | null
+          field_key: string
+          field_label_en: string
+          field_label_es: string | null
+          field_options: Json | null
+          field_placeholder: string | null
+          field_type: string
+          grid_column: string | null
+          id: string
+          is_active: boolean | null
+          is_required: boolean | null
+          is_required_condition: string | null
+          jurisdiction_id: string
+          max_length: number | null
+          min_length: number | null
+          right_type: string
+          updated_at: string | null
+          validation_regex: string | null
+          visible_condition: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          display_order?: number | null
+          field_description?: string | null
+          field_group?: string | null
+          field_key: string
+          field_label_en: string
+          field_label_es?: string | null
+          field_options?: Json | null
+          field_placeholder?: string | null
+          field_type: string
+          grid_column?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_required?: boolean | null
+          is_required_condition?: string | null
+          jurisdiction_id: string
+          max_length?: number | null
+          min_length?: number | null
+          right_type: string
+          updated_at?: string | null
+          validation_regex?: string | null
+          visible_condition?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          display_order?: number | null
+          field_description?: string | null
+          field_group?: string | null
+          field_key?: string
+          field_label_en?: string
+          field_label_es?: string | null
+          field_options?: Json | null
+          field_placeholder?: string | null
+          field_type?: string
+          grid_column?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_required?: boolean | null
+          is_required_condition?: string | null
+          jurisdiction_id?: string
+          max_length?: number | null
+          min_length?: number | null
+          right_type?: string
+          updated_at?: string | null
+          validation_regex?: string | null
+          visible_condition?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jurisdiction_field_configs_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "jurisdictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jurisdiction_knowledge_base: {
         Row: {
           category: string
@@ -23034,83 +23117,176 @@ export type Database = {
         Row: {
           code: string
           created_at: string | null
+          currency_code: string | null
+          filing_languages: string[] | null
+          flag_code: string | null
           flag_emoji: string | null
           has_api_integration: boolean | null
           has_deadline_rules: boolean | null
           has_knowledge_base: boolean | null
           has_official_forms: boolean | null
           has_spider_monitoring: boolean | null
+          has_subclasses: boolean | null
           icon: string | null
           id: string
           ipo_api_url: string | null
           ipo_name: string | null
           ipo_url: string | null
           is_active: boolean | null
+          is_hague_member: boolean | null
+          is_madrid_member: boolean | null
+          is_paris_member: boolean | null
+          is_pct_member: boolean | null
+          jurisdiction_type: string | null
           kb_last_updated: string | null
           name: string
+          name_en: string | null
+          name_es: string | null
           name_local: string | null
+          notes: string | null
+          office_acronym: string | null
+          office_website: string | null
+          official_languages: string[] | null
+          opposition_period_days: number | null
+          paris_priority_months_ds: number | null
+          paris_priority_months_pt: number | null
+          paris_priority_months_tm: number | null
+          patent_duration_years: number | null
+          phone_code: string | null
           price_monthly: number
           price_yearly: number | null
           region: string
+          requires_local_agent: boolean | null
+          requires_translation: boolean | null
           sort_order: number | null
           stripe_price_id_monthly: string | null
           stripe_price_id_yearly: string | null
+          supports_designs: boolean | null
+          supports_patents: boolean | null
+          supports_trademarks: boolean | null
+          supports_utility_models: boolean | null
           tier: number | null
+          timezone: string | null
+          trademark_duration_years: number | null
           updated_at: string | null
+          use_declaration_required: boolean | null
+          use_requirement: boolean | null
         }
         Insert: {
           code: string
           created_at?: string | null
+          currency_code?: string | null
+          filing_languages?: string[] | null
+          flag_code?: string | null
           flag_emoji?: string | null
           has_api_integration?: boolean | null
           has_deadline_rules?: boolean | null
           has_knowledge_base?: boolean | null
           has_official_forms?: boolean | null
           has_spider_monitoring?: boolean | null
+          has_subclasses?: boolean | null
           icon?: string | null
           id?: string
           ipo_api_url?: string | null
           ipo_name?: string | null
           ipo_url?: string | null
           is_active?: boolean | null
+          is_hague_member?: boolean | null
+          is_madrid_member?: boolean | null
+          is_paris_member?: boolean | null
+          is_pct_member?: boolean | null
+          jurisdiction_type?: string | null
           kb_last_updated?: string | null
           name: string
+          name_en?: string | null
+          name_es?: string | null
           name_local?: string | null
+          notes?: string | null
+          office_acronym?: string | null
+          office_website?: string | null
+          official_languages?: string[] | null
+          opposition_period_days?: number | null
+          paris_priority_months_ds?: number | null
+          paris_priority_months_pt?: number | null
+          paris_priority_months_tm?: number | null
+          patent_duration_years?: number | null
+          phone_code?: string | null
           price_monthly: number
           price_yearly?: number | null
           region: string
+          requires_local_agent?: boolean | null
+          requires_translation?: boolean | null
           sort_order?: number | null
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
+          supports_designs?: boolean | null
+          supports_patents?: boolean | null
+          supports_trademarks?: boolean | null
+          supports_utility_models?: boolean | null
           tier?: number | null
+          timezone?: string | null
+          trademark_duration_years?: number | null
           updated_at?: string | null
+          use_declaration_required?: boolean | null
+          use_requirement?: boolean | null
         }
         Update: {
           code?: string
           created_at?: string | null
+          currency_code?: string | null
+          filing_languages?: string[] | null
+          flag_code?: string | null
           flag_emoji?: string | null
           has_api_integration?: boolean | null
           has_deadline_rules?: boolean | null
           has_knowledge_base?: boolean | null
           has_official_forms?: boolean | null
           has_spider_monitoring?: boolean | null
+          has_subclasses?: boolean | null
           icon?: string | null
           id?: string
           ipo_api_url?: string | null
           ipo_name?: string | null
           ipo_url?: string | null
           is_active?: boolean | null
+          is_hague_member?: boolean | null
+          is_madrid_member?: boolean | null
+          is_paris_member?: boolean | null
+          is_pct_member?: boolean | null
+          jurisdiction_type?: string | null
           kb_last_updated?: string | null
           name?: string
+          name_en?: string | null
+          name_es?: string | null
           name_local?: string | null
+          notes?: string | null
+          office_acronym?: string | null
+          office_website?: string | null
+          official_languages?: string[] | null
+          opposition_period_days?: number | null
+          paris_priority_months_ds?: number | null
+          paris_priority_months_pt?: number | null
+          paris_priority_months_tm?: number | null
+          patent_duration_years?: number | null
+          phone_code?: string | null
           price_monthly?: number
           price_yearly?: number | null
           region?: string
+          requires_local_agent?: boolean | null
+          requires_translation?: boolean | null
           sort_order?: number | null
           stripe_price_id_monthly?: string | null
           stripe_price_id_yearly?: string | null
+          supports_designs?: boolean | null
+          supports_patents?: boolean | null
+          supports_trademarks?: boolean | null
+          supports_utility_models?: boolean | null
           tier?: number | null
+          timezone?: string | null
+          trademark_duration_years?: number | null
           updated_at?: string | null
+          use_declaration_required?: boolean | null
+          use_requirement?: boolean | null
         }
         Relationships: []
       }
