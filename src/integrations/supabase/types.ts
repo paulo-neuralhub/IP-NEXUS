@@ -12491,10 +12491,14 @@ export type Database = {
           delivered_at: string | null
           error_message: string | null
           id: string
+          message: string | null
           organization_id: string
           read_at: string | null
           recipient_email: string | null
           recipient_id: string | null
+          recipient_role: string | null
+          response_data: Json | null
+          scheduled_for: string | null
           sent_at: string | null
           status: string | null
           subject: string | null
@@ -12508,10 +12512,14 @@ export type Database = {
           delivered_at?: string | null
           error_message?: string | null
           id?: string
+          message?: string | null
           organization_id: string
           read_at?: string | null
           recipient_email?: string | null
           recipient_id?: string | null
+          recipient_role?: string | null
+          response_data?: Json | null
+          scheduled_for?: string | null
           sent_at?: string | null
           status?: string | null
           subject?: string | null
@@ -12525,10 +12533,14 @@ export type Database = {
           delivered_at?: string | null
           error_message?: string | null
           id?: string
+          message?: string | null
           organization_id?: string
           read_at?: string | null
           recipient_email?: string | null
           recipient_id?: string | null
+          recipient_role?: string | null
+          response_data?: Json | null
+          scheduled_for?: string | null
           sent_at?: string | null
           status?: string | null
           subject?: string | null
