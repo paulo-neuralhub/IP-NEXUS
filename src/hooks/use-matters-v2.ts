@@ -587,6 +587,8 @@ export function useCreateMatterV2() {
           invention_title: data.invention_title || null,
           is_urgent: data.is_urgent ?? false,
           is_confidential: data.is_confidential ?? false,
+          // Dynamic jurisdiction fields from DB
+          jurisdiction_fields: (data.custom_fields as any)?.jurisdiction_fields || {},
         },
       };
 

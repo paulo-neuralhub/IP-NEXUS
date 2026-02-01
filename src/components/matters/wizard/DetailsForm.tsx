@@ -1,9 +1,10 @@
 // ============================================================
 // IP-NEXUS - DETAILS FORM COMPONENT
 // L131: Matter details form with DB-backed Nice class selector
+// Now integrated with DynamicJurisdictionFields from DB
 // ============================================================
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Building2,
   FileText,
@@ -35,7 +36,27 @@ import {
 import { ClientSelector } from './ClientSelector';
 import { NiceClassSelectorDB } from './NiceClassSelectorDB';
 import { CreateClientDialog } from './CreateClientDialog';
+import { DynamicJurisdictionFields } from '@/components/matters/DynamicJurisdictionFields';
 import type { NiceSelection } from './NiceClassWithProductsSelector';
+
+// Map matter type codes to right types for dynamic fields
+const MATTER_TYPE_TO_RIGHT_TYPE: Record<string, 'trademark' | 'patent' | 'utility_model' | 'design' | 'copyright'> = {
+  TM_NAT: 'trademark',
+  TM_EU: 'trademark',
+  TM_INT: 'trademark',
+  NC: 'trademark', // Nombre comercial
+  PT_NAT: 'patent',
+  PT_EU: 'patent',
+  PT_PCT: 'patent',
+  EP: 'patent',
+  UM: 'utility_model',
+  DS_NAT: 'design',
+  DS_EU: 'design',
+  DOM: 'trademark', // Domain as trademark-related
+  OPO: 'trademark', // Opposition
+  VIG: 'trademark', // Vigilancia
+  LIT: 'trademark', // Litigation
+};
 
 export interface MatterDetailsData {
   title: string;
@@ -49,7 +70,9 @@ export interface MatterDetailsData {
   is_confidential: boolean;
   nice_classes: number[];
   nice_classes_detail?: NiceSelection;
-  // Jurisdiction-specific fields
+  // Dynamic jurisdiction-specific fields from DB
+  jurisdiction_fields?: Record<string, unknown>;
+  // Legacy hardcoded fields (kept for backwards compatibility)
   modalidad_es?: 'normal' | 'acelerada';
   reduccion_pyme_es?: boolean;
   segundo_idioma_eu?: string;
@@ -90,6 +113,11 @@ export function DetailsForm({
 
   const isTrademarkType = matterType?.startsWith('TM') || matterType === 'NC';
   const isPatentType = matterType?.startsWith('PT') || matterType === 'UM';
+
+  // Map matterType to rightType for dynamic fields
+  const rightType = useMemo(() => {
+    return MATTER_TYPE_TO_RIGHT_TYPE[matterType] || 'trademark';
+  }, [matterType]);
 
   // Jurisdiction flags
   const isES = jurisdiction === 'ES';
@@ -649,6 +677,29 @@ export function DetailsForm({
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {/* ============================================ */}
+      {/* CAMPOS DINÁMICOS DE BASE DE DATOS           */}
+      {/* ============================================ */}
+      
+      {/* Dynamic fields from jurisdiction_field_configs table */}
+      {jurisdiction && (
+        <DynamicJurisdictionFields
+          jurisdictionCode={jurisdiction}
+          rightType={rightType}
+          values={data.jurisdiction_fields || {}}
+          onChange={(key, value) => {
+            onChange({
+              jurisdiction_fields: {
+                ...data.jurisdiction_fields,
+                [key]: value,
+              },
+            });
+          }}
+          language="es"
+          className="mt-6"
+        />
       )}
 
       {/* Create Client Dialog */}

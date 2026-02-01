@@ -63,6 +63,7 @@ export default function NewMatterPage() {
     is_urgent: false,
     is_confidential: false,
     nice_classes: [],
+    jurisdiction_fields: {},
   });
   
   // Preview number state
@@ -183,6 +184,10 @@ export default function NewMatterPage() {
         internal_notes: detailsData.internal_notes || null,
         is_urgent: detailsData.is_urgent,
         is_confidential: detailsData.is_confidential,
+        // Include jurisdiction-specific dynamic fields
+        custom_fields: {
+          jurisdiction_fields: detailsData.jurisdiction_fields || {},
+        },
       });
 
       toast.success('Expediente creado correctamente', {
