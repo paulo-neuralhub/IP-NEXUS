@@ -58,7 +58,7 @@ export function ServiceDetailModal({
               {service.category && (
                 <Badge variant="secondary" className="mt-2">
                   <Tag className="w-3 h-3 mr-1" />
-                  {service.category}
+                  {typeof service.category === 'object' ? service.category?.name_es : service.category}
                 </Badge>
               )}
             </div>

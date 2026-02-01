@@ -27587,6 +27587,101 @@ export type Database = {
           },
         ]
       }
+      matter_phase_history: {
+        Row: {
+          changed_at: string | null
+          changed_by: string | null
+          from_phase: string | null
+          id: string
+          is_automatic: boolean | null
+          matter_id: string
+          metadata: Json | null
+          notes: string | null
+          organization_id: string
+          time_in_phase_hours: number | null
+          to_phase: string
+          trigger_event: string | null
+        }
+        Insert: {
+          changed_at?: string | null
+          changed_by?: string | null
+          from_phase?: string | null
+          id?: string
+          is_automatic?: boolean | null
+          matter_id: string
+          metadata?: Json | null
+          notes?: string | null
+          organization_id: string
+          time_in_phase_hours?: number | null
+          to_phase: string
+          trigger_event?: string | null
+        }
+        Update: {
+          changed_at?: string | null
+          changed_by?: string | null
+          from_phase?: string | null
+          id?: string
+          is_automatic?: boolean | null
+          matter_id?: string
+          metadata?: Json | null
+          notes?: string | null
+          organization_id?: string
+          time_in_phase_hours?: number | null
+          to_phase?: string
+          trigger_event?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_phase_history_changed_by_fkey"
+            columns: ["changed_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "v_voip_billing_summary"
+            referencedColumns: ["organization_id"]
+          },
+        ]
+      }
       matter_relationships: {
         Row: {
           created_at: string | null
@@ -37943,6 +38038,7 @@ export type Database = {
           applicable_offices: string[] | null
           base_price: number
           category: string | null
+          category_id: string | null
           created_at: string
           currency: string
           default_jurisdiction: string | null
@@ -37978,6 +38074,7 @@ export type Database = {
           applicable_offices?: string[] | null
           base_price?: number
           category?: string | null
+          category_id?: string | null
           created_at?: string
           currency?: string
           default_jurisdiction?: string | null
@@ -38013,6 +38110,7 @@ export type Database = {
           applicable_offices?: string[] | null
           base_price?: number
           category?: string | null
+          category_id?: string | null
           created_at?: string
           currency?: string
           default_jurisdiction?: string | null
@@ -38046,6 +38144,13 @@ export type Database = {
         }
         Relationships: [
           {
+            foreignKeyName: "service_catalog_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "service_catalog_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -38072,6 +38177,65 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_voip_billing_summary"
             referencedColumns: ["organization_id"]
+          },
+        ]
+      }
+      service_categories: {
+        Row: {
+          code: string
+          color: string | null
+          created_at: string | null
+          description_en: string | null
+          description_es: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name_en: string
+          name_es: string
+          parent_id: string | null
+          position: number | null
+          right_types: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          code: string
+          color?: string | null
+          created_at?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name_en: string
+          name_es: string
+          parent_id?: string | null
+          position?: number | null
+          right_types?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          code?: string
+          color?: string | null
+          created_at?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name_en?: string
+          name_es?: string
+          parent_id?: string | null
+          position?: number | null
+          right_types?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -46215,48 +46379,82 @@ export type Database = {
       }
       workflow_phases: {
         Row: {
+          auto_tasks: Json | null
+          can_skip: boolean | null
           code: string
           color: string | null
           created_at: string | null
           default_tasks: Json | null
           description: string | null
+          estimated_days: number | null
+          exit_conditions: Json | null
           icon: string | null
           id: string
           is_active: boolean | null
           name: string
+          notification_template_id: string | null
           organization_id: string | null
           position: number
+          required_approvals: string[] | null
+          required_documents: string[] | null
+          requires_approval: boolean | null
+          sla_hours: number | null
           updated_at: string | null
         }
         Insert: {
+          auto_tasks?: Json | null
+          can_skip?: boolean | null
           code: string
           color?: string | null
           created_at?: string | null
           default_tasks?: Json | null
           description?: string | null
+          estimated_days?: number | null
+          exit_conditions?: Json | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
           name: string
+          notification_template_id?: string | null
           organization_id?: string | null
           position: number
+          required_approvals?: string[] | null
+          required_documents?: string[] | null
+          requires_approval?: boolean | null
+          sla_hours?: number | null
           updated_at?: string | null
         }
         Update: {
+          auto_tasks?: Json | null
+          can_skip?: boolean | null
           code?: string
           color?: string | null
           created_at?: string | null
           default_tasks?: Json | null
           description?: string | null
+          estimated_days?: number | null
+          exit_conditions?: Json | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
           name?: string
+          notification_template_id?: string | null
           organization_id?: string | null
           position?: number
+          required_approvals?: string[] | null
+          required_documents?: string[] | null
+          requires_approval?: boolean | null
+          sla_hours?: number | null
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "workflow_phases_notification_template_id_fkey"
+            columns: ["notification_template_id"]
+            isOneToOne: false
+            referencedRelation: "email_templates"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "workflow_phases_organization_id_fkey"
             columns: ["organization_id"]

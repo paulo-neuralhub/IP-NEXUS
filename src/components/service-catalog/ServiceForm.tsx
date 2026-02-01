@@ -115,7 +115,7 @@ export function ServiceForm({ open, onOpenChange, service, onSuccess }: ServiceF
         reference_code: service.reference_code || '',
         name: service.name,
         description: service.description || '',
-        service_type: service.service_type as ServiceType,
+        service_type: service.service_type as any,
         jurisdiction: service.jurisdiction,
         official_fee: service.official_fee || 0,
         professional_fee: service.professional_fee || 0,

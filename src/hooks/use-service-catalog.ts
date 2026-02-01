@@ -129,7 +129,8 @@ export function useCreateService() {
         organization_id: currentOrganization!.id,
         name: data.name || '',
         description: data.description,
-        category: data.category,
+        category: typeof data.category === 'object' ? (data.category as any)?.name_es : data.category,
+        category_id: (data as any).category_id,
         service_type: data.service_type || 'general',
         jurisdiction: data.jurisdiction,
         reference_code: data.reference_code,
@@ -144,7 +145,7 @@ export function useCreateService() {
         extra_class_fee: data.extra_class_fee || 0,
         display_order: data.display_order,
         is_active: data.is_active ?? true,
-      };
+      } as any;
       
       const { data: service, error } = await supabase
         .from('service_catalog')
@@ -224,7 +225,7 @@ export function useGenerateReferenceCode() {
       serviceType: ServiceType; 
       jurisdiction?: string | null;
     }) => {
-      const prefixes: Record<ServiceType, string> = {
+      const prefixes: Record<string, string> = {
         marca: 'MAR',
         patente: 'PAT',
         diseño: 'DIS',
@@ -233,6 +234,10 @@ export function useGenerateReferenceCode() {
         oposicion: 'OPO',
         informe: 'INF',
         general: 'GEN',
+        tm_registration: 'TM',
+        tm_renewal: 'TMR',
+        pt_filing: 'PT',
+        ds_registration: 'DS',
       };
       
       const prefix = prefixes[serviceType] || 'GEN';

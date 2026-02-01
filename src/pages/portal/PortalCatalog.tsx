@@ -60,11 +60,11 @@ export default function PortalCatalog() {
     const grouped: Record<string, ServiceCatalogItem[]> = {};
     
     services.forEach(service => {
-      const category = service.category || 'Otros';
-      if (!grouped[category]) {
-        grouped[category] = [];
+      const categoryName = typeof service.category === 'object' ? service.category?.name_es : service.category || 'Otros';
+      if (!grouped[categoryName]) {
+        grouped[categoryName] = [];
       }
-      grouped[category].push(service);
+      grouped[categoryName].push(service);
     });
 
     return grouped;
@@ -82,8 +82,8 @@ export default function PortalCatalog() {
         service.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
         service.description?.toLowerCase().includes(searchQuery.toLowerCase());
       
-      const matchesCategory = selectedCategory === 'all' || 
-        (service.category || 'Otros') === selectedCategory;
+      const categoryName = typeof service.category === 'object' ? service.category?.name_es : service.category || 'Otros';
+      const matchesCategory = selectedCategory === 'all' || categoryName === selectedCategory;
 
       return matchesSearch && matchesCategory;
     });
@@ -97,11 +97,11 @@ export default function PortalCatalog() {
     
     const grouped: Record<string, ServiceCatalogItem[]> = {};
     filteredServices.forEach(service => {
-      const category = service.category || 'Otros';
-      if (!grouped[category]) {
-        grouped[category] = [];
+      const categoryName = typeof service.category === 'object' ? service.category?.name_es : service.category || 'Otros';
+      if (!grouped[categoryName]) {
+        grouped[categoryName] = [];
       }
-      grouped[category].push(service);
+      grouped[categoryName].push(service);
     });
     return grouped;
   }, [filteredServices, selectedCategory]);
@@ -214,7 +214,8 @@ export default function PortalCatalog() {
       {viewMode === 'list' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {filteredServices.map((service) => {
-            const config = getCategoryConfig(service.category || 'Otros');
+            const categoryName = typeof service.category === 'object' ? service.category?.name_es : service.category || 'Otros';
+            const config = getCategoryConfig(categoryName);
             const Icon = config.icon;
             
             return (
@@ -237,10 +238,10 @@ export default function PortalCatalog() {
                       </CardTitle>
                     </div>
                   </div>
-                  {service.category && (
+                  {categoryName && (
                     <Badge variant="secondary" className="w-fit text-xs mt-1">
                       <Tag className="w-3 h-3 mr-1" />
-                      {service.category}
+                      {categoryName}
                     </Badge>
                   )}
                 </CardHeader>
