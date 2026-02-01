@@ -1,13 +1,13 @@
 // ============================================================
-// IP-NEXUS - New Matter Wizard Page
-// L129: 3-step wizard for creating new matters
+// IP-NEXUS - New Matter Wizard Page (EFECTO WOW)
+// L133: 3-step wizard with premium glassmorphism and glow effects
 // ============================================================
 
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ArrowLeft, ArrowRight, Check, Loader2, Tag, FileText, Eye } from 'lucide-react';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
 import { 
@@ -18,7 +18,7 @@ import {
 } from '@/hooks/use-matters-v2';
 import { useGenerateInternalReference } from '@/hooks/use-internal-reference-config';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { GradientBackground, GlassCard } from '@/components/ui/GradientBackground';
 import { usePageTitle } from '@/contexts/page-context';
 import {
   WizardSteps,
@@ -202,35 +202,46 @@ export default function NewMatterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="max-w-4xl mx-auto p-6">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-6">
+    <GradientBackground variant="default">
+      <div className="max-w-4xl mx-auto p-6 pb-24">
+        {/* Header with glass effect */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex items-center gap-4 mb-8"
+        >
           <Button
             variant="ghost"
             size="icon"
             onClick={() => navigate('/app/expedientes')}
+            className="bg-white/50 backdrop-blur-sm hover:bg-white/70"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">Nuevo Expediente</h1>
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
+              Nuevo Expediente
+            </h1>
             <p className="text-muted-foreground">
               Crea un nuevo expediente de propiedad intelectual
             </p>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Progress Steps */}
+        {/* Progress Steps - Premium */}
         <WizardSteps
           steps={WIZARD_STEPS}
           currentStep={currentStep}
           onStepClick={(step) => step < currentStep && setCurrentStep(step)}
         />
 
-        {/* Content Area */}
-        <Card className="mt-6">
-          <CardContent className="p-6 md:p-8">
+        {/* Content Area - Glass Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <GlassCard className="mt-8 p-6 md:p-8" glowColor="primary">
             <AnimatePresence mode="wait">
               {/* Step 1: Type + Jurisdiction Combined */}
               {currentStep === 1 && (
@@ -274,15 +285,21 @@ export default function NewMatterPage() {
                 />
               )}
             </AnimatePresence>
-          </CardContent>
-        </Card>
+          </GlassCard>
+        </motion.div>
 
-        {/* Navigation Buttons */}
-        <div className="flex items-center justify-between mt-6">
+        {/* Navigation Buttons - Premium */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="flex items-center justify-between mt-8"
+        >
           <Button
             variant="outline"
             onClick={prevStep}
             disabled={currentStep === 1}
+            className="bg-white/70 backdrop-blur-sm hover:bg-white/90 border-white/60"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Anterior
@@ -292,6 +309,7 @@ export default function NewMatterPage() {
             <Button
               onClick={nextStep}
               disabled={!isStepValid(currentStep)}
+              className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-lg shadow-primary/30 transition-all hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5"
             >
               Continuar
               <ArrowRight className="h-4 w-4 ml-2" />
@@ -300,7 +318,7 @@ export default function NewMatterPage() {
             <Button
               onClick={handleSubmit}
               disabled={createMatter.isPending}
-              variant="default"
+              className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-500/30 transition-all hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5"
             >
               {createMatter.isPending ? (
                 <>
@@ -315,8 +333,8 @@ export default function NewMatterPage() {
               )}
             </Button>
           )}
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </GradientBackground>
   );
 }

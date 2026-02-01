@@ -146,24 +146,41 @@ export function DetailsForm({
         <p className="text-muted-foreground">Completa la información básica</p>
       </div>
 
-      {/* Number Preview */}
+      {/* Number Preview - HERO ELEMENT WOW */}
       {previewNumber && (
-        <div className="flex items-center gap-3 p-4 bg-primary/5 rounded-lg border border-primary/20 mb-6">
-          <Sparkles className="h-5 w-5 text-primary shrink-0" />
-          <div className="flex-1 min-w-0">
-            <p className="text-sm text-muted-foreground">Número de expediente</p>
-            {isGeneratingNumber ? (
-              <div className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm">Generando...</span>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 mb-6"
+        >
+          {/* Glow orbs */}
+          <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/30 rounded-full blur-3xl" />
+          <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-violet-500/20 rounded-full blur-3xl" />
+          
+          <div className="relative z-10 flex items-center gap-4">
+            {/* Icon premium */}
+            <div className="relative">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-primary via-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-primary/50">
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-white/25 to-transparent" />
+                <Sparkles className="h-7 w-7 text-white relative z-10" />
               </div>
-            ) : (
-              <p className="font-mono text-lg font-semibold text-primary truncate">
-                {previewNumber}
-              </p>
-            )}
+            </div>
+            
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-slate-400 mb-1">Número de expediente</p>
+              {isGeneratingNumber ? (
+                <div className="flex items-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin text-primary" />
+                  <span className="text-slate-300">Generando...</span>
+                </div>
+              ) : (
+                <p className="font-mono text-xl font-bold text-white truncate">
+                  {previewNumber}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Client Selector */}
@@ -275,28 +292,48 @@ export function DetailsForm({
         />
       </div>
 
-      {/* Options - NIVEL DIOS: Cards con estado visual */}
-      <div className="space-y-3 pt-4 border-t">
+      {/* Options - EFECTO WOW: Toggles con glow */}
+      <div className="space-y-4 pt-4 border-t border-slate-200/60">
         {/* Urgente Toggle */}
         <motion.div
-          whileHover={{ scale: 1.01 }}
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
           className={cn(
-            "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+            "relative flex items-center justify-between p-5 rounded-xl border-2 transition-all cursor-pointer overflow-hidden",
             data.is_urgent
-              ? "border-destructive/70 bg-destructive/5 shadow-md"
-              : "border-border hover:border-destructive/40 hover:bg-destructive/5"
+              ? "border-orange-500 bg-white shadow-[0_20px_50px_-12px_rgba(249,115,22,0.35)]"
+              : "border-white/60 bg-white/60 backdrop-blur-sm hover:bg-white/80 hover:border-orange-400/50 hover:shadow-lg"
           )}
           onClick={() => onChange({ is_urgent: !data.is_urgent })}
         >
-          <div className="flex items-center gap-3">
+          {/* Pulse glow when active */}
+          {data.is_urgent && (
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/10 via-transparent to-red-500/10" />
+            </div>
+          )}
+          
+          <div className="flex items-center gap-4 relative z-10">
+            {/* Icon with gradient */}
             <div className={cn(
-              "w-10 h-10 rounded-lg flex items-center justify-center transition-all",
-              data.is_urgent ? "bg-destructive text-destructive-foreground" : "bg-muted text-muted-foreground"
+              "w-12 h-12 rounded-xl flex items-center justify-center transition-all relative",
+              data.is_urgent 
+                ? "bg-gradient-to-br from-orange-500 via-red-500 to-rose-600 shadow-lg shadow-orange-500/40" 
+                : "bg-slate-100"
             )}>
-              <Zap className="h-5 w-5" />
+              {data.is_urgent && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-white/25 to-transparent" />
+              )}
+              <Zap className={cn(
+                "h-6 w-6 relative z-10",
+                data.is_urgent ? "text-white" : "text-muted-foreground"
+              )} />
             </div>
             <div>
-              <p className={cn("font-semibold", data.is_urgent && "text-destructive")}>
+              <p className={cn(
+                "font-semibold text-base",
+                data.is_urgent && "text-orange-700"
+              )}>
                 ⚠️ Urgente
               </p>
               <p className="text-sm text-muted-foreground">Marcar como expediente prioritario</p>
@@ -305,29 +342,50 @@ export function DetailsForm({
           <Switch
             checked={data.is_urgent}
             onCheckedChange={(checked) => onChange({ is_urgent: checked })}
+            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-orange-500 data-[state=checked]:to-red-500"
           />
         </motion.div>
 
         {/* Confidencial Toggle */}
         <motion.div
-          whileHover={{ scale: 1.01 }}
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
           className={cn(
-            "flex items-center justify-between p-4 rounded-xl border-2 transition-all cursor-pointer",
+            "relative flex items-center justify-between p-5 rounded-xl border-2 transition-all cursor-pointer overflow-hidden",
             data.is_confidential
-              ? "border-primary/70 bg-primary/5 shadow-md"
-              : "border-border hover:border-primary/40 hover:bg-primary/5"
+              ? "border-violet-500 bg-white shadow-[0_20px_50px_-12px_rgba(139,92,246,0.35)]"
+              : "border-white/60 bg-white/60 backdrop-blur-sm hover:bg-white/80 hover:border-violet-400/50 hover:shadow-lg"
           )}
           onClick={() => onChange({ is_confidential: !data.is_confidential })}
         >
-          <div className="flex items-center gap-3">
+          {/* Pulse glow when active */}
+          {data.is_confidential && (
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute inset-0 bg-gradient-to-r from-violet-500/10 via-transparent to-purple-500/10" />
+            </div>
+          )}
+          
+          <div className="flex items-center gap-4 relative z-10">
+            {/* Icon with gradient */}
             <div className={cn(
-              "w-10 h-10 rounded-lg flex items-center justify-center transition-all",
-              data.is_confidential ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+              "w-12 h-12 rounded-xl flex items-center justify-center transition-all relative",
+              data.is_confidential 
+                ? "bg-gradient-to-br from-violet-500 via-purple-500 to-indigo-600 shadow-lg shadow-violet-500/40" 
+                : "bg-slate-100"
             )}>
-              <Lock className="h-5 w-5" />
+              {data.is_confidential && (
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-white/25 to-transparent" />
+              )}
+              <Lock className={cn(
+                "h-6 w-6 relative z-10",
+                data.is_confidential ? "text-white" : "text-muted-foreground"
+              )} />
             </div>
             <div>
-              <p className={cn("font-semibold", data.is_confidential && "text-primary")}>
+              <p className={cn(
+                "font-semibold text-base",
+                data.is_confidential && "text-violet-700"
+              )}>
                 🔒 Confidencial
               </p>
               <p className="text-sm text-muted-foreground">Restringir acceso a usuarios autorizados</p>
@@ -336,6 +394,7 @@ export function DetailsForm({
           <Switch
             checked={data.is_confidential}
             onCheckedChange={(checked) => onChange({ is_confidential: checked })}
+            className="data-[state=checked]:bg-gradient-to-r data-[state=checked]:from-violet-500 data-[state=checked]:to-purple-600"
           />
         </motion.div>
       </div>
