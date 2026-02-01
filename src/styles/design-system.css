@@ -210,3 +210,99 @@
 .ip-btn-whatsapp:hover {
   background-color: hsl(var(--ip-action-whatsapp-hover));
 }
+
+/* ===== EFECTO WOW - ANIMACIONES PREMIUM ===== */
+
+/* Glow pulsante para elementos importantes */
+@keyframes glow-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.6);
+  }
+}
+
+/* Pulse lento para orbes de fondo */
+@keyframes pulse-slow {
+  0%, 100% { 
+    opacity: 0.3; 
+    transform: scale(1); 
+  }
+  50% { 
+    opacity: 0.5; 
+    transform: scale(1.05); 
+  }
+}
+
+/* Pulse sutil para urgencias */
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* Shimmer para líneas de progreso */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+/* Float para elementos destacados */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Glow pulse for danger/urgent elements */
+@keyframes glow-pulse-danger {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(239, 68, 68, 0.6);
+  }
+}
+
+/* Clases de utilidad para animaciones */
+.animate-glow-pulse { animation: glow-pulse 2s ease-in-out infinite; }
+.animate-glow-pulse-danger { animation: glow-pulse-danger 2s ease-in-out infinite; }
+.animate-pulse-slow { animation: pulse-slow 8s ease-in-out infinite; }
+.animate-pulse-subtle { animation: pulse-subtle 2s ease-in-out infinite; }
+.animate-shimmer { animation: shimmer 2s infinite; }
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+/* Animation delays */
+.animation-delay-1000 { animation-delay: 1s; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-3000 { animation-delay: 3s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* Transición premium por defecto */
+.transition-premium {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Glass effect premium */
+.glass-premium {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 
+    inset 0 1px 1px rgba(255,255,255,0.4),
+    inset 0 -1px 1px rgba(0,0,0,0.05),
+    0 25px 50px -12px rgba(0,0,0,0.1);
+}
+
+/* Colored glow shadows */
+.glow-primary { box-shadow: 0 20px 50px -12px rgba(59, 130, 246, 0.4); }
+.glow-success { box-shadow: 0 20px 50px -12px rgba(16, 185, 129, 0.4); }
+.glow-warning { box-shadow: 0 20px 50px -12px rgba(249, 115, 22, 0.4); }
+.glow-danger { box-shadow: 0 20px 50px -12px rgba(239, 68, 68, 0.4); }
+.glow-purple { box-shadow: 0 20px 50px -12px rgba(147, 51, 234, 0.4); }
+
+/* Hover glow effects */
+.hover-glow-primary:hover { box-shadow: 0 25px 60px -12px rgba(59, 130, 246, 0.5); }
+.hover-glow-success:hover { box-shadow: 0 25px 60px -12px rgba(16, 185, 129, 0.5); }
+.hover-glow-warning:hover { box-shadow: 0 25px 60px -12px rgba(249, 115, 22, 0.5); }
+.hover-glow-danger:hover { box-shadow: 0 25px 60px -12px rgba(239, 68, 68, 0.5); }
