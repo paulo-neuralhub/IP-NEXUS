@@ -57,6 +57,13 @@ export interface MatterV2 {
   client_instructions: string | null;
   tags: string[];
   custom_fields: Record<string, unknown>;
+  // Phase tracking
+  current_phase?: string;
+  phase_entered_at?: string;
+  phase_history?: Array<{ from_phase: string; to_phase: string; changed_at: string; changed_by?: string }>;
+  previous_phase?: string;
+  workflow_progress?: number;
+  // Metadata
   created_by: string | null;
   created_at: string;
   updated_at: string;
@@ -242,7 +249,14 @@ export function useMattersV2(filters?: MatterV2Filters) {
         internal_notes: m.notes,
         client_instructions: null,
         tags: m.tags || [],
-        custom_fields: {},
+        custom_fields: m.custom_fields || {},
+        // Phase tracking
+        current_phase: m.current_phase || 'F0',
+        phase_entered_at: m.phase_entered_at || m.phase_started_at,
+        phase_history: m.phase_history || [],
+        previous_phase: m.previous_phase,
+        workflow_progress: m.workflow_progress || 0,
+        // Metadata
         created_by: m.created_by,
         created_at: m.created_at,
         updated_at: m.updated_at,
@@ -352,7 +366,14 @@ export function useMatterV2(id: string) {
         internal_notes: m.notes || m.internal_notes,
         client_instructions: null,
         tags: m.tags || [],
-        custom_fields: {},
+        custom_fields: m.custom_fields || {},
+        // Phase tracking (direct columns in matters table)
+        current_phase: m.current_phase || 'F0',
+        phase_entered_at: m.phase_entered_at || m.phase_started_at,
+        phase_history: m.phase_history || [],
+        previous_phase: m.previous_phase,
+        workflow_progress: m.workflow_progress || 0,
+        // Metadata
         created_by: m.created_by,
         created_at: m.created_at,
         updated_at: m.updated_at,

@@ -92,9 +92,16 @@ export function useMatterPhase(matterId: string) {
       return result;
     },
     onSuccess: (data) => {
+      // Invalidate ALL related queries to refresh UI
       queryClient.invalidateQueries({ queryKey: ['matter', matterId] });
+      queryClient.invalidateQueries({ queryKey: ['matter-v2', matterId] });
       queryClient.invalidateQueries({ queryKey: ['matter-timeline', matterId] });
       queryClient.invalidateQueries({ queryKey: ['matters'] });
+      queryClient.invalidateQueries({ queryKey: ['matters-v2'] });
+      
+      // Force refetch to ensure UI updates immediately
+      queryClient.refetchQueries({ queryKey: ['matter-v2', matterId] });
+      
       toast.success(`Fase actualizada: ${data.from_phase} → ${data.to_phase}`);
     },
     onError: (error) => {

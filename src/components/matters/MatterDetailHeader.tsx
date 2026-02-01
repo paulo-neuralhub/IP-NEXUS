@@ -99,9 +99,9 @@ export function MatterDetailHeader({
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Get current phase from custom_fields or default
-  const currentPhase = (matter.custom_fields as any)?.current_phase || 'F0';
-  const phaseEnteredAt = (matter.custom_fields as any)?.phase_entered_at;
+  // Get current phase from direct matter fields (not custom_fields!)
+  const currentPhase = matter.current_phase || 'F0';
+  const phaseEnteredAt = matter.phase_entered_at;
 
   // Type and jurisdiction config
   const typeConfig = TYPE_CONFIG[matter.matter_type] || TYPE_CONFIG.trademark;
