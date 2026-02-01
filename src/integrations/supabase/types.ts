@@ -38187,6 +38187,7 @@ export type Database = {
           created_at: string | null
           description_en: string | null
           description_es: string | null
+          display_order: number | null
           icon: string | null
           id: string
           is_active: boolean | null
@@ -38194,6 +38195,7 @@ export type Database = {
           name_es: string
           parent_id: string | null
           position: number | null
+          right_type: string | null
           right_types: string[] | null
           updated_at: string | null
         }
@@ -38203,6 +38205,7 @@ export type Database = {
           created_at?: string | null
           description_en?: string | null
           description_es?: string | null
+          display_order?: number | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
@@ -38210,6 +38213,7 @@ export type Database = {
           name_es: string
           parent_id?: string | null
           position?: number | null
+          right_type?: string | null
           right_types?: string[] | null
           updated_at?: string | null
         }
@@ -38219,6 +38223,7 @@ export type Database = {
           created_at?: string | null
           description_en?: string | null
           description_es?: string | null
+          display_order?: number | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
@@ -38226,6 +38231,7 @@ export type Database = {
           name_es?: string
           parent_id?: string | null
           position?: number | null
+          right_type?: string | null
           right_types?: string[] | null
           updated_at?: string | null
         }
@@ -38386,6 +38392,117 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "service_catalog"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_templates: {
+        Row: {
+          applicable_phases: string[] | null
+          auto_deadlines: string[] | null
+          base_official_fee: number | null
+          base_professional_fee: number | null
+          category_id: string | null
+          code: string
+          created_at: string | null
+          currency: string | null
+          description_en: string | null
+          description_es: string | null
+          display_order: number | null
+          fee_notes: string | null
+          id: string
+          initial_phase: string
+          internal_notes: string | null
+          international_system: string | null
+          is_active: boolean | null
+          jurisdiction_id: string | null
+          name_en: string
+          name_es: string
+          optional_fields: string[] | null
+          phase_durations: Json | null
+          related_services: string[] | null
+          required_documents: string[] | null
+          required_fields: string[] | null
+          right_type: string
+          skippable_phases: string[] | null
+          tags: string[] | null
+          updated_at: string | null
+        }
+        Insert: {
+          applicable_phases?: string[] | null
+          auto_deadlines?: string[] | null
+          base_official_fee?: number | null
+          base_professional_fee?: number | null
+          category_id?: string | null
+          code: string
+          created_at?: string | null
+          currency?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          display_order?: number | null
+          fee_notes?: string | null
+          id?: string
+          initial_phase?: string
+          internal_notes?: string | null
+          international_system?: string | null
+          is_active?: boolean | null
+          jurisdiction_id?: string | null
+          name_en: string
+          name_es: string
+          optional_fields?: string[] | null
+          phase_durations?: Json | null
+          related_services?: string[] | null
+          required_documents?: string[] | null
+          required_fields?: string[] | null
+          right_type: string
+          skippable_phases?: string[] | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Update: {
+          applicable_phases?: string[] | null
+          auto_deadlines?: string[] | null
+          base_official_fee?: number | null
+          base_professional_fee?: number | null
+          category_id?: string | null
+          code?: string
+          created_at?: string | null
+          currency?: string | null
+          description_en?: string | null
+          description_es?: string | null
+          display_order?: number | null
+          fee_notes?: string | null
+          id?: string
+          initial_phase?: string
+          internal_notes?: string | null
+          international_system?: string | null
+          is_active?: boolean | null
+          jurisdiction_id?: string | null
+          name_en?: string
+          name_es?: string
+          optional_fields?: string[] | null
+          phase_durations?: Json | null
+          related_services?: string[] | null
+          required_documents?: string[] | null
+          required_fields?: string[] | null
+          right_type?: string
+          skippable_phases?: string[] | null
+          tags?: string[] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_templates_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_templates_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "jurisdictions"
             referencedColumns: ["id"]
           },
         ]
