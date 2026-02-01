@@ -12755,6 +12755,128 @@ export type Database = {
           },
         ]
       }
+      deadline_rules: {
+        Row: {
+          adjust_to_business_day: boolean | null
+          adjust_to_end_of_month: boolean | null
+          alert_days: number[] | null
+          applies_to_phase: string | null
+          business_day_direction: string | null
+          calendar_type: string | null
+          can_be_revived: boolean | null
+          category: string | null
+          code: string
+          consequence_if_missed: string | null
+          created_at: string | null
+          criticality: string
+          description: string | null
+          escalate_days_before: number | null
+          escalate_to_role: string | null
+          extension_requires_fee: boolean | null
+          extension_time_unit: string | null
+          extension_time_value: number | null
+          id: string
+          is_active: boolean | null
+          is_extendable: boolean | null
+          jurisdiction_id: string | null
+          legal_basis: string | null
+          legal_url: string | null
+          max_extensions: number | null
+          name_en: string
+          name_es: string | null
+          revival_period_days: number | null
+          revival_requires_petition: boolean | null
+          right_type: string | null
+          time_unit: string
+          time_value: number
+          trigger_event: string
+          trigger_field: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          adjust_to_business_day?: boolean | null
+          adjust_to_end_of_month?: boolean | null
+          alert_days?: number[] | null
+          applies_to_phase?: string | null
+          business_day_direction?: string | null
+          calendar_type?: string | null
+          can_be_revived?: boolean | null
+          category?: string | null
+          code: string
+          consequence_if_missed?: string | null
+          created_at?: string | null
+          criticality?: string
+          description?: string | null
+          escalate_days_before?: number | null
+          escalate_to_role?: string | null
+          extension_requires_fee?: boolean | null
+          extension_time_unit?: string | null
+          extension_time_value?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_extendable?: boolean | null
+          jurisdiction_id?: string | null
+          legal_basis?: string | null
+          legal_url?: string | null
+          max_extensions?: number | null
+          name_en: string
+          name_es?: string | null
+          revival_period_days?: number | null
+          revival_requires_petition?: boolean | null
+          right_type?: string | null
+          time_unit: string
+          time_value: number
+          trigger_event: string
+          trigger_field?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          adjust_to_business_day?: boolean | null
+          adjust_to_end_of_month?: boolean | null
+          alert_days?: number[] | null
+          applies_to_phase?: string | null
+          business_day_direction?: string | null
+          calendar_type?: string | null
+          can_be_revived?: boolean | null
+          category?: string | null
+          code?: string
+          consequence_if_missed?: string | null
+          created_at?: string | null
+          criticality?: string
+          description?: string | null
+          escalate_days_before?: number | null
+          escalate_to_role?: string | null
+          extension_requires_fee?: boolean | null
+          extension_time_unit?: string | null
+          extension_time_value?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_extendable?: boolean | null
+          jurisdiction_id?: string | null
+          legal_basis?: string | null
+          legal_url?: string | null
+          max_extensions?: number | null
+          name_en?: string
+          name_es?: string | null
+          revival_period_days?: number | null
+          revival_requires_petition?: boolean | null
+          right_type?: string | null
+          time_unit?: string
+          time_value?: number
+          trigger_event?: string
+          trigger_field?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "deadline_rules_jurisdiction_id_fkey"
+            columns: ["jurisdiction_id"]
+            isOneToOne: false
+            referencedRelation: "jurisdictions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       deadline_types: {
         Row: {
           category: string
@@ -26005,93 +26127,150 @@ export type Database = {
       }
       matter_deadlines: {
         Row: {
+          alert_days: number[] | null
+          alerts_enabled: boolean | null
           alerts_sent: Json | null
+          assigned_team: string | null
+          assigned_to: string | null
           auto_generated: boolean | null
+          category: string | null
           completed_at: string | null
           completed_by: string | null
+          completion_document_id: string | null
           completion_notes: string | null
           created_at: string | null
+          created_by: string | null
+          criticality: string | null
           deadline_date: string
           deadline_type: string
           description: string | null
+          escalated_at: string | null
+          escalated_to: string | null
           extended_by: string | null
           extension_count: number | null
           extension_reason: string | null
           google_event_id: string | null
           id: string
+          internal_notes: string | null
+          is_escalated: boolean | null
+          is_recurring: boolean | null
+          last_extended_date: string | null
           matter_id: string
+          max_extensions: number | null
           metadata: Json | null
           next_alert_date: string | null
+          next_recurrence_date: string | null
+          notes: string | null
           organization_id: string
           original_deadline: string | null
           outlook_event_id: string | null
           priority: string | null
+          recurrence_rule: string | null
           rule_code: string | null
           rule_id: string | null
           source: string | null
           status: string | null
+          tags: string[] | null
           task_id: string | null
           title: string
           trigger_date: string
           updated_at: string | null
         }
         Insert: {
+          alert_days?: number[] | null
+          alerts_enabled?: boolean | null
           alerts_sent?: Json | null
+          assigned_team?: string | null
+          assigned_to?: string | null
           auto_generated?: boolean | null
+          category?: string | null
           completed_at?: string | null
           completed_by?: string | null
+          completion_document_id?: string | null
           completion_notes?: string | null
           created_at?: string | null
+          created_by?: string | null
+          criticality?: string | null
           deadline_date: string
           deadline_type: string
           description?: string | null
+          escalated_at?: string | null
+          escalated_to?: string | null
           extended_by?: string | null
           extension_count?: number | null
           extension_reason?: string | null
           google_event_id?: string | null
           id?: string
+          internal_notes?: string | null
+          is_escalated?: boolean | null
+          is_recurring?: boolean | null
+          last_extended_date?: string | null
           matter_id: string
+          max_extensions?: number | null
           metadata?: Json | null
           next_alert_date?: string | null
+          next_recurrence_date?: string | null
+          notes?: string | null
           organization_id: string
           original_deadline?: string | null
           outlook_event_id?: string | null
           priority?: string | null
+          recurrence_rule?: string | null
           rule_code?: string | null
           rule_id?: string | null
           source?: string | null
           status?: string | null
+          tags?: string[] | null
           task_id?: string | null
           title: string
           trigger_date?: string
           updated_at?: string | null
         }
         Update: {
+          alert_days?: number[] | null
+          alerts_enabled?: boolean | null
           alerts_sent?: Json | null
+          assigned_team?: string | null
+          assigned_to?: string | null
           auto_generated?: boolean | null
+          category?: string | null
           completed_at?: string | null
           completed_by?: string | null
+          completion_document_id?: string | null
           completion_notes?: string | null
           created_at?: string | null
+          created_by?: string | null
+          criticality?: string | null
           deadline_date?: string
           deadline_type?: string
           description?: string | null
+          escalated_at?: string | null
+          escalated_to?: string | null
           extended_by?: string | null
           extension_count?: number | null
           extension_reason?: string | null
           google_event_id?: string | null
           id?: string
+          internal_notes?: string | null
+          is_escalated?: boolean | null
+          is_recurring?: boolean | null
+          last_extended_date?: string | null
           matter_id?: string
+          max_extensions?: number | null
           metadata?: Json | null
           next_alert_date?: string | null
+          next_recurrence_date?: string | null
+          notes?: string | null
           organization_id?: string
           original_deadline?: string | null
           outlook_event_id?: string | null
           priority?: string | null
+          recurrence_rule?: string | null
           rule_code?: string | null
           rule_id?: string | null
           source?: string | null
           status?: string | null
+          tags?: string[] | null
           task_id?: string | null
           title?: string
           trigger_date?: string
