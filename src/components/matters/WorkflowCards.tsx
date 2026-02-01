@@ -1,6 +1,6 @@
 // ============================================================
-// IP-NEXUS - Workflow Cards (L122)
-// Card-based workflow phases with better UX
+// IP-NEXUS - Workflow Cards (L122 + PROMPT 17)
+// Card-based workflow phases with advance functionality
 // ============================================================
 
 import { useState, useRef } from 'react';
@@ -37,6 +37,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+import { AdvancePhaseModal } from './AdvancePhaseModal';
 
 // Configuración de fases
 const PHASES_CONFIG = [
@@ -62,6 +63,7 @@ interface WorkflowCardsProps {
   currentPhase: string;
   phaseHistory?: PhaseHistoryEntry[];
   expedienteId: string;
+  matterReference?: string;
   tasksPerPhase?: Record<string, number>;
   phaseEnteredAt?: string;
   typeColor?: string;
@@ -73,12 +75,14 @@ export function WorkflowCards({
   currentPhase,
   phaseHistory = [],
   expedienteId,
+  matterReference = '',
   tasksPerPhase = {},
   phaseEnteredAt,
   typeColor = 'text-blue-600',
   onAdvancePhase,
   onPhaseClick
 }: WorkflowCardsProps) {
+  const [showAdvanceModal, setShowAdvanceModal] = useState(false);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   
@@ -355,9 +359,20 @@ export function WorkflowCards({
                 </DialogContent>
               </Dialog>
 
-              {currentIndex < PHASES_CONFIG.length - 1 && onAdvancePhase && (
-                <Button size="sm" onClick={onAdvancePhase}>
-                  <ArrowRight className="h-4 w-4 mr-2" />
+              {currentIndex < PHASES_CONFIG.length - 1 && (
+                <Button 
+                  size="sm" 
+                  onClick={() => setShowAdvanceModal(true)}
+                  className={cn(
+                    "gap-2",
+                    "bg-gradient-to-r from-primary to-blue-600",
+                    "hover:from-primary/90 hover:to-blue-600/90",
+                    "shadow-md shadow-primary/20",
+                    "transition-all duration-200",
+                    "hover:shadow-lg hover:scale-[1.02]"
+                  )}
+                >
+                  <ArrowRight className="h-4 w-4" />
                   Avanzar a {PHASES_CONFIG[currentIndex + 1]?.key}
                 </Button>
               )}
@@ -365,6 +380,15 @@ export function WorkflowCards({
           </div>
         </div>
       </CardContent>
+
+      {/* Modal de avance de fase */}
+      <AdvancePhaseModal
+        isOpen={showAdvanceModal}
+        onClose={() => setShowAdvanceModal(false)}
+        matterId={expedienteId}
+        matterReference={matterReference}
+        currentPhase={currentPhase}
+      />
     </Card>
   );
 }

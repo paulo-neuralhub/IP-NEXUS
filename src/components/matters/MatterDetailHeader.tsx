@@ -319,11 +319,9 @@ export function MatterDetailHeader({
         <WorkflowCards
           currentPhase={currentPhase}
           expedienteId={matter.id}
+          matterReference={matter.matter_number || matter.reference || ''}
           phaseEnteredAt={phaseEnteredAt}
           typeColor={typeConfig.textColor}
-          onAdvancePhase={() => {
-            toast.info('Funcionalidad de avanzar fase en desarrollo');
-          }}
           onPhaseClick={(phase) => {
             toast.info(`Click en fase ${phase}`);
           }}
