@@ -27396,6 +27396,89 @@ export type Database = {
           },
         ]
       }
+      matter_relationships: {
+        Row: {
+          created_at: string | null
+          created_by: string | null
+          effective_from: string | null
+          effective_until: string | null
+          id: string
+          inverse_relationship_type: string | null
+          is_bidirectional: boolean | null
+          notes: string | null
+          relationship_data: Json | null
+          relationship_date: string | null
+          relationship_type: string
+          source_matter_id: string
+          status: string | null
+          target_matter_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string | null
+          effective_until?: string | null
+          id?: string
+          inverse_relationship_type?: string | null
+          is_bidirectional?: boolean | null
+          notes?: string | null
+          relationship_data?: Json | null
+          relationship_date?: string | null
+          relationship_type: string
+          source_matter_id: string
+          status?: string | null
+          target_matter_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string | null
+          effective_until?: string | null
+          id?: string
+          inverse_relationship_type?: string | null
+          is_bidirectional?: boolean | null
+          notes?: string | null
+          relationship_data?: Json | null
+          relationship_date?: string | null
+          relationship_type?: string
+          source_matter_id?: string
+          status?: string | null
+          target_matter_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "matter_relationships_source_matter_id_fkey"
+            columns: ["source_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_relationships_source_matter_id_fkey"
+            columns: ["source_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_relationships_target_matter_id_fkey"
+            columns: ["target_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matter_deadline_summary"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_relationships_target_matter_id_fkey"
+            columns: ["target_matter_id"]
+            isOneToOne: false
+            referencedRelation: "matters"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       matter_sequences: {
         Row: {
           id: string
