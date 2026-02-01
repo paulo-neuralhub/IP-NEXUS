@@ -1,6 +1,6 @@
 // =============================================
 // COMPONENTE: Header
-// Header principal con badges de módulos
+// Header principal con badges de módulos + Dark Mode Toggle
 // =============================================
 
 import * as React from "react";
@@ -22,6 +22,7 @@ import { getInitials } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { NotificationBell } from "@/components/notifications";
 import { GlobalSearchTrigger } from "@/components/search";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -46,7 +47,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   return (
     <TooltipProvider>
-      <header className="sticky top-0 z-20 flex flex-col border-b border-border bg-background-card/95 backdrop-blur supports-[backdrop-filter]:bg-background-card/80">
+      <header className="sticky top-0 z-20 flex flex-col border-b border-border bg-background-card/95 backdrop-blur supports-[backdrop-filter]:bg-background-card/80 dark:bg-slate-900/95 dark:border-slate-700/50">
         {/* Main row */}
         <div className="flex h-14 items-center justify-between gap-3 px-4 sm:px-6">
           {/* Left: Mobile menu + Tenant info */}
@@ -84,12 +85,15 @@ export function Header({ onMenuClick }: HeaderProps) {
             <GlobalSearchTrigger className="max-w-md" />
           </div>
 
-          {/* Right: Notifications + User */}
+          {/* Right: Theme Toggle + Notifications + User */}
           <div className="flex items-center gap-2">
             {/* Mobile search button */}
             <div className="md:hidden">
               <GlobalSearchTrigger variant="compact" />
             </div>
+            
+            {/* Dark Mode Toggle */}
+            <ThemeToggle />
             
             {/* Notifications */}
             <NotificationBell />

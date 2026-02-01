@@ -2,6 +2,7 @@
 // IP-NEXUS - GRADIENT BACKGROUND COMPONENT
 // L133: Premium gradient mesh background with animated orbs
 // Creates the foundation for glassmorphism and WOW effect
+// Now with full dark mode support
 // ============================================================
 
 import { cn } from '@/lib/utils';
@@ -26,7 +27,12 @@ export function GradientBackground({
   const opacity = orbOpacity[variant];
 
   return (
-    <div className={cn("relative min-h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-background to-blue-50/30", className)}>
+    <div className={cn(
+      "relative min-h-screen overflow-hidden",
+      "bg-gradient-to-br from-slate-50 via-background to-blue-50/30",
+      "dark:from-slate-950 dark:via-slate-900 dark:to-slate-950",
+      className
+    )}>
       {/* Animated gradient orbs */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         {/* Blue orb - top right */}
@@ -34,6 +40,7 @@ export function GradientBackground({
           className={cn(
             "absolute -top-40 -right-40 w-[600px] h-[600px] rounded-full",
             "bg-gradient-to-br from-blue-400/60 via-blue-500/40 to-indigo-500/30",
+            "dark:from-blue-500/40 dark:via-blue-600/30 dark:to-indigo-600/20",
             "blur-[100px] animate-pulse-slow",
             opacity.blue
           )}
@@ -44,6 +51,7 @@ export function GradientBackground({
           className={cn(
             "absolute -bottom-40 -left-40 w-[500px] h-[500px] rounded-full",
             "bg-gradient-to-tr from-purple-500/50 via-violet-400/40 to-pink-400/30",
+            "dark:from-purple-600/40 dark:via-violet-500/30 dark:to-pink-500/20",
             "blur-[100px] animate-pulse-slow animation-delay-2000",
             opacity.purple
           )}
@@ -54,6 +62,7 @@ export function GradientBackground({
           className={cn(
             "absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full",
             "bg-gradient-to-br from-emerald-400/30 via-teal-400/20 to-cyan-400/20",
+            "dark:from-emerald-500/25 dark:via-teal-500/15 dark:to-cyan-500/15",
             "blur-[120px] animate-pulse-slow animation-delay-4000",
             opacity.emerald
           )}
@@ -88,22 +97,24 @@ export function GlassCard({
     warning: 'shadow-[0_20px_50px_-12px_rgba(249,115,22,0.25)]',
     danger: 'shadow-[0_20px_50px_-12px_rgba(239,68,68,0.25)]',
     purple: 'shadow-[0_20px_50px_-12px_rgba(147,51,234,0.25)]',
-    none: 'shadow-xl shadow-black/5',
+    none: 'shadow-xl shadow-black/5 dark:shadow-black/20',
   };
 
   return (
     <div
       className={cn(
-        // Glass effect base
+        // Glass effect base - light mode
         "bg-white/70 backdrop-blur-xl",
         "border border-white/60",
+        // Glass effect - dark mode
+        "dark:bg-slate-900/70 dark:border-slate-700/60",
         "rounded-2xl",
         // Inner glow effect
-        "ring-1 ring-white/30",
+        "ring-1 ring-white/30 dark:ring-white/10",
         // Shadow
         glowStyles[glowColor],
         // Hover effects
-        hover && "transition-all duration-300 hover:bg-white/80 hover:shadow-2xl hover:-translate-y-1",
+        hover && "transition-all duration-300 hover:bg-white/80 dark:hover:bg-slate-900/80 hover:shadow-2xl hover:-translate-y-1",
         className
       )}
     >

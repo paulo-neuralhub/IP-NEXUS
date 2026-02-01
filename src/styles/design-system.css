@@ -294,6 +294,16 @@
     0 25px 50px -12px rgba(0,0,0,0.1);
 }
 
+/* Dark mode glass */
+.dark .glass-premium {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    inset 0 1px 1px rgba(255,255,255,0.1),
+    inset 0 -1px 1px rgba(0,0,0,0.2),
+    0 25px 50px -12px rgba(0,0,0,0.4);
+}
+
 /* Colored glow shadows */
 .glow-primary { box-shadow: 0 20px 50px -12px rgba(59, 130, 246, 0.4); }
 .glow-success { box-shadow: 0 20px 50px -12px rgba(16, 185, 129, 0.4); }
@@ -306,3 +316,67 @@
 .hover-glow-success:hover { box-shadow: 0 25px 60px -12px rgba(16, 185, 129, 0.5); }
 .hover-glow-warning:hover { box-shadow: 0 25px 60px -12px rgba(249, 115, 22, 0.5); }
 .hover-glow-danger:hover { box-shadow: 0 25px 60px -12px rgba(239, 68, 68, 0.5); }
+
+/* ===== DARK MODE ENHANCEMENTS ===== */
+
+/* Dark mode background adjustments */
+.dark {
+  --ip-bg-primary: 224 71% 4%;
+  --ip-bg-card: 224 71% 8%;
+  --ip-text-primary: 213 31% 91%;
+  --ip-text-secondary: 215 20% 65%;
+  --ip-border-light: 217 33% 17%;
+}
+
+/* Dark mode orb colors - more vibrant */
+.dark .bg-blue-500\/20 { background-color: rgba(59, 130, 246, 0.3); }
+.dark .bg-purple-500\/15 { background-color: rgba(139, 92, 246, 0.25); }
+.dark .bg-emerald-500\/10 { background-color: rgba(16, 185, 129, 0.2); }
+
+/* Button micro-interactions */
+.btn-micro {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-micro:hover {
+  transform: translateY(-2px) scale(1.02);
+}
+.btn-micro:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Input focus glow */
+.input-glow:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+.dark .input-glow:focus {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Card breathing animation */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.005); }
+}
+.animate-breathe {
+  animation: breathe 4s ease-in-out infinite;
+}
+
+/* Skeleton shimmer for loading */
+.skeleton-shimmer {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted)) 0%,
+    hsl(var(--muted-foreground) / 0.1) 50%,
+    hsl(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Icon rotate on hover */
+.icon-rotate-hover {
+  transition: transform 0.3s ease;
+}
+.group:hover .icon-rotate-hover {
+  transform: rotate(12deg);
+}

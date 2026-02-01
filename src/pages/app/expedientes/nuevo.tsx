@@ -1,12 +1,13 @@
 // ============================================================
-// IP-NEXUS - New Matter Wizard Page (EFECTO WOW)
-// L133: 3-step wizard with premium glassmorphism and glow effects
+// IP-NEXUS - New Matter Wizard Page (EFECTO WOW + IMPACTO BRUTAL)
+// L133: 3-step wizard with premium glassmorphism, glow effects,
+//       dark mode support, and celebration animations
 // ============================================================
 
 import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, ArrowRight, Check, Loader2, Tag, FileText, Eye } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, Loader2, Tag, FileText, Eye, Sparkles } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
@@ -19,6 +20,7 @@ import {
 import { useGenerateInternalReference } from '@/hooks/use-internal-reference-config';
 import { Button } from '@/components/ui/button';
 import { GradientBackground, GlassCard } from '@/components/ui/GradientBackground';
+import { SuccessModal } from '@/components/ui/SuccessModal';
 import { usePageTitle } from '@/contexts/page-context';
 import {
   WizardSteps,
@@ -69,6 +71,10 @@ export default function NewMatterPage() {
   // Preview number state
   const [previewNumber, setPreviewNumber] = useState<string | null>(null);
   const [generatingNumber, setGeneratingNumber] = useState(false);
+  
+  // Success modal state
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [createdMatter, setCreatedMatter] = useState<{ id: string; reference: string } | null>(null);
 
   // Get selected client name for review
   const { data: selectedClient } = useQuery({
@@ -146,7 +152,7 @@ export default function NewMatterPage() {
     setDetailsData(prev => ({ ...prev, ...updates }));
   };
 
-  // Submit
+  // Submit with celebration
   const handleSubmit = async () => {
     try {
       // Generate final number
@@ -190,10 +196,10 @@ export default function NewMatterPage() {
         },
       });
 
-      toast.success('Expediente creado correctamente', {
-        description: `Número: ${matterNumber}`,
-      });
-      navigate(`/app/expedientes/${matter.id}`);
+      // Show success modal with confetti
+      setCreatedMatter({ id: matter.id, reference: matterNumber });
+      setShowSuccessModal(true);
+      
     } catch (error) {
       toast.error('Error al crear expediente', {
         description: error instanceof Error ? error.message : 'Error desconocido',
@@ -204,7 +210,7 @@ export default function NewMatterPage() {
   return (
     <GradientBackground variant="default">
       <div className="max-w-4xl mx-auto p-6 pb-24">
-        {/* Header with glass effect */}
+        {/* HERO Header with gradient text */}
         <motion.div 
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -214,15 +220,17 @@ export default function NewMatterPage() {
             variant="ghost"
             size="icon"
             onClick={() => navigate('/app/expedientes')}
-            className="bg-white/50 backdrop-blur-sm hover:bg-white/70"
+            className="bg-white/50 dark:bg-white/10 backdrop-blur-sm hover:bg-white/70 dark:hover:bg-white/20 transition-all duration-300 hover:scale-105"
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 bg-clip-text text-transparent">
+            {/* HERO Typography */}
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-slate-900 via-primary to-purple-600 dark:from-white dark:via-primary dark:to-purple-400 bg-clip-text text-transparent">
               Nuevo Expediente
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mt-1 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
               Crea un nuevo expediente de propiedad intelectual
             </p>
           </div>
@@ -235,7 +243,7 @@ export default function NewMatterPage() {
           onStepClick={(step) => step < currentStep && setCurrentStep(step)}
         />
 
-        {/* Content Area - Glass Card */}
+        {/* Content Area - Glass Card with step transitions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -245,50 +253,71 @@ export default function NewMatterPage() {
             <AnimatePresence mode="wait">
               {/* Step 1: Type + Jurisdiction Combined */}
               {currentStep === 1 && (
-                <TypeJurisdictionStep
+                <motion.div
                   key="step-1"
-                  types={matterTypes}
-                  selectedType={selectedType}
-                  onSelectType={setSelectedType}
-                  selectedJurisdictions={selectedJurisdictions}
-                  onSelectJurisdictions={setSelectedJurisdictions}
-                  isLoading={loadingTypes}
-                  singleJurisdiction={true}
-                />
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <TypeJurisdictionStep
+                    types={matterTypes}
+                    selectedType={selectedType}
+                    onSelectType={setSelectedType}
+                    selectedJurisdictions={selectedJurisdictions}
+                    onSelectJurisdictions={setSelectedJurisdictions}
+                    isLoading={loadingTypes}
+                    singleJurisdiction={true}
+                  />
+                </motion.div>
               )}
 
               {/* Step 2: Details Form */}
               {currentStep === 2 && (
-                <DetailsForm
+                <motion.div
                   key="step-2"
-                  data={detailsData}
-                  onChange={handleDetailsChange}
-                  matterType={selectedType}
-                  jurisdiction={selectedJurisdictions[0]}
-                  previewNumber={previewNumber || undefined}
-                  isGeneratingNumber={generatingNumber}
-                />
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <DetailsForm
+                    data={detailsData}
+                    onChange={handleDetailsChange}
+                    matterType={selectedType}
+                    jurisdiction={selectedJurisdictions[0]}
+                    previewNumber={previewNumber || undefined}
+                    isGeneratingNumber={generatingNumber}
+                  />
+                </motion.div>
               )}
 
               {/* Step 3: Review */}
               {currentStep === 3 && (
-                <ReviewStep
+                <motion.div
                   key="step-3"
-                  formData={{
-                    ...detailsData,
-                    client_name: selectedClient?.name || undefined,
-                  }}
-                  matterType={selectedType}
-                  matterTypeInfo={selectedTypeInfo}
-                  jurisdictions={selectedJurisdictions}
-                  previewNumber={previewNumber || undefined}
-                />
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <ReviewStep
+                    formData={{
+                      ...detailsData,
+                      client_name: selectedClient?.name || undefined,
+                    }}
+                    matterType={selectedType}
+                    matterTypeInfo={selectedTypeInfo}
+                    jurisdictions={selectedJurisdictions}
+                    previewNumber={previewNumber || undefined}
+                  />
+                </motion.div>
               )}
             </AnimatePresence>
           </GlassCard>
         </motion.div>
 
-        {/* Navigation Buttons - Premium */}
+        {/* Navigation Buttons - Premium with micro-animations */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -299,7 +328,7 @@ export default function NewMatterPage() {
             variant="outline"
             onClick={prevStep}
             disabled={currentStep === 1}
-            className="bg-white/70 backdrop-blur-sm hover:bg-white/90 border-white/60"
+            className="bg-white/70 dark:bg-white/10 backdrop-blur-sm hover:bg-white/90 dark:hover:bg-white/20 border-white/60 dark:border-white/20 transition-all duration-300 hover:scale-105 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Anterior
@@ -309,7 +338,7 @@ export default function NewMatterPage() {
             <Button
               onClick={nextStep}
               disabled={!isStepValid(currentStep)}
-              className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-lg shadow-primary/30 transition-all hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5"
+              className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-lg shadow-primary/30 transition-all duration-300 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5 hover:scale-105 active:scale-95"
             >
               Continuar
               <ArrowRight className="h-4 w-4 ml-2" />
@@ -318,7 +347,7 @@ export default function NewMatterPage() {
             <Button
               onClick={handleSubmit}
               disabled={createMatter.isPending}
-              className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-500/30 transition-all hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5"
+              className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 shadow-lg shadow-emerald-500/30 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/40 hover:-translate-y-0.5 hover:scale-105 active:scale-95"
             >
               {createMatter.isPending ? (
                 <>
@@ -335,6 +364,29 @@ export default function NewMatterPage() {
           )}
         </motion.div>
       </div>
+
+      {/* Success Modal with Confetti */}
+      <SuccessModal
+        isOpen={showSuccessModal}
+        onClose={() => setShowSuccessModal(false)}
+        title="¡Expediente Creado!"
+        reference={createdMatter?.reference}
+        description="Tu expediente está listo para gestionar"
+        primaryAction={{
+          label: 'Abrir expediente',
+          onClick: () => {
+            setShowSuccessModal(false);
+            navigate(`/app/expedientes/${createdMatter?.id}`);
+          },
+        }}
+        secondaryAction={{
+          label: 'Ver todos',
+          onClick: () => {
+            setShowSuccessModal(false);
+            navigate('/app/expedientes');
+          },
+        }}
+      />
     </GradientBackground>
   );
 }
