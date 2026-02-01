@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
-  ChevronLeft, ChevronRight, Save, Send, Check, 
-  AlertCircle, Building2, User, FileText, Image,
+  ChevronLeft, ChevronRight, Save, Send,
+  Building2, User, FileText, Image,
   List, DollarSign, FileCheck, Upload
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +21,9 @@ import { Step5Classification } from './steps/Step5Classification';
 import { Step6Documents } from './steps/Step6Documents';
 import { Step7Fees } from './steps/Step7Fees';
 import { Step8Review } from './steps/Step8Review';
+
+// Premium Stepper Component
+import { WizardStepper } from './WizardStepper';
 
 import { 
   useFilingApplication, 
@@ -354,89 +358,91 @@ export function FilingWizard() {
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      {/* Header */}
+      {/* Header - Premium */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold tracking-tight">
             {isEditing ? 'Editar Solicitud' : 'Nueva Solicitud de Registro'}
           </h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground mt-1">
             Completa los pasos para crear tu solicitud electrónica
           </p>
         </div>
-        <Button variant="outline" onClick={() => navigate('/app/filing')}>
-          <ChevronLeft className="mr-2 h-4 w-4" />
+        <Button variant="outline" onClick={() => navigate('/app/filing')} className="gap-2">
+          <ChevronLeft className="h-4 w-4" />
           Volver
         </Button>
       </div>
 
-      {/* Progress */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium">Paso {currentStep} de {STEPS.length}</span>
-              <span className="text-muted-foreground">{Math.round(progress)}% completado</span>
+      {/* Progress Card - Premium Stepper */}
+      <Card className="overflow-hidden border-2">
+        <CardContent className="pt-6 pb-4">
+          {/* Progress info bar */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <Badge variant="outline" className="text-xs font-semibold px-3 py-1">
+                Paso {currentStep} de {STEPS.length}
+              </Badge>
+              <span className="text-sm text-muted-foreground hidden sm:inline">
+                {STEPS[currentStep - 1].description}
+              </span>
             </div>
-            <Progress value={progress} className="h-2" />
-            
-            {/* Step indicators */}
-            <div className="flex justify-between mt-6">
-              {STEPS.map((step) => {
-                const Icon = step.icon;
-                const isActive = step.id === currentStep;
-                const isCompleted = step.id < currentStep;
-                
-                return (
-                  <div
-                    key={step.id}
-                    className={cn(
-                      "flex flex-col items-center gap-2 cursor-pointer transition-colors",
-                      isActive && "text-primary",
-                      isCompleted && "text-emerald-600",
-                      !isActive && !isCompleted && "text-muted-foreground"
-                    )}
-                    onClick={() => step.id < currentStep && setCurrentStep(step.id)}
-                  >
-                    <div className={cn(
-                      "w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors",
-                      isActive && "border-primary bg-primary/10",
-                      isCompleted && "border-emerald-600 bg-emerald-50",
-                      !isActive && !isCompleted && "border-muted-foreground/30"
-                    )}>
-                      {isCompleted ? (
-                        <Check className="h-5 w-5" />
-                      ) : (
-                        <Icon className="h-5 w-5" />
-                      )}
-                    </div>
-                    <span className="text-xs font-medium hidden md:block">
-                      {step.title}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
+            <span className="text-sm font-medium text-primary">
+              {Math.round(progress)}%
+            </span>
           </div>
+          
+          {/* Premium animated progress bar */}
+          <div className="relative h-2 w-full overflow-hidden rounded-full bg-muted mb-6">
+            <motion.div
+              className="h-full bg-gradient-to-r from-primary to-primary/80"
+              initial={{ width: 0 }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+            />
+          </div>
+          
+          {/* Premium Step indicators */}
+          <WizardStepper 
+            steps={STEPS} 
+            currentStep={currentStep} 
+            onStepClick={(step) => step < currentStep && setCurrentStep(step)} 
+          />
         </CardContent>
       </Card>
 
-      {/* Step Content */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            {(() => {
-              const Icon = STEPS[currentStep - 1].icon;
-              return <Icon className="h-5 w-5" />;
-            })()}
-            {STEPS[currentStep - 1].title}
-          </CardTitle>
-          <CardDescription>
-            {STEPS[currentStep - 1].description}
-          </CardDescription>
+      {/* Step Content - Premium Card */}
+      <Card className="border-2">
+        <CardHeader className="border-b bg-muted/30">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              {(() => {
+                const Icon = STEPS[currentStep - 1].icon;
+                return <Icon className="h-5 w-5 text-primary" />;
+              })()}
+            </div>
+            <div>
+              <CardTitle className="text-lg">
+                {STEPS[currentStep - 1].title}
+              </CardTitle>
+              <CardDescription>
+                {STEPS[currentStep - 1].description}
+              </CardDescription>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent>
-          {renderStep()}
+        <CardContent className="pt-6">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentStep}
+              initial={{ opacity: 0, x: 10 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -10 }}
+              transition={{ duration: 0.2 }}
+            >
+              {renderStep()}
+            </motion.div>
+          </AnimatePresence>
         </CardContent>
       </Card>
 

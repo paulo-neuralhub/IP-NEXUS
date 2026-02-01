@@ -28,14 +28,16 @@ interface Step4Props {
   errors: Record<string, string[]>;
 }
 
+import { TypeSelectionCard } from '../SelectionCard';
+
 const MARK_TYPE_CONFIG = [
   { value: 'word', label: 'Denominativa', icon: Type, description: 'Solo texto' },
   { value: 'figurative', label: 'Figurativa', icon: ImageIcon, description: 'Solo imagen' },
   { value: 'combined', label: 'Mixta', icon: Layers, description: 'Texto + imagen' },
   { value: 'sound', label: 'Sonora', icon: Music, description: 'Marca sonora' },
   { value: 'shape_3d', label: '3D', icon: Box, description: 'Tridimensional' },
-  { value: 'position', label: 'Posición', icon: Target, description: 'Ubicación específica' },
-  { value: 'pattern', label: 'Patrón', icon: Grid, description: 'Diseño repetitivo' },
+  { value: 'position', label: 'Posición', icon: Target, description: 'Ubicación' },
+  { value: 'pattern', label: 'Patrón', icon: Grid, description: 'Repetitivo' },
   { value: 'color', label: 'Color', icon: Palette, description: 'Color único' },
   { value: 'motion', label: 'Movimiento', icon: Play, description: 'Animación' },
   { value: 'hologram', label: 'Holograma', icon: Sparkles, description: 'Holográfica' },
@@ -103,34 +105,31 @@ export function Step4MarkDetails({ formData, updateFormData, errors }: Step4Prop
 
   return (
     <div className="space-y-6">
-      {/* Mark Type Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">Tipo de Marca</CardTitle>
+      {/* Mark Type Selection - Premium Grid */}
+      <Card className="border-2">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Layers className="h-4 w-4 text-primary" />
+            </div>
+            Tipo de Marca
+          </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {MARK_TYPE_CONFIG.map(type => {
               const isSelected = formData.mark_type === type.value;
               const Icon = type.icon;
               
               return (
-                <div
+                <TypeSelectionCard
                   key={type.value}
-                  className={cn(
-                    "p-3 rounded-lg border cursor-pointer transition-all text-center",
-                    isSelected 
-                      ? "border-primary bg-primary/5 ring-2 ring-primary" 
-                      : "hover:border-primary/50"
-                  )}
+                  isSelected={isSelected}
                   onClick={() => updateFormData({ mark_type: type.value as any })}
-                >
-                  <Icon className={cn(
-                    "h-5 w-5 mx-auto mb-1",
-                    isSelected ? "text-primary" : "text-muted-foreground"
-                  )} />
-                  <p className="text-xs font-medium">{type.label}</p>
-                </div>
+                  icon={<Icon className="h-5 w-5" />}
+                  label={type.label}
+                  description={type.description}
+                />
               );
             })}
           </div>
