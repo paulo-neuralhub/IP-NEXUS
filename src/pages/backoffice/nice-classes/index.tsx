@@ -332,11 +332,11 @@ function NiceClassDetail({ classNumber }: { classNumber: number }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Badge variant={classInfo.type === 'products' ? 'default' : 'secondary'}>
-              {classInfo.type === 'products' ? 'Productos' : 'Servicios'}
+            <Badge variant={classInfo.class_type === 'product' ? 'default' : 'secondary'}>
+              {classInfo.class_type === 'product' ? 'Productos' : 'Servicios'}
             </Badge>
-            {classInfo.wipo_version && (
-              <Badge variant="outline">WIPO {classInfo.wipo_version}</Badge>
+            {classInfo.version_id && (
+              <Badge variant="outline">v{classInfo.version_id}</Badge>
             )}
           </div>
         </div>

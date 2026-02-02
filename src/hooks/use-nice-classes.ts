@@ -1,22 +1,33 @@
 // ============================================================
 // IP-NEXUS - NICE CLASSES HOOK
 // Fetches Nice classes and products from Supabase
+// Uses actual DB schema types
 // ============================================================
 
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
+// Types matching actual DB schema
 export interface NiceClass {
-  id: number;
+  id: string;
   class_number: number;
-  type: string;
-  title_es: string;
+  class_type: string;
+  title_es: string | null;
   title_en: string;
-  description_es: string | null;
-  description_en: string | null;
+  explanatory_note_es: string | null;
+  explanatory_note_en: string | null;
+  includes_en: string[] | null;
+  includes_es: string[] | null;
+  excludes_en: string[] | null;
+  excludes_es: string[] | null;
+  version_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  last_reviewed_at: string | null;
+  reviewed_by: string | null;
   icon: string | null;
   color: string | null;
-  product_count: number | null;
+  notes: string | null;
 }
 
 export interface NiceProduct {
@@ -25,12 +36,13 @@ export interface NiceProduct {
   name_es: string;
   name_en: string | null;
   is_common: boolean;
+  is_active?: boolean;
   wipo_code: string | null;
 }
 
 export interface NiceClassWithProducts extends NiceClass {
   products: NiceProduct[];
-  category: 'products' | 'services';
+  category: 'product' | 'service' | 'products' | 'services';
 }
 
 export function useNiceClasses() {
@@ -43,7 +55,7 @@ export function useNiceClasses() {
         .order('class_number', { ascending: true });
       
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as NiceClass[];
     },
     staleTime: 1000 * 60 * 60, // 1 hour - data is static
   });
@@ -66,7 +78,7 @@ export function useNiceProducts(classNumber?: number) {
       
       const { data, error } = await query;
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as NiceProduct[];
     },
     staleTime: 1000 * 60 * 60, // 1 hour
   });
@@ -97,15 +109,15 @@ export function useNiceClassesWithProducts() {
       // Group products by class
       const productsByClass = (products || []).reduce((acc, p) => {
         if (!acc[p.class_number]) acc[p.class_number] = [];
-        acc[p.class_number].push(p);
+        acc[p.class_number].push(p as unknown as NiceProduct);
         return acc;
       }, {} as Record<number, NiceProduct[]>);
       
       // Combine
       return (classes || []).map(cls => ({
-        ...cls,
+        ...(cls as unknown as NiceClass),
         products: productsByClass[cls.class_number] || [],
-        category: cls.class_number <= 34 ? 'products' : 'services' as const,
+        category: cls.class_number <= 34 ? 'product' : 'service' as const,
       }));
     },
     staleTime: 1000 * 60 * 60, // 1 hour

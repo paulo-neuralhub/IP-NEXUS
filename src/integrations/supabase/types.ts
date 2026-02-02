@@ -31136,73 +31136,205 @@ export type Database = {
           },
         ]
       }
-      nice_classes: {
+      nice_class_items: {
         Row: {
+          alternate_names: string[] | null
           class_number: number
-          color: string | null
           created_at: string | null
-          description_en: string | null
-          description_es: string | null
-          icon: string | null
-          id: number
-          keywords_en: string[] | null
-          keywords_es: string[] | null
-          last_reviewed_at: string | null
-          notes: string | null
-          product_count: number | null
-          reviewed_by: string | null
-          title_en: string
-          title_es: string
-          type: string
-          wipo_version: string | null
+          id: string
+          is_generic_term: boolean | null
+          item_code: string
+          item_name_en: string
+          item_name_es: string | null
+          updated_at: string | null
+          version_id: string | null
         }
         Insert: {
+          alternate_names?: string[] | null
           class_number: number
-          color?: string | null
           created_at?: string | null
-          description_en?: string | null
-          description_es?: string | null
-          icon?: string | null
-          id?: number
-          keywords_en?: string[] | null
-          keywords_es?: string[] | null
-          last_reviewed_at?: string | null
-          notes?: string | null
-          product_count?: number | null
-          reviewed_by?: string | null
-          title_en: string
-          title_es: string
-          type: string
-          wipo_version?: string | null
+          id?: string
+          is_generic_term?: boolean | null
+          item_code: string
+          item_name_en: string
+          item_name_es?: string | null
+          updated_at?: string | null
+          version_id?: string | null
         }
         Update: {
+          alternate_names?: string[] | null
           class_number?: number
-          color?: string | null
           created_at?: string | null
-          description_en?: string | null
-          description_es?: string | null
-          icon?: string | null
-          id?: number
-          keywords_en?: string[] | null
-          keywords_es?: string[] | null
-          last_reviewed_at?: string | null
-          notes?: string | null
-          product_count?: number | null
-          reviewed_by?: string | null
-          title_en?: string
-          title_es?: string
-          type?: string
-          wipo_version?: string | null
+          id?: string
+          is_generic_term?: boolean | null
+          item_code?: string
+          item_name_en?: string
+          item_name_es?: string | null
+          updated_at?: string | null
+          version_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "nice_classes_reviewed_by_fkey"
-            columns: ["reviewed_by"]
+            foreignKeyName: "nice_class_items_class_number_fkey"
+            columns: ["class_number"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "nice_classes"
+            referencedColumns: ["class_number"]
+          },
+          {
+            foreignKeyName: "nice_class_items_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "nice_classification_versions"
             referencedColumns: ["id"]
           },
         ]
+      }
+      nice_classes: {
+        Row: {
+          class_number: number
+          class_type: string
+          color: string | null
+          created_at: string | null
+          excludes_en: string[] | null
+          excludes_es: string[] | null
+          explanatory_note_en: string | null
+          explanatory_note_es: string | null
+          icon: string | null
+          id: string
+          includes_en: string[] | null
+          includes_es: string[] | null
+          last_reviewed_at: string | null
+          notes: string | null
+          reviewed_by: string | null
+          title_en: string
+          title_es: string | null
+          updated_at: string | null
+          version_id: string | null
+        }
+        Insert: {
+          class_number: number
+          class_type: string
+          color?: string | null
+          created_at?: string | null
+          excludes_en?: string[] | null
+          excludes_es?: string[] | null
+          explanatory_note_en?: string | null
+          explanatory_note_es?: string | null
+          icon?: string | null
+          id?: string
+          includes_en?: string[] | null
+          includes_es?: string[] | null
+          last_reviewed_at?: string | null
+          notes?: string | null
+          reviewed_by?: string | null
+          title_en: string
+          title_es?: string | null
+          updated_at?: string | null
+          version_id?: string | null
+        }
+        Update: {
+          class_number?: number
+          class_type?: string
+          color?: string | null
+          created_at?: string | null
+          excludes_en?: string[] | null
+          excludes_es?: string[] | null
+          explanatory_note_en?: string | null
+          explanatory_note_es?: string | null
+          icon?: string | null
+          id?: string
+          includes_en?: string[] | null
+          includes_es?: string[] | null
+          last_reviewed_at?: string | null
+          notes?: string | null
+          reviewed_by?: string | null
+          title_en?: string
+          title_es?: string | null
+          updated_at?: string | null
+          version_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "nice_classes_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "nice_classification_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      nice_classification_versions: {
+        Row: {
+          edition: string
+          effective_date: string | null
+          id: string
+          imported_at: string | null
+          imported_by: string | null
+          is_active: boolean | null
+          notes: string | null
+          total_classes: number | null
+          total_items: number | null
+          version_number: string
+        }
+        Insert: {
+          edition: string
+          effective_date?: string | null
+          id?: string
+          imported_at?: string | null
+          imported_by?: string | null
+          is_active?: boolean | null
+          notes?: string | null
+          total_classes?: number | null
+          total_items?: number | null
+          version_number: string
+        }
+        Update: {
+          edition?: string
+          effective_date?: string | null
+          id?: string
+          imported_at?: string | null
+          imported_by?: string | null
+          is_active?: boolean | null
+          notes?: string | null
+          total_classes?: number | null
+          total_items?: number | null
+          version_number?: string
+        }
+        Relationships: []
+      }
+      nice_import_log: {
+        Row: {
+          class_number: number | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          imported_by: string | null
+          items_imported: number | null
+          raw_text: string | null
+          status: string | null
+        }
+        Insert: {
+          class_number?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          imported_by?: string | null
+          items_imported?: number | null
+          raw_text?: string | null
+          status?: string | null
+        }
+        Update: {
+          class_number?: number | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          imported_by?: string | null
+          items_imported?: number | null
+          raw_text?: string | null
+          status?: string | null
+        }
+        Relationships: []
       }
       nice_products: {
         Row: {
@@ -31280,13 +31412,6 @@ export type Database = {
           performed_by?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "nice_revision_log_class_number_fkey"
-            columns: ["class_number"]
-            isOneToOne: false
-            referencedRelation: "nice_classes"
-            referencedColumns: ["class_number"]
-          },
           {
             foreignKeyName: "nice_revision_log_performed_by_fkey"
             columns: ["performed_by"]
@@ -49789,6 +49914,21 @@ export type Database = {
             Args: { p_org_id: string; p_series_code?: string }
             Returns: string
           }
+      get_nice_class_item_count: {
+        Args: { p_class_number: number }
+        Returns: number
+      }
+      get_nice_statistics: {
+        Args: never
+        Returns: {
+          current_version: string
+          generic_terms: number
+          product_classes: number
+          service_classes: number
+          total_classes: number
+          total_items: number
+        }[]
+      }
       get_offices_with_plan_access: {
         Args: { p_plan: string }
         Returns: {
@@ -50250,14 +50390,21 @@ export type Database = {
         }[]
       }
       search_nice_items: {
-        Args: { p_class_numbers?: number[]; p_limit?: number; p_query: string }
+        Args: {
+          p_class_number?: number
+          p_class_type?: string
+          p_limit?: number
+          p_search_term: string
+        }
         Returns: {
-          basic_number: string
           class_number: number
           class_title: string
-          id: string
-          relevance: number
-          term: string
+          class_type: string
+          is_generic_term: boolean
+          item_code: string
+          item_id: string
+          item_name_en: string
+          similarity: number
         }[]
       }
       search_vienna_sections: {
@@ -50328,6 +50475,16 @@ export type Database = {
           p_user_id?: string
         }
         Returns: string
+      }
+      suggest_nice_classes: {
+        Args: { p_description: string; p_max_results?: number }
+        Returns: {
+          class_number: number
+          class_title: string
+          class_type: string
+          match_count: number
+          sample_items: string[]
+        }[]
       }
       sync_market_user_from_nexus: {
         Args: { p_auth_user_id: string; p_organization_id: string }

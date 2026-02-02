@@ -7,24 +7,30 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/auth-context';
 import { toast } from 'sonner';
 
-// Types
+// Types - matching actual DB schema with new columns
 export interface NiceClass {
-  id: number;
+  id: string;
   class_number: number;
-  type: 'products' | 'services';
-  title_es: string;
+  class_type: string;
+  title_es: string | null;
   title_en: string;
-  description_es: string | null;
-  description_en: string | null;
-  icon: string | null;
-  color: string | null;
-  keywords_es: string[] | null;
-  keywords_en: string[] | null;
+  explanatory_note_es: string | null;
+  explanatory_note_en: string | null;
+  includes_en: string[] | null;
+  includes_es: string[] | null;
+  excludes_en: string[] | null;
+  excludes_es: string[] | null;
+  version_id: string | null;
+  created_at: string | null;
+  updated_at: string | null;
+  // Admin fields
   last_reviewed_at: string | null;
   reviewed_by: string | null;
-  wipo_version: string | null;
+  icon: string | null;
+  color: string | null;
   notes: string | null;
-  product_count: number;
+  // Computed UI field
+  product_count?: number;
 }
 
 export interface NiceProduct {
@@ -65,7 +71,7 @@ export function useNiceStats() {
     queryFn: async (): Promise<NiceStats> => {
       const { data: classes, error: classError } = await supabase
         .from('nice_classes')
-        .select('class_number, last_reviewed_at, product_count');
+        .select('class_number, last_reviewed_at');
 
       if (classError) throw classError;
 
@@ -200,22 +206,22 @@ export function useUpdateNiceClass() {
   return useMutation({
     mutationFn: async ({ classNumber, updates }: { 
       classNumber: number; 
-      updates: Partial<Pick<NiceClass, 'notes' | 'wipo_version'>>;
+      updates: Partial<Pick<NiceClass, 'notes'>>;
     }) => {
       const { error } = await supabase
         .from('nice_classes')
-        .update(updates)
+        .update(updates as any)
         .eq('class_number', classNumber);
 
       if (error) throw error;
 
       // Log revision
-      await supabase.from('nice_revision_log').insert({
+      await supabase.from('nice_revision_log').insert([{
         class_number: classNumber,
         action: 'class_updated',
-        details: updates,
+        details: updates as any,
         performed_by: user?.id,
-      });
+      }]);
     },
     onSuccess: (_, { classNumber }) => {
       queryClient.invalidateQueries({ queryKey: ['nice-classes-admin'] });
@@ -408,8 +414,8 @@ export function useExportNiceClasses() {
     },
     onSuccess: ({ classes, products }) => {
       // Create CSV content
-      const classRows = classes?.map(c => 
-        `${c.class_number},"${c.title_es}","${c.title_en || ''}",${c.type},${c.product_count || 0},"${c.last_reviewed_at || ''}"`
+      const classRows = (classes as any[])?.map(c => 
+        `${c.class_number},"${c.title_es || ''}","${c.title_en || ''}",${c.class_type},0,"${c.last_reviewed_at || ''}"`
       ).join('\n');
       
       const classCSV = `class_number,title_es,title_en,type,product_count,last_reviewed_at\n${classRows}`;

@@ -10,18 +10,20 @@ import { supabase } from '@/integrations/supabase/client';
 // TYPES
 // ============================================================
 
+// Nice Class - matches actual DB schema
 export interface NiceClass {
-  id: number;
+  id: string;
   class_number: number;
-  type: string;
-  title_es: string;
-  title_en: string | null;
-  description_es: string | null;
-  description_en: string | null;
-  icon: string | null;
-  color: string | null;
-  product_count: number | null;
-  wipo_version: string | null;
+  class_type: string;
+  title_es: string | null;
+  title_en: string;
+  explanatory_note_es: string | null;
+  explanatory_note_en: string | null;
+  includes_en: string[] | null;
+  includes_es: string[] | null;
+  excludes_en: string[] | null;
+  excludes_es: string[] | null;
+  version_id: string | null;
 }
 
 export interface NiceProduct {
@@ -30,16 +32,20 @@ export interface NiceProduct {
   name_es: string;
   name_en: string | null;
   is_common: boolean;
+  is_active?: boolean;
   wipo_code: string | null;
 }
 
+// Nice search result - matches actual RPC return type
 export interface NiceSearchResult {
-  id: string;
+  item_id: string;
   class_number: number;
   class_title: string;
-  basic_number: string;
-  term: string;
-  relevance: number;
+  class_type: string;
+  item_code: string;
+  item_name_en: string;
+  is_generic_term: boolean;
+  similarity: number;
 }
 
 export interface IPCSection {
@@ -148,7 +154,7 @@ export function useNiceClasses() {
         .order('class_number', { ascending: true });
       
       if (error) throw error;
-      return data || [];
+      return (data || []) as unknown as NiceClass[];
     },
     staleTime: 1000 * 60 * 60, // 1 hour - data is static
   });
@@ -184,13 +190,12 @@ export function useNiceSearch(query: string, classNumbers?: number[]) {
       if (!query || query.length < 2) return [];
       
       const { data, error } = await supabase.rpc('search_nice_items', {
-        p_query: query,
-        p_class_numbers: classNumbers || null,
+        p_search_term: query,
         p_limit: 50,
       });
       
       if (error) throw error;
-      return (data || []) as NiceSearchResult[];
+      return (data || []) as unknown as NiceSearchResult[];
     },
     enabled: query.length >= 2,
     staleTime: 1000 * 60 * 5, // 5 minutes for search results
