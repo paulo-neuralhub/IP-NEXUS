@@ -47,20 +47,31 @@ import { ClientCommunicationsTab } from '@/components/clients/ClientCommunicatio
 import { ClientDocumentsTab } from '@/components/clients/ClientDocumentsTab';
 import { ClientTasksTab } from '@/components/clients/tabs/ClientTasksTab';
 import { ClientSettingsTab } from '@/components/clients/tabs/ClientSettingsTab';
+import { ClientGeneralTab } from '@/components/clients/tabs/ClientGeneralTab';
+import { ClientHoldersTab } from '@/components/clients/tabs/ClientHoldersTab';
 import { fromTable } from '@/lib/supabase';
 import { useOrganization } from '@/hooks/useOrganization';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface Client360PageProps {
   clientId: string;
 }
 
 export function Client360Page({ clientId }: Client360PageProps) {
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useClientDetail(clientId);
-  const { data: crmAccount } = useCRMAccount(clientId);
+  const { data: crmAccount, refetch: refetchCrmAccount } = useCRMAccount(clientId);
   const { data: contacts } = useCRMContacts({ account_id: clientId });
   const { data: matters } = useMattersV2({ client_id: clientId });
   const { organizationId } = useOrganization();
   const navigate = useNavigate();
+  
+  // Callback to refresh client data
+  const handleClientUpdate = () => {
+    queryClient.invalidateQueries({ queryKey: ['client-detail', clientId] });
+    queryClient.invalidateQueries({ queryKey: ['crm-account', organizationId, clientId] });
+    refetchCrmAccount();
+  };
 
   const [openEditCompany, setOpenEditCompany] = useState(false);
   const [openInternalNotes, setOpenInternalNotes] = useState(false);
@@ -383,130 +394,12 @@ export function Client360Page({ clientId }: Client360PageProps) {
                 </TabsTrigger>
               </TabsList>
 
-              {/* TAB: GENERAL */}
+              {/* TAB: GENERAL - usando el nuevo componente completo */}
               <TabsContent value="general" className="space-y-3">
-                <CollapsibleSection
-                  title="Datos de Empresa"
-                  icon={<Building2 className="w-4 h-4" />}
-                  actions={
-                    <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => setOpenEditCompany(true)}>
-                      <Edit className="w-3 h-3" />
-                    </Button>
-                  }
-                >
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-sm pt-2">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Nombre</span>
-                      <span className="font-medium">{client.display_name || client.company_name}</span>
-                    </div>
-                    {client.tax_id && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">CIF/NIF</span>
-                        <span className="font-medium font-mono">{client.tax_id}</span>
-                      </div>
-                    )}
-                    {client.email && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Email</span>
-                        <a href={`mailto:${client.email}`} className="font-medium text-primary hover:underline">
-                          {client.email}
-                        </a>
-                      </div>
-                    )}
-                    {client.phone && (
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">Teléfono</span>
-                        <a href={`tel:${client.phone}`} className="font-medium hover:underline">
-                          {client.phone}
-                        </a>
-                      </div>
-                    )}
-                    {client.address_line1 && (
-                      <div className="flex justify-between col-span-2">
-                        <span className="text-muted-foreground">Dirección</span>
-                        <span className="font-medium text-right">
-                          {client.address_line1}
-                          {client.city && `, ${client.city}`}
-                          {client.country && ` (${client.country})`}
-                        </span>
-                      </div>
-                    )}
-                    {crmAccount?.website && (
-                      <div className="flex justify-between col-span-2">
-                        <span className="text-muted-foreground">Web</span>
-                        <a 
-                          href={crmAccount.website.startsWith('http') ? crmAccount.website : `https://${crmAccount.website}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="font-medium text-primary hover:underline flex items-center gap-1"
-                        >
-                          <Globe className="w-3 h-3" />
-                          {crmAccount.website}
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  title="Resumen Financiero"
-                  icon={<Wallet className="w-4 h-4" />}
-                  defaultOpen={false}
-                >
-                  <div className="grid grid-cols-3 gap-4 pt-2">
-                    <div className="text-center p-3 bg-muted/30 rounded-lg">
-                      <p className="text-lg font-semibold">€0</p>
-                      <p className="text-xs text-muted-foreground">Facturado</p>
-                    </div>
-                    <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
-                      <p className="text-lg font-semibold text-emerald-600 dark:text-emerald-400">€0</p>
-                      <p className="text-xs text-muted-foreground">Cobrado</p>
-                    </div>
-                    <div className="text-center p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                      <p className="text-lg font-semibold text-amber-600 dark:text-amber-400">€0</p>
-                      <p className="text-xs text-muted-foreground">Pendiente</p>
-                    </div>
-                  </div>
-                </CollapsibleSection>
-
-                {alerts?.length > 0 && (
-                  <CollapsibleSection
-                    title="Alertas Activas"
-                    icon={<AlertTriangle className="w-4 h-4 text-amber-500" />}
-                    badge={<Badge variant="destructive" className="h-5 text-xs ml-2">{alerts.length}</Badge>}
-                  >
-                    <div className="pt-2">
-                      <ClientAlerts alerts={alerts} />
-                    </div>
-                  </CollapsibleSection>
-                )}
-
-                <CollapsibleSection
-                  title="Notas Internas"
-                  icon={<PenLine className="w-4 h-4" />}
-                  actions={
-                    <Button size="sm" variant="ghost" className="h-6 px-2" onClick={() => setOpenInternalNotes(true)}>
-                      <Edit className="w-3 h-3" />
-                    </Button>
-                  }
-                  defaultOpen={!!client.notes}
-                >
-                  <div className="pt-2">
-                    <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                      {client.notes || 'Sin notas internas.'}
-                    </p>
-                  </div>
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  title="Relaciones"
-                  icon={<Users className="w-4 h-4" />}
-                  defaultOpen={false}
-                >
-                  <div className="pt-2">
-                    <ClientRelationshipsSection clientId={clientId} />
-                  </div>
-                </CollapsibleSection>
+                <ClientGeneralTab 
+                  client={client} 
+                  onUpdate={handleClientUpdate}
+                />
               </TabsContent>
 
               {/* TAB: CONTACTS */}
@@ -575,11 +468,11 @@ export function Client360Page({ clientId }: Client360PageProps) {
                 )}
               </TabsContent>
 
-              {/* TAB: HOLDERS */}
+              {/* TAB: HOLDERS - usando el nuevo componente con edición */}
               <TabsContent value="holders" className="space-y-4">
-                <ClientHoldersPanel 
-                  accountId={clientId}
-                  accountName={client.display_name || client.company_name || 'Cliente'}
+                <ClientHoldersTab 
+                  clientId={clientId}
+                  clientName={client.display_name || client.company_name || 'Cliente'}
                 />
               </TabsContent>
 
