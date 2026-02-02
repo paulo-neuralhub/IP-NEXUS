@@ -145,37 +145,7 @@ export function EditClientCompanyDialog({
     }
   }, [open, initialValues, form]);
 
-  // Build metadata object with extended fields (address, contact, notes)
-  const buildMetadata = (values: FormValues) => {
-    const meta: Record<string, unknown> = {};
-    
-    // Contact info
-    if (values.email) meta.email = values.email;
-    if (values.phone) meta.phone = values.phone;
-    if (values.website) meta.website = values.website;
-    
-    // Address
-    if (values.address_line1 || values.city || values.country) {
-      meta.address = {
-        line1: values.address_line1 || null,
-        line2: values.address_line2 || null,
-        city: values.city || null,
-        state_province: values.state_province || null,
-        postal_code: values.postal_code || null,
-        country: values.country || null,
-      };
-    }
-    
-    // Notes
-    if (values.notes) meta.notes = values.notes;
-    
-    // Tax ID type
-    if (values.tax_id_type) meta.tax_id_type = values.tax_id_type;
-    
-    return Object.keys(meta).length > 0 ? meta : {};
-  };
-
-  // Create mutation
+  // Create mutation - save directly to columns (not metadata)
   const createMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       if (!currentOrganization?.id) throw new Error("No hay organización activa");
@@ -190,13 +160,25 @@ export function EditClientCompanyDialog({
           name: values.name,
           legal_name: values.legal_name || null,
           tax_id: values.tax_id || null,
+          tax_id_type: values.tax_id_type || "CIF",
           account_type: values.account_type || "direct",
           status: values.status || "active",
           tier: values.tier || "bronze",
           rating_stars: values.rating_stars || null,
           assigned_to: values.assigned_to || user.user?.id || null,
-          internal_notes: values.notes || null,
-          metadata: buildMetadata(values),
+          // Address columns
+          address_line1: values.address_line1 || null,
+          address_line2: values.address_line2 || null,
+          city: values.city || null,
+          state_province: values.state_province || null,
+          postal_code: values.postal_code || null,
+          country: values.country || "ES",
+          // Contact columns
+          email: values.email || null,
+          phone: values.phone || null,
+          website: values.website || null,
+          // Notes
+          notes: values.notes || null,
         })
         .select("id")
         .single();
@@ -215,7 +197,7 @@ export function EditClientCompanyDialog({
     },
   });
 
-  // Update mutation
+  // Update mutation - save directly to columns (not metadata)
   const updateMutation = useMutation({
     mutationFn: async (values: FormValues) => {
       if (!currentOrganization?.id || !clientId) throw new Error("Faltan datos");
@@ -227,13 +209,26 @@ export function EditClientCompanyDialog({
           name: values.name,
           legal_name: values.legal_name || null,
           tax_id: values.tax_id || null,
+          tax_id_type: values.tax_id_type || "CIF",
           account_type: values.account_type || "direct",
           status: values.status || "active",
           tier: values.tier || "bronze",
           rating_stars: values.rating_stars || null,
           assigned_to: values.assigned_to || null,
-          internal_notes: values.notes || null,
-          metadata: buildMetadata(values),
+          // Address columns
+          address_line1: values.address_line1 || null,
+          address_line2: values.address_line2 || null,
+          city: values.city || null,
+          state_province: values.state_province || null,
+          postal_code: values.postal_code || null,
+          country: values.country || "ES",
+          // Contact columns
+          email: values.email || null,
+          phone: values.phone || null,
+          website: values.website || null,
+          // Notes
+          notes: values.notes || null,
+          updated_at: new Date().toISOString(),
         })
         .eq("id", clientId)
         .eq("organization_id", currentOrganization.id);
