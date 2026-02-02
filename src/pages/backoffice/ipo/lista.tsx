@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Plus, Search, Settings, BarChart2, CheckCircle2, AlertTriangle, XCircle, Pause, Circle } from 'lucide-react';
+import { IPOSeedingPanel } from '@/components/ipo/IPOSeedingPanel';
 
 interface IPOOffice {
   id: string;
@@ -104,6 +105,9 @@ export default function OfficeListPage() {
           </Link>
         </Button>
       </div>
+
+      {/* Seeding Panel */}
+      <IPOSeedingPanel currentOfficeCount={offices.length} />
 
       {/* Filters */}
       <Card>
