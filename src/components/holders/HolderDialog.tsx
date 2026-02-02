@@ -31,7 +31,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Building2, User, MapPin, Phone, FileText } from 'lucide-react';
+import { Building2, User, MapPin, Phone, FileText, Briefcase } from 'lucide-react';
 import { useCreateHolder, useUpdateHolder } from '@/hooks/useHolders';
 import type { Holder, HolderFormData, HolderType } from '@/types/holders';
 import { HOLDER_TYPE_LABELS } from '@/types/holders';
@@ -185,7 +185,7 @@ export function HolderDialog({ open, onOpenChange, holder, onSuccess }: Props) {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <Tabs defaultValue="general" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="general" className="text-xs">
                   <Building2 className="h-3 w-3 mr-1" />
                   General
@@ -197,6 +197,10 @@ export function HolderDialog({ open, onOpenChange, holder, onSuccess }: Props) {
                 <TabsTrigger value="contact" className="text-xs">
                   <Phone className="h-3 w-3 mr-1" />
                   Contacto
+                </TabsTrigger>
+                <TabsTrigger value="corporate" className="text-xs">
+                  <Briefcase className="h-3 w-3 mr-1" />
+                  Corporativo
                 </TabsTrigger>
                 <TabsTrigger value="notes" className="text-xs">
                   <FileText className="h-3 w-3 mr-1" />
@@ -375,63 +379,75 @@ export function HolderDialog({ open, onOpenChange, holder, onSuccess }: Props) {
                   />
                 </div>
 
-                {!isIndividual && (
-                  <div className="grid grid-cols-3 gap-4">
+              </TabsContent>
+
+              {/* TAB: Corporate (solo empresas) */}
+              <TabsContent value="corporate" className="space-y-4 mt-4">
+                {isIndividual ? (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Briefcase className="h-8 w-8 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">Los datos corporativos no aplican para personas físicas</p>
+                  </div>
+                ) : (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={form.control}
+                        name="incorporation_country"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>País de constitución</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="España" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={form.control}
+                        name="incorporation_date"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Fecha de constitución</FormLabel>
+                            <FormControl>
+                              <Input {...field} type="date" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
                     <FormField
                       control={form.control}
                       name="incorporation_number"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Nº Registro Mercantil</FormLabel>
+                          <FormLabel>Número de registro mercantil</FormLabel>
                           <FormControl>
-                            <Input {...field} placeholder="Tomo, Folio, Hoja..." />
+                            <Input {...field} placeholder="Tomo X, Folio Y, Hoja Z, Inscripción N" />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                    <FormField
-                      control={form.control}
-                      name="incorporation_country"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>País constitución</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="España" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="incorporation_date"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Fecha constitución</FormLabel>
-                          <FormControl>
-                            <Input {...field} type="date" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-                )}
 
-                <FormField
-                  control={form.control}
-                  name="industry"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Sector/Industria</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="Tecnología, Alimentación, etc." />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="industry"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Sector/Industria</FormLabel>
+                          <FormControl>
+                            <Input {...field} placeholder="Tecnología, Alimentación, Moda..." />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </>
+                )}
               </TabsContent>
 
               {/* TAB: Address */}
