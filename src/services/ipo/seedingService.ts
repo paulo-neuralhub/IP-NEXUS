@@ -20,17 +20,17 @@ export class IPOSeedingService {
     const stats = { officesCreated: 0, officesSkipped: 0, errorsCount: 0 };
 
     try {
-      this.updateProgress('base_data', 0, ALL_IPO_SEED_DATA.length, 'Iniciando importación...');
+      this.updateProgress('base_data', 0, ALL_IPO_OFFICES.length, 'Iniciando importación...');
       
-      for (let i = 0; i < ALL_IPO_SEED_DATA.length; i++) {
-        const office = ALL_IPO_SEED_DATA[i] as any;
+      for (let i = 0; i < ALL_IPO_OFFICES.length; i++) {
+        const office = ALL_IPO_OFFICES[i];
         const result = await this.insertOffice(office);
         
         if (result.created) stats.officesCreated++;
         else if (result.skipped) stats.officesSkipped++;
         else stats.errorsCount++;
 
-        this.updateProgress('base_data', i + 1, ALL_IPO_SEED_DATA.length, `Procesando ${office.code}...`);
+        this.updateProgress('base_data', i + 1, ALL_IPO_OFFICES.length, `Procesando ${office.code}...`);
       }
 
       return { success: true, stats };
