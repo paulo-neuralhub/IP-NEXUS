@@ -389,6 +389,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "activities_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "activities_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "activities_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -564,6 +578,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "activity_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "activity_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "activity_log_organization_id_fkey"
@@ -1185,6 +1213,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ai_conversations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "ai_conversations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "ai_conversations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -1368,6 +1410,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_generated_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "ai_generated_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "ai_generated_documents_organization_id_fkey"
@@ -5959,6 +6015,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "call_logs_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "call_logs_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "call_logs_communication_id_fkey"
             columns: ["communication_id"]
             isOneToOne: false
@@ -5992,6 +6062,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "call_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "call_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "call_logs_organization_id_fkey"
@@ -6901,6 +6985,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "client_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "client_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "client_documents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -7101,6 +7199,138 @@ export type Database = {
             columns: ["parent_id"]
             isOneToOne: false
             referencedRelation: "client_folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_holders: {
+        Row: {
+          account_id: string
+          client_reference: string | null
+          created_at: string | null
+          created_by: string | null
+          effective_from: string | null
+          effective_to: string | null
+          holder_id: string
+          id: string
+          is_active: boolean | null
+          jurisdictions: string[] | null
+          notes: string | null
+          organization_id: string
+          relationship_type: string
+          representation_scope: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id: string
+          client_reference?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          holder_id: string
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          notes?: string | null
+          organization_id: string
+          relationship_type?: string
+          representation_scope?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string
+          client_reference?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          holder_id?: string
+          id?: string
+          is_active?: boolean | null
+          jurisdictions?: string[] | null
+          notes?: string | null
+          organization_id?: string
+          relationship_type?: string
+          representation_scope?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_holders_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_holders_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "client_holders_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "client_holders_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "client_holders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_holders_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "holders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_holders_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["holder_id"]
+          },
+          {
+            foreignKeyName: "client_holders_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["holder_id"]
+          },
+          {
+            foreignKeyName: "client_holders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_holders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "client_holders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -7427,6 +7657,20 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "client_tags_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "client_tags_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
             referencedColumns: ["account_id"]
           },
           {
@@ -8059,6 +8303,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "communications_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "communications_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "communications_organization_id_fkey"
@@ -8778,6 +9036,9 @@ export type Database = {
       crm_accounts: {
         Row: {
           account_manager_id: string | null
+          account_type: string | null
+          agent_jurisdictions: string[] | null
+          agent_license_number: string | null
           assigned_to: string | null
           churn_risk_level: string | null
           client_token: string | null
@@ -8791,6 +9052,7 @@ export type Database = {
           metadata: Json
           name: string
           organization_id: string
+          parent_account_id: string | null
           payment_classification_id: string | null
           rating_stars: number | null
           status: string
@@ -8801,6 +9063,9 @@ export type Database = {
         }
         Insert: {
           account_manager_id?: string | null
+          account_type?: string | null
+          agent_jurisdictions?: string[] | null
+          agent_license_number?: string | null
           assigned_to?: string | null
           churn_risk_level?: string | null
           client_token?: string | null
@@ -8814,6 +9079,7 @@ export type Database = {
           metadata?: Json
           name: string
           organization_id: string
+          parent_account_id?: string | null
           payment_classification_id?: string | null
           rating_stars?: number | null
           status?: string
@@ -8824,6 +9090,9 @@ export type Database = {
         }
         Update: {
           account_manager_id?: string | null
+          account_type?: string | null
+          agent_jurisdictions?: string[] | null
+          agent_license_number?: string | null
           assigned_to?: string | null
           churn_risk_level?: string | null
           client_token?: string | null
@@ -8837,6 +9106,7 @@ export type Database = {
           metadata?: Json
           name?: string
           organization_id?: string
+          parent_account_id?: string | null
           payment_classification_id?: string | null
           rating_stars?: number | null
           status?: string
@@ -8887,6 +9157,34 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_accounts_parent_account_id_fkey"
+            columns: ["parent_account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
           },
           {
             foreignKeyName: "crm_accounts_payment_classification_id_fkey"
@@ -9244,6 +9542,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_ai_recommendations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "crm_ai_recommendations_organization_id_fkey"
@@ -9780,6 +10092,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "crm_contacts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_contacts_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "crm_contacts_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
@@ -9949,6 +10275,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "crm_deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "crm_deals_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
@@ -10003,6 +10343,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "crm_deals_organization_id_fkey"
@@ -10339,6 +10693,20 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_interactions_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
             referencedColumns: ["account_id"]
           },
           {
@@ -11048,6 +11416,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "crm_tasks_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_tasks_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "crm_tasks_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
@@ -11255,6 +11637,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "crm_voip_calls_contact_id_fkey"
             columns: ["contact_id"]
             isOneToOne: false
@@ -11274,6 +11670,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "crm_voip_calls_organization_id_fkey"
@@ -12531,6 +12941,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "deals_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "deals_assigned_to_fkey"
             columns: ["assigned_to"]
             isOneToOne: false
@@ -12571,6 +12995,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "deals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "deals_organization_id_fkey"
@@ -13073,6 +13511,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "document_entities_linked_matter_id_fkey"
+            columns: ["linked_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "document_entities_linked_matter_id_fkey"
+            columns: ["linked_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "document_entities_organization_id_fkey"
@@ -13959,6 +14411,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "documents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -14407,6 +14873,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "email_ingestion_queue_matched_matter_id_fkey"
+            columns: ["matched_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "email_ingestion_queue_matched_matter_id_fkey"
+            columns: ["matched_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "email_ingestion_queue_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -14560,6 +15040,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "email_messages_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "email_messages_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "email_messages_communication_id_fkey"
             columns: ["communication_id"]
             isOneToOne: false
@@ -14593,6 +15087,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "email_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "email_messages_organization_id_fkey"
@@ -15172,6 +15680,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "expenses_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "expenses_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "expenses_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -15647,6 +16169,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "filing_applications_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "filing_applications_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "filing_applications_office_id_fkey"
@@ -16218,6 +16754,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "finance_portfolio_assets_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "finance_portfolio_assets_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "finance_portfolio_assets_portfolio_id_fkey"
@@ -16951,6 +17501,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "generated_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "generated_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "generated_documents_organization_id_fkey"
@@ -18247,6 +18811,158 @@ export type Database = {
         }
         Relationships: []
       }
+      holders: {
+        Row: {
+          address_line1: string | null
+          address_line2: string | null
+          city: string | null
+          code: string | null
+          country: string | null
+          created_at: string | null
+          created_by: string | null
+          email: string | null
+          fax: string | null
+          first_name: string | null
+          holder_type: string
+          id: string
+          incorporation_country: string | null
+          incorporation_date: string | null
+          incorporation_number: string | null
+          industry: string | null
+          industry_codes: string[] | null
+          internal_notes: string | null
+          is_active: boolean | null
+          last_name: string | null
+          legal_name: string
+          notes: string | null
+          notification_address: Json | null
+          organization_id: string
+          phone: string | null
+          postal_code: string | null
+          preferred_language: string | null
+          primary_contact_email: string | null
+          primary_contact_name: string | null
+          primary_contact_phone: string | null
+          primary_contact_position: string | null
+          state_province: string | null
+          tax_country: string | null
+          tax_id: string | null
+          tax_id_type: string | null
+          trade_name: string | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          code?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          email?: string | null
+          fax?: string | null
+          first_name?: string | null
+          holder_type?: string
+          id?: string
+          incorporation_country?: string | null
+          incorporation_date?: string | null
+          incorporation_number?: string | null
+          industry?: string | null
+          industry_codes?: string[] | null
+          internal_notes?: string | null
+          is_active?: boolean | null
+          last_name?: string | null
+          legal_name: string
+          notes?: string | null
+          notification_address?: Json | null
+          organization_id: string
+          phone?: string | null
+          postal_code?: string | null
+          preferred_language?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          primary_contact_position?: string | null
+          state_province?: string | null
+          tax_country?: string | null
+          tax_id?: string | null
+          tax_id_type?: string | null
+          trade_name?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address_line1?: string | null
+          address_line2?: string | null
+          city?: string | null
+          code?: string | null
+          country?: string | null
+          created_at?: string | null
+          created_by?: string | null
+          email?: string | null
+          fax?: string | null
+          first_name?: string | null
+          holder_type?: string
+          id?: string
+          incorporation_country?: string | null
+          incorporation_date?: string | null
+          incorporation_number?: string | null
+          industry?: string | null
+          industry_codes?: string[] | null
+          internal_notes?: string | null
+          is_active?: boolean | null
+          last_name?: string | null
+          legal_name?: string
+          notes?: string | null
+          notification_address?: Json | null
+          organization_id?: string
+          phone?: string | null
+          postal_code?: string | null
+          preferred_language?: string | null
+          primary_contact_email?: string | null
+          primary_contact_name?: string | null
+          primary_contact_phone?: string | null
+          primary_contact_position?: string | null
+          state_province?: string | null
+          tax_country?: string | null
+          tax_id?: string | null
+          tax_id_type?: string | null
+          trade_name?: string | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "holders_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "holders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "holders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "holders_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       holiday_calendars: {
         Row: {
           country_code: string
@@ -18687,6 +19403,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "import_review_queue_organization_id_fkey"
@@ -19504,6 +20234,20 @@ export type Database = {
             referencedRelation: "matters"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "invoice_items_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "invoice_items_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
         ]
       }
       invoice_payments: {
@@ -19964,6 +20708,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "invoices_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "invoices_organization_id_fkey"
@@ -23849,6 +24607,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "legalops_ai_interactions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "legalops_ai_interactions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "legalops_ai_interactions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -25573,6 +26345,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_activity_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_activity_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_activity_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -25665,6 +26451,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_comments_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_comments_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "matter_comments_organization_id_fkey"
@@ -25807,6 +26607,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_costs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_costs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "matter_costs_official_fee_id_fkey"
@@ -26026,6 +26840,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_deadlines_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_deadlines_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_deadlines_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -26207,6 +27035,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_documents_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -26307,6 +27149,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_events_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_events_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_events_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -26379,6 +27235,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_family_relations_child_matter_id_fkey"
+            columns: ["child_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_family_relations_child_matter_id_fkey"
+            columns: ["child_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_family_relations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -26412,6 +27282,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_family_relations_parent_matter_id_fkey"
+            columns: ["parent_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_family_relations_parent_matter_id_fkey"
+            columns: ["parent_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
         ]
       }
@@ -26613,6 +27497,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_filings_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_filings_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_filings_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -26703,6 +27601,20 @@ export type Database = {
             referencedRelation: "matters"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "matter_jurisdiction_ep_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_ep_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
         ]
       }
       matter_jurisdiction_es: {
@@ -26753,6 +27665,20 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_es_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_es_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
         ]
       }
@@ -26810,6 +27736,20 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_euipo_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_euipo_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
         ]
       }
@@ -26886,6 +27826,20 @@ export type Database = {
             referencedRelation: "matters"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "matter_jurisdiction_us_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_us_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
         ]
       }
       matter_jurisdiction_wipo: {
@@ -26942,6 +27896,20 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_wipo_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_jurisdiction_wipo_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
         ]
       }
@@ -27026,11 +27994,13 @@ export type Database = {
           external_name_local: string | null
           external_phone: string | null
           filing_id: string | null
+          holder_id: string | null
           id: string
           inventor_id_number: string | null
           inventor_nationality: string | null
           inventor_residence: string | null
           is_active: boolean | null
+          is_current: boolean | null
           is_primary: boolean | null
           jurisdiction: string | null
           matter_id: string
@@ -27046,10 +28016,14 @@ export type Database = {
           poa_expiry: string | null
           poa_reference: string | null
           poa_type: string | null
+          registration_date: string | null
+          registration_reference: string | null
           role_detail: string | null
+          share_percentage: number | null
           sort_order: number | null
           source_relationship_id: string | null
           source_type: string
+          supporting_document_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -27071,11 +28045,13 @@ export type Database = {
           external_name_local?: string | null
           external_phone?: string | null
           filing_id?: string | null
+          holder_id?: string | null
           id?: string
           inventor_id_number?: string | null
           inventor_nationality?: string | null
           inventor_residence?: string | null
           is_active?: boolean | null
+          is_current?: boolean | null
           is_primary?: boolean | null
           jurisdiction?: string | null
           matter_id: string
@@ -27091,10 +28067,14 @@ export type Database = {
           poa_expiry?: string | null
           poa_reference?: string | null
           poa_type?: string | null
+          registration_date?: string | null
+          registration_reference?: string | null
           role_detail?: string | null
+          share_percentage?: number | null
           sort_order?: number | null
           source_relationship_id?: string | null
           source_type?: string
+          supporting_document_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -27116,11 +28096,13 @@ export type Database = {
           external_name_local?: string | null
           external_phone?: string | null
           filing_id?: string | null
+          holder_id?: string | null
           id?: string
           inventor_id_number?: string | null
           inventor_nationality?: string | null
           inventor_residence?: string | null
           is_active?: boolean | null
+          is_current?: boolean | null
           is_primary?: boolean | null
           jurisdiction?: string | null
           matter_id?: string
@@ -27136,10 +28118,14 @@ export type Database = {
           poa_expiry?: string | null
           poa_reference?: string | null
           poa_type?: string | null
+          registration_date?: string | null
+          registration_reference?: string | null
           role_detail?: string | null
+          share_percentage?: number | null
           sort_order?: number | null
           source_relationship_id?: string | null
           source_type?: string
+          supporting_document_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -27172,6 +28158,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_parties_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "holders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["holder_id"]
+          },
+          {
+            foreignKeyName: "matter_parties_holder_id_fkey"
+            columns: ["holder_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["holder_id"]
+          },
+          {
             foreignKeyName: "matter_parties_matter_id_fkey"
             columns: ["matter_id"]
             isOneToOne: false
@@ -27184,6 +28191,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_parties_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "matter_parties_organization_id_fkey"
@@ -27211,6 +28232,13 @@ export type Database = {
             columns: ["source_relationship_id"]
             isOneToOne: false
             referencedRelation: "client_relationships"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_parties_supporting_document_id_fkey"
+            columns: ["supporting_document_id"]
+            isOneToOne: false
+            referencedRelation: "matter_documents"
             referencedColumns: ["id"]
           },
         ]
@@ -27336,6 +28364,20 @@ export type Database = {
             referencedRelation: "matters"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "matter_patent_details_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_patent_details_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
         ]
       }
       matter_phase_data: {
@@ -27409,6 +28451,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_phase_data_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "matter_phase_data_organization_id_fkey"
@@ -27505,6 +28561,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_phase_history_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_phase_history_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_phase_history_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -27595,6 +28665,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_relationships_source_matter_id_fkey"
+            columns: ["source_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_relationships_source_matter_id_fkey"
+            columns: ["source_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_relationships_target_matter_id_fkey"
             columns: ["target_matter_id"]
             isOneToOne: false
@@ -27607,6 +28691,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_relationships_target_matter_id_fkey"
+            columns: ["target_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_relationships_target_matter_id_fkey"
+            columns: ["target_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
         ]
       }
@@ -27754,6 +28852,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_tasks_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_tasks_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_tasks_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -27885,6 +28997,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_timeline_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_timeline_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_timeline_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -28000,6 +29126,20 @@ export type Database = {
             isOneToOne: true
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matter_trademark_details_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_trademark_details_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: true
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
         ]
       }
@@ -28166,6 +29306,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matter_valuations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matter_valuations_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matter_valuations_portfolio_valuation_id_fkey"
             columns: ["portfolio_valuation_id"]
             isOneToOne: false
@@ -28234,6 +29388,7 @@ export type Database = {
           phase_started_at: string | null
           portfolio_id: string | null
           previous_phase: string | null
+          primary_holder_id: string | null
           priority_country: string | null
           priority_date: string | null
           priority_number: string | null
@@ -28320,6 +29475,7 @@ export type Database = {
           phase_started_at?: string | null
           portfolio_id?: string | null
           previous_phase?: string | null
+          primary_holder_id?: string | null
           priority_country?: string | null
           priority_date?: string | null
           priority_number?: string | null
@@ -28406,6 +29562,7 @@ export type Database = {
           phase_started_at?: string | null
           portfolio_id?: string | null
           previous_phase?: string | null
+          primary_holder_id?: string | null
           priority_country?: string | null
           priority_date?: string | null
           priority_number?: string | null
@@ -28446,6 +29603,20 @@ export type Database = {
             columns: ["account_id"]
             isOneToOne: false
             referencedRelation: "crm_client_360_view"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "matters_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "matters_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
             referencedColumns: ["account_id"]
           },
           {
@@ -28491,6 +29662,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "matters_family_root_id_fkey"
+            columns: ["family_root_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "matters_family_root_id_fkey"
+            columns: ["family_root_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "matters_holder_id_fkey"
             columns: ["holder_id"]
             isOneToOne: false
@@ -28531,6 +29716,27 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "portfolios"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_primary_holder_id_fkey"
+            columns: ["primary_holder_id"]
+            isOneToOne: false
+            referencedRelation: "holders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "matters_primary_holder_id_fkey"
+            columns: ["primary_holder_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["holder_id"]
+          },
+          {
+            foreignKeyName: "matters_primary_holder_id_fkey"
+            columns: ["primary_holder_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["holder_id"]
           },
           {
             foreignKeyName: "matters_responsible_user_id_fkey"
@@ -29830,6 +31036,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "monitored_deadlines_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "monitored_deadlines_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "monitored_deadlines_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -30635,6 +31855,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "office_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "office_documents_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "office_documents_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
@@ -30871,6 +32105,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "office_import_review_queue_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "office_import_review_queue_reviewed_by_fkey"
@@ -31132,6 +32380,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "office_request_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "office_request_logs_tenant_id_fkey"
@@ -33539,6 +34801,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "portal_file_access_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "portal_file_access_log_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "portal_file_access_log_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -33647,6 +34923,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "portal_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "portal_messages_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "portal_messages_parent_id_fkey"
@@ -34383,6 +35673,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "predictive_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "predictive_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "predictive_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -34786,6 +36090,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "provisions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "provisions_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "provisions_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -34941,6 +36259,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_items_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "quote_items_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "quote_items_official_fee_id_fkey"
@@ -35108,6 +36440,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quotes_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "quotes_generated_matter_id_fkey"
+            columns: ["generated_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "quotes_organization_id_fkey"
@@ -35736,6 +37082,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "renewal_schedule_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "renewal_schedule_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "renewal_schedule_organization_id_fkey"
@@ -38480,6 +39840,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "signature_requests_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "signature_requests_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "signature_requests_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -38716,6 +40090,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "smart_tasks_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "smart_tasks_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "smart_tasks_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -38844,6 +40232,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "spider_alerts_organization_id_fkey"
@@ -41869,6 +43271,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "telephony_usage_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "telephony_usage_logs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "telephony_usage_logs_tenant_id_fkey"
             columns: ["tenant_id"]
             isOneToOne: false
@@ -43153,6 +44569,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "time_entries_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "time_entries_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "time_entries_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -43245,6 +44675,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trademark_visuals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "trademark_visuals_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "trademark_visuals_organization_id_fkey"
@@ -43679,6 +45123,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_presence_current_matter_id_fkey"
+            columns: ["current_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "user_presence_current_matter_id_fkey"
+            columns: ["current_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "user_presence_organization_id_fkey"
@@ -44880,6 +46338,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "watch_results_related_matter_id_fkey"
+            columns: ["related_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "watch_results_related_matter_id_fkey"
+            columns: ["related_matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "watch_results_reviewed_by_fkey"
             columns: ["reviewed_by"]
             isOneToOne: false
@@ -45007,6 +46479,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "watchlists_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "watchlists_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "watchlists_organization_id_fkey"
@@ -46302,6 +47788,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "workflow_runs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "workflow_runs_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "workflow_runs_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -47267,6 +48767,20 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "spider_alerts_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
+          },
+          {
             foreignKeyName: "spider_alerts_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -47309,6 +48823,59 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      v_client_holders_summary: {
+        Row: {
+          account_id: string | null
+          account_name: string | null
+          account_type: string | null
+          active_matters: number | null
+          holder_country: string | null
+          holder_id: string | null
+          holder_name: string | null
+          is_active: boolean | null
+          relationship_type: string | null
+          total_matters: number | null
+        }
+        Relationships: []
+      }
+      v_matter_ownership_history: {
+        Row: {
+          effective_from: string | null
+          effective_to: string | null
+          is_current: boolean | null
+          matter_id: string | null
+          notes: string | null
+          party_name: string | null
+          party_role: string | null
+          reference: string | null
+          registration_date: string | null
+          registration_reference: string | null
+          share_percentage: number | null
+          title: string | null
+        }
+        Relationships: []
+      }
+      v_matters_with_holders: {
+        Row: {
+          account_id: string | null
+          account_name: string | null
+          account_type: string | null
+          effective_from: string | null
+          effective_to: string | null
+          holder_country: string | null
+          holder_id: string | null
+          holder_name: string | null
+          is_primary: boolean | null
+          matter_id: string | null
+          matter_type: string | null
+          party_role: string | null
+          reference: string | null
+          share_percentage: number | null
+          status: string | null
+          title: string | null
+        }
+        Relationships: []
       }
       v_voip_calls_with_contact: {
         Row: {
@@ -47379,6 +48946,20 @@ export type Database = {
             referencedColumns: ["account_id"]
           },
           {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_client_holders_summary"
+            referencedColumns: ["account_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_account_id_fkey"
+            columns: ["account_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["account_id"]
+          },
+          {
             foreignKeyName: "crm_voip_calls_contact_id_fkey"
             columns: ["contact_id"]
             isOneToOne: false
@@ -47398,6 +48979,20 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "matters"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matter_ownership_history"
+            referencedColumns: ["matter_id"]
+          },
+          {
+            foreignKeyName: "crm_voip_calls_matter_id_fkey"
+            columns: ["matter_id"]
+            isOneToOne: false
+            referencedRelation: "v_matters_with_holders"
+            referencedColumns: ["matter_id"]
           },
           {
             foreignKeyName: "crm_voip_calls_organization_id_fkey"
@@ -47963,6 +49558,10 @@ export type Database = {
         Args: { p_organization_id: string }
         Returns: string
       }
+      generate_holder_code: {
+        Args: { p_organization_id: string }
+        Returns: string
+      }
       generate_internal_reference: {
         Args: {
           p_client_code?: string
@@ -48085,6 +49684,16 @@ export type Database = {
       get_inverse_relationship_type: {
         Args: { rel_type: string }
         Returns: string
+      }
+      get_matter_current_holders: {
+        Args: { p_matter_id: string }
+        Returns: {
+          holder_id: string
+          holder_name: string
+          is_primary: boolean
+          party_role: string
+          share_percentage: number
+        }[]
       }
       get_matter_family_tree: {
         Args: { matter_uuid: string }
@@ -48678,6 +50287,18 @@ export type Database = {
       text_soundex: { Args: { "": string }; Returns: string }
       toggle_circuit_breaker: {
         Args: { p_open: boolean; p_provider_id: string }
+        Returns: undefined
+      }
+      transfer_matter_ownership: {
+        Args: {
+          p_from_holder_id: string
+          p_matter_id: string
+          p_notes?: string
+          p_registration_reference?: string
+          p_supporting_document_id?: string
+          p_to_holder_id: string
+          p_transfer_date: string
+        }
         Returns: undefined
       }
       trigger_workflow_manually: {

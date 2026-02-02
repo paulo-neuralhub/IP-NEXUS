@@ -33,6 +33,7 @@ import { cn } from '@/lib/utils';
 import { EditClientCompanyDialog } from '@/components/legal-ops/modals/EditClientCompanyDialog';
 import { EditClientInternalNotesDialog } from '@/components/legal-ops/modals/EditClientInternalNotesDialog';
 import { AddClientNoteDialog } from '@/components/legal-ops/modals/AddClientNoteDialog';
+import { ClientHoldersPanel } from '@/components/holders/ClientHoldersPanel';
 
 interface Client360PageProps {
   clientId: string;
@@ -351,6 +352,12 @@ export function Client360Page({ clientId }: Client360PageProps) {
                     </p>
                   </div>
                 </CollapsibleSection>
+
+                {/* Titulares (PROMPT 26) */}
+                <ClientHoldersPanel 
+                  accountId={clientId}
+                  accountName={client.display_name || client.company_name || 'Cliente'}
+                />
 
                 {/* Relaciones */}
                 <CollapsibleSection

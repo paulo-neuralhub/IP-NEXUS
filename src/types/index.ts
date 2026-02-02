@@ -126,3 +126,6 @@ export * from './services';
 
 // Workflow Types (PROMPT 4D)
 export * from './workflow';
+
+// Holder Types (PROMPT 26)
+export * from './holders';
