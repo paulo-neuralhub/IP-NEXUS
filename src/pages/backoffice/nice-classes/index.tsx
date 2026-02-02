@@ -15,25 +15,17 @@ import {
   CheckCircle,
   Tags,
   Edit2,
-  History
+  History,
+  Upload,
+  List
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger,
-  DialogFooter,
-  DialogClose
-} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { formatDate } from '@/lib/utils';
@@ -52,15 +44,17 @@ import {
   type NiceClass,
   type NiceProduct,
 } from '@/hooks/backoffice/useNiceClassesAdmin';
+import { NiceImporter } from '@/components/nice/NiceImporter';
 
 export default function NiceClassesAdminPage() {
-  const { data: stats, isLoading: statsLoading } = useNiceStats();
-  const { data: classes, isLoading: classesLoading } = useNiceClasses();
+  const { data: stats, isLoading: statsLoading, refetch: refetchStats } = useNiceStats();
+  const { data: classes, isLoading: classesLoading, refetch: refetchClasses } = useNiceClasses();
   const exportMutation = useExportNiceClasses();
   
   const [selectedClass, setSelectedClass] = useState<number | null>(null);
   const [filterPending, setFilterPending] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState<'browse' | 'import'>('browse');
 
   const filteredClasses = classes?.filter(cls => {
     if (filterPending && !needsReview(cls.last_reviewed_at)) return false;
@@ -74,6 +68,11 @@ export default function NiceClassesAdminPage() {
     }
     return true;
   });
+
+  const handleImportComplete = () => {
+    refetchStats();
+    refetchClasses();
+  };
 
   return (
     <div className="space-y-6">
@@ -104,136 +103,158 @@ export default function NiceClassesAdminPage() {
         </div>
       </div>
 
-      {/* Alert for pending reviews */}
-      {stats && stats.classesNeedingReview > 0 && (
-        <Alert variant="default" className="border-warning bg-warning/10">
-          <AlertTriangle className="h-4 w-4 text-warning" />
-          <AlertTitle className="text-warning">Revisión necesaria</AlertTitle>
-          <AlertDescription className="text-warning/80">
-            {stats.classesNeedingReview} clases no han sido revisadas en más de 12 meses.
-            <Button 
-              variant="link" 
-              className="p-0 h-auto ml-2 text-warning"
-              onClick={() => setFilterPending(true)}
-            >
-              Ver clases pendientes
-            </Button>
-          </AlertDescription>
-        </Alert>
-      )}
+      {/* Main Tabs */}
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'browse' | 'import')}>
+        <TabsList>
+          <TabsTrigger value="browse" className="gap-2">
+            <List className="h-4 w-4" />
+            Explorar Clases
+          </TabsTrigger>
+          <TabsTrigger value="import" className="gap-2">
+            <Upload className="h-4 w-4" />
+            Importar
+          </TabsTrigger>
+        </TabsList>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {statsLoading ? (
-          Array.from({ length: 4 }).map((_, i) => (
-            <Skeleton key={i} className="h-20" />
-          ))
-        ) : (
-          <>
-            <Card className="p-4">
-              <div className="text-2xl font-bold">{stats?.totalClasses || 45}</div>
-              <div className="text-sm text-muted-foreground">Clases Nice</div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-2xl font-bold">{stats?.totalProducts?.toLocaleString() || 0}</div>
-              <div className="text-sm text-muted-foreground">Productos/Servicios</div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-2xl font-bold text-success">{stats?.reviewedThisYear || 0}</div>
-              <div className="text-sm text-muted-foreground">Revisadas este año</div>
-            </Card>
-            <Card className="p-4">
-              <div className="text-2xl font-bold text-warning">{stats?.classesNeedingReview || 0}</div>
-              <div className="text-sm text-muted-foreground">Pendientes revisión</div>
-            </Card>
-          </>
-        )}
-      </div>
-
-      {/* Main content */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Class list */}
-        <Card className="lg:col-span-1">
-          <CardHeader className="pb-2">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-lg">Clases</CardTitle>
-              {filterPending && (
+        {/* Browse Tab */}
+        <TabsContent value="browse" className="mt-6 space-y-6">
+          {/* Alert for pending reviews */}
+          {stats && stats.classesNeedingReview > 0 && (
+            <Alert variant="default" className="border-amber-300 bg-amber-50 dark:bg-amber-950 dark:border-amber-800">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              <AlertTitle className="text-amber-800 dark:text-amber-200">Revisión necesaria</AlertTitle>
+              <AlertDescription className="text-amber-700 dark:text-amber-300">
+                {stats.classesNeedingReview} clases no han sido revisadas en más de 12 meses.
                 <Button 
-                  variant="ghost" 
-                  size="sm"
-                  onClick={() => setFilterPending(false)}
+                  variant="link" 
+                  className="p-0 h-auto ml-2 text-amber-700 dark:text-amber-300"
+                  onClick={() => setFilterPending(true)}
                 >
-                  Mostrar todas
+                  Ver clases pendientes
                 </Button>
-              )}
-            </div>
-            <Input
-              placeholder="Buscar clase..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="mt-2"
-            />
-          </CardHeader>
-          <CardContent className="p-0">
-            <ScrollArea className="h-[600px]">
-              {classesLoading ? (
-                <div className="p-4 space-y-2">
-                  {Array.from({ length: 10 }).map((_, i) => (
-                    <Skeleton key={i} className="h-16" />
-                  ))}
-                </div>
-              ) : (
-                filteredClasses?.map((cls) => (
-                  <button
-                    key={cls.class_number}
-                    type="button"
-                    onClick={() => setSelectedClass(cls.class_number)}
-                    className={cn(
-                      "w-full flex items-center gap-3 p-3 text-left border-b hover:bg-muted/50 transition-colors",
-                      selectedClass === cls.class_number && "bg-muted"
-                    )}
-                  >
-                    <span className="text-2xl">{cls.icon || '📦'}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium">Clase {cls.class_number}</div>
-                      <div className="text-sm text-muted-foreground truncate">
-                        {cls.title_es}
-                      </div>
-                    </div>
-                    <div className="text-right flex flex-col items-end gap-1">
-                      <Badge variant="secondary" className="text-xs">
-                        {cls.product_count || 0}
-                      </Badge>
-                      {needsReview(cls.last_reviewed_at) && (
-                        <AlertTriangle className="h-4 w-4 text-warning" />
-                      )}
-                    </div>
-                  </button>
-                ))
-              )}
-              {filteredClasses?.length === 0 && (
-                <p className="text-center text-muted-foreground py-8">
-                  No se encontraron clases
-                </p>
-              )}
-            </ScrollArea>
-          </CardContent>
-        </Card>
-
-        {/* Class detail */}
-        <Card className="lg:col-span-2">
-          {selectedClass ? (
-            <NiceClassDetail 
-              classNumber={selectedClass} 
-            />
-          ) : (
-            <CardContent className="flex flex-col items-center justify-center h-[650px] text-muted-foreground">
-              <Tags className="h-12 w-12 mb-4 opacity-50" />
-              <p>Selecciona una clase para ver sus productos</p>
-            </CardContent>
+              </AlertDescription>
+            </Alert>
           )}
-        </Card>
-      </div>
+
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {statsLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-20" />
+              ))
+            ) : (
+              <>
+                <Card className="p-4">
+                  <div className="text-2xl font-bold">{stats?.totalClasses || 45}</div>
+                  <div className="text-sm text-muted-foreground">Clases Nice</div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-2xl font-bold">{stats?.totalProducts?.toLocaleString() || 0}</div>
+                  <div className="text-sm text-muted-foreground">Productos/Servicios</div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats?.reviewedThisYear || 0}</div>
+                  <div className="text-sm text-muted-foreground">Revisadas este año</div>
+                </Card>
+                <Card className="p-4">
+                  <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats?.classesNeedingReview || 0}</div>
+                  <div className="text-sm text-muted-foreground">Pendientes revisión</div>
+                </Card>
+              </>
+            )}
+          </div>
+
+          {/* Main content */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Class list */}
+            <Card className="lg:col-span-1">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-lg">Clases</CardTitle>
+                  {filterPending && (
+                    <Button 
+                      variant="ghost" 
+                      size="sm"
+                      onClick={() => setFilterPending(false)}
+                    >
+                      Mostrar todas
+                    </Button>
+                  )}
+                </div>
+                <Input
+                  placeholder="Buscar clase..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="mt-2"
+                />
+              </CardHeader>
+              <CardContent className="p-0">
+                <ScrollArea className="h-[600px]">
+                  {classesLoading ? (
+                    <div className="p-4 space-y-2">
+                      {Array.from({ length: 10 }).map((_, i) => (
+                        <Skeleton key={i} className="h-16" />
+                      ))}
+                    </div>
+                  ) : (
+                    filteredClasses?.map((cls) => (
+                      <button
+                        key={cls.class_number}
+                        type="button"
+                        onClick={() => setSelectedClass(cls.class_number)}
+                        className={cn(
+                          "w-full flex items-center gap-3 p-3 text-left border-b hover:bg-muted/50 transition-colors",
+                          selectedClass === cls.class_number && "bg-muted"
+                        )}
+                      >
+                        <span className="text-2xl">{cls.icon || '📦'}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-medium">Clase {cls.class_number}</div>
+                          <div className="text-sm text-muted-foreground truncate">
+                            {cls.title_es}
+                          </div>
+                        </div>
+                        <div className="text-right flex flex-col items-end gap-1">
+                          <Badge variant="secondary" className="text-xs">
+                            {cls.product_count || 0}
+                          </Badge>
+                          {needsReview(cls.last_reviewed_at) && (
+                            <AlertTriangle className="h-4 w-4 text-amber-500" />
+                          )}
+                        </div>
+                      </button>
+                    ))
+                  )}
+                  {filteredClasses?.length === 0 && (
+                    <p className="text-center text-muted-foreground py-8">
+                      No se encontraron clases
+                    </p>
+                  )}
+                </ScrollArea>
+              </CardContent>
+            </Card>
+
+            {/* Class detail */}
+            <Card className="lg:col-span-2">
+              {selectedClass ? (
+                <NiceClassDetail classNumber={selectedClass} />
+              ) : (
+                <CardContent className="flex flex-col items-center justify-center h-[650px] text-muted-foreground">
+                  <Tags className="h-12 w-12 mb-4 opacity-50" />
+                  <p>Selecciona una clase para ver sus productos</p>
+                </CardContent>
+              )}
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Import Tab */}
+        <TabsContent value="import" className="mt-6">
+          <div className="max-w-3xl">
+            <NiceImporter onImportComplete={handleImportComplete} />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
@@ -241,7 +262,7 @@ export default function NiceClassesAdminPage() {
 // Class Detail Component
 function NiceClassDetail({ classNumber }: { classNumber: number }) {
   const { data: classInfo, isLoading: classLoading } = useNiceClass(classNumber);
-  const { data: products, isLoading: productsLoading, refetch } = useNiceProducts(classNumber);
+  const { data: products, isLoading: productsLoading } = useNiceProducts(classNumber);
   const { data: revisionLog } = useNiceRevisionLog(classNumber);
   
   const markReviewed = useMarkClassReviewed();
@@ -433,7 +454,7 @@ function NiceClassDetail({ classNumber }: { classNumber: number }) {
                           className={cn(
                             "h-4 w-4",
                             product.is_common 
-                              ? "text-warning fill-warning" 
+                              ? "text-amber-500 fill-amber-500" 
                               : "text-muted-foreground"
                           )} 
                         />
