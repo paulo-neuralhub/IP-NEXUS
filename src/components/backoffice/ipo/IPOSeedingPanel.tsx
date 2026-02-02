@@ -6,7 +6,7 @@ import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Database, Play, CheckCircle, AlertTriangle, Loader2, FileJson } from 'lucide-react';
 import { IPOSeedingService } from '@/services/ipo/seedingService';
-import { ALL_IPO_SEED_DATA, TIER1_OFFICES, TIER2_OFFICES, TIER3_OFFICES } from '@/data/ipo-seed-data';
+import { ALL_IPO_OFFICES, getOfficesByTier } from '@/data/ipo-offices';
 
 export function IPOSeedingPanel() {
   const [isRunning, setIsRunning] = useState(false);
@@ -35,24 +35,24 @@ export function IPOSeedingPanel() {
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid grid-cols-3 gap-4">
-          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-center">
-            <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">{TIER1_OFFICES.length}</p>
-            <p className="text-sm text-purple-600 dark:text-purple-400">Tier 1 (Críticas)</p>
+          <div className="p-4 bg-primary/10 rounded-lg text-center">
+            <p className="text-2xl font-bold text-primary">{getOfficesByTier(1).length}</p>
+            <p className="text-sm text-muted-foreground">Tier 1 (Críticas)</p>
           </div>
-          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center">
-            <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">{TIER2_OFFICES.length}</p>
-            <p className="text-sm text-blue-600 dark:text-blue-400">Tier 2 (Importantes)</p>
+          <div className="p-4 bg-secondary/10 rounded-lg text-center">
+            <p className="text-2xl font-bold text-secondary-foreground">{getOfficesByTier(2).length}</p>
+            <p className="text-sm text-muted-foreground">Tier 2 (Importantes)</p>
           </div>
-          <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg text-center">
-            <p className="text-2xl font-bold text-gray-700 dark:text-gray-300">{TIER3_OFFICES.length}</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">Tier 3 (Secundarias)</p>
+          <div className="p-4 bg-muted rounded-lg text-center">
+            <p className="text-2xl font-bold text-foreground">{getOfficesByTier(3).length}</p>
+            <p className="text-sm text-muted-foreground">Tier 3 (Secundarias)</p>
           </div>
         </div>
 
         <Alert>
           <FileJson className="h-4 w-4" />
           <AlertDescription>
-            Total: {ALL_IPO_SEED_DATA.length} oficinas preparadas para importar.
+            Total: {ALL_IPO_OFFICES.length} oficinas preparadas para importar.
           </AlertDescription>
         </Alert>
 
@@ -67,15 +67,15 @@ export function IPOSeedingPanel() {
         )}
 
         {result && (
-          <div className={`p-4 rounded-lg ${result.success ? 'bg-green-50 dark:bg-green-900/20' : 'bg-red-50 dark:bg-red-900/20'}`}>
+          <div className={`p-4 rounded-lg ${result.success ? 'bg-emerald-500/10' : 'bg-destructive/10'}`}>
             <div className="flex items-center gap-2 mb-2">
-              {result.success ? <CheckCircle className="h-5 w-5 text-green-600" /> : <AlertTriangle className="h-5 w-5 text-red-600" />}
+              {result.success ? <CheckCircle className="h-5 w-5 text-emerald-600" /> : <AlertTriangle className="h-5 w-5 text-destructive" />}
               <span className="font-medium">{result.success ? 'Seeding completado' : 'Seeding con errores'}</span>
             </div>
             <div className="grid grid-cols-3 gap-2 text-sm">
-              <div><span className="text-muted-foreground">Creadas:</span> <strong className="text-green-600">{result.stats.officesCreated}</strong></div>
+              <div><span className="text-muted-foreground">Creadas:</span> <strong className="text-emerald-600">{result.stats.officesCreated}</strong></div>
               <div><span className="text-muted-foreground">Omitidas:</span> <strong>{result.stats.officesSkipped}</strong></div>
-              <div><span className="text-muted-foreground">Errores:</span> <strong className="text-red-600">{result.stats.errorsCount}</strong></div>
+              <div><span className="text-muted-foreground">Errores:</span> <strong className="text-destructive">{result.stats.errorsCount}</strong></div>
             </div>
           </div>
         )}
