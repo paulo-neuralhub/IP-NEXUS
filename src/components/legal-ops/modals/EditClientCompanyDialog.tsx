@@ -1,12 +1,13 @@
 // ============================================
-// EDIT CLIENT COMPANY DIALOG - Full Form with Tabs
+// CLIENT FORM DIALOG - Create or Edit client with Tabs
+// Unified modal for both new clients and editing existing ones
 // ============================================
 
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -26,7 +27,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useOrganization } from "@/contexts/organization-context";
 import { useTeamMembers } from "@/hooks/crm/v2/team-members";
 import { toast } from "sonner";
-import { Building2, MapPin, User, FileText, Star } from "lucide-react";
+import { Building2, MapPin, User, FileText, Star, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const schema = z.object({
@@ -87,119 +88,163 @@ const TAX_ID_TYPES = [
   { value: "OTHER", label: "Otro" },
 ];
 
+const DEFAULT_VALUES: FormValues = {
+  name: "",
+  legal_name: "",
+  tax_id: "",
+  tax_id_type: "CIF",
+  account_type: "direct",
+  status: "active",
+  tier: "",
+  rating_stars: 0,
+  assigned_to: "",
+  email: "",
+  phone: "",
+  website: "",
+  address_line1: "",
+  address_line2: "",
+  city: "",
+  state_province: "",
+  postal_code: "",
+  country: "ES",
+  notes: "",
+};
+
+interface ClientFormDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  /** If null/undefined, the dialog is in "create" mode */
+  clientId?: string | null;
+  /** Used in edit mode to prefill form */
+  initialValues?: Partial<FormValues>;
+  /** Called after successful create with the new client ID */
+  onCreated?: (clientId: string) => void;
+}
+
 export function EditClientCompanyDialog({
   open,
   onOpenChange,
   clientId,
   initialValues,
-}: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  clientId: string;
-  initialValues: Partial<FormValues>;
-}) {
+  onCreated,
+}: ClientFormDialogProps) {
   const { currentOrganization } = useOrganization();
   const queryClient = useQueryClient();
   const { data: teamMembers = [] } = useTeamMembers();
 
+  const isEditMode = !!clientId;
+
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: "",
-      legal_name: "",
-      tax_id: "",
-      tax_id_type: "CIF",
-      account_type: "direct",
-      status: "active",
-      tier: "",
-      rating_stars: 0,
-      assigned_to: "",
-      email: "",
-      phone: "",
-      website: "",
-      address_line1: "",
-      address_line2: "",
-      city: "",
-      state_province: "",
-      postal_code: "",
-      country: "ES",
-      notes: "",
-      ...initialValues,
-    },
+    defaultValues: { ...DEFAULT_VALUES, ...initialValues },
   });
 
   useEffect(() => {
     if (open) {
-      form.reset({
-        name: "",
-        legal_name: "",
-        tax_id: "",
-        tax_id_type: "CIF",
-        account_type: "direct",
-        status: "active",
-        tier: "",
-        rating_stars: 0,
-        assigned_to: "",
-        email: "",
-        phone: "",
-        website: "",
-        address_line1: "",
-        address_line2: "",
-        city: "",
-        state_province: "",
-        postal_code: "",
-        country: "ES",
-        notes: "",
-        ...initialValues,
-      });
+      form.reset({ ...DEFAULT_VALUES, ...initialValues });
     }
   }, [open, initialValues, form]);
 
-  const onSubmit = async (values: FormValues) => {
-    if (!currentOrganization?.id) {
-      toast.error("No hay organización activa");
-      return;
-    }
+  // Create mutation
+  const createMutation = useMutation({
+    mutationFn: async (values: FormValues) => {
+      if (!currentOrganization?.id) throw new Error("No hay organización activa");
 
-    const { error } = await supabase
-      .from("crm_accounts")
-      .update({
-        name: values.name,
-        legal_name: values.legal_name || null,
-        tax_id: values.tax_id || null,
-        account_type: values.account_type || "direct",
-        status: values.status || "active",
-        tier: values.tier || null,
-        rating_stars: values.rating_stars || null,
-        assigned_to: values.assigned_to || null,
-        email: values.email || null,
-        phone: values.phone || null,
-        website: values.website || null,
-        address_line1: values.address_line1 || null,
-        address_line2: values.address_line2 || null,
-        city: values.city || null,
-        state_province: values.state_province || null,
-        postal_code: values.postal_code || null,
-        country: values.country || null,
-        metadata: values.notes ? { notes: values.notes } : null,
-      })
-      .eq("id", clientId)
-      .eq("organization_id", currentOrganization.id);
+      const { data: user } = await supabase.auth.getUser();
 
-    if (error) {
+      const { data, error } = await supabase
+        .from("crm_accounts")
+        .insert({
+          organization_id: currentOrganization.id,
+          name: values.name,
+          legal_name: values.legal_name || null,
+          tax_id: values.tax_id || null,
+          account_type: values.account_type || "direct",
+          status: values.status || "active",
+          tier: values.tier || null,
+          rating_stars: values.rating_stars || null,
+          assigned_to: values.assigned_to || user.user?.id || null,
+          email: values.email || null,
+          phone: values.phone || null,
+          website: values.website || null,
+          address_line1: values.address_line1 || null,
+          address_line2: values.address_line2 || null,
+          city: values.city || null,
+          state_province: values.state_province || null,
+          postal_code: values.postal_code || null,
+          country: values.country || null,
+          metadata: values.notes ? { notes: values.notes } : null,
+        })
+        .select("id")
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: (data) => {
+      toast.success("Cliente creado");
+      queryClient.invalidateQueries({ queryKey: ["crm-accounts"] });
+      onOpenChange(false);
+      onCreated?.(data.id);
+    },
+    onError: (error: Error) => {
+      toast.error("No se pudo crear el cliente", { description: error.message });
+    },
+  });
+
+  // Update mutation
+  const updateMutation = useMutation({
+    mutationFn: async (values: FormValues) => {
+      if (!currentOrganization?.id || !clientId) throw new Error("Faltan datos");
+
+      const { error } = await supabase
+        .from("crm_accounts")
+        .update({
+          name: values.name,
+          legal_name: values.legal_name || null,
+          tax_id: values.tax_id || null,
+          account_type: values.account_type || "direct",
+          status: values.status || "active",
+          tier: values.tier || null,
+          rating_stars: values.rating_stars || null,
+          assigned_to: values.assigned_to || null,
+          email: values.email || null,
+          phone: values.phone || null,
+          website: values.website || null,
+          address_line1: values.address_line1 || null,
+          address_line2: values.address_line2 || null,
+          city: values.city || null,
+          state_province: values.state_province || null,
+          postal_code: values.postal_code || null,
+          country: values.country || null,
+          metadata: values.notes ? { notes: values.notes } : null,
+        })
+        .eq("id", clientId)
+        .eq("organization_id", currentOrganization.id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Cliente actualizado");
+      queryClient.invalidateQueries({ queryKey: ["client-detail", clientId] });
+      queryClient.invalidateQueries({ queryKey: ["crm-account"] });
+      queryClient.invalidateQueries({ queryKey: ["crm-accounts"] });
+      onOpenChange(false);
+    },
+    onError: (error: Error) => {
       toast.error("No se pudo guardar", { description: error.message });
-      return;
-    }
+    },
+  });
 
-    toast.success("Cliente actualizado");
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["client-detail", clientId] }),
-      queryClient.invalidateQueries({ queryKey: ["crm-account", currentOrganization.id, clientId] }),
-      queryClient.invalidateQueries({ queryKey: ["crm-accounts"] }),
-    ]);
-    onOpenChange(false);
+  const onSubmit = (values: FormValues) => {
+    if (isEditMode) {
+      updateMutation.mutate(values);
+    } else {
+      createMutation.mutate(values);
+    }
   };
 
+  const isPending = createMutation.isPending || updateMutation.isPending;
   const ratingValue = form.watch("rating_stars") || 0;
 
   return (
@@ -207,8 +252,17 @@ export function EditClientCompanyDialog({
       <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Building2 className="w-5 h-5" />
-            Editar Cliente
+            {isEditMode ? (
+              <>
+                <Building2 className="w-5 h-5" />
+                Editar Cliente
+              </>
+            ) : (
+              <>
+                <Plus className="w-5 h-5" />
+                Nuevo Cliente
+              </>
+            )}
           </DialogTitle>
         </DialogHeader>
 
@@ -438,8 +492,8 @@ export function EditClientCompanyDialog({
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Guardando..." : "Guardar cambios"}
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Guardando..." : isEditMode ? "Guardar cambios" : "Crear cliente"}
             </Button>
           </DialogFooter>
         </form>

@@ -35,7 +35,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { AccountFormModal } from "@/components/features/crm/v2/AccountFormModal";
+import { EditClientCompanyDialog } from "@/components/legal-ops/modals/EditClientCompanyDialog";
 
 type AccountRow = {
   id: string;
@@ -265,7 +265,11 @@ export default function CRMV2AccountsList() {
   return (
     <div className="space-y-6">
       {/* Modal Nuevo Cliente */}
-      <AccountFormModal open={showNewClientModal} onClose={() => setShowNewClientModal(false)} />
+      <EditClientCompanyDialog 
+        open={showNewClientModal} 
+        onOpenChange={setShowNewClientModal}
+        clientId={null}
+      />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
