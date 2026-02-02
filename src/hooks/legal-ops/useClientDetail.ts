@@ -202,21 +202,39 @@ export function useClientDetail(clientId: string) {
         ? (rawAssignedUser[0] as { id: string; full_name: string; avatar_url?: string } | undefined) ?? null
         : (rawAssignedUser as { id: string; full_name: string; avatar_url?: string } | null);
       
-      // Cast to any to access dynamic fields
+      // Cast to any to access all dynamic fields from crm_accounts
       const clientData = client as Record<string, unknown>;
 
       return {
+        // Pass the entire client object so ClientGeneralTab has all fields
         client: {
+          ...clientData,
           id: client.id,
           name: client.name || '',
           display_name: client.name || '',
           company_name: client.name,
+          legal_name: (clientData.legal_name as string) || undefined,
+          trade_name: (clientData.trade_name as string) || undefined,
+          account_type: (clientData.account_type as string) || 'direct',
+          tier: (clientData.tier as string) || undefined,
+          status: (clientData.status as string) || 'active',
           tax_id: (clientData.tax_id as string) || undefined,
+          tax_id_type: (clientData.tax_id_type as string) || 'CIF',
+          tax_country: (clientData.tax_country as string) || 'ES',
           email: (clientData.email as string) || undefined,
           phone: (clientData.phone as string) || undefined,
+          fax: (clientData.fax as string) || undefined,
+          website: (clientData.website as string) || undefined,
           address_line1: (clientData.address_line1 as string) || undefined,
+          address_line2: (clientData.address_line2 as string) || undefined,
           city: (clientData.city as string) || undefined,
-          notes: client.internal_notes || undefined,
+          state_province: (clientData.state_province as string) || undefined,
+          postal_code: (clientData.postal_code as string) || undefined,
+          country: (clientData.country as string) || 'ES',
+          industry: (clientData.industry as string) || undefined,
+          agent_license_number: (clientData.agent_license_number as string) || undefined,
+          agent_jurisdictions: (clientData.agent_jurisdictions as string[]) || undefined,
+          notes: (clientData.notes as string) || (client.internal_notes as string) || undefined,
           tags: (clientData.tags as string[]) || undefined,
           created_at: client.created_at,
           responsible_user: assignedUser || undefined
