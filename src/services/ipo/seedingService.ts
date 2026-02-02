@@ -1,6 +1,6 @@
 // src/services/ipo/seedingService.ts
 import { supabase } from '@/integrations/supabase/client';
-import { ALL_IPO_SEED_DATA } from '@/data/ipo-seed-data';
+import { ALL_IPO_OFFICES, IPOOfficeData } from '@/data/ipo-offices';
 
 interface SeedingProgress {
   phase: string;
