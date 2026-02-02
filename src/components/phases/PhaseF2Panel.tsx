@@ -33,7 +33,6 @@ import {
 import { PHASE_CHECKLISTS, type PhaseF2Data } from '@/hooks/use-phase-data';
 import { EmailComposer } from '@/components/communications/EmailComposer';
 import { SendWhatsAppModal } from '@/components/features/crm/v2/SendWhatsAppModal';
-import { useDocumentGeneration } from '@/hooks/useDocumentGeneration';
 import { toast } from 'sonner';
 
 interface PhaseF2PanelProps {
@@ -86,8 +85,11 @@ export function PhaseF2Panel({
   const [showEmailComposer, setShowEmailComposer] = useState(false);
   const [showWhatsAppModal, setShowWhatsAppModal] = useState(false);
   
-  // PDF generation
-  const { generateQuotePdf, previewPdf, downloadPdf, isGenerating } = useDocumentGeneration();
+  // Separate loading states for each action
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false);
+  const [isGenerateLoading, setIsGenerateLoading] = useState(false);
+  const [generatedPdfBase64, setGeneratedPdfBase64] = useState<string | null>(null);
+  
   const lineItems = data.line_items || DEFAULT_LINE_ITEMS;
   
   // Calculate totals
@@ -152,42 +154,200 @@ export function PhaseF2Panel({
     ).join('\n')}\n\nSubtotal: €${subtotal.toFixed(2)}\nIVA (${taxRate}%): €${taxAmount.toFixed(2)}\nTotal: €${total.toFixed(2)}`;
   };
 
-  // Handler: Preview PDF
-  const handlePreviewPdf = async () => {
-    // For now, generate a quote preview using client-side PDF
-    toast.info('Generando vista previa del presupuesto...');
+  // Generate PDF HTML content
+  const generateQuoteHtml = () => {
+    const ref = matterReference || matterId.slice(0, 8);
+    const validityDate = new Date();
+    validityDate.setDate(validityDate.getDate() + (data.validity_days || 30));
+    
+    return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; font-size: 11pt; color: #333; padding: 40px; }
+          .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #3B82F6; padding-bottom: 15px; }
+          .title { font-size: 18pt; font-weight: bold; color: #3B82F6; }
+          .ref { font-size: 10pt; color: #666; margin-top: 5px; }
+          .section { margin: 20px 0; }
+          .section-title { font-weight: bold; color: #3B82F6; margin-bottom: 10px; text-transform: uppercase; font-size: 10pt; }
+          table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+          th { background: #f3f4f6; padding: 10px; text-align: left; font-size: 9pt; border-bottom: 2px solid #e5e7eb; }
+          td { padding: 10px; border-bottom: 1px solid #e5e7eb; font-size: 10pt; }
+          .amount { text-align: right; }
+          .totals { margin-top: 20px; text-align: right; }
+          .totals-row { display: flex; justify-content: flex-end; margin: 5px 0; }
+          .totals-label { width: 200px; text-align: right; padding-right: 20px; }
+          .totals-value { width: 100px; text-align: right; font-weight: bold; }
+          .total-final { font-size: 14pt; color: #3B82F6; border-top: 2px solid #3B82F6; padding-top: 10px; margin-top: 10px; }
+          .conditions { background: #f9fafb; padding: 15px; border-radius: 8px; margin-top: 30px; font-size: 9pt; }
+          .signature-section { margin-top: 50px; display: flex; justify-content: space-between; }
+          .signature-box { width: 45%; text-align: center; }
+          .signature-line { border-top: 1px solid #333; margin-top: 60px; padding-top: 10px; font-size: 9pt; }
+          .footer { margin-top: 40px; text-align: center; font-size: 8pt; color: #666; }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <div class="title">PRESUPUESTO</div>
+          <div class="ref">Ref: ${ref} | Fecha: ${new Date().toLocaleDateString('es-ES')}</div>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Cliente</div>
+          <p><strong>${clientName || 'Cliente'}</strong></p>
+        </div>
+        
+        <div class="section">
+          <div class="section-title">Detalle del Presupuesto</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Concepto</th>
+                <th class="amount">Cantidad</th>
+                <th class="amount">Precio Unit.</th>
+                <th class="amount">Importe</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${lineItems.map(item => `
+                <tr>
+                  <td>${item.concept}</td>
+                  <td class="amount">${item.quantity}</td>
+                  <td class="amount">€${item.unit_price.toFixed(2)}</td>
+                  <td class="amount">€${item.total.toFixed(2)}</td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        
+        <div class="totals">
+          <div class="totals-row">
+            <span class="totals-label">Subtotal tasas oficiales:</span>
+            <span class="totals-value">€${subtotalFees.toFixed(2)}</span>
+          </div>
+          <div class="totals-row">
+            <span class="totals-label">Subtotal honorarios:</span>
+            <span class="totals-value">€${subtotalTaxable.toFixed(2)}</span>
+          </div>
+          <div class="totals-row">
+            <span class="totals-label">IVA (${taxRate}%) sobre honorarios:</span>
+            <span class="totals-value">€${taxAmount.toFixed(2)}</span>
+          </div>
+          <div class="totals-row total-final">
+            <span class="totals-label">TOTAL:</span>
+            <span class="totals-value">€${total.toFixed(2)}</span>
+          </div>
+        </div>
+        
+        <div class="conditions">
+          <strong>Condiciones:</strong><br/>
+          • Validez del presupuesto: ${data.validity_days || 30} días (hasta ${validityDate.toLocaleDateString('es-ES')})<br/>
+          • Forma de pago: ${data.payment_terms === '100_advance' ? '100% anticipado' : data.payment_terms === '50_advance' ? '50% anticipado, 50% a la finalización' : data.payment_terms === 'on_completion' ? 'Al finalizar el servicio' : '30 días desde factura'}<br/>
+          ${data.additional_notes ? `• ${data.additional_notes}` : ''}
+        </div>
+        
+        <div class="signature-section">
+          <div class="signature-box">
+            <div class="signature-line">Firma del Cliente<br/>(Aceptación del presupuesto)</div>
+          </div>
+          <div class="signature-box">
+            <div class="signature-line">Fecha de aceptación</div>
+          </div>
+        </div>
+        
+        <div class="footer">
+          Este presupuesto es válido durante ${data.validity_days || 30} días desde la fecha de emisión.<br/>
+          Para su aceptación, por favor firme este documento y devuélvalo escaneado.
+        </div>
+      </body>
+      </html>
+    `;
+  };
+
+  // Handler: Preview PDF - INDEPENDENT action
+  const handlePreviewPdf = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    if (isPreviewLoading) return;
+    setIsPreviewLoading(true);
+    
     try {
-      const success = await previewPdf('quote', matterId);
-      if (!success) {
-        // Fallback: show toast with summary
-        toast.info(getQuoteSummary(), { duration: 10000 });
+      const htmlContent = generateQuoteHtml();
+      
+      // Open in new window for preview
+      const previewWindow = window.open('', '_blank');
+      if (previewWindow) {
+        previewWindow.document.write(htmlContent);
+        previewWindow.document.close();
+        toast.success('Vista previa abierta en nueva pestaña');
+      } else {
+        toast.error('El navegador bloqueó la ventana emergente');
       }
-    } catch {
+    } catch (err) {
+      console.error('Preview error:', err);
       toast.error('Error al generar vista previa');
+    } finally {
+      setIsPreviewLoading(false);
     }
   };
 
-  // Handler: Generate/Download Quote
-  const handleGenerateQuote = async () => {
-    toast.info('Generando presupuesto PDF...');
+  // Handler: Generate/Download Quote - INDEPENDENT action
+  const handleGenerateQuote = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
+    if (isGenerateLoading) return;
+    setIsGenerateLoading(true);
+    
     try {
-      const fileName = `Presupuesto_${matterReference || matterId.slice(0, 8)}.pdf`;
-      const success = await downloadPdf('quote', matterId, fileName);
-      if (success) {
-        onDataChange('quote_generated', true);
-        onDataChange('quote_generated_date', new Date().toISOString());
-        toast.success('Presupuesto generado correctamente');
-      } else {
-        // If edge function not available, show user-friendly message
-        toast.warning('La generación de PDF está siendo configurada. Por ahora, use Vista Previa o Enviar por Email.');
-      }
-    } catch {
-      toast.error('Error al generar presupuesto');
+      const { jsPDF } = await import('jspdf');
+      const htmlContent = generateQuoteHtml();
+      
+      // Create temporary element for PDF generation
+      const container = document.createElement('div');
+      container.innerHTML = htmlContent;
+      container.style.cssText = 'position: absolute; left: -9999px; width: 210mm;';
+      document.body.appendChild(container);
+      
+      const pdf = new jsPDF('p', 'mm', 'a4');
+      
+      await pdf.html(container, {
+        callback: function(doc) {
+          const fileName = `Presupuesto_${matterReference || matterId.slice(0, 8)}.pdf`;
+          doc.save(fileName);
+          
+          // Store base64 for email attachment
+          const base64 = doc.output('datauristring');
+          setGeneratedPdfBase64(base64);
+          
+          onDataChange('quote_generated', true);
+          onDataChange('quote_generated_date', new Date().toISOString());
+          toast.success('Presupuesto PDF generado correctamente');
+        },
+        x: 0,
+        y: 0,
+        width: 210,
+        windowWidth: 800,
+      });
+      
+      document.body.removeChild(container);
+    } catch (err) {
+      console.error('Generate error:', err);
+      toast.error('Error al generar presupuesto PDF');
+    } finally {
+      setIsGenerateLoading(false);
     }
   };
 
   // Handler: Send by Email
-  const handleSendEmail = () => {
+  const handleSendEmail = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
     if (!clientEmail) {
       toast.warning('El cliente no tiene email configurado');
     }
@@ -195,7 +355,10 @@ export function PhaseF2Panel({
   };
 
   // Handler: Send by WhatsApp
-  const handleSendWhatsApp = () => {
+  const handleSendWhatsApp = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    e.preventDefault();
+    
     if (!clientPhone) {
       toast.warning('El cliente no tiene teléfono configurado');
     }
@@ -430,39 +593,41 @@ export function PhaseF2Panel({
             <Button 
               variant="outline" 
               onClick={handlePreviewPdf}
-              disabled={isGenerating}
+              disabled={isPreviewLoading}
+              type="button"
             >
-              {isGenerating ? (
+              {isPreviewLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <Eye className="w-4 h-4 mr-2" />
               )}
-              Vista previa PDF
+              Vista previa
             </Button>
             <Button 
               variant="outline" 
               onClick={handleGenerateQuote}
-              disabled={isGenerating}
+              disabled={isGenerateLoading}
+              type="button"
             >
-              {isGenerating ? (
+              {isGenerateLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <Download className="w-4 h-4 mr-2" />
               )}
-              Generar presupuesto
+              Descargar PDF
             </Button>
-            <Button variant="outline" onClick={handleSendEmail}>
+            <Button variant="outline" onClick={handleSendEmail} type="button">
               <Send className="w-4 h-4 mr-2" />
               Enviar por email
             </Button>
-            <Button variant="outline" onClick={handleSendWhatsApp}>
+            <Button variant="outline" onClick={handleSendWhatsApp} type="button">
               <MessageCircle className="w-4 h-4 mr-2" />
               Enviar por WhatsApp
             </Button>
           </div>
 
           {data.quote_sent && (
-            <Badge variant="outline" className="mt-3 bg-emerald-50 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">
+            <Badge variant="secondary" className="mt-3">
               ✅ Presupuesto enviado el {data.quote_sent_date}
             </Badge>
           )}
@@ -520,16 +685,50 @@ export function PhaseF2Panel({
         matterId={matterId}
         matterName={matterTitle || matterReference}
         defaultTo={clientEmail ? [{ email: clientEmail, name: clientName }] : []}
-        defaultSubject={`Presupuesto - ${matterReference || matterTitle || 'Expediente'}`}
+        defaultSubject={`Presupuesto para aceptación - Ref. ${matterReference || matterTitle || 'Expediente'}`}
         defaultBody={`<p>Estimado/a ${clientName || 'cliente'},</p>
-<p>Adjunto le enviamos el presupuesto solicitado:</p>
-<p><strong>Resumen:</strong></p>
-<ul>
-${lineItems.map(item => `<li>${item.concept}: €${item.total.toFixed(2)}</li>`).join('\n')}
-</ul>
-<p><strong>Total: €${total.toFixed(2)}</strong> (IVA ${taxRate}% incluido sobre honorarios)</p>
-<p>Este presupuesto tiene una validez de ${data.validity_days || 30} días.</p>
-<p>Quedamos a su disposición para cualquier consulta.</p>`}
+
+<p>Le enviamos adjunto el presupuesto solicitado para su revisión y aceptación.</p>
+
+<h3 style="color: #3B82F6; border-bottom: 1px solid #e5e7eb; padding-bottom: 8px;">📋 Resumen del Presupuesto</h3>
+
+<table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+  <tbody>
+    ${lineItems.map(item => `
+      <tr style="border-bottom: 1px solid #f3f4f6;">
+        <td style="padding: 8px 0;">${item.concept}</td>
+        <td style="padding: 8px 0; text-align: right; font-weight: 500;">€${item.total.toFixed(2)}</td>
+      </tr>
+    `).join('')}
+    <tr style="border-top: 2px solid #e5e7eb;">
+      <td style="padding: 12px 0; font-weight: bold;">SUBTOTAL</td>
+      <td style="padding: 12px 0; text-align: right; font-weight: bold;">€${subtotal.toFixed(2)}</td>
+    </tr>
+    <tr>
+      <td style="padding: 4px 0; color: #6b7280;">IVA (${taxRate}%) sobre honorarios</td>
+      <td style="padding: 4px 0; text-align: right; color: #6b7280;">€${taxAmount.toFixed(2)}</td>
+    </tr>
+    <tr style="background: #f0f9ff;">
+      <td style="padding: 12px 8px; font-weight: bold; font-size: 1.1em; color: #3B82F6;">TOTAL</td>
+      <td style="padding: 12px 8px; text-align: right; font-weight: bold; font-size: 1.1em; color: #3B82F6;">€${total.toFixed(2)}</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Validez:</strong> ${data.validity_days || 30} días desde la fecha de emisión.</p>
+
+<div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0;">
+  <p style="margin: 0; font-weight: bold; color: #92400e;">📝 Para aceptar este presupuesto:</p>
+  <ol style="margin: 10px 0 0 0; padding-left: 20px; color: #92400e;">
+    <li>Descargue el PDF adjunto</li>
+    <li>Firme en el espacio indicado</li>
+    <li>Envíenoslo escaneado como respuesta a este email</li>
+  </ol>
+</div>
+
+<p>Quedamos a su disposición para cualquier consulta o aclaración.</p>
+
+<p>Un cordial saludo,</p>`}
         onSuccess={() => {
           onDataChange('quote_sent', true);
           onDataChange('quote_sent_date', new Date().toLocaleDateString('es-ES'));

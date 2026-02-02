@@ -99,7 +99,8 @@ export function EmailComposer({
   const [showCcBcc, setShowCcBcc] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [selectedMatterId, setSelectedMatterId] = useState<string | null>(propMatterId || null);
-  const [linkToMatter, setLinkToMatter] = useState(!!propMatterId);
+  // Si viene de un expediente, SIEMPRE asociar por defecto
+  const [linkToMatter, setLinkToMatter] = useState(true);
 
   // Reset form when dialog opens
   useEffect(() => {
@@ -112,6 +113,7 @@ export function EmailComposer({
       setAttachments([]);
       setShowCcBcc(false);
       setSelectedMatterId(propMatterId || null);
+      // Si hay propMatterId, siempre asociar; si no, permitir seleccionar
       setLinkToMatter(!!propMatterId);
       
       // Pre-select default signature
