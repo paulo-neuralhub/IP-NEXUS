@@ -35,6 +35,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AccountFormModal } from "@/components/features/crm/v2/AccountFormModal";
 
 type AccountRow = {
   id: string;
@@ -242,6 +243,7 @@ export default function CRMV2AccountsList() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<string>("all");
   const [paymentFilter, setPaymentFilter] = useState<string>("all");
+  const [showNewClientModal, setShowNewClientModal] = useState(false);
 
   const { data, isLoading } = useCRMAccounts({ search: search || undefined });
 
@@ -262,13 +264,16 @@ export default function CRMV2AccountsList() {
 
   return (
     <div className="space-y-6">
+      {/* Modal Nuevo Cliente */}
+      <AccountFormModal open={showNewClientModal} onClose={() => setShowNewClientModal(false)} />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-foreground">Clientes</h1>
           <p className="text-muted-foreground">Gestiona tus clientes y empresas</p>
         </div>
-        <Button>
+        <Button onClick={() => setShowNewClientModal(true)}>
           <Plus className="w-4 h-4 mr-2" />
           Nuevo Cliente
         </Button>
@@ -327,7 +332,7 @@ export default function CRMV2AccountsList() {
           </div>
           <p className="font-semibold text-lg">Sin clientes</p>
           <p className="text-sm text-muted-foreground mb-4">No se encontraron clientes con estos filtros.</p>
-          <Button>
+          <Button onClick={() => setShowNewClientModal(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Crear primer cliente
           </Button>

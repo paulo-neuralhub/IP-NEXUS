@@ -86,14 +86,23 @@ export function Client360Page({ clientId }: Client360PageProps) {
         clientId={clientId}
         initialValues={{
           name: client.display_name || client.company_name || '',
+          legal_name: (crmAccount as any)?.legal_name || '',
           tax_id: client.tax_id || '',
+          account_type: (crmAccount as any)?.account_type || 'direct',
+          status: (crmAccount as any)?.status || 'active',
+          tier: (crmAccount as any)?.tier || '',
+          rating_stars: (crmAccount as any)?.rating_stars || 0,
+          assigned_to: (crmAccount as any)?.assigned_to || '',
           email: client.email || '',
           phone: client.phone || '',
+          website: (crmAccount as any)?.website || '',
           address_line1: client.address_line1 || '',
+          address_line2: (crmAccount as any)?.address_line2 || '',
           city: client.city || '',
+          state_province: (crmAccount as any)?.state_province || '',
           postal_code: client.postal_code || '',
           country: client.country || '',
-          website: (crmAccount as any)?.website || '',
+          notes: client.notes || (crmAccount as any)?.metadata?.notes || '',
         }}
       />
 
