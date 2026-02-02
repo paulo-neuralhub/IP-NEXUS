@@ -236,6 +236,11 @@ export function useClientDetail(clientId: string) {
           agent_jurisdictions: (clientData.agent_jurisdictions as string[]) || undefined,
           notes: (clientData.notes as string) || (client.internal_notes as string) || undefined,
           tags: (clientData.tags as string[]) || undefined,
+          // Billing fields (PROMPT 28)
+          billing_email: (clientData.billing_email as string) || undefined,
+          payment_terms: (clientData.payment_terms as number) || 30,
+          credit_limit: (clientData.credit_limit as number) || undefined,
+          currency: (clientData.currency as string) || 'EUR',
           created_at: client.created_at,
           responsible_user: assignedUser || undefined
         } as ClientFull,

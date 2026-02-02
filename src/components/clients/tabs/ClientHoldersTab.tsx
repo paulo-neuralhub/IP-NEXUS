@@ -1,14 +1,15 @@
 // =====================================================
-// IP-NEXUS - CLIENT HOLDERS TAB (PROMPT 27)
-// Gestión de titulares vinculados al cliente
+// IP-NEXUS - CLIENT HOLDERS TAB (PROMPT 28)
+// Muestra titulares de los expedientes del cliente
+// Solo lectura - edición con aviso de impacto
 // =====================================================
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import {
   Table,
@@ -19,155 +20,231 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
   Building2,
   User,
-  Plus,
   Search,
   FileText,
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  Eye,
+  ExternalLink,
+  Info,
   Globe,
   Briefcase,
-  TrendingUp,
-  Link2,
+  Edit,
+  AlertTriangle,
+  Save,
+  Plus,
 } from 'lucide-react';
 import { fromTable } from '@/lib/supabase';
-import { format } from 'date-fns';
-import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 import { Skeleton } from '@/components/ui/skeleton';
-import { cn } from '@/lib/utils';
-
-interface ClientHolder {
-  id: string;
-  relationship_type: string;
-  client_reference: string;
-  jurisdictions: string[];
-  effective_from: string;
-  effective_to: string | null;
-  is_active: boolean;
-  holder: {
-    id: string;
-    holder_code: string;
-    legal_name: string;
-    trade_name: string;
-    holder_type: string;
-    tax_id: string;
-    country: string;
-    city: string;
-    email: string;
-    phone: string;
-  };
-  matters_count?: number;
-  active_matters?: number;
-}
 
 interface ClientHoldersTabProps {
   clientId: string;
   clientName: string;
 }
 
-export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps) {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [search, setSearch] = useState('');
-  const [selectedHolder, setSelectedHolder] = useState<ClientHolder | null>(null);
-  const [detailDialogOpen, setDetailDialogOpen] = useState(false);
+interface HolderWithMatters {
+  id: string;
+  code: string;
+  legal_name: string;
+  trade_name: string | null;
+  holder_type: string;
+  tax_id: string | null;
+  tax_id_type: string | null;
+  country: string | null;
+  address_line1: string | null;
+  city: string | null;
+  email: string | null;
+  phone: string | null;
+  matters_count: number;
+  matters: Array<{
+    id: string;
+    reference: string;
+    title: string;
+  }>;
+}
 
-  const { data: holders = [], isLoading } = useQuery({
-    queryKey: ['client-holders', clientId],
-    queryFn: async () => {
-      const { data, error } = await fromTable('client_holders')
+export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps) {
+  const [holders, setHolders] = useState<HolderWithMatters[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  
+  // Estado para edición
+  const [editingHolder, setEditingHolder] = useState<HolderWithMatters | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [confirmDialogOpen, setConfirmDialogOpen] = useState(false);
+  const [editFormData, setEditFormData] = useState<any>({});
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    loadHolders();
+  }, [clientId]);
+
+  const loadHolders = async () => {
+    setLoading(true);
+    try {
+      // Obtener titulares únicos de los expedientes de este cliente
+      // usando matter_parties -> matters (filtrado por client_id)
+      const { data: matterParties, error } = await fromTable('matter_parties')
         .select(`
-          id,
-          relationship_type,
-          client_reference,
-          jurisdictions,
-          effective_from,
-          effective_to,
-          is_active,
-          holder:holder_id(
-            id, holder_code, legal_name, trade_name, holder_type, 
-            tax_id, country, city, email, phone
+          party_id,
+          role,
+          share_percentage,
+          party:parties!party_id(
+            id, code, legal_name, trade_name, party_type, 
+            tax_id, tax_id_type, country, address_line1, city, email, phone
+          ),
+          matter:matter_id(
+            id, reference, title, client_id
           )
         `)
-        .eq('account_id', clientId)
-        .eq('is_active', true)
-        .order('created_at', { ascending: false });
+        .eq('is_current', true)
+        .in('role', ['holder', 'co_holder', 'applicant']);
 
       if (error) throw error;
-      return (data || []) as unknown as ClientHolder[];
-    },
-    enabled: !!clientId,
-  });
 
-  const unlinkMutation = useMutation({
-    mutationFn: async (clientHolderId: string) => {
-      const { error } = await fromTable('client_holders')
-        .update({ is_active: false })
-        .eq('id', clientHolderId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['client-holders'] });
-      toast({ title: 'Titular desvinculado' });
-    },
-  });
+      // Filtrar solo los expedientes de este cliente y agrupar por titular
+      const holdersMap = new Map<string, HolderWithMatters>();
+      
+      (matterParties || []).forEach((mp: any) => {
+        // Verificar que el expediente pertenece a este cliente
+        if (!mp.matter || mp.matter.client_id !== clientId) return;
+        if (!mp.party) return;
+        
+        const partyId = mp.party.id;
+        if (!holdersMap.has(partyId)) {
+          holdersMap.set(partyId, {
+            id: mp.party.id,
+            code: mp.party.code || '',
+            legal_name: mp.party.legal_name || '',
+            trade_name: mp.party.trade_name,
+            holder_type: mp.party.party_type || 'company',
+            tax_id: mp.party.tax_id,
+            tax_id_type: mp.party.tax_id_type,
+            country: mp.party.country,
+            address_line1: mp.party.address_line1,
+            city: mp.party.city,
+            email: mp.party.email,
+            phone: mp.party.phone,
+            matters_count: 0,
+            matters: [],
+          });
+        }
+        
+        const holder = holdersMap.get(partyId)!;
+        // Solo añadir el expediente si no está ya
+        if (!holder.matters.find(m => m.id === mp.matter.id)) {
+          holder.matters_count++;
+          holder.matters.push({
+            id: mp.matter.id,
+            reference: mp.matter.reference,
+            title: mp.matter.title,
+          });
+        }
+      });
 
-  const handleUnlinkHolder = (clientHolderId: string) => {
-    if (!confirm('¿Desvincular este titular del cliente?')) return;
-    unlinkMutation.mutate(clientHolderId);
+      setHolders(Array.from(holdersMap.values()));
+    } catch (error) {
+      console.error('Error loading holders:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const filteredHolders = holders.filter(ch => {
-    if (!ch.holder) return false;
+  const handleEditClick = (holder: HolderWithMatters) => {
+    setEditingHolder(holder);
+    setEditFormData({ ...holder });
+    setConfirmDialogOpen(true); // Primero mostrar aviso de impacto
+  };
+
+  const handleConfirmEdit = () => {
+    setConfirmDialogOpen(false);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveHolder = async () => {
+    if (!editingHolder) return;
+    
+    setSaving(true);
+    try {
+      const { error } = await fromTable('parties')
+        .update({
+          legal_name: editFormData.legal_name,
+          trade_name: editFormData.trade_name || null,
+          tax_id: editFormData.tax_id || null,
+          tax_id_type: editFormData.tax_id_type || null,
+          country: editFormData.country || null,
+          address_line1: editFormData.address_line1 || null,
+          city: editFormData.city || null,
+          email: editFormData.email || null,
+          phone: editFormData.phone || null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', editingHolder.id);
+
+      if (error) throw error;
+
+      toast({ title: 'Titular actualizado' });
+      setEditDialogOpen(false);
+      setEditingHolder(null);
+      loadHolders();
+    } catch (error) {
+      console.error('Error saving holder:', error);
+      toast({ title: 'Error al guardar', variant: 'destructive' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const filteredHolders = holders.filter(h => {
     const searchLower = search.toLowerCase();
     return (
-      ch.holder.legal_name?.toLowerCase().includes(searchLower) ||
-      ch.holder.trade_name?.toLowerCase().includes(searchLower) ||
-      ch.holder.tax_id?.toLowerCase().includes(searchLower) ||
-      ch.holder.holder_code?.toLowerCase().includes(searchLower) ||
-      ch.holder.country?.toLowerCase().includes(searchLower)
+      h.legal_name?.toLowerCase().includes(searchLower) ||
+      h.tax_id?.toLowerCase().includes(searchLower) ||
+      h.code?.toLowerCase().includes(searchLower) ||
+      h.country?.toLowerCase().includes(searchLower)
     );
   });
-
-  const relationshipLabels: Record<string, { label: string; color: string }> = {
-    representation: { label: 'Representación', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300' },
-    subsidiary: { label: 'Subsidiaria', color: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' },
-    affiliate: { label: 'Afiliada', color: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300' },
-    licensor: { label: 'Licenciante', color: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-300' },
-    licensee: { label: 'Licenciatario', color: 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-300' },
-  };
 
   // Estadísticas
   const stats = {
     total: holders.length,
-    totalMatters: holders.reduce((sum, h) => sum + (h.matters_count || 0), 0),
-    activeMatters: holders.reduce((sum, h) => sum + (h.active_matters || 0), 0),
-    countries: new Set(holders.map(h => h.holder?.country).filter(Boolean)).size,
+    totalMatters: holders.reduce((sum, h) => sum + h.matters_count, 0),
+    countries: new Set(holders.map(h => h.country).filter(Boolean)).size,
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-4 gap-4">
-          {[1, 2, 3, 4].map(i => (
+        <div className="grid grid-cols-3 gap-4">
+          {[1, 2, 3].map(i => (
             <Skeleton key={i} className="h-20" />
           ))}
         </div>
@@ -179,8 +256,26 @@ export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps
 
   return (
     <div className="space-y-6">
+      {/* Info box explicativo */}
+      <Card className="border-blue-200 bg-blue-50/50 dark:border-blue-800 dark:bg-blue-950/20">
+        <CardContent className="p-4">
+          <div className="flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+            <div>
+              <p className="font-medium text-blue-900 dark:text-blue-100">
+                Los titulares se añaden desde los expedientes
+              </p>
+              <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                Para añadir un nuevo titular, crea un expediente y asígnale el titular. 
+                Aquí puedes ver y editar los datos de titulares existentes.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Estadísticas */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -202,20 +297,7 @@ export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps
               </div>
               <div>
                 <p className="text-2xl font-bold">{stats.totalMatters}</p>
-                <p className="text-xs text-muted-foreground">Expedientes totales</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-100 dark:bg-green-900 flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600 dark:text-green-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{stats.activeMatters}</p>
-                <p className="text-xs text-muted-foreground">Expedientes activos</p>
+                <p className="text-xs text-muted-foreground">Expedientes</p>
               </div>
             </div>
           </CardContent>
@@ -235,9 +317,9 @@ export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps
         </Card>
       </div>
 
-      {/* Barra de acciones */}
-      <div className="flex items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
+      {/* Búsqueda */}
+      {holders.length > 0 && (
+        <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <Input
             placeholder="Buscar titular..."
@@ -246,17 +328,7 @@ export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps
             className="pl-9"
           />
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm">
-            <Link2 className="w-4 h-4 mr-2" />
-            Vincular existente
-          </Button>
-          <Button size="sm">
-            <Plus className="w-4 h-4 mr-2" />
-            Nuevo titular
-          </Button>
-        </div>
-      </div>
+      )}
 
       {/* Tabla de titulares */}
       <Card>
@@ -266,221 +338,239 @@ export function ClientHoldersTab({ clientId, clientName }: ClientHoldersTabProps
               <TableHead>Titular</TableHead>
               <TableHead>Identificación</TableHead>
               <TableHead>País</TableHead>
-              <TableHead>Relación</TableHead>
-              <TableHead>Jurisdicciones</TableHead>
               <TableHead>Expedientes</TableHead>
-              <TableHead>Desde</TableHead>
-              <TableHead className="w-10"></TableHead>
+              <TableHead className="w-[100px]"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredHolders.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={8}>
+                <TableCell colSpan={5}>
                   <div className="py-12 text-center">
                     <Building2 className="w-12 h-12 mx-auto mb-3 text-muted-foreground/30" />
-                    <p className="font-medium">No hay titulares vinculados</p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {search ? 'No se encontraron resultados para tu búsqueda' : 'Añade titulares para este cliente'}
+                    <p className="font-medium">No hay titulares</p>
+                    <p className="text-sm text-muted-foreground mt-1 max-w-md mx-auto">
+                      {search 
+                        ? 'No se encontraron resultados para tu búsqueda' 
+                        : 'Los titulares aparecerán automáticamente cuando crees expedientes para este cliente'}
                     </p>
                     {!search && (
-                      <Button className="mt-4" size="sm">
+                      <Button 
+                        className="mt-4" 
+                        size="sm"
+                        onClick={() => navigate('/app/docket/matters/new')}
+                      >
                         <Plus className="w-4 h-4 mr-2" />
-                        Añadir primer titular
+                        Crear expediente
                       </Button>
                     )}
                   </div>
                 </TableCell>
               </TableRow>
             ) : (
-              filteredHolders.map((ch) => {
-                if (!ch.holder) return null;
-                const rel = relationshipLabels[ch.relationship_type] || relationshipLabels.representation;
-                
-                return (
-                  <TableRow key={ch.id} className="cursor-pointer hover:bg-muted/50">
-                    <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Avatar className="w-9 h-9">
-                          <AvatarFallback className="bg-primary/10 text-primary text-xs">
-                            {ch.holder.holder_type === 'individual' ? (
-                              <User className="w-4 h-4" />
-                            ) : (
-                              ch.holder.legal_name?.substring(0, 2).toUpperCase()
-                            )}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="min-w-0">
-                          <p className="font-medium truncate">{ch.holder.legal_name}</p>
-                          {ch.holder.trade_name && ch.holder.trade_name !== ch.holder.legal_name && (
-                            <p className="text-xs text-muted-foreground truncate">
-                              {ch.holder.trade_name}
-                            </p>
+              filteredHolders.map((holder) => (
+                <TableRow key={holder.id}>
+                  <TableCell>
+                    <div className="flex items-center gap-3">
+                      <Avatar className="w-9 h-9">
+                        <AvatarFallback className="bg-primary/10 text-primary text-xs">
+                          {holder.holder_type === 'individual' ? (
+                            <User className="w-4 h-4" />
+                          ) : (
+                            holder.legal_name?.substring(0, 2).toUpperCase()
                           )}
-                          {ch.client_reference && (
-                            <p className="text-xs text-muted-foreground">
-                              Ref: {ch.client_reference}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        <p className="font-mono text-xs text-muted-foreground">{ch.holder.holder_code}</p>
-                        <p className="text-sm">{ch.holder.tax_id || '—'}</p>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{ch.holder.country || '—'}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={cn("text-xs", rel.color)}>{rel.label}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {ch.jurisdictions?.slice(0, 3).map((j) => (
-                          <Badge key={j} variant="secondary" className="text-xs">
-                            {j}
-                          </Badge>
-                        ))}
-                        {ch.jurisdictions && ch.jurisdictions.length > 3 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{ch.jurisdictions.length - 3}
-                          </Badge>
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{holder.legal_name}</p>
+                        {holder.trade_name && holder.trade_name !== holder.legal_name && (
+                          <p className="text-xs text-muted-foreground truncate">
+                            {holder.trade_name}
+                          </p>
+                        )}
+                        {holder.code && (
+                          <p className="text-xs text-muted-foreground font-mono">
+                            {holder.code}
+                          </p>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1">
-                        <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
-                        <span>{ch.matters_count || 0}</span>
-                        {(ch.active_matters || 0) > 0 && (
-                          <span className="text-xs text-muted-foreground">
-                            ({ch.active_matters} activos)
-                          </span>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {ch.effective_from ? format(new Date(ch.effective_from), 'dd/MM/yyyy') : '—'}
-                    </TableCell>
-                    <TableCell>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <MoreHorizontal className="w-4 h-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => { setSelectedHolder(ch); setDetailDialogOpen(true); }}>
-                            <Eye className="w-4 h-4 mr-2" />
-                            Ver detalles
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="w-4 h-4 mr-2" />
-                            Editar relación
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <FileText className="w-4 h-4 mr-2" />
-                            Ver expedientes
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleUnlinkHolder(ch.id)}
-                            className="text-destructive"
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" />
-                            Desvincular
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </TableCell>
-                  </TableRow>
-                );
-              })
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      {holder.tax_id_type && (
+                        <span className="text-xs text-muted-foreground mr-1">{holder.tax_id_type}:</span>
+                      )}
+                      <span className="font-mono text-sm">{holder.tax_id || '—'}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{holder.country || '—'}</Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Briefcase className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span className="font-medium">{holder.matters_count}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditClick(holder)}
+                      >
+                        <Edit className="w-4 h-4 mr-1" />
+                        Editar
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
             )}
           </TableBody>
         </Table>
       </Card>
 
-      {/* Dialog detalle titular */}
-      {selectedHolder && selectedHolder.holder && (
-        <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-3">
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback className="bg-primary/10 text-primary">
-                    {selectedHolder.holder.legal_name?.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-semibold">{selectedHolder.holder.legal_name}</p>
-                  <p className="text-sm font-normal text-muted-foreground">
-                    {selectedHolder.holder.holder_code}
-                  </p>
-                </div>
-              </DialogTitle>
-            </DialogHeader>
-
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Razón social</p>
-                  <p className="text-sm font-medium">{selectedHolder.holder.legal_name}</p>
-                </div>
-                {selectedHolder.holder.trade_name && (
-                  <div>
-                    <p className="text-xs text-muted-foreground mb-1">Nombre comercial</p>
-                    <p className="text-sm font-medium">{selectedHolder.holder.trade_name}</p>
-                  </div>
-                )}
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Identificación fiscal</p>
-                  <p className="text-sm font-medium">{selectedHolder.holder.tax_id || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">País</p>
-                  <p className="text-sm font-medium">{selectedHolder.holder.country}</p>
-                </div>
+      {/* Dialog de confirmación (aviso de impacto) */}
+      <AlertDialog open={confirmDialogOpen} onOpenChange={setConfirmDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <AlertTriangle className="w-5 h-5 text-amber-500" />
+              Editar titular
+            </AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="space-y-2">
+                <p>
+                  El titular <strong>"{editingHolder?.legal_name}"</strong> está vinculado a{' '}
+                  <strong>{editingHolder?.matters_count} expediente(s)</strong>.
+                </p>
+                <p className="text-sm">
+                  Los cambios que realices se aplicarán a la ficha del titular y se reflejarán 
+                  en futuros documentos generados para estos expedientes.
+                </p>
               </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmEdit}>
+              Entendido, continuar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Email</p>
-                  <p className="text-sm font-medium">{selectedHolder.holder.email || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Teléfono</p>
-                  <p className="text-sm font-medium">{selectedHolder.holder.phone || '—'}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Relación con {clientName}</p>
-                  <Badge className={cn(relationshipLabels[selectedHolder.relationship_type]?.color)}>
-                    {relationshipLabels[selectedHolder.relationship_type]?.label}
-                  </Badge>
-                </div>
-                <div>
-                  <p className="text-xs text-muted-foreground mb-1">Expedientes</p>
-                  <p className="text-sm font-medium">
-                    {selectedHolder.matters_count || 0} total ({selectedHolder.active_matters || 0} activos)
-                  </p>
-                </div>
+      {/* Dialog de edición */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Editar titular</DialogTitle>
+            <DialogDescription>
+              Los cambios afectarán a {editingHolder?.matters_count} expediente(s).
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Nombre / Razón social</Label>
+                <Input
+                  value={editFormData.legal_name || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, legal_name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Nombre comercial</Label>
+                <Input
+                  value={editFormData.trade_name || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, trade_name: e.target.value })}
+                />
               </div>
             </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setDetailDialogOpen(false)}>
-                Cerrar
-              </Button>
-              <Button onClick={() => navigate(`/app/expedientes?holder=${selectedHolder.holder.id}`)}>
-                <FileText className="w-4 h-4 mr-2" />
-                Ver expedientes
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Tipo ID</Label>
+                <Select
+                  value={editFormData.tax_id_type || 'CIF'}
+                  onValueChange={(v) => setEditFormData({ ...editFormData, tax_id_type: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="CIF">CIF</SelectItem>
+                    <SelectItem value="NIF">NIF</SelectItem>
+                    <SelectItem value="VAT">VAT</SelectItem>
+                    <SelectItem value="EIN">EIN</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Número ID</Label>
+                <Input
+                  value={editFormData.tax_id || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, tax_id: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>País</Label>
+                <Input
+                  value={editFormData.country || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, country: e.target.value.toUpperCase() })}
+                  maxLength={2}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Dirección</Label>
+              <Input
+                value={editFormData.address_line1 || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, address_line1: e.target.value })}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Ciudad</Label>
+                <Input
+                  value={editFormData.city || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  type="email"
+                  value={editFormData.email || ''}
+                  onChange={(e) => setEditFormData({ ...editFormData, email: e.target.value })}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label>Teléfono</Label>
+              <Input
+                value={editFormData.phone || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, phone: e.target.value })}
+              />
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleSaveHolder} disabled={saving}>
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? 'Guardando...' : 'Guardar cambios'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

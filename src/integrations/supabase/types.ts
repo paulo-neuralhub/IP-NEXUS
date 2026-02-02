@@ -9042,12 +9042,15 @@ export type Database = {
           agent_jurisdictions: string[] | null
           agent_license_number: string | null
           assigned_to: string | null
+          billing_email: string | null
           churn_risk_level: string | null
           city: string | null
           client_token: string | null
           client_type_id: string | null
           country: string | null
           created_at: string
+          credit_limit: number | null
+          currency: string | null
           email: string | null
           fax: string | null
           health_score: number | null
@@ -9062,6 +9065,7 @@ export type Database = {
           organization_id: string
           parent_account_id: string | null
           payment_classification_id: string | null
+          payment_terms: number | null
           phone: string | null
           postal_code: string | null
           rating_stars: number | null
@@ -9084,12 +9088,15 @@ export type Database = {
           agent_jurisdictions?: string[] | null
           agent_license_number?: string | null
           assigned_to?: string | null
+          billing_email?: string | null
           churn_risk_level?: string | null
           city?: string | null
           client_token?: string | null
           client_type_id?: string | null
           country?: string | null
           created_at?: string
+          credit_limit?: number | null
+          currency?: string | null
           email?: string | null
           fax?: string | null
           health_score?: number | null
@@ -9104,6 +9111,7 @@ export type Database = {
           organization_id: string
           parent_account_id?: string | null
           payment_classification_id?: string | null
+          payment_terms?: number | null
           phone?: string | null
           postal_code?: string | null
           rating_stars?: number | null
@@ -9126,12 +9134,15 @@ export type Database = {
           agent_jurisdictions?: string[] | null
           agent_license_number?: string | null
           assigned_to?: string | null
+          billing_email?: string | null
           churn_risk_level?: string | null
           city?: string | null
           client_token?: string | null
           client_type_id?: string | null
           country?: string | null
           created_at?: string
+          credit_limit?: number | null
+          currency?: string | null
           email?: string | null
           fax?: string | null
           health_score?: number | null
@@ -9146,6 +9157,7 @@ export type Database = {
           organization_id?: string
           parent_account_id?: string | null
           payment_classification_id?: string | null
+          payment_terms?: number | null
           phone?: string | null
           postal_code?: string | null
           rating_stars?: number | null
