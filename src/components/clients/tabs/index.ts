@@ -3,5 +3,6 @@
 // =====================================================
 
 export { ClientGeneralTab } from './ClientGeneralTab';
+export { ClientHoldersTab } from './ClientHoldersTab';
 export { ClientTasksTab } from './ClientTasksTab';
 export { ClientSettingsTab } from './ClientSettingsTab';
