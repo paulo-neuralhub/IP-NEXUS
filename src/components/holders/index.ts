@@ -6,3 +6,4 @@ export { HolderDialog } from './HolderDialog';
 export { HolderSelector } from './HolderSelector';
 export { ClientHoldersPanel } from './ClientHoldersPanel';
 export { AddClientHolderDialog } from './AddClientHolderDialog';
+export { MatterPartiesPanel } from './MatterPartiesPanel';
