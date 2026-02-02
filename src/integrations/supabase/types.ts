@@ -9037,83 +9037,128 @@ export type Database = {
         Row: {
           account_manager_id: string | null
           account_type: string | null
+          address_line1: string | null
+          address_line2: string | null
           agent_jurisdictions: string[] | null
           agent_license_number: string | null
           assigned_to: string | null
           churn_risk_level: string | null
+          city: string | null
           client_token: string | null
           client_type_id: string | null
+          country: string | null
           created_at: string
+          email: string | null
+          fax: string | null
           health_score: number | null
           id: string
+          industry: string | null
           internal_notes: string | null
           last_interaction_at: string | null
           legal_name: string | null
           metadata: Json
           name: string
+          notes: string | null
           organization_id: string
           parent_account_id: string | null
           payment_classification_id: string | null
+          phone: string | null
+          postal_code: string | null
           rating_stars: number | null
+          state_province: string | null
           status: string
           tags: string[]
+          tax_country: string | null
           tax_id: string | null
+          tax_id_type: string | null
           tier: string
+          trade_name: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           account_manager_id?: string | null
           account_type?: string | null
+          address_line1?: string | null
+          address_line2?: string | null
           agent_jurisdictions?: string[] | null
           agent_license_number?: string | null
           assigned_to?: string | null
           churn_risk_level?: string | null
+          city?: string | null
           client_token?: string | null
           client_type_id?: string | null
+          country?: string | null
           created_at?: string
+          email?: string | null
+          fax?: string | null
           health_score?: number | null
           id?: string
+          industry?: string | null
           internal_notes?: string | null
           last_interaction_at?: string | null
           legal_name?: string | null
           metadata?: Json
           name: string
+          notes?: string | null
           organization_id: string
           parent_account_id?: string | null
           payment_classification_id?: string | null
+          phone?: string | null
+          postal_code?: string | null
           rating_stars?: number | null
+          state_province?: string | null
           status?: string
           tags?: string[]
+          tax_country?: string | null
           tax_id?: string | null
+          tax_id_type?: string | null
           tier?: string
+          trade_name?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           account_manager_id?: string | null
           account_type?: string | null
+          address_line1?: string | null
+          address_line2?: string | null
           agent_jurisdictions?: string[] | null
           agent_license_number?: string | null
           assigned_to?: string | null
           churn_risk_level?: string | null
+          city?: string | null
           client_token?: string | null
           client_type_id?: string | null
+          country?: string | null
           created_at?: string
+          email?: string | null
+          fax?: string | null
           health_score?: number | null
           id?: string
+          industry?: string | null
           internal_notes?: string | null
           last_interaction_at?: string | null
           legal_name?: string | null
           metadata?: Json
           name?: string
+          notes?: string | null
           organization_id?: string
           parent_account_id?: string | null
           payment_classification_id?: string | null
+          phone?: string | null
+          postal_code?: string | null
           rating_stars?: number | null
+          state_province?: string | null
           status?: string
           tags?: string[]
+          tax_country?: string | null
           tax_id?: string | null
+          tax_id_type?: string | null
           tier?: string
+          trade_name?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: [
           {

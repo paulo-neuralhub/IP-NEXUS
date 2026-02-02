@@ -20,20 +20,14 @@ import {
 import {
   Building2,
   MapPin,
-  Mail,
-  Phone,
   Globe,
   Edit,
   Save,
   X,
-  FileText,
-  User,
-  Briefcase,
+  Phone,
   Shield,
 } from 'lucide-react';
 import { fromTable } from '@/lib/supabase';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast';
 
 interface ClientGeneralTabProps {
@@ -50,31 +44,32 @@ export function ClientGeneralTab({ client, onUpdate }: ClientGeneralTabProps) {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const { error } = await fromTable('crm_accounts')
+      const supabaseClient: any = fromTable('crm_accounts');
+      const { error } = await supabaseClient
         .update({
           name: formData.name,
-          legal_name: formData.legal_name,
-          trade_name: formData.trade_name,
-          client_type_id: formData.client_type_id,
+          legal_name: formData.legal_name || null,
+          trade_name: formData.trade_name || null,
           account_type: formData.account_type,
           status: formData.status,
           tier: formData.tier,
-          tax_id: formData.tax_id,
-          tax_id_type: formData.tax_id_type,
-          address_line1: formData.address_line1,
-          address_line2: formData.address_line2,
-          city: formData.city,
-          state_province: formData.state_province,
-          postal_code: formData.postal_code,
-          country: formData.country,
-          email: formData.email,
-          phone: formData.phone,
-          fax: formData.fax,
-          website: formData.website,
-          agent_license_number: formData.agent_license_number,
-          agent_jurisdictions: formData.agent_jurisdictions,
-          industry: formData.industry,
-          notes: formData.notes,
+          tax_id: formData.tax_id || null,
+          tax_id_type: formData.tax_id_type || 'CIF',
+          tax_country: formData.tax_country || 'ES',
+          address_line1: formData.address_line1 || null,
+          address_line2: formData.address_line2 || null,
+          city: formData.city || null,
+          state_province: formData.state_province || null,
+          postal_code: formData.postal_code || null,
+          country: formData.country || 'ES',
+          email: formData.email || null,
+          phone: formData.phone || null,
+          fax: formData.fax || null,
+          website: formData.website || null,
+          agent_license_number: formData.agent_license_number || null,
+          agent_jurisdictions: formData.agent_jurisdictions || null,
+          industry: formData.industry || null,
+          notes: formData.notes || null,
           updated_at: new Date().toISOString(),
         })
         .eq('id', client.id);
@@ -485,60 +480,26 @@ export function ClientGeneralTab({ client, onUpdate }: ClientGeneralTabProps) {
             </CardContent>
           </Card>
         )}
-
-        {/* Notas */}
-        <Card className="lg:col-span-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-base">
-              <FileText className="w-4 h-4 text-primary" />
-              Notas
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {editing ? (
-              <Textarea
-                value={formData.notes || ''}
-                onChange={(e) => updateField('notes', e.target.value)}
-                rows={4}
-                placeholder="Notas internas sobre este cliente..."
-              />
-            ) : (
-              <p className="text-sm whitespace-pre-wrap">
-                {client.notes || 'Sin notas'}
-              </p>
-            )}
-          </CardContent>
-        </Card>
       </div>
 
-      {/* Info de auditoría */}
+      {/* Notas - full width */}
       <Card>
-        <CardContent className="py-4">
-          <div className="flex items-center justify-between text-sm text-muted-foreground">
-            <div className="flex items-center gap-4">
-              {client.client_token && (
-                <span>
-                  Código: <span className="font-mono font-medium">{client.client_token}</span>
-                </span>
-              )}
-              {client.created_at && (
-                <span>
-                  Creado: {format(new Date(client.created_at), "d 'de' MMMM 'de' yyyy", { locale: es })}
-                </span>
-              )}
-              {client.updated_at && (
-                <span>
-                  Actualizado: {format(new Date(client.updated_at), "d 'de' MMMM 'de' yyyy 'a las' HH:mm", { locale: es })}
-                </span>
-              )}
-            </div>
-            {client.assigned_user && (
-              <div className="flex items-center gap-2">
-                <User className="h-4 w-4" />
-                <span>Asignado a: {client.assigned_user.full_name}</span>
-              </div>
-            )}
-          </div>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base">Notas Internas</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {editing ? (
+            <Textarea
+              value={formData.notes || ''}
+              onChange={(e) => updateField('notes', e.target.value)}
+              rows={4}
+              placeholder="Notas internas sobre este cliente..."
+            />
+          ) : (
+            <p className="text-sm whitespace-pre-wrap">
+              {client.notes || 'Sin notas internas.'}
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>
