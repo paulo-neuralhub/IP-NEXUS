@@ -31476,6 +31476,100 @@ export type Database = {
           },
         ]
       }
+      organization_signature_config: {
+        Row: {
+          auto_send_reminders: boolean | null
+          created_at: string | null
+          currency: string | null
+          current_month_qualified_count: number | null
+          current_month_reset_at: string | null
+          current_month_standard_count: number | null
+          custom_email_sender: string | null
+          default_expiration_days: number | null
+          id: string
+          logo_url: string | null
+          monthly_qualified_limit: number | null
+          monthly_standard_limit: number | null
+          organization_id: string
+          primary_color: string | null
+          qualified_enabled: boolean | null
+          qualified_price_per_signature: number | null
+          qualified_provider: string | null
+          reminder_days: number[] | null
+          standard_enabled: boolean | null
+          standard_provider: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          auto_send_reminders?: boolean | null
+          created_at?: string | null
+          currency?: string | null
+          current_month_qualified_count?: number | null
+          current_month_reset_at?: string | null
+          current_month_standard_count?: number | null
+          custom_email_sender?: string | null
+          default_expiration_days?: number | null
+          id?: string
+          logo_url?: string | null
+          monthly_qualified_limit?: number | null
+          monthly_standard_limit?: number | null
+          organization_id: string
+          primary_color?: string | null
+          qualified_enabled?: boolean | null
+          qualified_price_per_signature?: number | null
+          qualified_provider?: string | null
+          reminder_days?: number[] | null
+          standard_enabled?: boolean | null
+          standard_provider?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          auto_send_reminders?: boolean | null
+          created_at?: string | null
+          currency?: string | null
+          current_month_qualified_count?: number | null
+          current_month_reset_at?: string | null
+          current_month_standard_count?: number | null
+          custom_email_sender?: string | null
+          default_expiration_days?: number | null
+          id?: string
+          logo_url?: string | null
+          monthly_qualified_limit?: number | null
+          monthly_standard_limit?: number | null
+          organization_id?: string
+          primary_color?: string | null
+          qualified_enabled?: boolean | null
+          qualified_price_per_signature?: number | null
+          qualified_provider?: string | null
+          reminder_days?: number[] | null
+          standard_enabled?: boolean | null
+          standard_provider?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_signature_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organization_signature_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "organization_signature_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_subscriptions: {
         Row: {
           auto_recharge: boolean | null
@@ -37758,6 +37852,119 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      signature_events: {
+        Row: {
+          created_at: string | null
+          event_data: Json | null
+          event_type: string
+          id: string
+          organization_id: string
+          provider_raw_event: Json | null
+          signature_request_id: string
+          signer_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type: string
+          id?: string
+          organization_id: string
+          provider_raw_event?: Json | null
+          signature_request_id: string
+          signer_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          event_data?: Json | null
+          event_type?: string
+          id?: string
+          organization_id?: string
+          provider_raw_event?: Json | null
+          signature_request_id?: string
+          signer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "signature_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "signature_events_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "signature_events_signature_request_id_fkey"
+            columns: ["signature_request_id"]
+            isOneToOne: false
+            referencedRelation: "signature_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      signature_policies: {
+        Row: {
+          allowed_providers: string[] | null
+          created_at: string | null
+          document_type: string
+          id: string
+          info_message: string | null
+          is_active: boolean | null
+          jurisdiction: string | null
+          office_code: string | null
+          priority: number | null
+          recommended_level: string | null
+          required_level: string
+          requires_idv: boolean | null
+          updated_at: string | null
+          warning_message: string | null
+        }
+        Insert: {
+          allowed_providers?: string[] | null
+          created_at?: string | null
+          document_type: string
+          id?: string
+          info_message?: string | null
+          is_active?: boolean | null
+          jurisdiction?: string | null
+          office_code?: string | null
+          priority?: number | null
+          recommended_level?: string | null
+          required_level?: string
+          requires_idv?: boolean | null
+          updated_at?: string | null
+          warning_message?: string | null
+        }
+        Update: {
+          allowed_providers?: string[] | null
+          created_at?: string | null
+          document_type?: string
+          id?: string
+          info_message?: string | null
+          is_active?: boolean | null
+          jurisdiction?: string | null
+          office_code?: string | null
+          priority?: number | null
+          recommended_level?: string | null
+          required_level?: string
+          requires_idv?: boolean | null
+          updated_at?: string | null
+          warning_message?: string | null
+        }
+        Relationships: []
       }
       signature_requests: {
         Row: {
@@ -47239,6 +47446,14 @@ export type Database = {
         }
         Returns: number
       }
+      evaluate_signature_policy: {
+        Args: {
+          p_document_type: string
+          p_jurisdiction?: string
+          p_office_code?: string
+        }
+        Returns: Json
+      }
       expire_trials: { Args: never; Returns: number }
       generate_client_number: {
         Args: { p_organization_id: string }
@@ -47282,6 +47497,10 @@ export type Database = {
             }
             Returns: string
           }
+      generate_signature_request_number: {
+        Args: { p_organization_id: string }
+        Returns: string
+      }
       generate_voip_invoices_superadmin: {
         Args: { p_period_start: string; p_tax_rate?: number }
         Returns: {
