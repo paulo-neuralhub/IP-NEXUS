@@ -13364,12 +13364,18 @@ export type Database = {
           ai_system_prompt: string | null
           ai_temperature: number | null
           ai_user_prompt_template: string | null
+          applicable_jurisdictions: string[] | null
+          applicable_matter_types: string[] | null
+          applicable_offices: string[] | null
+          applicable_phases: string[] | null
           auto_generate_on_phase: string | null
           available_languages: string[] | null
+          available_variables: Json | null
           average_rating: number | null
           based_on_template_id: string | null
           body_sections: Json | null
           category: string
+          category_code: string | null
           code: string | null
           content_html: string | null
           created_at: string | null
@@ -13391,12 +13397,15 @@ export type Database = {
           jurisdiction_id: string | null
           last_modified_by: string | null
           layout: string | null
+          margins: Json | null
           name: string
           numbering_digits: number | null
           numbering_prefix: string | null
           numbering_suffix: string | null
           organization_id: string | null
+          orientation: string | null
           output_format: string | null
+          paper_size: string | null
           preferred_style_code: string | null
           requires_signature: boolean | null
           right_type: string | null
@@ -13404,6 +13413,7 @@ export type Database = {
           show_footer: boolean | null
           show_header: boolean | null
           show_logo: boolean | null
+          signature_positions: Json | null
           signature_type: string | null
           style: string | null
           tags: string[] | null
@@ -13417,6 +13427,7 @@ export type Database = {
           usage_count: number | null
           variable_codes: string[] | null
           variables: Json | null
+          version: number | null
         }
         Insert: {
           ai_max_tokens?: number | null
@@ -13424,12 +13435,18 @@ export type Database = {
           ai_system_prompt?: string | null
           ai_temperature?: number | null
           ai_user_prompt_template?: string | null
+          applicable_jurisdictions?: string[] | null
+          applicable_matter_types?: string[] | null
+          applicable_offices?: string[] | null
+          applicable_phases?: string[] | null
           auto_generate_on_phase?: string | null
           available_languages?: string[] | null
+          available_variables?: Json | null
           average_rating?: number | null
           based_on_template_id?: string | null
           body_sections?: Json | null
           category: string
+          category_code?: string | null
           code?: string | null
           content_html?: string | null
           created_at?: string | null
@@ -13451,12 +13468,15 @@ export type Database = {
           jurisdiction_id?: string | null
           last_modified_by?: string | null
           layout?: string | null
+          margins?: Json | null
           name: string
           numbering_digits?: number | null
           numbering_prefix?: string | null
           numbering_suffix?: string | null
           organization_id?: string | null
+          orientation?: string | null
           output_format?: string | null
+          paper_size?: string | null
           preferred_style_code?: string | null
           requires_signature?: boolean | null
           right_type?: string | null
@@ -13464,6 +13484,7 @@ export type Database = {
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          signature_positions?: Json | null
           signature_type?: string | null
           style?: string | null
           tags?: string[] | null
@@ -13477,6 +13498,7 @@ export type Database = {
           usage_count?: number | null
           variable_codes?: string[] | null
           variables?: Json | null
+          version?: number | null
         }
         Update: {
           ai_max_tokens?: number | null
@@ -13484,12 +13506,18 @@ export type Database = {
           ai_system_prompt?: string | null
           ai_temperature?: number | null
           ai_user_prompt_template?: string | null
+          applicable_jurisdictions?: string[] | null
+          applicable_matter_types?: string[] | null
+          applicable_offices?: string[] | null
+          applicable_phases?: string[] | null
           auto_generate_on_phase?: string | null
           available_languages?: string[] | null
+          available_variables?: Json | null
           average_rating?: number | null
           based_on_template_id?: string | null
           body_sections?: Json | null
           category?: string
+          category_code?: string | null
           code?: string | null
           content_html?: string | null
           created_at?: string | null
@@ -13511,12 +13539,15 @@ export type Database = {
           jurisdiction_id?: string | null
           last_modified_by?: string | null
           layout?: string | null
+          margins?: Json | null
           name?: string
           numbering_digits?: number | null
           numbering_prefix?: string | null
           numbering_suffix?: string | null
           organization_id?: string | null
+          orientation?: string | null
           output_format?: string | null
+          paper_size?: string | null
           preferred_style_code?: string | null
           requires_signature?: boolean | null
           right_type?: string | null
@@ -13524,6 +13555,7 @@ export type Database = {
           show_footer?: boolean | null
           show_header?: boolean | null
           show_logo?: boolean | null
+          signature_positions?: Json | null
           signature_type?: string | null
           style?: string | null
           tags?: string[] | null
@@ -13537,6 +13569,7 @@ export type Database = {
           usage_count?: number | null
           variable_codes?: string[] | null
           variables?: Json | null
+          version?: number | null
         }
         Relationships: [
           {
@@ -41512,6 +41545,42 @@ export type Database = {
           },
         ]
       }
+      template_categories: {
+        Row: {
+          code: string
+          created_at: string | null
+          description_es: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          name_en: string | null
+          name_es: string
+          sort_order: number | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          description_es?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name_en?: string | null
+          name_es: string
+          sort_order?: number | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          description_es?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          name_en?: string | null
+          name_es?: string
+          sort_order?: number | null
+        }
+        Relationships: []
+      }
       tenant_addons: {
         Row: {
           access_type: string | null
@@ -47466,6 +47535,10 @@ export type Database = {
             Returns: string
           }
       generate_deal_number: {
+        Args: { p_organization_id: string }
+        Returns: string
+      }
+      generate_document_number: {
         Args: { p_organization_id: string }
         Returns: string
       }
