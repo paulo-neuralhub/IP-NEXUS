@@ -388,6 +388,10 @@ export function WorkflowCards({
         matterId={expedienteId}
         matterReference={matterReference}
         currentPhase={currentPhase}
+        onSuccess={(newPhase) => {
+          // Trigger the phase panel for the new phase
+          onPhaseClick?.(newPhase);
+        }}
       />
     </Card>
   );

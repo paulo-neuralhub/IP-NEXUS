@@ -62,6 +62,7 @@ interface AdvancePhaseModalProps {
   matterId: string;
   matterReference: string;
   currentPhase: string;
+  onSuccess?: (newPhase: string) => void;
 }
 
 export function AdvancePhaseModal({
@@ -70,6 +71,7 @@ export function AdvancePhaseModal({
   matterId,
   matterReference,
   currentPhase,
+  onSuccess,
 }: AdvancePhaseModalProps) {
   const [note, setNote] = useState('');
   const { advancePhase } = useMatterPhase(matterId);
@@ -111,6 +113,13 @@ export function AdvancePhaseModal({
           
           setNote('');
           onClose();
+          
+          // Open the new phase panel after a short delay
+          if (onSuccess && nextPhase) {
+            setTimeout(() => {
+              onSuccess(nextPhase);
+            }, 500);
+          }
         },
         onError: (error) => {
           toast.error('Error al avanzar fase', {
