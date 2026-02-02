@@ -293,3 +293,12 @@ verify_jwt = true
 
 [functions.extract-document-data]
 verify_jwt = false
+
+[functions.signature-boldsign]
+verify_jwt = false
+
+[functions.signature-yousign]
+verify_jwt = false
+
+[functions.signature-webhook]
+verify_jwt = false

@@ -38360,16 +38360,20 @@ export type Database = {
           matter_id: string | null
           organization_id: string
           provider: string | null
+          provider_envelope_id: string | null
+          provider_response: Json | null
           reminder_sent_count: number | null
           sent_at: string | null
           signature_type: string | null
           signed_document_hash: string | null
+          signed_document_path: string | null
           signed_document_url: string | null
           signers: Json
           status: string | null
           updated_at: string | null
           voided_at: string | null
           voided_reason: string | null
+          webhook_events: Json | null
         }
         Insert: {
           certificate_url?: string | null
@@ -38390,16 +38394,20 @@ export type Database = {
           matter_id?: string | null
           organization_id: string
           provider?: string | null
+          provider_envelope_id?: string | null
+          provider_response?: Json | null
           reminder_sent_count?: number | null
           sent_at?: string | null
           signature_type?: string | null
           signed_document_hash?: string | null
+          signed_document_path?: string | null
           signed_document_url?: string | null
           signers?: Json
           status?: string | null
           updated_at?: string | null
           voided_at?: string | null
           voided_reason?: string | null
+          webhook_events?: Json | null
         }
         Update: {
           certificate_url?: string | null
@@ -38420,16 +38428,20 @@ export type Database = {
           matter_id?: string | null
           organization_id?: string
           provider?: string | null
+          provider_envelope_id?: string | null
+          provider_response?: Json | null
           reminder_sent_count?: number | null
           sent_at?: string | null
           signature_type?: string | null
           signed_document_hash?: string | null
+          signed_document_path?: string | null
           signed_document_url?: string | null
           signers?: Json
           status?: string | null
           updated_at?: string | null
           voided_at?: string | null
           voided_reason?: string | null
+          webhook_events?: Json | null
         }
         Relationships: [
           {
