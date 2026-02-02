@@ -8,4 +8,6 @@ export { ClientCommunicationsTab } from './ClientCommunicationsTab';
 export { ClientDocumentsTab } from './ClientDocumentsTab';
 export { ClientWhatsAppTimeline } from './ClientWhatsAppTimeline';
 export { ClientQuickMetrics } from './ClientQuickMetrics';
+export { ClientQuickActions } from './ClientQuickActions';
+export { ClientTimeline } from './ClientTimeline';
 export * from './tabs';
