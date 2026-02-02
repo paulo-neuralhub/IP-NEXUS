@@ -3,6 +3,7 @@
 // Full-width hero with info + WorkflowCards below
 // ============================================================
 
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -30,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import type { MatterV2 } from '@/hooks/use-matters-v2';
 import { WorkflowCards } from './WorkflowCards';
+import { PhasePanelContainer } from '@/components/phases';
 
 // Type configuration - colors for icon accents only
 const TYPE_CONFIG: Record<string, { label: string; icon: string; borderColor: string; textColor: string; bgLight: string }> = {
@@ -98,6 +100,10 @@ export function MatterDetailHeader({
 }: MatterDetailHeaderProps) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  
+  // State for phase panel
+  const [showPhasePanel, setShowPhasePanel] = useState(false);
+  const [selectedPhase, setSelectedPhase] = useState<string>('F0');
 
   // Get current phase from direct matter fields (not custom_fields!)
   const currentPhase = matter.current_phase || 'F0';
@@ -323,10 +329,31 @@ export function MatterDetailHeader({
           phaseEnteredAt={phaseEnteredAt}
           typeColor={typeConfig.textColor}
           onPhaseClick={(phase) => {
-            toast.info(`Click en fase ${phase}`);
+            setSelectedPhase(phase);
+            setShowPhasePanel(true);
           }}
         />
       </div>
+
+      {/* =============================================== */}
+      {/* PHASE PANEL MODAL */}
+      {/* =============================================== */}
+      <PhasePanelContainer
+        open={showPhasePanel}
+        onOpenChange={setShowPhasePanel}
+        matterId={matter.id}
+        matterReference={matter.matter_number || matter.reference || ''}
+        matterTitle={matter.title || matter.mark_name || 'Sin título'}
+        currentPhase={selectedPhase}
+        onAdvancePhase={() => {
+          // Close panel after advance
+          setShowPhasePanel(false);
+        }}
+        onGoBack={() => {
+          // Could navigate to previous phase or close
+          setShowPhasePanel(false);
+        }}
+      />
     </div>
   );
 }

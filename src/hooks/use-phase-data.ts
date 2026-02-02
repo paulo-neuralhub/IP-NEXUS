@@ -197,19 +197,31 @@ export interface PhaseF9Data {
   }>;
 }
 
-// Hook to get phase data
+// Hook to get phase data - creates if not exists
 export function usePhaseData(matterId: string, phaseCode: string) {
   return useQuery({
     queryKey: ['phase-data', matterId, phaseCode],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('matter_phase_data')
-        .select('*')
-        .eq('matter_id', matterId)
-        .eq('phase_code', phaseCode)
-        .maybeSingle();
+      // Use RPC to get or create phase data
+      const { data, error } = await supabase.rpc('get_or_create_phase_data', {
+        p_matter_id: matterId,
+        p_phase_code: phaseCode,
+      });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error getting/creating phase data:', error);
+        // Fallback: try direct query
+        const { data: directData, error: directError } = await supabase
+          .from('matter_phase_data')
+          .select('*')
+          .eq('matter_id', matterId)
+          .eq('phase_code', phaseCode)
+          .maybeSingle();
+
+        if (directError) throw directError;
+        return directData as PhaseData | null;
+      }
+
       return data as PhaseData | null;
     },
     enabled: !!matterId && !!phaseCode,
