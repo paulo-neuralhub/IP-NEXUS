@@ -65,7 +65,8 @@ export function NiceClassBrowser() {
         items_count: counts[c.class_number] || 0
       }));
     },
-    staleTime: 1000 * 60, // 1 minute
+    staleTime: 0, // Always consider stale to pick up imports
+    refetchOnMount: 'always', // Refetch when component mounts (tab switch)
   });
 
   // Load items when class is selected - also with React Query
@@ -81,7 +82,8 @@ export function NiceClassBrowser() {
       return data || [];
     },
     enabled: !!selectedClass,
-    staleTime: 1000 * 60,
+    staleTime: 0, // Always fresh
+    refetchOnMount: 'always',
   });
 
   // Filter classes
