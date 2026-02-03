@@ -3,7 +3,7 @@
 // PROMPT 21: Panel de análisis de viabilidad
 // ============================================================
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -20,13 +20,20 @@ import {
   Send,
   ExternalLink,
   FileDown,
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { PHASE_CHECKLISTS, type PhaseF1Data } from '@/hooks/use-phase-data';
+import { toast } from 'sonner';
+import jsPDF from 'jspdf';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
 
 interface PhaseF1PanelProps {
   matterId: string;
+  matterReference?: string;
+  matterTitle?: string;
   phaseData: Record<string, unknown>;
   checklist: Record<string, boolean>;
   onDataChange: (key: string, value: unknown) => void;
@@ -42,11 +49,14 @@ const SEARCH_DATABASES = [
 
 export function PhaseF1Panel({
   matterId,
+  matterReference,
+  matterTitle,
   phaseData,
   checklist,
   onDataChange,
   onChecklistChange,
 }: PhaseF1PanelProps) {
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const data = phaseData as PhaseF1Data;
   const checklistItems = PHASE_CHECKLISTS.F1;
 
@@ -56,6 +66,135 @@ export function PhaseF1Panel({
       case 'medium': return 'bg-yellow-100 text-yellow-700 border-yellow-300';
       case 'high': return 'bg-red-100 text-red-700 border-red-300';
       default: return 'bg-gray-100 text-gray-700 border-gray-300';
+    }
+  };
+
+  // Generate PDF report
+  const handleGeneratePdf = async () => {
+    setIsGeneratingPdf(true);
+    
+    try {
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const pageWidth = 210;
+      const margin = 20;
+      const contentWidth = pageWidth - margin * 2;
+      let y = margin;
+
+      // Header
+      doc.setFillColor(59, 130, 246); // Blue-500
+      doc.rect(0, 0, pageWidth, 35, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(20);
+      doc.setFont('helvetica', 'bold');
+      doc.text('INFORME DE ANÁLISIS', margin, 20);
+      
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Expediente: ${matterReference || matterId}`, margin, 28);
+
+      // Reset colors
+      doc.setTextColor(31, 41, 55);
+      y = 45;
+
+      // Matter info
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Información del Expediente', margin, y);
+      y += 8;
+      
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text(`Referencia: ${matterReference || 'N/A'}`, margin, y);
+      y += 5;
+      doc.text(`Título: ${matterTitle || 'N/A'}`, margin, y);
+      y += 5;
+      doc.text(`Fecha: ${format(new Date(), "d 'de' MMMM 'de' yyyy", { locale: es })}`, margin, y);
+      y += 12;
+
+      // Risk Assessment
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Evaluación de Riesgo', margin, y);
+      y += 8;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      
+      const riskLevelText = {
+        low: '🟢 Bajo',
+        medium: '🟡 Medio', 
+        high: '🔴 Alto',
+      }[data.risk_level || ''] || 'No evaluado';
+      
+      doc.text(`Nivel de riesgo: ${riskLevelText}`, margin, y);
+      y += 5;
+      doc.text(`Distintividad: ${data.distinctiveness_score || 0}%`, margin, y);
+      y += 12;
+
+      // Search Results
+      if (data.search_performed && data.search_results) {
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'bold');
+        doc.text('Resultados de Búsqueda', margin, y);
+        y += 8;
+        
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(10);
+        doc.text(`Marcas encontradas: ${data.search_results.total_found}`, margin, y);
+        y += 5;
+        doc.text(`Alto riesgo: ${data.search_results.high_risk}`, margin, y);
+        y += 5;
+        doc.text(`Riesgo medio: ${data.search_results.medium_risk}`, margin, y);
+        y += 5;
+        doc.text(`Bajo riesgo: ${data.search_results.low_risk}`, margin, y);
+        y += 12;
+      }
+
+      // Recommendation
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text('Recomendación', margin, y);
+      y += 8;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      
+      const recommendationText = {
+        proceed: '✅ Proceder con el registro',
+        proceed_with_changes: '⚠️ Proceder con modificaciones',
+        not_recommended: '❌ No recomendado',
+      }[data.recommendation || ''] || 'Sin recomendación';
+      
+      doc.text(recommendationText, margin, y);
+      y += 8;
+
+      // Recommendation notes
+      if (data.recommendation_notes) {
+        const lines = doc.splitTextToSize(data.recommendation_notes, contentWidth);
+        doc.text(lines, margin, y);
+        y += lines.length * 5 + 10;
+      }
+
+      // Footer
+      const footerY = 280;
+      doc.setFontSize(8);
+      doc.setTextColor(156, 163, 175);
+      doc.text('Este documento es confidencial y de uso interno.', pageWidth / 2, footerY, { align: 'center' });
+      doc.text(`Generado por IP-NEXUS · ${format(new Date(), 'dd/MM/yyyy HH:mm')}`, pageWidth / 2, footerY + 4, { align: 'center' });
+
+      // Save
+      const fileName = `Informe_Analisis_${matterReference || matterId}_${format(new Date(), 'yyyyMMdd')}.pdf`;
+      doc.save(fileName);
+      
+      toast.success('PDF generado correctamente', {
+        description: fileName,
+      });
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Error al generar el PDF');
+    } finally {
+      setIsGeneratingPdf(false);
     }
   };
 
@@ -283,9 +422,17 @@ export function PhaseF1Panel({
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline">
-              <FileDown className="w-4 h-4 mr-2" />
-              Generar informe PDF
+            <Button 
+              variant="outline" 
+              onClick={handleGeneratePdf}
+              disabled={isGeneratingPdf}
+            >
+              {isGeneratingPdf ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <FileDown className="w-4 h-4 mr-2" />
+              )}
+              {isGeneratingPdf ? 'Generando...' : 'Generar informe PDF'}
             </Button>
             <Button variant="outline">
               <Send className="w-4 h-4 mr-2" />

@@ -140,7 +140,7 @@ export function PhasePanelContainer({
 
     switch (currentPhase) {
       case 'F1':
-        return <PhaseF1Panel {...commonProps} />;
+        return <PhaseF1Panel {...commonProps} matterReference={matterReference} matterTitle={matterTitle} />;
       case 'F2':
         return <PhaseF2Panel {...commonProps} {...clientProps} />;
       case 'F3':
