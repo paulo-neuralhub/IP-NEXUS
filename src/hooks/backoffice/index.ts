@@ -26,3 +26,6 @@ export * from './useNiceClassesAdmin';
 
 // External API Connections
 export * from './useExternalApiConnections';
+
+// Master Automation Templates
+export * from './useMasterAutomationTemplates';
