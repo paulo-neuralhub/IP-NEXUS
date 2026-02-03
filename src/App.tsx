@@ -304,6 +304,9 @@ import ExternalApiConnectionsPage from "./pages/backoffice/external-api-connecti
 
 // Automation Engine
 import MasterAutomationTemplatesPage from "./pages/backoffice/master-automation-templates";
+import AutomationTemplatesPage from "./pages/backoffice/automations";
+import AutomationExecutionsPage from "./pages/backoffice/automations/executions";
+import AutomationVariablesPage from "./pages/backoffice/automations/variables";
 
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
@@ -622,7 +625,9 @@ const App = () => (
                 {/* AI Brain */}
                 <Route path="ai" element={<AIBrainPage />} />
                 {/* Automations */}
-                <Route path="automations" element={<MasterAutomationTemplatesPage />} />
+                <Route path="automations" element={<AutomationTemplatesPage />} />
+                <Route path="automations/executions" element={<AutomationExecutionsPage />} />
+                <Route path="automations/variables" element={<AutomationVariablesPage />} />
                 {/* Tools */}
                 <Route path="feature-flags" element={<FeatureFlagsPage />} />
                 <Route path="integrations" element={<BackofficeIntegrationsPage />} />
