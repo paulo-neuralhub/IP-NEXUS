@@ -33,11 +33,12 @@ export function Header({ onMenuClick }: HeaderProps) {
   const { profile, signOut } = useAuth();
   const { currentOrganization } = useOrganization();
 
-  // Get plan badge text
+  // Get plan badge text - check both plan_code and plan fields
   const planBadge = React.useMemo(() => {
-    const planCode = (currentOrganization as { plan_code?: string })?.plan_code;
-    if (!planCode) return 'Free';
-    return planCode.charAt(0).toUpperCase() + planCode.slice(1);
+    const org = currentOrganization as { plan_code?: string; plan?: string };
+    const planValue = org?.plan_code || org?.plan;
+    if (!planValue) return 'Free';
+    return planValue.charAt(0).toUpperCase() + planValue.slice(1);
   }, [currentOrganization]);
 
   const handleSignOut = async () => {
