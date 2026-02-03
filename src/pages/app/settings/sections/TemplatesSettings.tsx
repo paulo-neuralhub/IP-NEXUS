@@ -1,6 +1,6 @@
 /**
  * Templates Settings Section
- * Embedded version of document templates for settings page
+ * Summary view of 270 combinations for settings page
  */
 
 import { Link } from 'react-router-dom';
@@ -8,75 +8,88 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
-  FileText, Receipt, FileCheck, Mail, BarChart3, 
-  Palette, ChevronRight, Settings2, Star
+  FileText, Palette, ChevronRight, Settings2, Grid3X3,
+  Loader2, ExternalLink
 } from 'lucide-react';
-import { useDocumentTemplates, DocumentType } from '@/hooks/useDocumentTemplates';
+import { cn } from '@/lib/utils';
 
-const TEMPLATE_TYPES: { type: DocumentType; label: string; icon: React.ElementType; color: string; description: string }[] = [
-  { 
-    type: 'invoice', 
-    label: 'Facturas', 
-    icon: Receipt, 
-    color: 'text-finance bg-finance/10',
-    description: 'Plantillas para facturas comerciales'
-  },
-  { 
-    type: 'quote', 
-    label: 'Presupuestos', 
-    icon: FileText, 
-    color: 'text-primary bg-primary/10',
-    description: 'Plantillas para presupuestos y propuestas'
-  },
-  { 
-    type: 'certificate', 
-    label: 'Certificados', 
-    icon: FileCheck, 
-    color: 'text-warning bg-warning/10',
-    description: 'Certificados de registro y presentación'
-  },
-  { 
-    type: 'letter', 
-    label: 'Cartas', 
-    icon: Mail, 
-    color: 'text-genius bg-genius/10',
-    description: 'Cartas formales y notificaciones'
-  },
-  { 
-    type: 'report', 
-    label: 'Informes', 
-    icon: BarChart3, 
-    color: 'text-crm bg-crm/10',
-    description: 'Informes de vigilancia y análisis'
-  },
-];
+import { useDocumentStyles, useDocumentStylesByPack } from '@/hooks/documents/useDocumentStyles';
+import { useDocumentTypes, useDocumentTypesByCategory } from '@/hooks/documents/useDocumentTypes';
+import { PACK_COLORS, CATEGORY_LABELS, CATEGORY_ICONS } from '@/lib/document-templates/designTokens';
+import type { StylePack, DocumentCategory } from '@/lib/document-templates/designTokens';
 
 export default function TemplatesSettings() {
-  const { templates, isLoading } = useDocumentTemplates();
+  // Fetch data
+  const { data: styles, isLoading: stylesLoading } = useDocumentStyles();
+  const { data: types, isLoading: typesLoading } = useDocumentTypes();
+  const { data: stylesByPack } = useDocumentStylesByPack();
+  const { data: typesByCategory } = useDocumentTypesByCategory();
 
-  // Count templates by type
-  const countsByType = templates.reduce((acc, t) => {
-    acc[t.document_type] = (acc[t.document_type] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
+  const isLoading = stylesLoading || typesLoading;
+  const totalCombinations = (styles?.length || 0) * (types?.length || 0);
 
-  // Count defaults by type
-  const defaultsByType = templates.reduce((acc, t) => {
-    if (t.is_default) acc[t.document_type] = t.name;
-    return acc;
-  }, {} as Record<string, string>);
+  const packs: StylePack[] = ['Classic', 'Modern', 'Executive'];
+  const categories: DocumentCategory[] = ['financiero', 'comunicacion', 'informe', 'legal', 'ip'];
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <FileText className="w-6 h-6 text-primary" />
-        <div>
-          <h2 className="text-xl font-bold">Plantillas de Documentos</h2>
-          <p className="text-sm text-muted-foreground">Gestiona las plantillas para facturas, presupuestos, certificados y más</p>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="p-2 rounded-xl bg-primary/10">
+            <FileText className="w-6 h-6 text-primary" />
+          </div>
+          <div>
+            <h2 className="text-xl font-bold">Sistema de Plantillas</h2>
+            <p className="text-sm text-muted-foreground">
+              {isLoading ? 'Cargando...' : `${totalCombinations} combinaciones (${styles?.length || 0} estilos × ${types?.length || 0} tipos)`}
+            </p>
+          </div>
         </div>
+
+        <Button asChild>
+          <Link to="/app/documents/generator">
+            <ExternalLink className="w-4 h-4 mr-2" />
+            Abrir Generador
+          </Link>
+        </Button>
       </div>
 
-      {/* Branding Card */}
+      {/* Stats Row */}
+      <div className="grid grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="pt-4 text-center">
+            <div className="text-2xl font-bold text-primary">
+              {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : totalCombinations}
+            </div>
+            <div className="text-xs text-muted-foreground">Combinaciones</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center">
+            <div className="text-2xl font-bold text-finance">
+              {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : styles?.length || 0}
+            </div>
+            <div className="text-xs text-muted-foreground">Estilos</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center">
+            <div className="text-2xl font-bold text-genius">
+              {isLoading ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : types?.length || 0}
+            </div>
+            <div className="text-xs text-muted-foreground">Tipos</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="pt-4 text-center">
+            <div className="text-2xl font-bold text-crm">3</div>
+            <div className="text-xs text-muted-foreground">Packs</div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Branding Config */}
       <Card className="border-primary/20 bg-gradient-to-r from-primary/5 to-transparent">
         <CardContent className="flex items-center justify-between py-4">
           <div className="flex items-center gap-4">
@@ -86,7 +99,7 @@ export default function TemplatesSettings() {
             <div>
               <h3 className="font-semibold">Identidad de Marca</h3>
               <p className="text-sm text-muted-foreground">
-                Configura logo, colores y datos de empresa
+                Logo, colores y datos de empresa
               </p>
             </div>
           </div>
@@ -99,72 +112,78 @@ export default function TemplatesSettings() {
         </CardContent>
       </Card>
 
-      {/* Template Types Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {TEMPLATE_TYPES.map(({ type, label, icon: Icon, color, description }) => (
-          <Link key={type} to={`/app/settings/templates/${type}`}>
-            <Card className="h-full hover:shadow-md transition-shadow cursor-pointer group">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className={`p-2 rounded-lg ${color}`}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <Badge variant="secondary" className="text-xs">
-                    {countsByType[type] || 0} plantillas
-                  </Badge>
-                </div>
-                <CardTitle className="text-base mt-2">{label}</CardTitle>
-                <CardDescription className="text-xs">{description}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {defaultsByType[type] && (
-                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                    <Star className="w-3 h-3 text-warning fill-warning" />
-                    <span className="truncate">{defaultsByType[type]}</span>
-                  </div>
-                )}
-                <div className="flex items-center justify-end mt-3 text-primary group-hover:translate-x-1 transition-transform">
-                  <span className="text-xs font-medium mr-1">Ver</span>
-                  <ChevronRight className="w-3 h-3" />
-                </div>
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
-      </div>
-
-      {/* Quick Stats */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm">Resumen</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-4 gap-4 text-center">
-            <div>
-              <div className="text-xl font-bold text-primary">{templates.length}</div>
-              <div className="text-xs text-muted-foreground">Total</div>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-finance">
-                {templates.filter(t => t.is_system_template).length}
-              </div>
-              <div className="text-xs text-muted-foreground">Sistema</div>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-primary">
-                {templates.filter(t => !t.is_system_template).length}
-              </div>
-              <div className="text-xs text-muted-foreground">Custom</div>
-            </div>
-            <div>
-              <div className="text-xl font-bold text-warning">
-                {templates.filter(t => t.is_default).length}
-              </div>
-              <div className="text-xs text-muted-foreground">Default</div>
-            </div>
+      {/* Packs Preview */}
+      {!isLoading && stylesByPack && (
+        <div>
+          <h3 className="text-sm font-medium mb-3">Packs de Estilo</h3>
+          <div className="grid grid-cols-3 gap-4">
+            {packs.map((pack) => {
+              const packStyles = stylesByPack[pack] || [];
+              const packColors = PACK_COLORS[pack];
+              return (
+                <Card key={pack} className="hover:shadow-sm transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <Badge className={cn(packColors.bg, packColors.text, 'border-0')}>
+                        {pack}
+                      </Badge>
+                      <span className="text-xs text-muted-foreground">
+                        {packStyles.length} estilos
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {packStyles.slice(0, 6).map((s) => (
+                        <div
+                          key={s.id}
+                          className="w-5 h-5 rounded border"
+                          style={{ backgroundColor: s.colors.headerBg }}
+                          title={s.name}
+                        />
+                      ))}
+                      {packStyles.length > 6 && (
+                        <div className="w-5 h-5 rounded border bg-muted flex items-center justify-center text-[10px]">
+                          +{packStyles.length - 6}
+                        </div>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      )}
+
+      {/* Categories Preview */}
+      {!isLoading && typesByCategory && (
+        <div>
+          <h3 className="text-sm font-medium mb-3">Tipos por Categoría</h3>
+          <div className="grid grid-cols-5 gap-2">
+            {categories.map((cat) => {
+              const catTypes = typesByCategory[cat] || [];
+              return (
+                <Card key={cat} className="text-center">
+                  <CardContent className="p-3">
+                    <div className="text-xl mb-1">{CATEGORY_ICONS[cat]}</div>
+                    <div className="font-medium text-xs">{CATEGORY_LABELS[cat]}</div>
+                    <div className="text-[10px] text-muted-foreground">{catTypes.length} tipos</div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* View All Link */}
+      <Link 
+        to="/app/settings/templates" 
+        className="flex items-center justify-center gap-2 text-sm text-primary hover:underline py-2"
+      >
+        <Grid3X3 className="w-4 h-4" />
+        Ver todos los estilos y tipos
+        <ChevronRight className="w-4 h-4" />
+      </Link>
     </div>
   );
 }
