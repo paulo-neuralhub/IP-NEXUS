@@ -1,76 +1,21 @@
 /**
  * Top Agents Component
  * Leaderboard of top-rated market agents
- * Financial terminal style
+ * Financial terminal style - USES REAL DATA
  */
 
 import { Link } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Star, TrendingUp, CheckCircle, Clock, Trophy } from 'lucide-react';
+import { Star, TrendingUp, CheckCircle, Clock, Trophy, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-interface Agent {
-  id: string;
-  display_name: string;
-  avatar_url?: string;
-  jurisdictions: string[];
-  specializations: string[];
-  rating_avg: number;
-  ratings_count: number;
-  total_transactions: number;
-  success_rate: number;
-  response_time_avg: number; // minutes
-  is_verified_agent: boolean;
-  rank_position?: number;
-  rank_change?: number; // positive = up, negative = down
-}
+import { useTopMarketAgents, type MarketAgent } from '@/hooks/use-market-agents';
 
 interface TopAgentsProps {
-  agents?: Agent[];
+  agents?: MarketAgent[];
   isLoading?: boolean;
   className?: string;
 }
-
-// Mock data for demo
-const MOCK_AGENTS: Agent[] = [
-  { 
-    id: '1', display_name: 'García & Asociados', 
-    jurisdictions: ['ES', 'EU'], specializations: ['Marcas', 'Patentes'],
-    rating_avg: 4.9, ratings_count: 156, total_transactions: 234,
-    success_rate: 98.5, response_time_avg: 45, is_verified_agent: true,
-    rank_position: 1, rank_change: 0
-  },
-  { 
-    id: '2', display_name: 'PatentPro Legal', 
-    jurisdictions: ['EU', 'US'], specializations: ['Patentes'],
-    rating_avg: 4.8, ratings_count: 98, total_transactions: 167,
-    success_rate: 97.2, response_time_avg: 60, is_verified_agent: true,
-    rank_position: 2, rank_change: 2
-  },
-  { 
-    id: '3', display_name: 'IP Solutions Madrid', 
-    jurisdictions: ['ES'], specializations: ['Marcas', 'Diseños'],
-    rating_avg: 4.8, ratings_count: 203, total_transactions: 312,
-    success_rate: 96.8, response_time_avg: 30, is_verified_agent: true,
-    rank_position: 3, rank_change: -1
-  },
-  { 
-    id: '4', display_name: 'EuroMark Partners', 
-    jurisdictions: ['EU', 'DE', 'FR'], specializations: ['Marcas'],
-    rating_avg: 4.7, ratings_count: 87, total_transactions: 145,
-    success_rate: 95.5, response_time_avg: 90, is_verified_agent: true,
-    rank_position: 4, rank_change: 1
-  },
-  { 
-    id: '5', display_name: 'TechIP Global', 
-    jurisdictions: ['US', 'CN', 'JP'], specializations: ['Patentes', 'Software'],
-    rating_avg: 4.7, ratings_count: 64, total_transactions: 98,
-    success_rate: 94.8, response_time_avg: 120, is_verified_agent: false,
-    rank_position: 5, rank_change: -2
-  },
-];
 
 function getRankColor(position: number) {
   if (position === 1) return 'text-amber-400';
@@ -86,10 +31,16 @@ function getRankBadge(position: number) {
 }
 
 export function TopAgents({ 
-  agents = MOCK_AGENTS, 
-  isLoading = false,
+  agents: externalAgents,
+  isLoading: externalLoading,
   className 
 }: TopAgentsProps) {
+  // Use hook if no external agents provided
+  const { data: hookAgents, isLoading: hookLoading } = useTopMarketAgents(10);
+  
+  const agents = externalAgents ?? hookAgents ?? [];
+  const isLoading = externalLoading ?? hookLoading;
+
   if (isLoading) {
     return (
       <Card className={cn('terminal-card', className)}>
@@ -103,6 +54,29 @@ export function TopAgents({
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-12 terminal-skeleton animate-pulse rounded" />
           ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Empty state
+  if (agents.length === 0) {
+    return (
+      <Card className={cn('terminal-card', className)}>
+        <CardHeader className="pb-3">
+          <CardTitle className="terminal-text flex items-center gap-2">
+            <Trophy className="h-5 w-5 text-amber-400" />
+            Top Agentes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Users className="h-12 w-12 text-muted-foreground/30 mb-3" />
+            <p className="text-sm text-muted-foreground">Sin agentes activos</p>
+            <p className="text-xs text-muted-foreground/70 mt-1">
+              Los agentes verificados aparecerán aquí
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -159,7 +133,7 @@ export function TopAgents({
                 )}
               </div>
               <div className="flex items-center gap-1 mt-0.5">
-                {agent.jurisdictions.slice(0, 3).map((j) => (
+                {(agent.jurisdictions || []).slice(0, 3).map((j) => (
                   <span key={j} className="text-[10px] font-mono terminal-text-muted terminal-skeleton px-1 rounded">
                     {j}
                   </span>
@@ -172,20 +146,26 @@ export function TopAgents({
               {/* Rating */}
               <div className="flex items-center gap-1">
                 <Star className="h-3.5 w-3.5 text-amber-400 fill-amber-400" />
-                <span className="terminal-text font-mono">{agent.rating_avg.toFixed(1)}</span>
+                <span className="terminal-text font-mono">
+                  {agent.rating_avg > 0 ? agent.rating_avg.toFixed(1) : '-'}
+                </span>
               </div>
 
               {/* Transactions */}
-              <div className="hidden sm:flex items-center gap-1 terminal-text-muted">
-                <TrendingUp className="h-3.5 w-3.5" />
-                <span className="font-mono text-xs">{agent.total_transactions}</span>
-              </div>
+              {agent.total_transactions > 0 && (
+                <div className="hidden sm:flex items-center gap-1 terminal-text-muted">
+                  <TrendingUp className="h-3.5 w-3.5" />
+                  <span className="font-mono text-xs">{agent.total_transactions}</span>
+                </div>
+              )}
 
               {/* Response time */}
-              <div className="hidden md:flex items-center gap-1 terminal-text-muted">
-                <Clock className="h-3.5 w-3.5" />
-                <span className="font-mono text-xs">{agent.response_time_avg}m</span>
-              </div>
+              {agent.response_time_avg > 0 && (
+                <div className="hidden md:flex items-center gap-1 terminal-text-muted">
+                  <Clock className="h-3.5 w-3.5" />
+                  <span className="font-mono text-xs">{agent.response_time_avg}m</span>
+                </div>
+              )}
             </div>
           </Link>
         ))}
