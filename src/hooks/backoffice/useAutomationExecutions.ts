@@ -1,5 +1,6 @@
 // =====================================================================
 // Hook para gestionar Automation Executions (Backoffice)
+// Usa las tablas reales: automation_executions, tenant_automations
 // =====================================================================
 
 import { useQuery } from '@tanstack/react-query';

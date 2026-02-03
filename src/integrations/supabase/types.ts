@@ -4771,6 +4771,73 @@ export type Database = {
           },
         ]
       }
+      automation_event_queue: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string
+          error_message: string | null
+          event_data: Json
+          event_type: string
+          id: string
+          old_data: Json | null
+          organization_id: string | null
+          processed_at: string | null
+          status: string
+          trigger_type: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type: string
+          error_message?: string | null
+          event_data?: Json
+          event_type: string
+          id?: string
+          old_data?: Json | null
+          organization_id?: string | null
+          processed_at?: string | null
+          status?: string
+          trigger_type: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string
+          error_message?: string | null
+          event_data?: Json
+          event_type?: string
+          id?: string
+          old_data?: Json | null
+          organization_id?: string | null
+          processed_at?: string | null
+          status?: string
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_event_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_event_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "automation_event_queue_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       automation_execution_logs_legacy: {
         Row: {
           actions_completed: number | null

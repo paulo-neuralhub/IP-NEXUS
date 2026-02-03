@@ -303,5 +303,11 @@ verify_jwt = false
 [functions.signature-webhook]
 verify_jwt = false
 
+[functions.automation-cron-runner]
+verify_jwt = false
+
+[functions.automation-event-processor]
+verify_jwt = false
+
 [functions.automation-execute]
 verify_jwt = false
