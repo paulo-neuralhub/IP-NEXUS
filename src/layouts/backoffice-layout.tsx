@@ -149,6 +149,7 @@ const sidebarSections: SidebarSection[] = [
     label: 'Herramientas',
     icon: Wrench,
     items: [
+      { label: 'Conexiones API', path: '/backoffice/api-connections', icon: Plug },
       { label: 'Calendar', path: '/backoffice/calendar', icon: Calendar },
       { label: 'Settings', path: '/backoffice/settings', icon: Settings },
     ],

@@ -23,3 +23,6 @@ export * from './useTelephonyAlerts';
 
 // Nice Classes Admin
 export * from './useNiceClassesAdmin';
+
+// External API Connections
+export * from './useExternalApiConnections';
