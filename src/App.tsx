@@ -299,6 +299,9 @@ import LandingPagesListPage from "./pages/backoffice/landings/pages";
 import LeadsListPage from "./pages/backoffice/landings/leads";
 import LeadDetailPage from "./pages/backoffice/landings/lead-detail";
 
+// External API Connections
+import ExternalApiConnectionsPage from "./pages/backoffice/external-api-connections";
+
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
 import KycVerificationPage from "./pages/app/market/kyc/[type]";
@@ -618,6 +621,7 @@ const App = () => (
                 {/* Tools */}
                 <Route path="feature-flags" element={<FeatureFlagsPage />} />
                 <Route path="integrations" element={<BackofficeIntegrationsPage />} />
+                <Route path="api-connections" element={<ExternalApiConnectionsPage />} />
                 <Route path="api-keys" element={<BackofficeApiKeysPage />} />
                 <Route path="announcements" element={<AnnouncementsPage />} />
                 {/* Compliance */}

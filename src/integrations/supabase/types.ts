@@ -15856,6 +15856,216 @@ export type Database = {
           },
         ]
       }
+      external_api_connections: {
+        Row: {
+          access_token_encrypted: string | null
+          api_base_url: string | null
+          api_docs_url: string | null
+          api_key_encrypted: string | null
+          auth_type: string | null
+          available_endpoints: Json | null
+          avg_response_ms: number | null
+          client_id: string | null
+          client_secret_encrypted: string | null
+          created_at: string | null
+          description: string | null
+          enabled_endpoints: string[] | null
+          id: string
+          last_error: string | null
+          last_reset_date: string | null
+          last_test_at: string | null
+          last_test_result: string | null
+          name: string
+          password_encrypted: string | null
+          provider: string
+          rate_limit_per_day: number | null
+          rate_limit_per_minute: number | null
+          refresh_token_encrypted: string | null
+          requests_this_month: number | null
+          requests_today: number | null
+          status: string | null
+          timeout_seconds: number | null
+          token_expires_at: string | null
+          total_requests: number | null
+          updated_at: string | null
+          username: string | null
+          website: string | null
+        }
+        Insert: {
+          access_token_encrypted?: string | null
+          api_base_url?: string | null
+          api_docs_url?: string | null
+          api_key_encrypted?: string | null
+          auth_type?: string | null
+          available_endpoints?: Json | null
+          avg_response_ms?: number | null
+          client_id?: string | null
+          client_secret_encrypted?: string | null
+          created_at?: string | null
+          description?: string | null
+          enabled_endpoints?: string[] | null
+          id?: string
+          last_error?: string | null
+          last_reset_date?: string | null
+          last_test_at?: string | null
+          last_test_result?: string | null
+          name: string
+          password_encrypted?: string | null
+          provider: string
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          refresh_token_encrypted?: string | null
+          requests_this_month?: number | null
+          requests_today?: number | null
+          status?: string | null
+          timeout_seconds?: number | null
+          token_expires_at?: string | null
+          total_requests?: number | null
+          updated_at?: string | null
+          username?: string | null
+          website?: string | null
+        }
+        Update: {
+          access_token_encrypted?: string | null
+          api_base_url?: string | null
+          api_docs_url?: string | null
+          api_key_encrypted?: string | null
+          auth_type?: string | null
+          available_endpoints?: Json | null
+          avg_response_ms?: number | null
+          client_id?: string | null
+          client_secret_encrypted?: string | null
+          created_at?: string | null
+          description?: string | null
+          enabled_endpoints?: string[] | null
+          id?: string
+          last_error?: string | null
+          last_reset_date?: string | null
+          last_test_at?: string | null
+          last_test_result?: string | null
+          name?: string
+          password_encrypted?: string | null
+          provider?: string
+          rate_limit_per_day?: number | null
+          rate_limit_per_minute?: number | null
+          refresh_token_encrypted?: string | null
+          requests_this_month?: number | null
+          requests_today?: number | null
+          status?: string | null
+          timeout_seconds?: number | null
+          token_expires_at?: string | null
+          total_requests?: number | null
+          updated_at?: string | null
+          username?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
+      external_api_logs: {
+        Row: {
+          connection_id: string | null
+          created_at: string | null
+          endpoint: string | null
+          error_code: string | null
+          error_message: string | null
+          id: string
+          method: string | null
+          organization_id: string | null
+          provider: string
+          related_entity_id: string | null
+          related_entity_type: string | null
+          request_body: Json | null
+          request_headers: Json | null
+          request_params: Json | null
+          response_body: Json | null
+          response_status: number | null
+          response_time_ms: number | null
+          success: boolean | null
+          triggered_by: string | null
+          triggered_by_user: string | null
+        }
+        Insert: {
+          connection_id?: string | null
+          created_at?: string | null
+          endpoint?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          method?: string | null
+          organization_id?: string | null
+          provider: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          request_body?: Json | null
+          request_headers?: Json | null
+          request_params?: Json | null
+          response_body?: Json | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          success?: boolean | null
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Update: {
+          connection_id?: string | null
+          created_at?: string | null
+          endpoint?: string | null
+          error_code?: string | null
+          error_message?: string | null
+          id?: string
+          method?: string | null
+          organization_id?: string | null
+          provider?: string
+          related_entity_id?: string | null
+          related_entity_type?: string | null
+          request_body?: Json | null
+          request_headers?: Json | null
+          request_params?: Json | null
+          response_body?: Json | null
+          response_status?: number | null
+          response_time_ms?: number | null
+          success?: boolean | null
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "external_api_logs_connection_id_fkey"
+            columns: ["connection_id"]
+            isOneToOne: false
+            referencedRelation: "external_api_connections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_api_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_api_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "external_api_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "external_api_logs_triggered_by_user_fkey"
+            columns: ["triggered_by_user"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       extraction_suggestion_log: {
         Row: {
           action: string
@@ -25181,6 +25391,51 @@ export type Database = {
           resolution_notes?: string | null
           resolved_at?: string | null
           status?: string
+        }
+        Relationships: []
+      }
+      market_data_cache: {
+        Row: {
+          country_code: string | null
+          created_at: string | null
+          data: Json
+          data_type: string
+          expires_at: string | null
+          fetched_at: string | null
+          id: string
+          nice_class: number | null
+          source: string | null
+          source_url: string | null
+          updated_at: string | null
+          year: number | null
+        }
+        Insert: {
+          country_code?: string | null
+          created_at?: string | null
+          data: Json
+          data_type: string
+          expires_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          nice_class?: number | null
+          source?: string | null
+          source_url?: string | null
+          updated_at?: string | null
+          year?: number | null
+        }
+        Update: {
+          country_code?: string | null
+          created_at?: string | null
+          data?: Json
+          data_type?: string
+          expires_at?: string | null
+          fetched_at?: string | null
+          id?: string
+          nice_class?: number | null
+          source?: string | null
+          source_url?: string | null
+          updated_at?: string | null
+          year?: number | null
         }
         Relationships: []
       }
