@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import { 
   Bot, Plus, Search, Filter, MoreVertical, 
   Copy, Send, Eye, Trash2, FileText, ChevronDown,
-  CheckCircle, XCircle, Clock, Zap
+  CheckCircle, XCircle, Clock, Zap, Play
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -48,6 +48,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Spinner } from '@/components/ui/spinner';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 import {
   useAutomationMasterTemplates,
@@ -58,6 +59,8 @@ import {
   usePropagateMasterTemplate,
   useTenantInstancesCount,
 } from '@/hooks/backoffice/useAutomationMasterTemplates';
+
+import { useTestAutomation } from '@/hooks/backoffice/useAutomationExecutions';
 
 import {
   CATEGORY_CONFIG,
@@ -104,6 +107,7 @@ export default function AutomationTemplatesPage() {
   const duplicate = useDuplicateMasterTemplate();
   const deleteTemplate = useDeleteMasterTemplate();
   const propagate = usePropagateMasterTemplate();
+  const testAutomation = useTestAutomation();
 
   // Handlers
   const handleEdit = (template: AutomationMasterTemplate) => {
@@ -146,6 +150,15 @@ export default function AutomationTemplatesPage() {
         },
       });
     }
+  };
+
+  const handleTest = (template: AutomationMasterTemplate) => {
+    // For testing, we need a tenant_automation instance
+    // Since we're in backoffice, we'll look for any active instance
+    toast.info('Buscando instancia de tenant para probar...');
+    // This would normally fetch a tenant instance first
+    // For now, we show a message
+    toast.warning('El botón Test requiere una instancia de tenant. Usa "Ver instancias" para probar.');
   };
 
   return (
@@ -345,6 +358,8 @@ export default function AutomationTemplatesPage() {
                           setTemplateToAction(t);
                           setPropagateDialogOpen(true);
                         }}
+                        onTest={handleTest}
+                        isTestPending={testAutomation.isPending}
                       />
                     ))}
                   </TableBody>
@@ -418,6 +433,8 @@ function TemplateRow({
   onTogglePublish,
   onDelete,
   onPropagate,
+  onTest,
+  isTestPending,
 }: {
   template: AutomationMasterTemplate;
   onEdit: (t: AutomationMasterTemplate) => void;
@@ -425,6 +442,8 @@ function TemplateRow({
   onTogglePublish: (t: AutomationMasterTemplate) => void;
   onDelete: (t: AutomationMasterTemplate) => void;
   onPropagate: (t: AutomationMasterTemplate) => void;
+  onTest: (t: AutomationMasterTemplate) => void;
+  isTestPending: boolean;
 }) {
   const categoryConfig = CATEGORY_CONFIG[template.category];
   const visibilityConfig = VISIBILITY_CONFIG[template.visibility];
@@ -498,6 +517,13 @@ function TemplateRow({
               )}
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              onClick={() => onTest(template)}
+              disabled={isTestPending}
+            >
+              <Play className="h-4 w-4 mr-2" />
+              {isTestPending ? 'Ejecutando...' : 'Probar'}
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onPropagate(template)}>
               <Send className="h-4 w-4 mr-2" />
               Propagar a tenants

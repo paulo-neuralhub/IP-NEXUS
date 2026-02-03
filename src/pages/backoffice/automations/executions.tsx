@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Activity, ArrowLeft, Search, Filter, ChevronDown, ChevronRight,
-  CheckCircle, XCircle, Clock, AlertTriangle, Play
+  CheckCircle, XCircle, Clock, AlertTriangle, Play, RefreshCw
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -40,6 +40,7 @@ import { es } from 'date-fns/locale';
 import {
   useAutomationExecutions,
   useExecutionStats,
+  useOrganizationsForFilter,
   type ExecutionWithRelations,
 } from '@/hooks/backoffice/useAutomationExecutions';
 
@@ -52,11 +53,15 @@ import {
 
 export default function ExecutionsPage() {
   const [statusFilter, setStatusFilter] = useState<ExecutionStatus | 'all'>('all');
+  const [tenantFilter, setTenantFilter] = useState<string>('all');
   const [dateFrom, setDateFrom] = useState<string>('');
   const [dateTo, setDateTo] = useState<string>('');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
-  const { data: executions, isLoading } = useAutomationExecutions({
+  const { data: organizations = [] } = useOrganizationsForFilter();
+
+  const { data: executions, isLoading, refetch } = useAutomationExecutions({
+    organizationId: tenantFilter !== 'all' ? tenantFilter : undefined,
     status: statusFilter !== 'all' ? statusFilter : undefined,
     dateFrom: dateFrom || undefined,
     dateTo: dateTo || undefined,
@@ -80,21 +85,27 @@ export default function ExecutionsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
-          <Link to="/backoffice/automations">
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Activity className="h-6 w-6 text-primary" />
-            Log de Ejecuciones
-          </h1>
-          <p className="text-muted-foreground">
-            Historial de todas las ejecuciones de automatizaciones.
-          </p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" asChild>
+            <Link to="/backoffice/automations">
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Activity className="h-6 w-6 text-primary" />
+              Log de Ejecuciones
+            </h1>
+            <p className="text-muted-foreground">
+              Historial de todas las ejecuciones de automatizaciones.
+            </p>
+          </div>
         </div>
+        <Button variant="outline" size="sm" onClick={() => refetch()}>
+          <RefreshCw className="h-4 w-4 mr-2" />
+          Actualizar
+        </Button>
       </div>
 
       {/* Stats */}
@@ -159,6 +170,17 @@ export default function ExecutionsPage() {
       <Card>
         <CardContent className="pt-4">
           <div className="flex flex-wrap gap-3">
+            <Select value={tenantFilter} onValueChange={setTenantFilter}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder="Tenant" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos los tenants</SelectItem>
+                {organizations.map(org => (
+                  <SelectItem key={org.id} value={org.id}>{org.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as ExecutionStatus | 'all')}>
               <SelectTrigger className="w-[160px]">
                 <SelectValue placeholder="Estado" />

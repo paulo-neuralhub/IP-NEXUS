@@ -3,7 +3,7 @@
 // Usa las tablas reales: automation_executions, tenant_automations
 // =====================================================================
 
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import type { ExecutionStatus, ActionLog, TriggerType } from '@/types/automations';
 
@@ -153,6 +153,59 @@ export function useExecutionStats(dateFrom?: string, dateTo?: string) {
           ? Math.round((executions.filter(e => e.status === 'success').length / executions.length) * 100)
           : 0,
       };
+    },
+  });
+}
+
+// ─── Fetch organizations for filter ─────────────────────────
+
+export function useOrganizationsForFilter() {
+  return useQuery({
+    queryKey: ['organizations-filter-list'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('organizations')
+        .select('id, name')
+        .order('name');
+      if (error) throw error;
+      return data || [];
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+// ─── Test/Execute automation manually ───────────────────────
+
+export function useTestAutomation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ 
+      automationId, 
+      organizationId,
+      userId 
+    }: { 
+      automationId: string; 
+      organizationId?: string;
+      userId?: string;
+    }) => {
+      const { data, error } = await supabase.functions.invoke('automation-execute', {
+        body: {
+          trigger_type: 'manual',
+          automation_id: automationId,
+          organization_id: organizationId,
+          trigger_data: { 
+            manual: true, 
+            triggered_by: userId,
+            triggered_at: new Date().toISOString(),
+          },
+        },
+      });
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: QUERY_KEY });
     },
   });
 }
