@@ -29,25 +29,32 @@ const TEMPLATE_TYPES: { type: DocumentType; label: string; icon: React.ElementTy
     description: 'Plantillas para presupuestos y propuestas'
   },
   { 
+    type: 'contract', 
+    label: 'Contratos', 
+    icon: FileSignature, 
+    color: 'text-secondary bg-secondary/10',
+    description: 'Contratos de licencia, NDA, cesión y más'
+  },
+  { 
     type: 'certificate', 
     label: 'Certificados', 
     icon: FileCheck, 
     color: 'text-warning bg-warning/10',
-    description: 'Certificados de registro y presentación'
+    description: 'Certificados de registro, presentación y declaraciones'
   },
   { 
     type: 'letter', 
-    label: 'Cartas', 
+    label: 'Cartas y Poderes', 
     icon: Mail, 
     color: 'text-genius bg-genius/10',
-    description: 'Cartas formales y notificaciones'
+    description: 'Cartas formales, poderes y notificaciones'
   },
   { 
     type: 'report', 
     label: 'Informes', 
     icon: BarChart3, 
     color: 'text-crm bg-crm/10',
-    description: 'Informes de vigilancia y análisis'
+    description: 'Informes de vigilancia, portfolio y análisis'
   },
 ];
 
