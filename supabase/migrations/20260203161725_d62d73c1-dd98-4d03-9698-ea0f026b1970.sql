@@ -1,0 +1,36 @@
+
+-- FASE 9: SPIDER ALERTS (status válido: unread/read/actioned/dismissed)
+INSERT INTO spider_alerts (
+  id, organization_id, matter_id, alert_type, title, message, severity, 
+  data, status, created_at
+) VALUES
+('5a000001-0001-0000-0000-000000000001', 'd0000001-0000-0000-0000-000000000001',
+ '10000001-0001-0000-0000-000000000001', 'high_similarity',
+ 'Marca similar detectada: GREENTECH ENERGY',
+ 'Nueva solicitud M-4091234 "GREENTECH ENERGY" de SolarVerde S.A. en clase 9. Alta similitud fonética y conceptual con GREENPOWER.',
+ 'high', '{"similarity_score": 82, "detected_mark": "GREENTECH ENERGY", "applicant": "SolarVerde S.A."}',
+ 'actioned', '2025-10-25T03:00:00Z'),
+('5a000001-0002-0000-0000-000000000001', 'd0000001-0000-0000-0000-000000000001',
+ '10000001-0001-0000-0000-000000000001', 'high_similarity',
+ 'Marca similar detectada: GREEN SOLUTIONS ENERGY',
+ 'Solicitud EU "GREEN SOLUTIONS ENERGY" en clase 42. Similitud conceptual moderada.',
+ 'medium', '{"similarity_score": 58, "detected_mark": "GREEN SOLUTIONS ENERGY"}',
+ 'dismissed', '2025-12-01T03:00:00Z'),
+('5a000001-0003-0000-0000-000000000001', 'd0000001-0000-0000-0000-000000000001',
+ '10000001-0001-0000-0000-000000000001', 'high_similarity',
+ 'Marca similar detectada: GREENPWR',
+ 'Nueva solicitud "GREENPWR" en clases 9 y 37. Alta similitud fonética con GREENPOWER.',
+ 'high', '{"similarity_score": 78, "detected_mark": "GREENPWR"}',
+ 'unread', '2026-01-27T03:00:00Z'),
+('5a000001-0004-0000-0000-000000000001', 'd0000001-0000-0000-0000-000000000001',
+ '10000001-0004-0000-0000-000000000001', 'high_similarity',
+ 'Marca similar detectada: TECHFLOW AI SOLUTIONS',
+ 'Solicitud EU "TECHFLOW AI SOLUTIONS" en clase 42. Incorpora la denominación TECHFLOW completa.',
+ 'high', '{"similarity_score": 91, "detected_mark": "TECHFLOW AI SOLUTIONS"}',
+ 'unread', '2026-01-27T03:15:00Z'),
+('5a000001-0005-0000-0000-000000000001', 'd0000001-0000-0000-0000-000000000001',
+ '10000001-0008-0000-0000-000000000001', 'high_similarity',
+ 'Marca similar detectada: PREMIUM OLIVA SELECTA',
+ 'Solicitud ES "PREMIUM OLIVA SELECTA" en clase 29. Inversión de términos de OLIVAR PREMIUM.',
+ 'medium', '{"similarity_score": 65, "detected_mark": "PREMIUM OLIVA SELECTA"}',
+ 'read', '2026-01-20T03:00:00Z');
