@@ -40,6 +40,7 @@ import {
   Bot,
   LineChart,
   Wrench,
+  Zap,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -121,6 +122,14 @@ const sidebarSections: SidebarSection[] = [
     items: [
       { label: 'AI Brain', path: '/backoffice/ai', icon: Brain },
       { label: 'Knowledge Bases', path: '/backoffice/knowledge-bases', icon: Library },
+    ],
+  },
+  {
+    code: 'automations',
+    label: 'Automatizaciones',
+    icon: Zap,
+    items: [
+      { label: 'Templates', path: '/backoffice/automations', icon: Zap },
     ],
   },
   {

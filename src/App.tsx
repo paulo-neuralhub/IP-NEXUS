@@ -302,6 +302,9 @@ import LeadDetailPage from "./pages/backoffice/landings/lead-detail";
 // External API Connections
 import ExternalApiConnectionsPage from "./pages/backoffice/external-api-connections";
 
+// Automation Engine
+import MasterAutomationTemplatesPage from "./pages/backoffice/master-automation-templates";
+
 // KYC Pages
 import MarketKycPage from "./pages/app/market/kyc";
 import KycVerificationPage from "./pages/app/market/kyc/[type]";
@@ -618,6 +621,8 @@ const App = () => (
                 <Route path="nice-classes" element={<NiceClassesAdminPage />} />
                 {/* AI Brain */}
                 <Route path="ai" element={<AIBrainPage />} />
+                {/* Automations */}
+                <Route path="automations" element={<MasterAutomationTemplatesPage />} />
                 {/* Tools */}
                 <Route path="feature-flags" element={<FeatureFlagsPage />} />
                 <Route path="integrations" element={<BackofficeIntegrationsPage />} />
