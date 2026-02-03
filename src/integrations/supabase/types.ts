@@ -4771,6 +4771,126 @@ export type Database = {
           },
         ]
       }
+      automation_execution_logs: {
+        Row: {
+          actions_completed: number | null
+          actions_executed: Json | null
+          actions_failed: number | null
+          actions_total: number | null
+          automation_code: string | null
+          automation_name: string | null
+          completed_at: string | null
+          contact_id: string | null
+          created_at: string | null
+          deadline_id: string | null
+          duration_ms: number | null
+          error_details: Json | null
+          error_message: string | null
+          id: string
+          master_template_id: string | null
+          matter_id: string | null
+          organization_id: string
+          started_at: string | null
+          status: string
+          tenant_config_id: string | null
+          trigger_data: Json | null
+          trigger_event: string | null
+          trigger_type: string | null
+          triggered_by: string | null
+          triggered_by_user: string | null
+        }
+        Insert: {
+          actions_completed?: number | null
+          actions_executed?: Json | null
+          actions_failed?: number | null
+          actions_total?: number | null
+          automation_code?: string | null
+          automation_name?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          deadline_id?: string | null
+          duration_ms?: number | null
+          error_details?: Json | null
+          error_message?: string | null
+          id?: string
+          master_template_id?: string | null
+          matter_id?: string | null
+          organization_id: string
+          started_at?: string | null
+          status: string
+          tenant_config_id?: string | null
+          trigger_data?: Json | null
+          trigger_event?: string | null
+          trigger_type?: string | null
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Update: {
+          actions_completed?: number | null
+          actions_executed?: Json | null
+          actions_failed?: number | null
+          actions_total?: number | null
+          automation_code?: string | null
+          automation_name?: string | null
+          completed_at?: string | null
+          contact_id?: string | null
+          created_at?: string | null
+          deadline_id?: string | null
+          duration_ms?: number | null
+          error_details?: Json | null
+          error_message?: string | null
+          id?: string
+          master_template_id?: string | null
+          matter_id?: string | null
+          organization_id?: string
+          started_at?: string | null
+          status?: string
+          tenant_config_id?: string | null
+          trigger_data?: Json | null
+          trigger_event?: string | null
+          trigger_type?: string | null
+          triggered_by?: string | null
+          triggered_by_user?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_execution_logs_master_template_id_fkey"
+            columns: ["master_template_id"]
+            isOneToOne: false
+            referencedRelation: "master_automation_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_execution_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_execution_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "automation_execution_logs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_execution_logs_tenant_config_id_fkey"
+            columns: ["tenant_config_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_automation_configs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       automation_rules: {
         Row: {
           category: string
@@ -26604,6 +26724,114 @@ export type Database = {
         }
         Relationships: []
       }
+      master_automation_templates: {
+        Row: {
+          actions: Json | null
+          category: string
+          changelog: Json | null
+          code: string
+          color: string | null
+          complexity: string | null
+          conditions: Json | null
+          configurable_params: Json | null
+          created_at: string | null
+          created_by: string | null
+          description: string | null
+          description_es: string | null
+          email_template_code: string | null
+          estimated_impact: string | null
+          icon: string | null
+          id: string
+          is_active: boolean | null
+          is_mandatory: boolean | null
+          is_visible: boolean | null
+          min_plan: string | null
+          name: string
+          name_es: string | null
+          notification_template_code: string | null
+          required_module: string | null
+          sort_order: number | null
+          subcategory: string | null
+          tags: string[] | null
+          trigger_config: Json | null
+          trigger_event: string | null
+          trigger_type: string
+          updated_at: string | null
+          updated_by: string | null
+          version: number | null
+        }
+        Insert: {
+          actions?: Json | null
+          category: string
+          changelog?: Json | null
+          code: string
+          color?: string | null
+          complexity?: string | null
+          conditions?: Json | null
+          configurable_params?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          description_es?: string | null
+          email_template_code?: string | null
+          estimated_impact?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_mandatory?: boolean | null
+          is_visible?: boolean | null
+          min_plan?: string | null
+          name: string
+          name_es?: string | null
+          notification_template_code?: string | null
+          required_module?: string | null
+          sort_order?: number | null
+          subcategory?: string | null
+          tags?: string[] | null
+          trigger_config?: Json | null
+          trigger_event?: string | null
+          trigger_type: string
+          updated_at?: string | null
+          updated_by?: string | null
+          version?: number | null
+        }
+        Update: {
+          actions?: Json | null
+          category?: string
+          changelog?: Json | null
+          code?: string
+          color?: string | null
+          complexity?: string | null
+          conditions?: Json | null
+          configurable_params?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          description?: string | null
+          description_es?: string | null
+          email_template_code?: string | null
+          estimated_impact?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean | null
+          is_mandatory?: boolean | null
+          is_visible?: boolean | null
+          min_plan?: string | null
+          name?: string
+          name_es?: string | null
+          notification_template_code?: string | null
+          required_module?: string | null
+          sort_order?: number | null
+          subcategory?: string | null
+          tags?: string[] | null
+          trigger_config?: Json | null
+          trigger_event?: string | null
+          trigger_type?: string
+          updated_at?: string | null
+          updated_by?: string | null
+          version?: number | null
+        }
+        Relationships: []
+      }
       matter_activity: {
         Row: {
           activity_type: string
@@ -44005,6 +44233,92 @@ export type Database = {
             foreignKeyName: "tenant_ai_config_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_automation_configs: {
+        Row: {
+          created_at: string | null
+          custom_actions: Json | null
+          custom_conditions: Json | null
+          custom_params: Json | null
+          enabled_by: string | null
+          error_count: number | null
+          execution_count: number | null
+          id: string
+          is_customized: boolean | null
+          is_enabled: boolean | null
+          last_executed_at: string | null
+          last_failure_at: string | null
+          last_success_at: string | null
+          master_template_id: string
+          organization_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          custom_actions?: Json | null
+          custom_conditions?: Json | null
+          custom_params?: Json | null
+          enabled_by?: string | null
+          error_count?: number | null
+          execution_count?: number | null
+          id?: string
+          is_customized?: boolean | null
+          is_enabled?: boolean | null
+          last_executed_at?: string | null
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          master_template_id: string
+          organization_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          custom_actions?: Json | null
+          custom_conditions?: Json | null
+          custom_params?: Json | null
+          enabled_by?: string | null
+          error_count?: number | null
+          execution_count?: number | null
+          id?: string
+          is_customized?: boolean | null
+          is_enabled?: boolean | null
+          last_executed_at?: string | null
+          last_failure_at?: string | null
+          last_success_at?: string | null
+          master_template_id?: string
+          organization_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_automation_configs_master_template_id_fkey"
+            columns: ["master_template_id"]
+            isOneToOne: false
+            referencedRelation: "master_automation_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_automation_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_automation_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_automation_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
