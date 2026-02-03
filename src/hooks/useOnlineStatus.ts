@@ -1,50 +1,39 @@
 import { useState, useEffect } from 'react';
 
-// Real network check to avoid false positives in iframe environments
-async function checkRealConnectivity(): Promise<boolean> {
-  try {
-    // Try to fetch a small resource to verify actual connectivity
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 3000);
-    
-    const response = await fetch('https://www.google.com/favicon.ico', {
-      method: 'HEAD',
-      mode: 'no-cors',
-      cache: 'no-store',
-      signal: controller.signal,
-    });
-    
-    clearTimeout(timeoutId);
-    return true;
-  } catch {
-    // If fetch fails, fall back to navigator.onLine
-    return navigator.onLine;
-  }
+// Check if we're in Lovable preview environment
+function isLovablePreview(): boolean {
+  if (typeof window === 'undefined') return false;
+  const hostname = window.location.hostname;
+  return hostname.includes('lovable.app') || 
+         hostname.includes('lovableproject.com') ||
+         hostname === 'localhost';
 }
 
 export function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(true); // Assume online initially
+  // Always assume online initially, especially in preview environments
+  const [isOnline, setIsOnline] = useState(true);
   const [wasOffline, setWasOffline] = useState(false);
 
   useEffect(() => {
-    // Initial check
-    checkRealConnectivity().then(setIsOnline);
+    // In Lovable preview, always trust we're online to avoid false negatives
+    if (isLovablePreview()) {
+      setIsOnline(true);
+      return;
+    }
 
-    const handleOnline = async () => {
-      const reallyOnline = await checkRealConnectivity();
-      setIsOnline(reallyOnline);
-      if (reallyOnline && wasOffline) {
+    // For production, use navigator.onLine
+    setIsOnline(navigator.onLine);
+
+    const handleOnline = () => {
+      setIsOnline(true);
+      if (wasOffline) {
         window.dispatchEvent(new CustomEvent('app:back-online'));
       }
     };
 
-    const handleOffline = async () => {
-      // Double-check with real connectivity test
-      const reallyOffline = !(await checkRealConnectivity());
-      if (reallyOffline) {
-        setIsOnline(false);
-        setWasOffline(true);
-      }
+    const handleOffline = () => {
+      setIsOnline(false);
+      setWasOffline(true);
     };
 
     window.addEventListener('online', handleOnline);
@@ -64,6 +53,12 @@ export function useOfflineIndicator() {
   const [showIndicator, setShowIndicator] = useState(false);
 
   useEffect(() => {
+    // Never show offline indicator in Lovable preview
+    if (isLovablePreview()) {
+      setShowIndicator(false);
+      return;
+    }
+
     if (!isOnline) {
       setShowIndicator(true);
     } else {
