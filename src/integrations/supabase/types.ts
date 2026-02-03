@@ -4771,7 +4771,7 @@ export type Database = {
           },
         ]
       }
-      automation_execution_logs: {
+      automation_execution_logs_legacy: {
         Row: {
           actions_completed: number | null
           actions_executed: Json | null
@@ -4858,7 +4858,7 @@ export type Database = {
             foreignKeyName: "automation_execution_logs_master_template_id_fkey"
             columns: ["master_template_id"]
             isOneToOne: false
-            referencedRelation: "master_automation_templates"
+            referencedRelation: "master_automation_templates_legacy"
             referencedColumns: ["id"]
           },
           {
@@ -4886,10 +4886,186 @@ export type Database = {
             foreignKeyName: "automation_execution_logs_tenant_config_id_fkey"
             columns: ["tenant_config_id"]
             isOneToOne: false
-            referencedRelation: "tenant_automation_configs"
+            referencedRelation: "tenant_automation_configs_legacy"
             referencedColumns: ["id"]
           },
         ]
+      }
+      automation_executions: {
+        Row: {
+          actions_log: Json
+          completed_at: string | null
+          duration_ms: number | null
+          entity_id: string | null
+          entity_type: string | null
+          error_message: string | null
+          id: string
+          idempotency_key: string | null
+          max_retries: number
+          next_retry_at: string | null
+          organization_id: string
+          retry_count: number
+          started_at: string
+          status: string
+          tenant_automation_id: string
+          trigger_data: Json | null
+          trigger_type: string
+        }
+        Insert: {
+          actions_log?: Json
+          completed_at?: string | null
+          duration_ms?: number | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string | null
+          max_retries?: number
+          next_retry_at?: string | null
+          organization_id: string
+          retry_count?: number
+          started_at?: string
+          status?: string
+          tenant_automation_id: string
+          trigger_data?: Json | null
+          trigger_type: string
+        }
+        Update: {
+          actions_log?: Json
+          completed_at?: string | null
+          duration_ms?: number | null
+          entity_id?: string | null
+          entity_type?: string | null
+          error_message?: string | null
+          id?: string
+          idempotency_key?: string | null
+          max_retries?: number
+          next_retry_at?: string | null
+          organization_id?: string
+          retry_count?: number
+          started_at?: string
+          status?: string
+          tenant_automation_id?: string
+          trigger_data?: Json | null
+          trigger_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "automation_executions_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_executions_tenant_automation_id_fkey"
+            columns: ["tenant_automation_id"]
+            isOneToOne: false
+            referencedRelation: "tenant_automations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_master_templates: {
+        Row: {
+          actions: Json
+          category: string
+          code: string
+          color: string | null
+          conditions: Json
+          configurable_params: Json
+          created_at: string
+          created_by: string | null
+          description: string | null
+          description_en: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_published: boolean
+          min_plan_tier: string | null
+          name: string
+          name_en: string | null
+          related_entity: string | null
+          sort_order: number | null
+          tags: string[] | null
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+          updated_by: string | null
+          version: number
+          visibility: string
+        }
+        Insert: {
+          actions?: Json
+          category: string
+          code: string
+          color?: string | null
+          conditions?: Json
+          configurable_params?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          description_en?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_published?: boolean
+          min_plan_tier?: string | null
+          name: string
+          name_en?: string | null
+          related_entity?: string | null
+          sort_order?: number | null
+          tags?: string[] | null
+          trigger_config?: Json
+          trigger_type: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+          visibility?: string
+        }
+        Update: {
+          actions?: Json
+          category?: string
+          code?: string
+          color?: string | null
+          conditions?: Json
+          configurable_params?: Json
+          created_at?: string
+          created_by?: string | null
+          description?: string | null
+          description_en?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_published?: boolean
+          min_plan_tier?: string | null
+          name?: string
+          name_en?: string | null
+          related_entity?: string | null
+          sort_order?: number | null
+          tags?: string[] | null
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+          updated_by?: string | null
+          version?: number
+          visibility?: string
+        }
+        Relationships: []
       }
       automation_rules: {
         Row: {
@@ -4998,6 +5174,61 @@ export type Database = {
           {
             foreignKeyName: "automation_rules_tenant_id_fkey"
             columns: ["tenant_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      automation_variables: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_system: boolean
+          key: string
+          organization_id: string | null
+          updated_at: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          key: string
+          organization_id?: string | null
+          updated_at?: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          key?: string
+          organization_id?: string | null
+          updated_at?: string
+          value?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "automation_variables_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "automation_variables_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "automation_variables_organization_id_fkey"
+            columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
@@ -26724,7 +26955,7 @@ export type Database = {
         }
         Relationships: []
       }
-      master_automation_templates: {
+      master_automation_templates_legacy: {
         Row: {
           actions: Json | null
           category: string
@@ -44238,7 +44469,7 @@ export type Database = {
           },
         ]
       }
-      tenant_automation_configs: {
+      tenant_automation_configs_legacy: {
         Row: {
           created_at: string | null
           custom_actions: Json | null
@@ -44298,7 +44529,7 @@ export type Database = {
             foreignKeyName: "tenant_automation_configs_master_template_id_fkey"
             columns: ["master_template_id"]
             isOneToOne: false
-            referencedRelation: "master_automation_templates"
+            referencedRelation: "master_automation_templates_legacy"
             referencedColumns: ["id"]
           },
           {
@@ -44317,6 +44548,119 @@ export type Database = {
           },
           {
             foreignKeyName: "tenant_automation_configs_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tenant_automations: {
+        Row: {
+          actions: Json
+          category: string
+          conditions: Json
+          created_at: string
+          created_by: string | null
+          custom_params: Json
+          description: string | null
+          error_count: number
+          icon: string | null
+          id: string
+          is_active: boolean
+          is_custom: boolean
+          is_locked: boolean
+          last_error: string | null
+          last_run_at: string | null
+          master_template_id: string | null
+          master_template_version: number | null
+          name: string
+          organization_id: string
+          run_count: number
+          success_count: number
+          trigger_config: Json
+          trigger_type: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          actions?: Json
+          category: string
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          custom_params?: Json
+          description?: string | null
+          error_count?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_custom?: boolean
+          is_locked?: boolean
+          last_error?: string | null
+          last_run_at?: string | null
+          master_template_id?: string | null
+          master_template_version?: number | null
+          name: string
+          organization_id: string
+          run_count?: number
+          success_count?: number
+          trigger_config?: Json
+          trigger_type: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          actions?: Json
+          category?: string
+          conditions?: Json
+          created_at?: string
+          created_by?: string | null
+          custom_params?: Json
+          description?: string | null
+          error_count?: number
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          is_custom?: boolean
+          is_locked?: boolean
+          last_error?: string | null
+          last_run_at?: string | null
+          master_template_id?: string | null
+          master_template_version?: number | null
+          name?: string
+          organization_id?: string
+          run_count?: number
+          success_count?: number
+          trigger_config?: Json
+          trigger_type?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tenant_automations_master_template_id_fkey"
+            columns: ["master_template_id"]
+            isOneToOne: false
+            referencedRelation: "automation_master_templates"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_automations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tenant_automations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "tenant_automations_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -50426,6 +50770,10 @@ export type Database = {
           value: number
         }[]
       }
+      get_automation_param_value: {
+        Args: { p_param_key: string; p_tenant_automation_id: string }
+        Returns: Json
+      }
       get_crm_dashboard_stats: {
         Args: { p_organization_id: string }
         Returns: Json
@@ -50837,6 +51185,10 @@ export type Database = {
             }
             Returns: string
           }
+      propagate_master_template_update: {
+        Args: { p_template_id: string }
+        Returns: number
+      }
       provision_pack_modules: {
         Args: {
           p_billing_cycle?: string
@@ -50848,6 +51200,10 @@ export type Database = {
           result_status: string
           tier_code: string
         }[]
+      }
+      provision_tenant_automations: {
+        Args: { p_org_id: string }
+        Returns: number
       }
       record_test_result: {
         Args: {

@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { 
   Zap, Search, Filter, Check, Lock, Settings, 
   Bell, Clock, Users, FileText, AlertTriangle, RefreshCw,
-  ChevronDown, ChevronRight, Play
+  ChevronDown, ChevronRight, Play, Building, LineChart, Mail
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -39,22 +39,23 @@ import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import {
   useAutomationCatalog,
-  useEnableAutomation,
-  useDisableAutomation,
+  useActivateAutomation,
+  useDeactivateAutomation,
   useUpdateAutomationParams,
   useTenantAutomationStats,
   type TenantAutomationCatalogItem,
 } from '@/hooks/useTenantAutomationConfigs';
-import { TEMPLATE_CATEGORIES } from '@/hooks/backoffice/useMasterAutomationTemplates';
+import { TEMPLATE_CATEGORIES, type ConfigurableParam } from '@/hooks/backoffice/useMasterAutomationTemplates';
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   deadlines: Clock,
-  notifications: Bell,
-  onboarding: Users,
-  crm: Users,
-  spider: AlertTriangle,
+  communication: Mail,
+  case_management: FileText,
   billing: FileText,
-  tasks: RefreshCw,
+  ip_surveillance: AlertTriangle,
+  internal: Users,
+  reporting: LineChart,
+  custom: Zap,
 };
 
 interface ConfigDialogProps {
@@ -69,28 +70,23 @@ function ConfigDialog({ open, onOpenChange, item }: ConfigDialogProps) {
 
   if (!item) return null;
 
-  const configurableParams = (item.configurable_params as Array<{
-    key: string;
-    type: string;
-    label: string;
-    default: unknown;
-    min?: number;
-    max?: number;
-    options?: string[];
-  }>) || [];
+  const configurableParams = (item.template.configurable_params || []) as ConfigurableParam[];
 
   const handleSave = () => {
+    if (!item.tenant_automation?.id) return;
     updateParams.mutate(
-      { templateId: item.id, customParams: params },
+      { automationId: item.tenant_automation.id, customParams: params },
       { onSuccess: () => onOpenChange(false) }
     );
   };
+
+  const currentParams = item.tenant_automation?.custom_params || {};
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Configurar: {item.name_es || item.name}</DialogTitle>
+          <DialogTitle>Configurar: {item.template.name}</DialogTitle>
           <DialogDescription>
             Personaliza los parámetros de esta automatización
           </DialogDescription>
@@ -108,11 +104,10 @@ function ConfigDialog({ open, onOpenChange, item }: ConfigDialogProps) {
                   <Input
                     id={param.key}
                     type="number"
-                    min={param.min}
-                    max={param.max}
+                    min={param.validation?.min as number}
+                    max={param.validation?.max as number}
                     defaultValue={
-                      (item.tenant_config?.custom_params as Record<string, unknown>)?.[param.key] as number 
-                      ?? param.default as number
+                      (currentParams[param.key] as number) ?? (param.default_value as number)
                     }
                     onChange={(e) => setParams({ ...params, [param.key]: Number(e.target.value) })}
                   />
@@ -120,16 +115,14 @@ function ConfigDialog({ open, onOpenChange, item }: ConfigDialogProps) {
                   <Switch
                     id={param.key}
                     defaultChecked={
-                      (item.tenant_config?.custom_params as Record<string, unknown>)?.[param.key] as boolean 
-                      ?? param.default as boolean
+                      (currentParams[param.key] as boolean) ?? (param.default_value as boolean)
                     }
                     onCheckedChange={(checked) => setParams({ ...params, [param.key]: checked })}
                   />
                 ) : param.type === 'select' && param.options ? (
                   <Select
                     defaultValue={
-                      ((item.tenant_config?.custom_params as Record<string, unknown>)?.[param.key] as string) 
-                      ?? (param.default as string)
+                      (currentParams[param.key] as string) ?? (param.default_value as string)
                     }
                     onValueChange={(value) => setParams({ ...params, [param.key]: value })}
                   >
@@ -138,7 +131,7 @@ function ConfigDialog({ open, onOpenChange, item }: ConfigDialogProps) {
                     </SelectTrigger>
                     <SelectContent>
                       {param.options.map(opt => (
-                        <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -146,11 +139,13 @@ function ConfigDialog({ open, onOpenChange, item }: ConfigDialogProps) {
                   <Input
                     id={param.key}
                     defaultValue={
-                      ((item.tenant_config?.custom_params as Record<string, unknown>)?.[param.key] as string) 
-                      ?? (param.default as string)
+                      (currentParams[param.key] as string) ?? (param.default_value as string)
                     }
                     onChange={(e) => setParams({ ...params, [param.key]: e.target.value })}
                   />
+                )}
+                {param.description && (
+                  <p className="text-xs text-muted-foreground">{param.description}</p>
                 )}
               </div>
             ))
@@ -177,22 +172,24 @@ export function AutomationCatalog() {
 
   const { data: catalog = [], isLoading } = useAutomationCatalog();
   const { data: stats } = useTenantAutomationStats();
-  const enableAutomation = useEnableAutomation();
-  const disableAutomation = useDisableAutomation();
+  const activateAutomation = useActivateAutomation();
+  const deactivateAutomation = useDeactivateAutomation();
 
   // Filter catalog
   const filteredCatalog = catalog.filter(item => {
     const matchesSearch = !search ||
-      item.name.toLowerCase().includes(search.toLowerCase()) ||
-      (item.name_es?.toLowerCase().includes(search.toLowerCase()));
-    const matchesCategory = categoryFilter === 'all' || item.category === categoryFilter;
+      item.template.name.toLowerCase().includes(search.toLowerCase()) ||
+      (item.template.name_en?.toLowerCase().includes(search.toLowerCase())) ||
+      (item.template.description?.toLowerCase().includes(search.toLowerCase()));
+    const matchesCategory = categoryFilter === 'all' || item.template.category === categoryFilter;
     return matchesSearch && matchesCategory;
   });
 
   // Group by category
   const groupedCatalog = filteredCatalog.reduce((acc, item) => {
-    if (!acc[item.category]) acc[item.category] = [];
-    acc[item.category].push(item);
+    const cat = item.template.category;
+    if (!acc[cat]) acc[cat] = [];
+    acc[cat].push(item);
     return acc;
   }, {} as Record<string, TenantAutomationCatalogItem[]>);
 
@@ -207,16 +204,16 @@ export function AutomationCatalog() {
   };
 
   const handleToggle = (item: TenantAutomationCatalogItem) => {
-    if (item.is_enabled) {
-      disableAutomation.mutate(item.id);
+    if (item.is_active && item.tenant_automation?.id) {
+      deactivateAutomation.mutate(item.tenant_automation.id);
     } else {
-      enableAutomation.mutate({ templateId: item.id });
+      activateAutomation.mutate({ templateId: item.template.id });
     }
   };
 
   const getCategoryConfig = (category: string) => {
     return TEMPLATE_CATEGORIES.find(c => c.value === category) ||
-      { label: category, icon: 'zap', color: '#6B7280' };
+      { label: category, icon: '⚡', color: '#6B7280' };
   };
 
   if (isLoading) {
@@ -240,13 +237,13 @@ export function AutomationCatalog() {
             Catálogo de Automatizaciones
           </h2>
           <p className="text-sm text-muted-foreground">
-            {stats?.enabled || 0} activas de {catalog.length} disponibles
+            {stats?.active || 0} activas de {catalog.length} disponibles
           </p>
         </div>
         {stats && (
           <div className="flex gap-4 text-sm">
             <div className="text-center">
-              <p className="text-2xl font-bold text-emerald-600">{stats.completed}</p>
+              <p className="text-2xl font-bold text-emerald-600">{stats.success}</p>
               <p className="text-muted-foreground">Completadas</p>
             </div>
             <div className="text-center">
@@ -304,7 +301,7 @@ export function AutomationCatalog() {
             const catConfig = getCategoryConfig(category);
             const CategoryIcon = CATEGORY_ICONS[category] || Zap;
             const isExpanded = expandedCategories.has(category);
-            const enabledCount = items.filter(i => i.is_enabled).length;
+            const activeCount = items.filter(i => i.is_active).length;
 
             return (
               <Collapsible key={category} open={isExpanded}>
@@ -328,7 +325,7 @@ export function AutomationCatalog() {
                           <div>
                             <CardTitle className="text-lg">{catConfig.label}</CardTitle>
                             <CardDescription>
-                              {enabledCount}/{items.length} activas
+                              {activeCount}/{items.length} activas
                             </CardDescription>
                           </div>
                         </div>
@@ -345,23 +342,24 @@ export function AutomationCatalog() {
                       <div className="divide-y">
                         {items.map(item => (
                           <div 
-                            key={item.id}
+                            key={item.template.id}
                             className={cn(
                               "py-4 flex items-center justify-between",
-                              !item.can_enable && "opacity-60"
+                              !item.can_activate && "opacity-60"
                             )}
                           >
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2">
                                 <h4 className="font-medium">
-                                  {item.name_es || item.name}
+                                  {item.template.name}
                                 </h4>
-                                {item.is_mandatory && (
+                                {item.is_locked && (
                                   <Badge variant="secondary" className="text-xs">
+                                    <Lock className="h-3 w-3 mr-1" />
                                     Obligatoria
                                   </Badge>
                                 )}
-                                {!item.can_enable && (
+                                {!item.can_activate && (
                                   <Badge variant="outline" className="text-xs">
                                     <Lock className="h-3 w-3 mr-1" />
                                     {item.blocked_reason}
@@ -369,17 +367,22 @@ export function AutomationCatalog() {
                                 )}
                               </div>
                               <p className="text-sm text-muted-foreground mt-1">
-                                {item.description_es || item.description}
+                                {item.template.description}
                               </p>
-                              {item.is_enabled && item.tenant_config?.execution_count ? (
+                              {item.is_active && item.tenant_automation?.run_count ? (
                                 <p className="text-xs text-muted-foreground mt-1">
                                   <Play className="h-3 w-3 inline mr-1" />
-                                  {item.tenant_config.execution_count} ejecuciones
+                                  {item.tenant_automation.run_count} ejecuciones
+                                  {item.tenant_automation.success_count > 0 && (
+                                    <span className="text-emerald-600 ml-2">
+                                      ✓ {item.tenant_automation.success_count} exitosas
+                                    </span>
+                                  )}
                                 </p>
                               ) : null}
                             </div>
                             <div className="flex items-center gap-2">
-                              {item.is_enabled && (
+                              {item.is_active && item.tenant_automation && (
                                 <Button
                                   variant="ghost"
                                   size="icon"
@@ -389,12 +392,13 @@ export function AutomationCatalog() {
                                 </Button>
                               )}
                               <Switch
-                                checked={item.is_enabled}
+                                checked={item.is_active}
                                 onCheckedChange={() => handleToggle(item)}
                                 disabled={
-                                  !item.can_enable ||
-                                  enableAutomation.isPending ||
-                                  disableAutomation.isPending
+                                  !item.can_activate ||
+                                  item.is_locked ||
+                                  activateAutomation.isPending ||
+                                  deactivateAutomation.isPending
                                 }
                               />
                             </div>

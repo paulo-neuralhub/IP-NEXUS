@@ -6,8 +6,8 @@
 import { useState } from 'react';
 import { 
   Zap, Plus, Search, Filter, MoreVertical, 
-  Eye, Edit, Trash2, Copy, Power, PowerOff,
-  Bell, Clock, Users, FileText, RefreshCw, AlertTriangle
+  Eye, Edit, Trash2, Copy, Power, PowerOff, Send,
+  Bell, Clock, Users, FileText, RefreshCw, AlertTriangle, Mail, LineChart
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,20 +42,23 @@ import {
   useMasterAutomationTemplates,
   useMasterTemplateStats,
   useToggleMasterTemplateActive,
+  useToggleMasterTemplatePublished,
+  usePropagateTemplateUpdate,
   useDeleteMasterTemplate,
   TEMPLATE_CATEGORIES,
   PLAN_LEVELS,
+  VISIBILITY_TYPES,
   type MasterAutomationTemplate,
 } from '@/hooks/backoffice/useMasterAutomationTemplates';
 
 const CATEGORY_ICONS: Record<string, React.ElementType> = {
   deadlines: Clock,
-  notifications: Bell,
-  onboarding: Users,
-  crm: Users,
-  spider: AlertTriangle,
+  communication: Mail,
+  case_management: FileText,
   billing: FileText,
-  tasks: RefreshCw,
+  ip_surveillance: AlertTriangle,
+  internal: Users,
+  reporting: LineChart,
 };
 
 export default function MasterAutomationTemplatesPage() {
@@ -67,11 +70,13 @@ export default function MasterAutomationTemplatesPage() {
 
   const { data: templates = [], isLoading } = useMasterAutomationTemplates({
     category: categoryFilter !== 'all' ? categoryFilter : undefined,
-    min_plan: planFilter !== 'all' ? planFilter : undefined,
+    min_plan_tier: planFilter !== 'all' ? planFilter : undefined,
     search: search || undefined,
   });
   const { data: stats } = useMasterTemplateStats();
   const toggleActive = useToggleMasterTemplateActive();
+  const togglePublished = useToggleMasterTemplatePublished();
+  const propagate = usePropagateTemplateUpdate();
   const deleteTemplate = useDeleteMasterTemplate();
 
   // Filter by search client-side for instant feedback
@@ -91,7 +96,28 @@ export default function MasterAutomationTemplatesPage() {
 
   const getCategoryConfig = (category: string) => {
     return TEMPLATE_CATEGORIES.find(c => c.value === category) || 
-      { label: category, icon: 'zap', color: '#6B7280' };
+      { label: category, icon: '⚡', color: '#6B7280' };
+  };
+
+  const getVisibilityBadge = (visibility: string) => {
+    const config = VISIBILITY_TYPES.find(v => v.value === visibility);
+    if (!config) return null;
+    
+    const colors: Record<string, string> = {
+      system: '#6B7280',
+      mandatory: '#EF4444',
+      recommended: '#10B981',
+      optional: '#3B82F6',
+    };
+    
+    return (
+      <Badge 
+        variant="outline" 
+        style={{ borderColor: colors[visibility], color: colors[visibility] }}
+      >
+        {config.label}
+      </Badge>
+    );
   };
 
   const getPlanBadge = (plan: string | null) => {
@@ -157,11 +183,11 @@ export default function MasterAutomationTemplatesPage() {
           <CardContent className="p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-muted-foreground">Inactivos</p>
-                <p className="text-2xl font-bold text-gray-500">{stats?.inactive || 0}</p>
+                <p className="text-sm text-muted-foreground">Publicados</p>
+                <p className="text-2xl font-bold text-blue-600">{stats?.published || 0}</p>
               </div>
-              <div className="p-3 bg-gray-100 rounded-lg">
-                <PowerOff className="h-5 w-5 text-gray-500" />
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <Send className="h-5 w-5 text-blue-600" />
               </div>
             </div>
           </CardContent>
@@ -267,19 +293,24 @@ export default function MasterAutomationTemplatesPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
                           <h3 className="font-semibold truncate">
-                            {template.name_es || template.name}
+                            {template.name}
                           </h3>
                           <Badge variant="secondary" className="text-xs">
                             {template.code}
                           </Badge>
-                          {template.is_mandatory && (
+                          {template.visibility === 'mandatory' && (
                             <Badge variant="destructive" className="text-xs">
                               Obligatoria
                             </Badge>
                           )}
+                          {template.is_published && (
+                            <Badge variant="default" className="text-xs bg-blue-600">
+                              Publicado
+                            </Badge>
+                          )}
                         </div>
                         <p className="text-sm text-muted-foreground truncate">
-                          {template.description_es || template.description}
+                          {template.description}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <Badge 
@@ -288,15 +319,11 @@ export default function MasterAutomationTemplatesPage() {
                           >
                             {catConfig.label}
                           </Badge>
-                          {getPlanBadge(template.min_plan)}
+                          {getVisibilityBadge(template.visibility)}
+                          {getPlanBadge(template.min_plan_tier)}
                           <span className="text-xs text-muted-foreground">
-                            Trigger: {template.trigger_type}
+                            v{template.version} • {template.trigger_type}
                           </span>
-                          {template.trigger_event && (
-                            <span className="text-xs text-muted-foreground">
-                              → {template.trigger_event}
-                            </span>
-                          )}
                         </div>
                       </div>
                     </div>
@@ -336,6 +363,24 @@ export default function MasterAutomationTemplatesPage() {
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
+                            onClick={() => togglePublished.mutate({ 
+                              id: template.id, 
+                              isPublished: !template.is_published 
+                            })}
+                          >
+                            <Send className="h-4 w-4 mr-2" />
+                            {template.is_published ? 'Despublicar' : 'Publicar'}
+                          </DropdownMenuItem>
+                          {template.is_published && (
+                            <DropdownMenuItem
+                              onClick={() => propagate.mutate(template.id)}
+                            >
+                              <RefreshCw className="h-4 w-4 mr-2" />
+                              Propagar a Tenants
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem
                             className="text-destructive"
                             onClick={() => {
                               setSelectedTemplate(template);
@@ -363,7 +408,7 @@ export default function MasterAutomationTemplatesPage() {
             <DialogTitle>¿Eliminar template?</DialogTitle>
             <DialogDescription>
               Esta acción no se puede deshacer. Se eliminará el template{' '}
-              <strong>{selectedTemplate?.name_es || selectedTemplate?.name}</strong>{' '}
+              <strong>{selectedTemplate?.name}</strong>{' '}
               y todas las configuraciones de tenants asociadas.
             </DialogDescription>
           </DialogHeader>
