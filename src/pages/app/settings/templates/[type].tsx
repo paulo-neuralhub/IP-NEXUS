@@ -20,6 +20,7 @@ const TYPE_CONFIG: Record<DocumentType, { label: string; icon: React.ElementType
   certificate: { label: 'Certificados', icon: FileCheck, color: 'text-warning' },
   letter: { label: 'Cartas', icon: Mail, color: 'text-genius' },
   report: { label: 'Informes', icon: BarChart3, color: 'text-crm' },
+  contract: { label: 'Contratos', icon: FileCheck, color: 'text-secondary' },
 };
 
 export default function TemplateListPage() {

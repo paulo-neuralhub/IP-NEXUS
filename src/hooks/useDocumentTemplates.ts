@@ -5,7 +5,7 @@ import { useOrganization } from '@/contexts/organization-context';
 import { useToast } from '@/hooks/use-toast';
 import { Json } from '@/integrations/supabase/types';
 
-export type DocumentType = 'invoice' | 'quote' | 'certificate' | 'letter' | 'report';
+export type DocumentType = 'invoice' | 'quote' | 'certificate' | 'letter' | 'report' | 'contract';
 export type TemplateLayout = 'classic' | 'modern' | 'minimal' | 'corporate' | 'certificate' | 'letter';
 
 export interface DocumentTemplate {
