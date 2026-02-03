@@ -11,3 +11,5 @@ export { LegalDeadlineCard } from './LegalDeadlineCard';
 export { ExecutionHistory } from './ExecutionHistory';
 export { VerificationBadge } from './VerificationBadge';
 export { AutomationCatalog } from './AutomationCatalog';
+export { TenantAutomationsPage } from './TenantAutomationsPage';
+export { AutomationConfigDialog } from './AutomationConfigDialog';
