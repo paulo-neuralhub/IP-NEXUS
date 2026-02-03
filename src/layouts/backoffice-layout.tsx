@@ -125,14 +125,6 @@ const sidebarSections: SidebarSection[] = [
     ],
   },
   {
-    code: 'automations',
-    label: 'Automatizaciones',
-    icon: Zap,
-    items: [
-      { label: 'Templates', path: '/backoffice/automations', icon: Zap },
-    ],
-  },
-  {
     code: 'analytics',
     label: 'Analytics',
     icon: LineChart,
@@ -158,43 +150,8 @@ const sidebarSections: SidebarSection[] = [
     label: 'Herramientas',
     icon: Wrench,
     items: [
-      { label: 'Conexiones API', path: '/backoffice/api-connections', icon: Plug },
       { label: 'Calendar', path: '/backoffice/calendar', icon: Calendar },
-      { label: 'Settings', path: '/backoffice/settings', icon: Settings },
-    ],
-  },
-  {
-    code: 'demo',
-    label: 'Demo',
-    icon: Play,
-    items: [
-      { label: 'Demo Mode', path: '/backoffice/demo-mode', icon: Play },
-      { label: 'Demo Data', path: '/backoffice/demo-data', icon: Database },
-    ],
-  },
-  {
-    code: 'compliance',
-    label: 'Compliance',
-    icon: ShieldCheck,
-    items: [
-      { label: 'KYC Review', path: '/backoffice/kyc-review', icon: ShieldCheck },
-      { label: 'Moderation', path: '/backoffice/moderation', icon: AlertTriangle },
-      { label: 'Compliance', path: '/backoffice/compliance', icon: Scale },
-      { label: 'Textos Legales', path: '/backoffice/legal-documents', icon: ScrollText },
-    ],
-  },
-  {
-    code: 'sistema',
-    label: 'Sistema',
-    icon: Settings,
-    items: [
-      { label: 'Alertas', path: '/backoffice/alerts', icon: AlertTriangle },
-      { label: 'Logs', path: '/backoffice/logs', icon: ScrollText },
-      { label: 'Audit Logs', path: '/backoffice/audit', icon: FileText },
-      { label: 'Event Log', path: '/backoffice/events', icon: ScrollText },
-      { label: 'System Tests', path: '/backoffice/system-tests', icon: FlaskConical },
-      { label: 'Feedback', path: '/backoffice/feedback', icon: MessageSquare },
-      { label: 'Kill Switch', path: '/backoffice/kill-switch', icon: Power, danger: true },
+      { label: 'Configuración', path: '/backoffice/settings', icon: Settings },
     ],
   },
 ];
