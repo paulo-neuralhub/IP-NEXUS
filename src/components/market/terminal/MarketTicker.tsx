@@ -1,23 +1,15 @@
 /**
  * Market Ticker Component
  * Horizontal scrolling ticker showing recent market activity
- * Bloomberg/financial terminal style
+ * Bloomberg/financial terminal style - USES REAL DATA
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { format, formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
-
-interface TickerItem {
-  id: string;
-  type: 'trademark' | 'patent' | 'design' | 'domain' | 'other';
-  title: string;
-  jurisdiction: string;
-  timestamp: string;
-  action: 'new' | 'bid' | 'completed' | 'update';
-}
+import { useMarketTicker, type TickerItem } from '@/hooks/use-market-requests';
 
 interface MarketTickerProps {
   items?: TickerItem[];
@@ -40,20 +32,8 @@ const ACTION_CONFIG = {
   update: { symbol: '●', color: 'text-amber-400' },
 };
 
-// Mock data for demo
-const MOCK_ITEMS: TickerItem[] = [
-  { id: '1', type: 'trademark', title: 'TechBrand', jurisdiction: 'ES', timestamp: new Date(Date.now() - 5 * 60000).toISOString(), action: 'new' },
-  { id: '2', type: 'patent', title: 'Solar Panel System', jurisdiction: 'EU', timestamp: new Date(Date.now() - 15 * 60000).toISOString(), action: 'bid' },
-  { id: '3', type: 'design', title: 'Furniture Collection', jurisdiction: 'US', timestamp: new Date(Date.now() - 30 * 60000).toISOString(), action: 'new' },
-  { id: '4', type: 'trademark', title: 'GreenLife', jurisdiction: 'EU', timestamp: new Date(Date.now() - 45 * 60000).toISOString(), action: 'completed' },
-  { id: '5', type: 'domain', title: 'crypto-tech.com', jurisdiction: 'INT', timestamp: new Date(Date.now() - 60 * 60000).toISOString(), action: 'new' },
-  { id: '6', type: 'patent', title: 'AI Algorithm', jurisdiction: 'CN', timestamp: new Date(Date.now() - 90 * 60000).toISOString(), action: 'bid' },
-  { id: '7', type: 'trademark', title: 'FreshFood', jurisdiction: 'JP', timestamp: new Date(Date.now() - 120 * 60000).toISOString(), action: 'update' },
-  { id: '8', type: 'design', title: 'Watch Face', jurisdiction: 'CH', timestamp: new Date(Date.now() - 150 * 60000).toISOString(), action: 'new' },
-];
-
 export function MarketTicker({ 
-  items = MOCK_ITEMS, 
+  items: externalItems,
   speed = 50,
   className 
 }: MarketTickerProps) {
@@ -61,8 +41,12 @@ export function MarketTicker({
   const contentRef = useRef<HTMLDivElement>(null);
   const [isPaused, setIsPaused] = useState(false);
 
+  // Use hook if no external items provided
+  const { data: hookItems } = useMarketTicker(15);
+  const items = externalItems ?? hookItems ?? [];
+
   useEffect(() => {
-    if (!contentRef.current) return;
+    if (!contentRef.current || items.length === 0) return;
 
     const content = contentRef.current;
     let animationId: number;
@@ -70,7 +54,7 @@ export function MarketTicker({
     const contentWidth = content.scrollWidth / 2;
 
     const animate = () => {
-      if (!isPaused) {
+      if (!isPaused && contentWidth > 0) {
         position -= speed / 60;
         if (Math.abs(position) >= contentWidth) {
           position = 0;
@@ -83,11 +67,28 @@ export function MarketTicker({
     animationId = requestAnimationFrame(animate);
 
     return () => cancelAnimationFrame(animationId);
-  }, [isPaused, speed]);
+  }, [isPaused, speed, items.length]);
+
+  // Empty state - show static message
+  if (items.length === 0) {
+    return (
+      <div 
+        className={cn(
+          'terminal-bg border-y terminal-border overflow-hidden py-3',
+          className
+        )}
+      >
+        <div className="flex items-center justify-center gap-2 text-muted-foreground text-sm">
+          <span className="text-lg">📊</span>
+          <span>Sin actividad reciente en el marketplace</span>
+        </div>
+      </div>
+    );
+  }
 
   const renderItem = (item: TickerItem, index: number) => {
-    const typeConfig = TYPE_CONFIG[item.type];
-    const actionConfig = ACTION_CONFIG[item.action];
+    const typeConfig = TYPE_CONFIG[item.type] || TYPE_CONFIG.other;
+    const actionConfig = ACTION_CONFIG[item.action] || ACTION_CONFIG.new;
 
     return (
       <Link

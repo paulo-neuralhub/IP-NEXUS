@@ -1,7 +1,7 @@
 /**
  * Recent Requests Component
  * Live feed of recent market requests
- * Financial terminal style
+ * Financial terminal style - USES REAL DATA
  */
 
 import { Link } from 'react-router-dom';
@@ -11,31 +11,14 @@ import { Badge } from '@/components/ui/badge';
 import { 
   Activity, 
   MapPin, 
-  Euro, 
   Clock, 
   ArrowRight,
-  FileText,
-  Sparkles,
-  Search,
-  Shield
+  Inbox
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-
-interface MarketRequest {
-  id: string;
-  request_number: string;
-  service_type: 'trademark' | 'patent' | 'design' | 'search' | 'opposition' | 'renewal';
-  title: string;
-  jurisdiction: string;
-  budget_min?: number;
-  budget_max?: number;
-  status: 'open' | 'assigned' | 'in_progress' | 'completed' | 'cancelled';
-  bids_count: number;
-  created_at: string;
-  city?: string;
-}
+import { useRecentMarketRequests, type MarketRequest } from '@/hooks/use-market-requests';
 
 interface RecentRequestsProps {
   requests?: MarketRequest[];
@@ -61,46 +44,6 @@ const STATUS_CONFIG = {
   cancelled: { color: 'bg-gray-500/20 text-gray-400', label: 'Cancelado' },
 };
 
-// Mock data for demo
-const MOCK_REQUESTS: MarketRequest[] = [
-  { 
-    id: '1', request_number: 'MKT-2026-0145', service_type: 'trademark',
-    title: 'Registro marca "InnoTech Solutions"', jurisdiction: 'ES',
-    budget_min: 800, budget_max: 1500, status: 'open', bids_count: 4,
-    created_at: new Date(Date.now() - 2 * 60 * 60000).toISOString(), city: 'Madrid'
-  },
-  { 
-    id: '2', request_number: 'MKT-2026-0144', service_type: 'patent',
-    title: 'Patente sistema energía solar', jurisdiction: 'EU',
-    budget_min: 3000, budget_max: 5000, status: 'open', bids_count: 2,
-    created_at: new Date(Date.now() - 4 * 60 * 60000).toISOString(), city: 'Berlin'
-  },
-  { 
-    id: '3', request_number: 'MKT-2026-0143', service_type: 'search',
-    title: 'Búsqueda anterioridades EU-wide', jurisdiction: 'EU',
-    budget_min: 500, budget_max: 1000, status: 'open', bids_count: 6,
-    created_at: new Date(Date.now() - 6 * 60 * 60000).toISOString()
-  },
-  { 
-    id: '4', request_number: 'MKT-2026-0142', service_type: 'opposition',
-    title: 'Oposición marca clase 9 tecnología', jurisdiction: 'ES',
-    budget_min: 2000, budget_max: 4000, status: 'assigned', bids_count: 3,
-    created_at: new Date(Date.now() - 12 * 60 * 60000).toISOString(), city: 'Barcelona'
-  },
-  { 
-    id: '5', request_number: 'MKT-2026-0141', service_type: 'design',
-    title: 'Registro diseño industrial packaging', jurisdiction: 'US',
-    budget_min: 1500, budget_max: 2500, status: 'open', bids_count: 1,
-    created_at: new Date(Date.now() - 24 * 60 * 60000).toISOString(), city: 'NYC'
-  },
-  { 
-    id: '6', request_number: 'MKT-2026-0140', service_type: 'renewal',
-    title: 'Renovación 15 marcas portfolio', jurisdiction: 'INT',
-    budget_min: 5000, budget_max: 8000, status: 'in_progress', bids_count: 5,
-    created_at: new Date(Date.now() - 48 * 60 * 60000).toISOString()
-  },
-];
-
 function formatBudget(min?: number, max?: number): string {
   if (!min && !max) return '-';
   if (min && max) return `€${min.toLocaleString()} - €${max.toLocaleString()}`;
@@ -109,11 +52,17 @@ function formatBudget(min?: number, max?: number): string {
 }
 
 export function RecentRequests({ 
-  requests = MOCK_REQUESTS, 
-  isLoading = false,
+  requests: externalRequests,
+  isLoading: externalLoading,
   showBidButton = true,
   className 
 }: RecentRequestsProps) {
+  // Use hook if no external data provided
+  const { data: hookRequests, isLoading: hookLoading } = useRecentMarketRequests(8);
+  
+  const requests = externalRequests ?? hookRequests ?? [];
+  const isLoading = externalLoading ?? hookLoading;
+
   if (isLoading) {
     return (
       <Card className={cn('terminal-card', className)}>
@@ -127,6 +76,29 @@ export function RecentRequests({
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="h-16 terminal-skeleton animate-pulse rounded" />
           ))}
+        </CardContent>
+      </Card>
+    );
+  }
+
+  // Empty state
+  if (requests.length === 0) {
+    return (
+      <Card className={cn('terminal-card', className)}>
+        <CardHeader className="pb-3 flex flex-row items-center justify-between">
+          <CardTitle className="terminal-text flex items-center gap-2">
+            <Activity className="h-5 w-5 text-emerald-400" />
+            Solicitudes Recientes
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <Inbox className="h-12 w-12 text-muted-foreground/30 mb-3" />
+            <p className="text-sm text-muted-foreground">Sin solicitudes recientes</p>
+            <p className="text-xs text-muted-foreground/70 mt-1">
+              Las nuevas solicitudes del marketplace aparecerán aquí
+            </p>
+          </div>
         </CardContent>
       </Card>
     );
@@ -147,8 +119,8 @@ export function RecentRequests({
       </CardHeader>
       <CardContent className="space-y-1 p-0">
         {requests.slice(0, 8).map((request) => {
-          const typeConfig = SERVICE_TYPE_CONFIG[request.service_type];
-          const statusConfig = STATUS_CONFIG[request.status];
+          const typeConfig = SERVICE_TYPE_CONFIG[request.service_type] || SERVICE_TYPE_CONFIG.trademark;
+          const statusConfig = STATUS_CONFIG[request.status] || STATUS_CONFIG.open;
 
           return (
             <Link

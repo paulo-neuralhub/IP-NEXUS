@@ -1,13 +1,13 @@
 /**
  * IP-NEXUS Backoffice - Calendar & Booking Management
  * Availability settings and meeting bookings
+ * USES REAL DATA from useCalendarBookings
  */
 
 import { useState } from 'react';
 import { 
-  Calendar, Clock, Video, Users, Settings, Plus, 
-  ChevronLeft, ChevronRight, MoreHorizontal, 
-  ExternalLink, Copy, Check
+  Calendar, Clock, Video, Users, Plus, 
+  MoreHorizontal, ExternalLink, Copy, Check, Inbox
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
+import { Skeleton } from '@/components/ui/skeleton';
 import {
   Select,
   SelectContent,
@@ -23,52 +24,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-
-// Mock data for calendar
-const MOCK_BOOKINGS = [
-  {
-    id: '1',
-    title: 'Demo comercial',
-    date: '2026-01-20',
-    time: '10:00',
-    duration: 60,
-    attendee: 'Carlos García',
-    email: 'carlos@empresa.com',
-    type: 'demo',
-    status: 'confirmed'
-  },
-  {
-    id: '2',
-    title: 'Consulta inicial',
-    date: '2026-01-20',
-    time: '15:30',
-    duration: 30,
-    attendee: 'María López',
-    email: 'maria@startup.io',
-    type: 'consultation',
-    status: 'pending'
-  },
-  {
-    id: '3',
-    title: 'Onboarding cliente',
-    date: '2026-01-21',
-    time: '11:00',
-    duration: 60,
-    attendee: 'Juan Martínez',
-    email: 'juan@legal.es',
-    type: 'onboarding',
-    status: 'confirmed'
-  }
-];
+import { useCalendarBookings, useCalendarStats } from '@/hooks/use-calendar-bookings';
 
 const MEETING_TYPES = [
   {
@@ -111,6 +68,10 @@ export default function BackofficeCalendarPage() {
   const [activeTab, setActiveTab] = useState('upcoming');
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
+  
+  // Use real data hooks
+  const { data: bookings = [], isLoading: loadingBookings } = useCalendarBookings();
+  const { data: stats, isLoading: loadingStats } = useCalendarStats();
 
   const bookingUrl = 'https://ip-nexus.com/book/team';
 
@@ -161,7 +122,7 @@ export default function BackofficeCalendarPage() {
         </div>
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Real data */}
       <div className="grid grid-cols-4 gap-4">
         <Card>
           <CardContent className="pt-4">
@@ -170,7 +131,11 @@ export default function BackofficeCalendarPage() {
                 <Calendar className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold">12</p>
+                {loadingStats ? (
+                  <Skeleton className="h-8 w-12" />
+                ) : (
+                  <p className="text-2xl font-bold">{stats?.thisWeek ?? 0}</p>
+                )}
                 <p className="text-xs text-muted-foreground">Reuniones esta semana</p>
               </div>
             </div>
@@ -183,7 +148,11 @@ export default function BackofficeCalendarPage() {
                 <Check className="w-5 h-5 text-success" />
               </div>
               <div>
-                <p className="text-2xl font-bold">8</p>
+                {loadingStats ? (
+                  <Skeleton className="h-8 w-12" />
+                ) : (
+                  <p className="text-2xl font-bold">{stats?.confirmed ?? 0}</p>
+                )}
                 <p className="text-xs text-muted-foreground">Confirmadas</p>
               </div>
             </div>
@@ -196,7 +165,11 @@ export default function BackofficeCalendarPage() {
                 <Clock className="w-5 h-5 text-warning" />
               </div>
               <div>
-                <p className="text-2xl font-bold">4</p>
+                {loadingStats ? (
+                  <Skeleton className="h-8 w-12" />
+                ) : (
+                  <p className="text-2xl font-bold">{stats?.pending ?? 0}</p>
+                )}
                 <p className="text-xs text-muted-foreground">Pendientes</p>
               </div>
             </div>
@@ -209,7 +182,11 @@ export default function BackofficeCalendarPage() {
                 <Video className="w-5 h-5 text-module-genius" />
               </div>
               <div>
-                <p className="text-2xl font-bold">45</p>
+                {loadingStats ? (
+                  <Skeleton className="h-8 w-12" />
+                ) : (
+                  <p className="text-2xl font-bold">{stats?.thisMonth ?? 0}</p>
+                )}
                 <p className="text-xs text-muted-foreground">Total este mes</p>
               </div>
             </div>
@@ -225,56 +202,74 @@ export default function BackofficeCalendarPage() {
           <TabsTrigger value="types">Tipos de reunión</TabsTrigger>
         </TabsList>
 
-        {/* Upcoming Meetings */}
+        {/* Upcoming Meetings - Real data */}
         <TabsContent value="upcoming" className="mt-4 space-y-4">
-          {MOCK_BOOKINGS.map((booking) => (
-            <Card key={booking.id}>
-              <CardContent className="p-4">
-                <div className="flex items-center gap-4">
-                  {/* Time indicator */}
-                  <div className="text-center min-w-[60px]">
-                    <p className="text-lg font-bold">{booking.time}</p>
-                    <p className="text-xs text-muted-foreground">{booking.duration} min</p>
-                  </div>
-
-                  {/* Color bar */}
-                  <div 
-                    className="w-1 h-12 rounded-full"
-                    style={{ backgroundColor: getTypeColor(booking.type) }}
-                  />
-
-                  {/* Info */}
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="font-medium">{booking.title}</h3>
-                      {getStatusBadge(booking.status)}
-                    </div>
-                    <p className="text-sm text-muted-foreground">
-                      {booking.attendee} · {booking.email}
-                    </p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      {new Date(booking.date).toLocaleDateString('es-ES', { 
-                        weekday: 'long', 
-                        day: 'numeric', 
-                        month: 'long' 
-                      })}
-                    </p>
-                  </div>
-
-                  {/* Actions */}
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" size="sm">
-                      <Video className="w-4 h-4 mr-1" />
-                      Unirse
-                    </Button>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="w-4 h-4" />
-                    </Button>
-                  </div>
+          {loadingBookings ? (
+            <div className="space-y-4">
+              {[1, 2, 3].map(i => <Skeleton key={i} className="h-20" />)}
+            </div>
+          ) : bookings.length === 0 ? (
+            <Card>
+              <CardContent className="py-12">
+                <div className="flex flex-col items-center justify-center text-center">
+                  <Inbox className="w-16 h-16 text-muted-foreground/30 mb-4" />
+                  <h3 className="text-lg font-medium text-muted-foreground">Sin reuniones programadas</h3>
+                  <p className="text-sm text-muted-foreground/70 mt-1">
+                    Las próximas reuniones aparecerán aquí cuando se agenden
+                  </p>
                 </div>
               </CardContent>
             </Card>
-          ))}
+          ) : (
+            bookings.map((booking) => (
+              <Card key={booking.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-4">
+                    {/* Time indicator */}
+                    <div className="text-center min-w-[60px]">
+                      <p className="text-lg font-bold">{booking.time}</p>
+                      <p className="text-xs text-muted-foreground">{booking.duration} min</p>
+                    </div>
+
+                    {/* Color bar */}
+                    <div 
+                      className="w-1 h-12 rounded-full"
+                      style={{ backgroundColor: getTypeColor(booking.type) }}
+                    />
+
+                    {/* Info */}
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium">{booking.title}</h3>
+                        {getStatusBadge(booking.status)}
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        {booking.attendee} · {booking.email}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {new Date(booking.date).toLocaleDateString('es-ES', { 
+                          weekday: 'long', 
+                          day: 'numeric', 
+                          month: 'long' 
+                        })}
+                      </p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm">
+                        <Video className="w-4 h-4 mr-1" />
+                        Unirse
+                      </Button>
+                      <Button variant="ghost" size="icon">
+                        <MoreHorizontal className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
         </TabsContent>
 
         {/* Availability Settings */}
