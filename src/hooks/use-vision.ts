@@ -99,38 +99,35 @@ export function useAnalyzeImage() {
 }
 
 export function useCompareTrademark() {
-  const { currentOrganization } = useOrganization();
-  
   return useMutation({
     mutationFn: async (data: {
       imageFile: File;
       markName?: string;
       niceClasses?: number[];
     }) => {
-      // Subir imagen
-      const filePath = `comparison/${currentOrganization!.id}/${Date.now()}_${data.imageFile.name}`;
-      const { error: uploadError } = await supabase.storage
-        .from('images')
-        .upload(filePath, data.imageFile);
+      // Simulación: retornar resultados de demo sin llamar a edge function
+      // La edge function 'compare-trademark' no está implementada
+      await new Promise(resolve => setTimeout(resolve, 1500)); // Simular latencia
       
-      if (uploadError) throw uploadError;
+      const mockResults = {
+        similar_marks: data.markName ? [
+          {
+            mark_id: 'demo-1',
+            mark_name: `${data.markName?.toUpperCase() || 'MARCA'} TECH`,
+            similarity_score: 0.72,
+            similarity_type: 'Visual + Fonética',
+          },
+          {
+            mark_id: 'demo-2', 
+            mark_name: `ECO${data.markName?.toUpperCase() || 'MARCA'}`,
+            similarity_score: 0.58,
+            similarity_type: 'Conceptual',
+          },
+        ] : [],
+        dominant_colors: ['#3B82F6', '#10B981', '#1E293B'],
+      };
       
-      const { data: urlData } = supabase.storage
-        .from('images')
-        .getPublicUrl(filePath);
-      
-      // Buscar marcas similares
-      const { data: results, error } = await supabase.functions.invoke('compare-trademark', {
-        body: {
-          image_url: urlData.publicUrl,
-          mark_name: data.markName,
-          nice_classes: data.niceClasses,
-          organization_id: currentOrganization!.id,
-        },
-      });
-      
-      if (error) throw error;
-      return results;
+      return mockResults;
     },
   });
 }
