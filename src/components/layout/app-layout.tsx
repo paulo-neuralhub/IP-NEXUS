@@ -119,21 +119,35 @@ export function AppLayout() {
                 )}
               </div>
             ) : (
-              // Desktop Layout
-              <div className={`min-h-screen bg-background ${superAdminOffset}`}>
+              // SILK Desktop Shell
+              <div 
+                className={`min-h-screen ${superAdminOffset}`}
+                style={{
+                  background: 'linear-gradient(180deg, #f1f4f9, #ebeef5)',
+                }}
+              >
                 <DynamicSidebar
                   variant="desktop"
                   collapsed={sidebarCollapsed}
                   onToggleCollapsed={() => setSidebarCollapsed(v => !v)}
                 />
-                <div className={sidebarCollapsed ? "ml-16" : "ml-64"}>
+                {/* SILK: Content area with proper margin for sidebar */}
+                <div 
+                  className={sidebarCollapsed ? "ml-16" : "ml-[230px]"}
+                  style={{ minHeight: '100vh' }}
+                >
                   <AlertBanner />
                   <TrialBanner />
                   <Header />
-                  <main>
-                    <PageContainer padding="md">
-                      <Outlet />
-                    </PageContainer>
+                  {/* SILK: Main content area */}
+                  <main 
+                    className="overflow-auto"
+                    style={{ 
+                      padding: '24px',
+                      background: '#f1f4f9',
+                    }}
+                  >
+                    <Outlet />
                   </main>
                 </div>
                 {/* Timer stays floating on mobile; on desktop it's embedded in the sidebar */}
