@@ -130,14 +130,20 @@ export function MatterDocumentsTab({
         .from('matter-documents')
         .createSignedUrl(doc.file_path, 3600);
       
-      if (error || !data?.signedUrl) {
-        toast({ title: 'Error al cargar vista previa', variant: 'destructive' });
+      if (error) {
+        // File doesn't exist in storage (demo data or not uploaded yet)
+        console.warn('Storage error:', error.message);
+        toast({ 
+          title: 'Archivo no disponible', 
+          description: 'El archivo aún no ha sido subido al sistema.',
+          variant: 'destructive' 
+        });
         setPreviewDoc(null);
         return;
       }
       
       setPreviewUrl(data.signedUrl);
-    } catch {
+    } catch (err) {
       toast({ title: 'Error al cargar vista previa', variant: 'destructive' });
       setPreviewDoc(null);
     } finally {
