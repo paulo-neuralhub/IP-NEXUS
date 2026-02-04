@@ -149,6 +149,94 @@
     --muted-foreground: var(--ip-text-secondary);
 }
 
+/* ═══════════════════════════════════════════════════════════════
+   SILK CARDS: Sin sombra, solo borde sutil
+   Aplica globalmente a todos los cards/paneles
+   
+   EXCEPCIONES que SÍ mantienen sombra:
+   - .silk-badge, .shadow-neu, .shadow-neu-sm (badges)
+   - .btn-primary, button[data-primary] (botones primarios)
+   - [role="tablist"], [data-tabs] (tabs)
+   - .silk-sidebar, nav.sidebar (sidebar)
+   - .silk-shell (shell principal)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* SILK Card base: border only, no shadow */
+.silk-card {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  background: hsl(var(--ip-bg-card));
+  box-shadow: none !important;
+}
+
+/* SILK Card row/list item */
+.silk-card-row {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+  background: hsl(var(--ip-bg-primary));
+  box-shadow: none !important;
+  padding: 14px 16px;
+  cursor: pointer;
+}
+
+.silk-card-row:hover {
+  border-color: rgba(0, 180, 216, 0.15);
+}
+
+/* ═══════ GLOBAL SHADOW REMOVAL FOR CARDS ═══════ */
+
+/* Remove shadow-sm from ALL cards and card-like elements */
+.shadow-sm:not(button):not([role="button"]):not([role="tab"]):not(.shadow-neu):not(.shadow-neu-sm):not(.silk-shell):not([data-radix-popper-content-wrapper] *):not([data-state="open"]):not([class*="Dialog"]):not([class*="Popover"]):not([class*="Dropdown"]):not([class*="Menu"]) {
+  box-shadow: none !important;
+}
+
+/* Remove shadow-md from ALL cards */
+.shadow-md:not(button):not([role="button"]):not([role="tab"]):not(.shadow-neu):not(.shadow-neu-sm):not([data-radix-popper-content-wrapper] *) {
+  box-shadow: none !important;
+}
+
+/* Remove shadow-lg from cards (keep for modals/dropdowns) */
+.shadow-lg:not(button):not([role="button"]):not([role="tab"]):not(.shadow-neu):not([data-radix-popper-content-wrapper] *):not([class*="Dialog"]):not([class*="Popover"]):not([class*="Dropdown"]):not([class*="Sheet"]) {
+  box-shadow: none !important;
+}
+
+/* Ensure all Card components have proper SILK styling */
+[class*="bg-card"]:not(button):not([role="button"]):not([data-radix-popper-content-wrapper] *) {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 14px;
+}
+
+/* ═══════ HOVER EFFECTS: Border instead of shadow ═══════ */
+
+.hover\:shadow-md:hover:not(button):not([role="button"]):not([role="tab"]):not(.shadow-neu) {
+  box-shadow: none !important;
+  border-color: rgba(0, 180, 216, 0.15) !important;
+}
+
+.hover\:shadow-lg:hover:not(button):not([role="button"]):not([role="tab"]):not(.shadow-neu) {
+  box-shadow: none !important;
+  border-color: rgba(0, 180, 216, 0.15) !important;
+}
+
+.hover\:shadow-xl:hover:not(button):not([role="button"]):not([role="tab"]):not(.shadow-neu) {
+  box-shadow: none !important;
+  border-color: rgba(0, 180, 216, 0.15) !important;
+}
+
+/* ═══════ SPECIFIC OVERRIDES ═══════ */
+
+/* Market cards */
+.group.bg-card:hover {
+  box-shadow: none !important;
+  border-color: rgba(0, 180, 216, 0.15) !important;
+}
+
+/* Module cards - no shadow */
+[class*="ModuleCard"],
+[class*="module-card"] {
+  box-shadow: none !important;
+}
+
 /* ===== CLASES DE UTILIDAD SILK ===== */
 
 /* Gradientes para Stats */

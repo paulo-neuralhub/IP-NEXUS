@@ -85,7 +85,7 @@ const ResetPassword = () => {
         </div>
 
         {/* Form Card */}
-        <div className="bg-background-card rounded-2xl p-8 shadow-lg border border-border">
+        <div className="bg-background-card rounded-[14px] p-8 border border-[rgba(0,0,0,0.06)]">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {/* Password */}
             <div className="space-y-2">

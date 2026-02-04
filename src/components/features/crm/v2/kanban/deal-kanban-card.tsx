@@ -60,8 +60,8 @@ export function DealKanbanCard({
       type="button"
       onClick={onClick}
       className={cn(
-        "w-full text-left rounded-lg border bg-background p-3 shadow-sm transition",
-        "hover:shadow-md hover:border-border",
+        "w-full text-left rounded-[14px] border border-[rgba(0,0,0,0.06)] bg-background p-3 transition",
+        "hover:border-[rgba(0,180,216,0.15)]",
         isDragging && "opacity-80"
       )}
     >

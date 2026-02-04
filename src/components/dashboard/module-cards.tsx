@@ -35,7 +35,7 @@ function ModuleCard({
   badge 
 }: ModuleCardProps) {
   return (
-    <Card className={cn("hover:shadow-md transition-shadow border-l-4", color)}>
+    <Card className={cn("border border-[rgba(0,0,0,0.06)] rounded-[14px] hover:border-[rgba(0,180,216,0.15)] transition-colors border-l-4", color)}>
       <CardHeader className="pb-2">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-2">

@@ -75,7 +75,7 @@ export default function GeniusPage() {
         <FeatureGuide featureKey={featureKey} title={currentGuide.title} steps={currentGuide.steps} />
       ) : null}
 
-      <div className="h-[calc(100vh-10rem)] flex rounded-xl border bg-card overflow-hidden shadow-sm">
+      <div className="h-[calc(100vh-10rem)] flex rounded-[14px] border border-[rgba(0,0,0,0.06)] bg-card overflow-hidden">
       {/* Mobile sidebar toggle */}
       <Button
         variant="ghost"

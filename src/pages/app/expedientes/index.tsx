@@ -706,7 +706,7 @@ function MatterCardNew({ matter, onClick }: { matter: MatterWithDeadline; onClic
     <Card 
       onClick={onClick}
       className={cn(
-        "group cursor-pointer hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden",
+        "group cursor-pointer hover:border-[rgba(0,180,216,0.15)] transition-all duration-200 overflow-hidden border border-[rgba(0,0,0,0.06)] rounded-[14px]",
         urgencyBorder
       )}
     >
@@ -808,7 +808,7 @@ function MatterKanbanNew({ matters }: { matters: MatterWithDeadline[] }) {
                     <Card 
                       key={matter.id}
                       onClick={() => navigate(`/app/expedientes/${matter.id}`)}
-                      className="cursor-pointer hover:shadow-md transition-shadow"
+                      className="cursor-pointer hover:border-[rgba(0,180,216,0.15)] transition-colors border border-[rgba(0,0,0,0.06)] rounded-[14px]"
                     >
                       <CardContent className="p-3">
                         <div className="flex items-center gap-2 mb-2">

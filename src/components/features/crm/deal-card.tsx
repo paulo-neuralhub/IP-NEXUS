@@ -44,9 +44,9 @@ export function DealCard({ deal, onClick, isDragging }: Props) {
       {...listeners}
       onClick={onClick}
       className={cn(
-        "bg-card rounded-lg p-3 shadow-sm border cursor-pointer",
-        "hover:shadow-md hover:border-border/80 transition-all",
-        (isDragging || isSorting) && "opacity-50 shadow-lg rotate-2",
+        "bg-card rounded-[14px] p-3 border border-[rgba(0,0,0,0.06)] cursor-pointer",
+        "hover:border-[rgba(0,180,216,0.15)] transition-all",
+        (isDragging || isSorting) && "opacity-50 rotate-2",
         isOverdue && "border-l-2 border-l-destructive"
       )}
     >

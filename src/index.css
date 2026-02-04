@@ -190,12 +190,22 @@
     @apply backdrop-blur-xl bg-white/80 border border-white/20;
   }
 
+  /* SILK: Cards sin sombra, solo borde */
   .card-shadow {
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.06);
   }
 
   .card-shadow-lg {
-    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    box-shadow: none;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+  }
+
+  /* SILK Card: border only */
+  .silk-card {
+    box-shadow: none !important;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
   }
 
   /* Market Terminal Theme */

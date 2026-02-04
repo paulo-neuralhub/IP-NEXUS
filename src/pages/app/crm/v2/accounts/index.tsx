@@ -104,9 +104,8 @@ function ClientCard({ account, onClick }: { account: AccountRow; onClick: () => 
     <div
       onClick={onClick}
       className={cn(
-        "bg-card border border-l-4 rounded-xl overflow-hidden cursor-pointer transition-all duration-200",
-        "hover:shadow-lg hover:scale-[1.01]",
-        "shadow-sm",
+        "bg-card border border-l-4 rounded-[14px] overflow-hidden cursor-pointer transition-all duration-200",
+        "hover:border-[rgba(0,180,216,0.15)]",
         clientTypeStyle.leftBorder // Borde izquierdo según tipo de cliente
       )}
     >

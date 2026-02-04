@@ -129,10 +129,10 @@ function PipelineCardInner({ item, type, onClick, isDragging: externalDragging }
       style={style}
       onClick={handleClick}
       className={cn(
-        'w-full rounded-xl overflow-hidden transition-all duration-200 cursor-grab touch-none',
-        'bg-card border shadow-sm',
-        'hover:shadow-lg hover:scale-[1.02]',
-        dragging && 'opacity-70 shadow-2xl ring-2 ring-primary rotate-1 cursor-grabbing z-50',
+        'w-full rounded-[14px] overflow-hidden transition-all duration-200 cursor-grab touch-none',
+        'bg-card border border-[rgba(0,0,0,0.06)]',
+        'hover:border-[rgba(0,180,216,0.15)]',
+        dragging && 'opacity-70 ring-2 ring-primary rotate-1 cursor-grabbing z-50',
         isOverdue && 'border-destructive/50'
       )}
       {...attributes}

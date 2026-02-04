@@ -47,12 +47,12 @@ export function PipelineKanbanColumn({
     <div
       ref={setNodeRef}
       className={cn(
-        'flex flex-col rounded-xl overflow-hidden transition-all w-[320px] flex-shrink-0',
-        'border shadow-sm bg-slate-50 dark:bg-slate-900/50',
-        isOver && 'ring-2 ring-primary shadow-lg scale-[1.01]',
+        'flex flex-col rounded-[14px] overflow-hidden transition-all w-[320px] flex-shrink-0',
+        'border bg-slate-50 dark:bg-slate-900/50',
+        isOver && 'ring-2 ring-primary scale-[1.01]',
         isWon && 'border-green-300 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20',
         isLost && 'border-red-300 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20',
-        !isWon && !isLost && 'border-border'
+        !isWon && !isLost && 'border-[rgba(0,0,0,0.06)]'
       )}
       style={{ height: '100%' }}
     >

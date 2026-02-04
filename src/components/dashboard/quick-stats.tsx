@@ -27,8 +27,8 @@ export function StatCard({
 }: StatCardProps) {
   const content = (
     <Card className={cn(
-      "transition-all hover:shadow-md",
-      link && "cursor-pointer hover:border-primary/50"
+      "transition-all border border-[rgba(0,0,0,0.06)] rounded-[14px] hover:border-[rgba(0,180,216,0.15)]",
+      link && "cursor-pointer"
     )}>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <CardTitle className="text-sm font-medium text-muted-foreground">
