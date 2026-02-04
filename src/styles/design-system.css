@@ -1,38 +1,39 @@
 /* ================================================
-   IP-NEXUS DESIGN SYSTEM (P-UI-01)
-   Global CSS variables (HSL) + optional utility classes
+   IP-NEXUS DESIGN SYSTEM "SILK"
+   Global CSS variables (HSL) + utility classes
    ================================================ */
 
 :root {
-    /* ===== FONDOS ===== */
-    /* #F4F7FE */
-    --ip-bg-primary: 226 78% 98%;
+    /* ===== FONDOS SILK ===== */
+    /* #f1f4f9 - Fondo principal */
+    --ip-bg-primary: 216 33% 97%;
     /* #FFFFFF */
     --ip-bg-white: 0 0% 100%;
-    --ip-bg-card: 0 0% 100%;
+    --ip-bg-card: 216 33% 97%;
 
-    /* ===== SIDEBAR ===== */
-    /* #1e293b */
-    --ip-sidebar-from: 215 28% 17%;
-    /* #0f172a */
-    --ip-sidebar-to: 222 47% 11%;
-    /* #22d3ee */
-    --ip-sidebar-accent-from: 189 85% 53%;
-    /* #3b82f6 */
-    --ip-sidebar-accent-to: 217 91% 60%;
+    /* ===== SIDEBAR SILK ===== */
+    /* Navy-Teal gradient: #0a2540 -> #0f4c75 -> #145374 */
+    --ip-sidebar-from: 210 75% 15%;     /* #0a2540 */
+    --ip-sidebar-mid: 205 77% 26%;      /* #0f4c75 */
+    --ip-sidebar-to: 200 71% 27%;       /* #145374 */
+    
+    /* Cyan accent: #00b4d8 */
+    --ip-sidebar-accent-from: 193 100% 42%;
+    /* Teal accent: #00d4aa */
+    --ip-sidebar-accent-to: 166 100% 42%;
 
     /* ===== STATS GRADIENTES ===== */
-    /* Blue: #3B82F6 -> #2563EB */
+    /* Blue: #3B82F6 -> #2563EB (reemplaza purple) */
     --ip-stat-blue-from: 217 91% 60%;
-    --ip-stat-blue-to: 217 91% 53%;
+    --ip-stat-blue-to: 221 83% 53%;
 
     /* Emerald: #10B981 -> #059669 */
     --ip-stat-emerald-from: 160 84% 39%;
     --ip-stat-emerald-to: 163 94% 30%;
 
-    /* Purple: #8B5CF6 -> #7C3AED */
-    --ip-stat-purple-from: 258 90% 66%;
-    --ip-stat-purple-to: 262 83% 58%;
+    /* Cyan: #00b4d8 -> #00d4aa */
+    --ip-stat-cyan-from: 193 100% 42%;
+    --ip-stat-cyan-to: 166 100% 42%;
 
     /* Orange: #F97316 -> #EA580C */
     --ip-stat-orange-from: 25 95% 53%;
@@ -40,27 +41,18 @@
 
     /* ===== BOTONES DE ACCIÓN ===== */
     /* call */
-    /* #f0f9ff */
     --ip-action-call-bg: 204 100% 97%;
-    /* #0284c7 */
     --ip-action-call-text: 199 98% 39%;
-    /* #e0f2fe */
     --ip-action-call-hover: 204 94% 94%;
 
     /* email */
-    /* #eff6ff */
     --ip-action-email-bg: 214 100% 97%;
-    /* #2563eb */
     --ip-action-email-text: 221 83% 53%;
-    /* #dbeafe */
     --ip-action-email-hover: 214 95% 93%;
 
     /* whatsapp */
-    /* #f0fdf4 */
     --ip-action-whatsapp-bg: 138 76% 97%;
-    /* #16a34a */
     --ip-action-whatsapp-text: 142 76% 36%;
-    /* #dcfce7 */
     --ip-action-whatsapp-hover: 138 76% 92%;
 
     /* ===== TIMELINE COLORS ===== */
@@ -91,19 +83,21 @@
     --ip-badge-vip-bg: 48 100% 88%;
     --ip-badge-vip-text: 32 91% 35%;
 
-    /* ===== TEXTO ===== */
-    /* #0f172a */
-    --ip-text-primary: 222 47% 11%;
-    /* #475569 */
-    --ip-text-secondary: 215 19% 35%;
+    /* ===== TEXTO SILK ===== */
+    /* #0a2540 - Navy headings */
+    --ip-text-heading: 210 75% 15%;
+    /* #334155 */
+    --ip-text-primary: 215 28% 27%;
+    /* #64748b */
+    --ip-text-secondary: 215 16% 47%;
     /* #94a3b8 */
-    --ip-text-muted: 214 20% 65%;
+    --ip-text-muted: 215 16% 65%;
 
-    /* ===== BORDES ===== */
-    /* #e2e8f0 */
-    --ip-border-light: 214 32% 91%;
-    /* #cbd5e1 */
-    --ip-border-default: 214 27% 84%;
+    /* ===== BORDES SILK ===== */
+    /* rgba(0,0,0,0.06) */
+    --ip-border-light: 0 0% 0% / 0.06;
+    /* rgba(0,180,216,0.15) - active */
+    --ip-border-active: 193 100% 42% / 0.15;
 
     /* ===== Wire into existing semantic tokens ===== */
     --background: var(--ip-bg-primary);
@@ -111,10 +105,9 @@
     --card: var(--ip-bg-card);
     --foreground: var(--ip-text-primary);
     --muted-foreground: var(--ip-text-secondary);
-    --border: var(--ip-border-light);
 }
 
-/* ===== CLASES DE UTILIDAD PERSONALIZADAS (opcionales) ===== */
+/* ===== CLASES DE UTILIDAD SILK ===== */
 
 /* Gradientes para Stats */
 .ip-stat-blue {
@@ -125,22 +118,157 @@
   background: linear-gradient(135deg, hsl(var(--ip-stat-emerald-from)), hsl(var(--ip-stat-emerald-to)));
 }
 
-.ip-stat-purple {
-  background: linear-gradient(135deg, hsl(var(--ip-stat-purple-from)), hsl(var(--ip-stat-purple-to)));
+.ip-stat-cyan {
+  background: linear-gradient(135deg, hsl(var(--ip-stat-cyan-from)), hsl(var(--ip-stat-cyan-to)));
 }
 
 .ip-stat-orange {
   background: linear-gradient(135deg, hsl(var(--ip-stat-orange-from)), hsl(var(--ip-stat-orange-to)));
 }
 
-/* Sidebar gradient */
+/* SILK Sidebar gradient: Navy -> Teal */
 .ip-sidebar-gradient {
-  background: linear-gradient(180deg, hsl(var(--ip-sidebar-from)), hsl(var(--ip-sidebar-to)));
+  background: linear-gradient(180deg, #0a2540 0%, #0f4c75 50%, #145374 100%);
+  position: relative;
 }
 
-/* Sidebar accent (logo) */
+/* SILK Sidebar ambient glow */
+.ip-sidebar-gradient::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: radial-gradient(ellipse at bottom, rgba(0,180,216,0.06), transparent);
+  pointer-events: none;
+}
+
+/* SILK Sidebar accent (logo icon) */
 .ip-sidebar-accent {
-  background: linear-gradient(135deg, hsl(var(--ip-sidebar-accent-from)), hsl(var(--ip-sidebar-accent-to)));
+  background: linear-gradient(135deg, #00b4d8, #00d4aa);
+  box-shadow: 0 3px 14px rgba(0, 180, 216, 0.30);
+}
+
+/* SILK Menu item active with tongue connector curves */
+.silk-menu-active {
+  position: relative;
+  background: #f1f4f9;
+  border-radius: 14px 0 0 14px;
+  margin-right: 0 !important;
+  z-index: 5;
+}
+
+/* SILK Tongue curve - top */
+.silk-menu-active::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: -20px;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border-bottom-right-radius: 14px;
+  box-shadow: 6px 6px 0 6px #f1f4f9;
+}
+
+/* SILK Tongue curve - bottom */
+.silk-menu-active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -20px;
+  width: 20px;
+  height: 20px;
+  background: transparent;
+  border-top-right-radius: 14px;
+  box-shadow: 6px -6px 0 6px #f1f4f9;
+}
+
+/* SILK Accent bar for active item */
+.silk-accent-bar {
+  position: absolute;
+  left: 0;
+  top: 22%;
+  bottom: 22%;
+  width: 3px;
+  background: #00b4d8;
+  border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 8px rgba(0, 180, 216, 0.30);
+}
+
+/* SILK Company badge */
+.silk-company-badge {
+  padding: 7px 10px;
+  border-radius: 8px;
+  background: rgba(0, 180, 216, 0.06);
+  border: 1px solid rgba(0, 180, 216, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+/* SILK Luminous dot */
+.silk-dot-glow {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #00b4d8;
+  box-shadow: 0 0 6px rgba(0, 180, 216, 0.30);
+}
+
+/* SILK Menu badge active */
+.silk-badge-active {
+  background: #00b4d8;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 180, 216, 0.30);
+}
+
+/* SILK Menu badge inactive */
+.silk-badge-inactive {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* SILK Quick actions grid */
+.silk-quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  padding: 12px 16px 0 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.silk-quick-action {
+  padding: 6px 4px;
+  border-radius: 7px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  cursor: pointer;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* SILK User avatar */
+.silk-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #00b4d8, #0088cc);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
 }
 
 /* Avatar gradient */

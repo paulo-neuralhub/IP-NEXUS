@@ -172,7 +172,7 @@ export function DynamicSidebar({
     return location.pathname === path || location.pathname.startsWith(path + "/");
   };
 
-  // Renderizar un item de menú de módulo
+  // Renderizar un item de menú de módulo (sub-item)
   const renderMenuItem = (item: { label: string; path: string; icon: string; badge?: string }, moduleColor: string) => {
     const isActive = isPathActive(item.path);
     const Icon = getIcon(item.icon);
@@ -184,19 +184,23 @@ export function DynamicSidebar({
         to={item.path}
         onClick={onNavigate}
         className={cn(
-          "flex items-center gap-2 rounded-lg text-xs transition-colors",
-          collapsed ? "px-2 py-2 justify-center" : "px-3 py-2 ml-6",
+          // SILK: Sub-item styling
+          "flex items-center gap-2 text-[11px] transition-colors",
+          collapsed ? "px-2 py-2 justify-center rounded-xl" : "py-[7px] px-3 ml-[26px] rounded-lg",
           isActive
-            ? "bg-sidebar-accent/20 text-sidebar-foreground"
-            : "text-sidebar-foreground/60 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+            ? "text-white/90"
+            : "text-white/[0.28] hover:text-white/50"
         )}
       >
-        <Icon className="h-4 w-4 shrink-0" style={{ color: isActive ? moduleColor : undefined }} />
+        <Icon 
+          className="h-[9px] w-[9px] shrink-0" 
+          style={{ color: isActive ? '#00b4d8' : undefined }} 
+        />
         {!collapsed && <span className="flex-1 truncate">{item.label}</span>}
         {!collapsed && badgeCount > 0 && (
-          <Badge variant="destructive" className="text-[10px] px-1.5 py-0 h-4">
+          <span className={isActive ? "silk-badge-active" : "silk-badge-inactive"}>
             {badgeCount}
-          </Badge>
+          </span>
         )}
       </Link>
     );
@@ -209,7 +213,6 @@ export function DynamicSidebar({
     const isExpanded = expandedModules.has(mod.moduleCode);
     const mainPath = mod.moduleMenuItems[0]?.path || `/app/${mod.moduleCode}`;
     const isActive = isPathActive(mainPath) || mod.moduleMenuItems.some(item => isPathActive(item.path));
-    const iconColor = mod.isLicensed ? mod.moduleColor : "hsl(var(--sidebar-foreground) / 0.35)";
 
     // Si está bloqueado
     if (!mod.isLicensed) {
@@ -220,16 +223,17 @@ export function DynamicSidebar({
           onClick={onNavigate}
           title={collapsed ? mod.moduleName : undefined}
           className={cn(
-            "flex items-center gap-3 rounded-xl text-sm transition-colors relative group",
-            collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
-            "text-sidebar-foreground/40 hover:bg-sidebar-accent/5"
+            // SILK: Item inactivo bloqueado
+            "flex items-center gap-3 text-[13px] transition-colors relative z-[1]",
+            collapsed ? "px-3 py-3 justify-center rounded-xl" : "px-3 py-[10px] rounded-xl mr-4",
+            "text-white/[0.28] hover:text-white/40"
           )}
         >
-          <Icon className="h-5 w-5 shrink-0 opacity-60" style={{ color: iconColor }} />
+          <Icon className="h-3 w-3 shrink-0 opacity-60" />
           {!collapsed && (
             <>
-              <span className="flex-1 truncate">{mod.moduleShortName || mod.moduleName}</span>
-              <Lock className="h-4 w-4 shrink-0" />
+              <span className="flex-1 truncate font-normal">{mod.moduleShortName || mod.moduleName}</span>
+              <Lock className="h-3 w-3 shrink-0" />
             </>
           )}
         </Link>
@@ -248,26 +252,29 @@ export function DynamicSidebar({
             <button
               type="button"
               className={cn(
-                "w-full flex items-center gap-3 rounded-xl text-sm transition-colors",
-                "px-4 py-2.5",
+                // SILK: Item con tongue connector si activo
+                "w-full flex items-center gap-3 text-[13px] transition-colors relative",
+                "py-[10px] px-3",
                 isActive
-                  ? "bg-sidebar-accent/15 text-sidebar-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+                  ? "silk-menu-active text-[#0a2540] font-bold"
+                  : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4"
               )}
-              style={isActive ? { borderLeft: `3px solid ${mod.moduleColor}` } : undefined}
             >
+              {/* SILK: Accent bar */}
+              {isActive && <span className="silk-accent-bar" />}
               <Icon 
-                className="h-5 w-5 shrink-0" 
-                style={{ color: isActive ? mod.moduleColor : iconColor }} 
+                className="h-3 w-3 shrink-0" 
+                style={isActive ? { 
+                  color: '#00b4d8',
+                  filter: 'drop-shadow(0 0 4px rgba(0,180,216,0.30))'
+                } : { color: 'rgba(255,255,255,0.28)' }} 
               />
               <span className="flex-1 truncate text-left">{mod.moduleShortName || mod.moduleName}</span>
               {mod.isTrial && (
-                <Badge variant="outline" className="text-[9px] px-1 py-0 border-yellow-500/50 text-yellow-400">
-                  TRIAL
-                </Badge>
+                <span className="silk-badge-inactive text-[9px]">TRIAL</span>
               )}
               <ChevronRight 
-                className={cn("h-4 w-4 transition-transform", isExpanded && "rotate-90")} 
+                className={cn("h-3 w-3 transition-transform", isExpanded && "rotate-90")} 
               />
             </button>
           </CollapsibleTrigger>
@@ -286,30 +293,31 @@ export function DynamicSidebar({
         onClick={onNavigate}
         title={collapsed ? mod.moduleName : undefined}
         className={cn(
-          "flex items-center gap-3 rounded-xl text-sm transition-colors",
-          collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
+          // SILK: Item con tongue connector si activo
+          "flex items-center gap-3 text-[13px] transition-colors relative",
+          collapsed ? "px-3 py-3 justify-center" : "py-[10px] px-3",
           isActive
-            ? "bg-sidebar-accent/15 text-sidebar-foreground"
-            : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+            ? "silk-menu-active text-[#0a2540] font-bold"
+            : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
         )}
-        style={isActive ? { borderLeft: `3px solid ${mod.moduleColor}` } : undefined}
       >
+        {/* SILK: Accent bar */}
+        {isActive && <span className="silk-accent-bar" />}
         <Icon 
-          className="h-5 w-5 shrink-0" 
-          style={{ color: isActive ? mod.moduleColor : iconColor }} 
+          className="h-3 w-3 shrink-0" 
+          style={isActive ? { 
+            color: '#00b4d8',
+            filter: 'drop-shadow(0 0 4px rgba(0,180,216,0.30))'
+          } : { color: 'rgba(255,255,255,0.28)' }} 
         />
         {!collapsed && (
           <>
             <span className="flex-1 truncate">{mod.moduleShortName || mod.moduleName}</span>
             {mod.isTrial && (
-              <Badge variant="outline" className="text-[9px] px-1 py-0 border-yellow-500/50 text-yellow-400">
-                TRIAL
-              </Badge>
+              <span className="silk-badge-inactive text-[9px]">TRIAL</span>
             )}
             {mod.modulePopular && !mod.isTrial && (
-              <Badge variant="secondary" className="text-[9px] px-1 py-0">
-                HOT
-              </Badge>
+              <span className="silk-badge-inactive text-[9px]">HOT</span>
             )}
           </>
         )}
@@ -325,23 +333,30 @@ export function DynamicSidebar({
 
     // Dashboard section (special case - no header)
     if (section.sectionCode === "dashboard") {
+      const isDashboardActive = isPathActive("/app/dashboard");
       return (
         <div key={section.sectionCode} className="mb-2">
-          {/* Dashboard link directo */}
           <Link
             to="/app/dashboard"
             onClick={onNavigate}
             title={collapsed ? "Dashboard" : undefined}
             className={cn(
-              "flex items-center gap-3 rounded-xl text-sm transition-colors",
-              collapsed ? "px-3 py-3 justify-center" : "px-4 py-3",
-              isPathActive("/app/dashboard")
-                ? "bg-sidebar-accent/15 text-sidebar-foreground"
-                : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+              // SILK: Dashboard item with tongue connector
+              "flex items-center gap-3 text-[13px] transition-colors relative",
+              collapsed ? "px-3 py-3 justify-center" : "py-[10px] px-3",
+              isDashboardActive
+                ? "silk-menu-active text-[#0a2540] font-bold"
+                : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
             )}
-            style={isPathActive("/app/dashboard") ? { borderLeft: "3px solid #3B82F6" } : undefined}
           >
-            <LayoutDashboard className="h-5 w-5 shrink-0" style={{ color: "#3B82F6" }} />
+            {isDashboardActive && <span className="silk-accent-bar" />}
+            <LayoutDashboard 
+              className="h-3 w-3 shrink-0" 
+              style={isDashboardActive ? { 
+                color: '#00b4d8',
+                filter: 'drop-shadow(0 0 4px rgba(0,180,216,0.30))'
+              } : { color: 'rgba(255,255,255,0.28)' }} 
+            />
             {!collapsed && <span className="flex-1">Dashboard</span>}
           </Link>
         </div>
@@ -357,20 +372,21 @@ export function DynamicSidebar({
               <button
                 type="button"
                 className={cn(
+                  // SILK: Section header
                   "w-full flex items-center gap-2 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider",
-                  "text-sidebar-foreground/50 hover:text-sidebar-foreground/70 transition-colors"
+                  "text-white/[0.28] hover:text-white/40 transition-colors"
                 )}
               >
-                <Icon className="h-3.5 w-3.5" />
+                <Icon className="h-3 w-3" />
                 <span className="flex-1 text-left">{section.sectionLabel || section.sectionName}</span>
                 <ChevronDown 
-                  className={cn("h-3.5 w-3.5 transition-transform", !isExpanded && "-rotate-90")} 
+                  className={cn("h-3 w-3 transition-transform", !isExpanded && "-rotate-90")} 
                 />
               </button>
             </CollapsibleTrigger>
-            <CollapsibleContent className="space-y-0.5">
+            <CollapsibleContent className="space-y-[1px]">
               {hasModules ? section.modules.map(renderModule) : (
-                <p className="text-xs text-sidebar-foreground/40 px-4 py-2">Sin módulos</p>
+                <p className="text-[11px] text-white/[0.28] px-4 py-2">Sin módulos</p>
               )}
             </CollapsibleContent>
           </Collapsible>
@@ -390,76 +406,117 @@ export function DynamicSidebar({
       className={cn(
         "flex flex-col",
         variant === "desktop" ? "fixed left-0 top-0 z-50 h-screen" : "h-full",
-        collapsed ? "w-16" : "w-64",
-        "ip-sidebar-gradient text-sidebar-foreground",
+        // SILK: Width 230px, sin padding-right
+        collapsed ? "w-16" : "w-[230px] min-w-[230px]",
+        "ip-sidebar-gradient text-white",
+        // SILK: Padding especial sin padding-right
+        collapsed ? "pt-[22px] pb-[18px] pl-4" : "pt-[22px] pb-[18px] pl-4 pr-0",
       )}
     >
-      {/* Logo */}
-      <div className={cn(collapsed ? "p-4" : "p-6")}>
+      {/* SILK: Logo + Badge empresa */}
+      <div className={cn("mb-7", collapsed ? "px-0" : "px-2")}>
         <Link to="/app" onClick={onNavigate} className="flex items-center gap-2">
-          <div className={cn("h-9 w-9 rounded-lg flex items-center justify-center ip-sidebar-accent")}>
-            <Shield className="h-5 w-5 text-primary-foreground" />
+          {/* SILK: Icono IP */}
+          <div className="h-9 w-9 rounded-[10px] flex items-center justify-center ip-sidebar-accent">
+            <span className="text-[13px] font-extrabold text-white tracking-[-1px]">IP</span>
           </div>
-          {!collapsed && <span className="text-lg font-bold tracking-tight">IP-NEXUS</span>}
+          {!collapsed && (
+            <div className="flex flex-col">
+              <span className="text-[15px] font-bold text-white tracking-[0.5px]">IP-NEXUS</span>
+              <span className="text-[8px] font-medium text-white/[0.28] tracking-[2.5px]">PLATAFORMA IP</span>
+            </div>
+          )}
         </Link>
+        
+        {/* SILK: Badge empresa */}
+        {!collapsed && currentOrganization && (
+          <div className="silk-company-badge mt-3">
+            <span className="silk-dot-glow" />
+            <span className="text-[9px] font-semibold text-white/50 tracking-[1.5px] uppercase truncate">
+              {currentOrganization.name}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
-      <nav className={cn("flex-1 overflow-y-auto", collapsed ? "px-2" : "px-3")}>
+      <nav className={cn("flex-1 overflow-y-auto", collapsed ? "px-2" : "pr-0")}>
         {isLoading ? (
-          <div className="space-y-2">
+          <div className="space-y-2 pr-4">
             {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-11 bg-white/5" />
+              <Skeleton key={i} className="h-10 bg-white/5" />
             ))}
           </div>
         ) : (
           <>
             {sections?.map(renderSection)}
             
-            {/* Separator antes de sistema */}
-            <div className="my-3 border-t border-white/10" />
+            {/* SILK: Separator */}
+            <div className="my-3 mr-4 border-t border-white/[0.04]" />
             
-            {/* Enlaces de utilidad fijos */}
-            <Link
-              to="/app/alerts"
-              onClick={onNavigate}
-              title={collapsed ? "Alertas IA" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-xl text-sm transition-colors",
-                collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
-                isPathActive("/app/alerts")
-                  ? "bg-sidebar-accent/15 text-sidebar-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
-              )}
-            >
-              <Bell className="h-5 w-5 shrink-0" style={{ color: "#EF4444" }} />
-              {!collapsed && (
-                <>
-                  <span className="flex-1">Alertas IA</span>
-                  {badgeCounts.alerts > 0 && (
-                    <Badge variant="destructive" className="text-[10px] px-1.5 py-0">
-                      {badgeCounts.alerts}
-                    </Badge>
+            {/* SILK: Enlaces de utilidad fijos */}
+            {(() => {
+              const isAlertsActive = isPathActive("/app/alerts");
+              return (
+                <Link
+                  to="/app/alerts"
+                  onClick={onNavigate}
+                  title={collapsed ? "Alertas IA" : undefined}
+                  className={cn(
+                    "flex items-center gap-3 text-[13px] transition-colors relative",
+                    collapsed ? "px-3 py-3 justify-center" : "py-[10px] px-3",
+                    isAlertsActive
+                      ? "silk-menu-active text-[#0a2540] font-bold"
+                      : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
                   )}
-                </>
-              )}
-            </Link>
+                >
+                  {isAlertsActive && <span className="silk-accent-bar" />}
+                  <Bell 
+                    className="h-3 w-3 shrink-0" 
+                    style={isAlertsActive ? { 
+                      color: '#ef4444',
+                      filter: 'drop-shadow(0 0 4px rgba(239,68,68,0.30))'
+                    } : { color: 'rgba(255,255,255,0.28)' }} 
+                  />
+                  {!collapsed && (
+                    <>
+                      <span className="flex-1">Alertas IA</span>
+                      {badgeCounts.alerts > 0 && (
+                        <span className="silk-badge-active bg-destructive">{badgeCounts.alerts}</span>
+                      )}
+                    </>
+                  )}
+                </Link>
+              );
+            })()}
 
-            <Link
-              to="/app/help"
-              onClick={onNavigate}
-              title={collapsed ? "Ayuda" : undefined}
-              className={cn(
-                "flex items-center gap-3 rounded-xl text-sm transition-colors",
-                collapsed ? "px-3 py-3 justify-center" : "px-4 py-2.5",
-                isPathActive("/app/help")
-                  ? "bg-sidebar-accent/15 text-sidebar-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
-              )}
-            >
-              <HelpCircle className="h-5 w-5 shrink-0" style={{ color: "#6B7280" }} />
-              {!collapsed && <span className="flex-1">Ayuda</span>}
-            </Link>
+            {(() => {
+              const isHelpActive = isPathActive("/app/help");
+              return (
+                <Link
+                  to="/app/help"
+                  onClick={onNavigate}
+                  title={collapsed ? "Ayuda" : undefined}
+                  className={cn(
+                    "flex items-center gap-3 text-[13px] transition-colors relative",
+                    collapsed ? "px-3 py-3 justify-center" : "py-[10px] px-3",
+                    isHelpActive
+                      ? "silk-menu-active text-[#0a2540] font-bold"
+                      : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
+                  )}
+                >
+                  {isHelpActive && <span className="silk-accent-bar" />}
+                  <HelpCircle 
+                    className="h-3 w-3 shrink-0" 
+                    style={isHelpActive ? { 
+                      color: '#00b4d8',
+                      filter: 'drop-shadow(0 0 4px rgba(0,180,216,0.30))'
+                    } : { color: 'rgba(255,255,255,0.28)' }} 
+                  />
+                  {!collapsed && <span className="flex-1">Ayuda</span>}
+                </Link>
+              );
+            })()}
           </>
         )}
       </nav>
@@ -471,58 +528,68 @@ export function DynamicSidebar({
         </div>
       )}
 
-      {/* Settings */}
-      <div className={cn("py-2 border-t border-sidebar-border", collapsed ? "px-2" : "px-3")}>
-        <Link
-          to="/app/settings"
-          onClick={onNavigate}
-          className={cn(
-            "flex items-center gap-3 rounded-xl text-sm hover:bg-sidebar-accent/10",
-            collapsed ? "px-3 py-3 justify-center" : "px-4 py-3",
-            location.pathname.startsWith("/app/settings")
-              ? "bg-sidebar-accent/15 text-sidebar-foreground"
-              : "text-sidebar-foreground/70 hover:text-sidebar-foreground"
-          )}
-        >
-          <Settings className="h-5 w-5" />
-          {!collapsed && "Configuración"}
-        </Link>
+      {/* SILK: Settings */}
+      <div className={cn("py-2", collapsed ? "px-2" : "pr-4")}>
+        {(() => {
+          const isSettingsActive = location.pathname.startsWith("/app/settings");
+          return (
+            <Link
+              to="/app/settings"
+              onClick={onNavigate}
+              className={cn(
+                "flex items-center gap-3 text-[13px] transition-colors relative",
+                collapsed ? "px-3 py-3 justify-center" : "py-[10px] px-3",
+                isSettingsActive
+                  ? "silk-menu-active text-[#0a2540] font-bold"
+                  : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl z-[1]"
+              )}
+            >
+              {isSettingsActive && <span className="silk-accent-bar" />}
+              <Settings 
+                className="h-3 w-3" 
+                style={isSettingsActive ? { 
+                  color: '#00b4d8',
+                  filter: 'drop-shadow(0 0 4px rgba(0,180,216,0.30))'
+                } : { color: 'rgba(255,255,255,0.28)' }}
+              />
+              {!collapsed && "Configuración"}
+            </Link>
+          );
+        })()}
       </div>
 
-      {/* Collapse Button */}
+      {/* SILK: Collapse Button */}
       {variant === "desktop" && onToggleCollapsed && (
-        <div className={cn("border-t border-sidebar-border", collapsed ? "px-2" : "px-3", "py-2")}>
+        <div className={cn(collapsed ? "px-2" : "pr-4", "py-2 border-t border-white/[0.04]")}>
           <button
             type="button"
             onClick={onToggleCollapsed}
             className={cn(
-              "w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm",
-              "text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent/10",
+              "w-full inline-flex items-center justify-center gap-2 rounded-xl px-3 py-2 text-[13px]",
+              "text-white/[0.48] hover:text-white/70",
             )}
           >
-            <ChevronDown className={cn("h-4 w-4 transition-transform", collapsed && "-rotate-90")} />
+            <ChevronDown className={cn("h-3 w-3 transition-transform", collapsed && "-rotate-90")} />
             {!collapsed && "Colapsar"}
           </button>
         </div>
       )}
 
-      {/* User Menu */}
-      <div className={cn("border-t border-sidebar-border", collapsed ? "p-2" : "p-4")}>
+      {/* SILK: User Menu */}
+      <div className={cn("border-t border-white/[0.04]", collapsed ? "p-2" : "p-4 pr-4")}>
         <DropdownMenu>
-          <DropdownMenuTrigger className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary text-xs">
-                {getInitials(profile?.full_name || profile?.email || "U")}
-              </AvatarFallback>
-            </Avatar>
+          <DropdownMenuTrigger className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors">
+            {/* SILK: Avatar con gradiente */}
+            <div className="silk-avatar">
+              {getInitials(profile?.full_name || profile?.email || "U")}
+            </div>
             {!collapsed && (
               <>
                 <div className="flex-1 text-left min-w-0">
-                  <p className="text-sm truncate">{profile?.full_name || "Usuario"}</p>
-                  <p className="text-xs text-sidebar-foreground/60 truncate">{currentOrganization?.name}</p>
+                  <p className="text-[11px] font-semibold text-white truncate">{profile?.full_name || "Usuario"}</p>
+                  <p className="text-[9px] text-white/[0.25] truncate">{currentOrganization?.name}</p>
                 </div>
-                <ChevronDown className="h-4 w-4 text-sidebar-foreground/60" />
+                <ChevronDown className="h-3 w-3 text-white/[0.28]" />
               </>
             )}
           </DropdownMenuTrigger>
