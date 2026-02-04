@@ -31,7 +31,17 @@ export function DocumentPreviewModal({ doc, onClose }: Props) {
   }, [doc.file_path]);
   
   const handleDownload = () => {
-    downloadMutation.mutate({ filePath: doc.file_path, fileName: doc.name });
+    if (!signedUrl) return;
+    
+    // Direct download using programmatic link
+    const link = document.createElement('a');
+    link.href = signedUrl;
+    link.download = doc.name;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
   
   const isImage = doc.mime_type?.startsWith('image/');
@@ -73,11 +83,19 @@ export function DocumentPreviewModal({ doc, onClose }: Props) {
                 />
               )}
               {isPdf && (
-                <iframe
-                  src={signedUrl}
-                  title={doc.name}
-                  className="w-full h-[70vh] rounded-lg border"
-                />
+                <object
+                  data={signedUrl}
+                  type="application/pdf"
+                  className="w-full h-[70vh] rounded-lg border bg-white"
+                >
+                  <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+                    <p className="mb-4">Tu navegador no puede mostrar el PDF directamente.</p>
+                    <Button onClick={handleDownload}>
+                      <Download className="h-4 w-4 mr-2" />
+                      Descargar PDF
+                    </Button>
+                  </div>
+                </object>
               )}
             </>
           ) : (

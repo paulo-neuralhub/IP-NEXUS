@@ -158,13 +158,12 @@ export function MatterDocumentsTab({
     }
     
     try {
-      // Use signed URL for secure access
+      // Get signed URL
       const { data, error } = await supabase.storage
         .from('matter-documents')
-        .createSignedUrl(filePath, 3600); // 1 hour expiry
+        .createSignedUrl(filePath, 3600);
       
       if (error || !data?.signedUrl) {
-        // Fallback: file might not be uploaded yet
         toast({ 
           title: 'El archivo aún no ha sido subido al sistema',
           variant: 'destructive' 
@@ -172,18 +171,19 @@ export function MatterDocumentsTab({
         return;
       }
       
-      // Create download by fetching and saving
-      const response = await fetch(data.signedUrl);
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = name;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      // Direct download using programmatic link with download attribute
+      const link = document.createElement('a');
+      link.href = data.signedUrl;
+      link.download = name;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({ title: 'Descarga iniciada' });
     } catch (err) {
+      console.error('Download error:', err);
       toast({ title: 'Error al descargar el documento', variant: 'destructive' });
     }
   };
@@ -471,11 +471,23 @@ export function MatterDocumentsTab({
                 )}
 
                 {isPdf(previewDoc?.mime_type) && (
-                  <iframe
-                    src={previewUrl}
-                    title={previewDoc?.name}
+                  <object
+                    data={previewUrl}
+                    type="application/pdf"
                     className="w-full h-[70vh] rounded-lg border bg-white"
-                  />
+                  >
+                    {/* Fallback for browsers that can't display PDF inline */}
+                    <div className="flex flex-col items-center justify-center h-64 text-muted-foreground">
+                      <FileText className="h-12 w-12 mb-4 text-muted-foreground/50" />
+                      <p className="mb-4">Tu navegador no puede mostrar el PDF directamente.</p>
+                      <Button
+                        onClick={() => previewDoc && handleDownload(previewDoc.file_path, previewDoc.name)}
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Descargar PDF
+                      </Button>
+                    </div>
+                  </object>
                 )}
 
                 {!isImage(previewDoc?.mime_type) && !isPdf(previewDoc?.mime_type) && (
