@@ -3,15 +3,16 @@
  */
 
 import { useState } from 'react';
-import { CheckSquare, Plus, Check, Clock, User, AlertTriangle } from 'lucide-react';
+import { CheckSquare, Plus, Check, Clock, User, AlertTriangle, Edit } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useMatterTasks, useCompleteMatterTask } from '@/hooks/use-matter-tasks';
+import { useMatterTasks, useCompleteMatterTask, type MatterTask } from '@/hooks/use-matter-tasks';
 import { format, isPast } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { AddTaskModal } from './AddTaskModal';
+import { TaskEditModal } from './TaskEditModal';
 import { useToast } from '@/hooks/use-toast';
 
 interface MatterTasksTabProps {
@@ -27,12 +28,14 @@ const PRIORITY_CONFIG: Record<string, { label: string; color: string }> = {
 
 export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<MatterTask | null>(null);
   const { toast } = useToast();
   
   const { data: tasks, isLoading } = useMatterTasks(matterId);
   const completeTask = useCompleteMatterTask();
 
-  const handleComplete = async (id: string) => {
+  const handleComplete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
     try {
       await completeTask.mutateAsync(id);
       toast({ title: 'Tarea completada' });
@@ -85,15 +88,16 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
               return (
                 <div 
                   key={task.id} 
+                  onClick={() => setSelectedTask(task)}
                   className={cn(
-                    "flex items-start justify-between p-4 border rounded-lg",
+                    "flex items-start justify-between p-4 border rounded-lg cursor-pointer transition-colors hover:bg-muted/50",
                     task.is_completed && "opacity-60",
                     isOverdue && "border-destructive/50 bg-destructive/5"
                   )}
                 >
                   <div className="flex items-start gap-3">
                     <button
-                      onClick={() => !task.is_completed && handleComplete(task.id)}
+                      onClick={(e) => !task.is_completed && handleComplete(e, task.id)}
                       className={cn(
                         "h-6 w-6 rounded border-2 flex items-center justify-center mt-0.5",
                         task.is_completed 
@@ -139,6 +143,9 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
                       )}
                     </div>
                   </div>
+                  <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); setSelectedTask(task); }}>
+                    <Edit className="h-4 w-4" />
+                  </Button>
                 </div>
               );
             })}
@@ -151,6 +158,14 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
         onOpenChange={setShowAddModal}
         matterId={matterId}
       />
+
+      {selectedTask && (
+        <TaskEditModal
+          open={!!selectedTask}
+          onOpenChange={(open) => !open && setSelectedTask(null)}
+          task={selectedTask}
+        />
+      )}
     </Card>
   );
 }

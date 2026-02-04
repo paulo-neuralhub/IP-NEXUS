@@ -190,7 +190,7 @@ export function DeadlineList({ matterId, limit, showFilters = true, compact = fa
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => navigate(`/app/docket/${deadline.matter_id}`)}>
+                      <DropdownMenuItem onClick={() => navigate(`/app/expedientes/${deadline.matter_id}`)}>
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Ver expediente
                       </DropdownMenuItem>
