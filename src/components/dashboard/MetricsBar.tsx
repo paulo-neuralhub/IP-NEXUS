@@ -1,6 +1,6 @@
 // =============================================
-// COMPONENTE: MetricsBar
-// Barra compacta de métricas principales
+// COMPONENTE: MetricsBar (SILK Hero Zone)
+// Solo para Dashboard - KPIs principales
 // =============================================
 
 import { 
@@ -16,7 +16,6 @@ import {
   Bell,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Card } from '@/components/ui/card';
 
 interface Metric {
   label: string;
@@ -32,42 +31,121 @@ interface MetricsBarProps {
   metrics: Metric[];
 }
 
+/**
+ * SILK Hero Zone - Solo Dashboard
+ * Contenedor con gradiente sutil y grid de 4 KPIs principales
+ */
 export function MetricsBar({ metrics }: MetricsBarProps) {
+  // Tomar solo los 4 primeros para Hero Zone (KPIs principales)
+  // Los demás se pueden mostrar en otra sección si se desea
+  const heroMetrics = metrics.slice(0, 4);
+  const secondaryMetrics = metrics.slice(4);
+
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3">
-      {metrics.map((metric, idx) => (
-        <MetricCard key={idx} metric={metric} />
-      ))}
+    <div className="space-y-3">
+      {/* SILK: Hero Zone Container */}
+      <div 
+        className="p-3 rounded-2xl mb-[18px]"
+        style={{
+          background: 'linear-gradient(135deg, #eceef6, #f1f4f9)',
+        }}
+      >
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-[10px]">
+          {heroMetrics.map((metric, idx) => (
+            <HeroKPICard key={idx} metric={metric} />
+          ))}
+        </div>
+      </div>
+
+      {/* Secondary metrics row (si hay más de 4) */}
+      {secondaryMetrics.length > 0 && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-[10px]">
+          {secondaryMetrics.map((metric, idx) => (
+            <SecondaryMetricCard key={idx} metric={metric} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
 
-function MetricCard({ metric }: { metric: Metric }) {
+/**
+ * SILK: Card KPI dentro de Hero Zone
+ */
+function HeroKPICard({ metric }: { metric: Metric }) {
   return (
-    <Card className="flex items-center gap-3 p-3 hover:shadow-md transition-shadow cursor-pointer">
+    <div 
+      className="flex items-center gap-3 py-[13px] px-3 rounded-[14px] border border-black/[0.06] cursor-pointer transition-colors hover:border-[rgba(0,180,216,0.15)]"
+      style={{ background: '#f1f4f9' }}
+    >
+      {/* Icon container */}
       <div 
-        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
-        style={{ backgroundColor: `${metric.color}15`, color: metric.color }}
+        className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+        style={{ 
+          backgroundColor: `${metric.color}12`, 
+          color: metric.color 
+        }}
       >
         {metric.icon}
       </div>
+      
+      {/* Content */}
       <div className="min-w-0 flex-1">
-        <p className="text-lg font-bold text-foreground truncate">
+        <p 
+          className="text-xl font-bold truncate"
+          style={{ color: '#0a2540' }}
+        >
           {metric.value}
         </p>
-        <p className="text-xs text-muted-foreground truncate">
+        <p className="text-[11px] text-[#94a3b8] truncate">
           {metric.label}
         </p>
         {metric.change !== undefined && (
           <p className={cn(
             "text-[10px] font-medium",
-            metric.change >= 0 ? 'text-green-600' : 'text-red-600'
+            metric.change >= 0 ? 'text-emerald-600' : 'text-red-500'
           )}>
             {metric.change >= 0 ? '↑' : '↓'} {Math.abs(metric.change)}% {metric.changeLabel}
           </p>
         )}
       </div>
-    </Card>
+    </div>
+  );
+}
+
+/**
+ * SILK: Card secundaria (métricas 5-8)
+ */
+function SecondaryMetricCard({ metric }: { metric: Metric }) {
+  return (
+    <div 
+      className="flex items-center gap-3 py-3 px-3 rounded-[14px] border border-black/[0.06] cursor-pointer transition-colors hover:border-[rgba(0,180,216,0.15)]"
+      style={{ background: '#f1f4f9' }}
+    >
+      {/* Icon */}
+      <div 
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+        style={{ 
+          backgroundColor: `${metric.color}10`, 
+          color: metric.color 
+        }}
+      >
+        {metric.icon}
+      </div>
+      
+      {/* Content */}
+      <div className="min-w-0 flex-1">
+        <p 
+          className="text-base font-bold truncate"
+          style={{ color: '#0a2540' }}
+        >
+          {metric.value}
+        </p>
+        <p className="text-[10px] text-[#94a3b8] truncate">
+          {metric.label}
+        </p>
+      </div>
+    </div>
   );
 }
 
