@@ -50,10 +50,9 @@ export function useCRMPendingCalls() {
           .from('crm_tasks') as any)
           .select(`
             id, title, due_date,
-            contact:crm_contacts(id, first_name, last_name, phone, account:crm_accounts(name))
+            contact:crm_contacts(id, full_name, phone, account:crm_accounts(name))
           `)
           .eq('organization_id', organizationId)
-          .eq('task_type', 'call')
           .eq('status', 'pending')
           .gte('due_date', todayStart)
           .lte('due_date', todayEnd)
@@ -67,7 +66,7 @@ export function useCRMPendingCalls() {
 
         return (data || []).map((t: any) => ({
           id: t.id,
-          name: t.contact ? `${t.contact.first_name || ''} ${t.contact.last_name || ''}`.trim() : 'Sin asignar',
+          name: t.contact?.full_name || 'Sin asignar',
           company: t.contact?.account?.name || 'Sin empresa',
           phone: t.contact?.phone || '',
           time: t.due_date ? format(new Date(t.due_date), 'HH:mm', { locale: es }) : '--:--',
@@ -96,11 +95,10 @@ export function useCRMUrgentTasks() {
         // Buscar tareas urgentes (vencen hoy o mañana)
         const { data, error } = await supabase
           .from('crm_tasks')
-          .select('id, title, priority, due_date')
+          .select('id, title, status, due_date')
           .eq('organization_id', organizationId)
           .eq('status', 'pending')
           .lte('due_date', endOfDay(tomorrow).toISOString())
-          .order('priority', { ascending: false })
           .order('due_date', { ascending: true })
           .limit(5);
 
@@ -113,11 +111,13 @@ export function useCRMUrgentTasks() {
           const due = t.due_date ? new Date(t.due_date) : null;
           const isToday = due && startOfDay(due).getTime() === startOfDay(today).getTime();
           const isTomorrow = due && startOfDay(due).getTime() === startOfDay(tomorrow).getTime();
+          // Determine urgency based on due date proximity
+          const urgency = isToday ? 'high' : isTomorrow ? 'medium' : 'low';
 
           return {
             id: t.id,
             title: t.title || 'Tarea sin título',
-            urgency: t.priority === 'urgent' || t.priority === 'high' ? 'high' : t.priority === 'medium' ? 'medium' : 'low',
+            urgency,
             dueDate: isToday ? 'Hoy' : isTomorrow ? 'Mañana' : due ? format(due, 'd MMM', { locale: es }) : 'Sin fecha',
           };
         });
