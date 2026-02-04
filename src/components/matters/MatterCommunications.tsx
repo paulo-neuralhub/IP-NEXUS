@@ -295,12 +295,12 @@ export function MatterCommunications({
               <div className="pt-4 border-t">
                 {selectedComm.body_html ? (
                   <div 
-                    className="prose prose-sm max-w-none dark:prose-invert"
+                    className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden"
                     dangerouslySetInnerHTML={{ __html: selectedComm.body_html }}
                   />
                 ) : (
-                  <p className="text-sm whitespace-pre-wrap">
-                    {selectedComm.body_preview || '[Sin contenido]'}
+                  <p className="text-sm whitespace-pre-wrap break-words">
+                    {selectedComm.body || selectedComm.body_preview || '[Sin contenido]'}
                   </p>
                 )}
               </div>

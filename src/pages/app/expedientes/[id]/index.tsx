@@ -20,6 +20,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -51,6 +57,7 @@ import { MatterDetailHeader } from '@/components/matters/MatterDetailHeader';
 import { MatterDetailSidebar } from '@/components/matters/MatterDetailSidebar';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { useCommunication } from '@/hooks/legal-ops/useCommunications';
 
 const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
   draft: { label: 'Borrador', color: 'bg-slate-100 text-slate-700' },
@@ -79,6 +86,7 @@ export default function MatterDetailPage() {
   const [selectedFiling, setSelectedFiling] = useState<any>(null);
   const [showPartyModal, setShowPartyModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [selectedTimelineCommId, setSelectedTimelineCommId] = useState<string | null>(null);
   
   const deleteMatter = useDeleteMatterV2();
   
@@ -87,6 +95,9 @@ export default function MatterDetailPage() {
   const { data: timeline } = useMatterTimeline(id!);
   const { data: parties } = useMatterParties(id!);
   const { data: matterTypes } = useMatterTypes();
+  
+  // Fetch selected communication for timeline sheet
+  const { data: selectedTimelineComm, isLoading: isLoadingTimelineComm } = useCommunication(selectedTimelineCommId || '');
   
   usePageTitle(matter?.matter_number || 'Expediente');
 
@@ -470,6 +481,20 @@ export default function MatterDetailPage() {
                 <TimelineProfesional 
                   matterId={id!} 
                   maxHeight="700px"
+                  onOpenCommunication={(commId) => setSelectedTimelineCommId(commId)}
+                  onOpenDocument={async (docId, filePath) => {
+                    if (filePath) {
+                      const { data } = await supabase.storage
+                        .from('matter-documents')
+                        .createSignedUrl(filePath, 3600);
+                      if (data?.signedUrl) {
+                        window.open(data.signedUrl, '_blank');
+                      }
+                    } else {
+                      setActiveTab('documents');
+                    }
+                  }}
+                  onOpenTask={() => setActiveTab('tasks')}
                 />
               </TabsContent>
             </Tabs>
@@ -555,6 +580,68 @@ export default function MatterDetailPage() {
         matterId={id!}
         matterType={matter?.matter_type}
       />
+      
+      {/* Timeline Communication Sheet */}
+      <Sheet open={!!selectedTimelineCommId} onOpenChange={(open) => !open && setSelectedTimelineCommId(null)}>
+        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
+          <SheetHeader className="pb-4 border-b">
+            <SheetTitle className="flex items-center gap-2">
+              {selectedTimelineComm?.channel === 'email' && <Mail className="h-4 w-4" />}
+              {selectedTimelineComm?.channel === 'whatsapp' && '💬'}
+              {selectedTimelineComm?.channel === 'phone' && '📞'}
+              {selectedTimelineComm?.subject || 'Comunicación'}
+            </SheetTitle>
+          </SheetHeader>
+          
+          {isLoadingTimelineComm ? (
+            <div className="p-4 text-center text-muted-foreground">
+              Cargando...
+            </div>
+          ) : selectedTimelineComm ? (
+            <div className="py-4 space-y-4">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <Badge variant="secondary">
+                    {selectedTimelineComm.channel?.toUpperCase()}
+                  </Badge>
+                  <Badge variant={selectedTimelineComm.direction === 'inbound' ? 'secondary' : 'outline'}>
+                    {selectedTimelineComm.direction === 'inbound' ? 'Recibido' : 'Enviado'}
+                  </Badge>
+                </div>
+                
+                {selectedTimelineComm.direction === 'inbound' ? (
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">De:</span>{' '}
+                    {selectedTimelineComm.email_from || selectedTimelineComm.whatsapp_from || selectedTimelineComm.phone_from || 'Desconocido'}
+                  </p>
+                ) : (
+                  <p className="text-sm text-muted-foreground">
+                    <span className="font-medium">Para:</span>{' '}
+                    {selectedTimelineComm.email_to?.join(', ') || selectedTimelineComm.whatsapp_to || selectedTimelineComm.phone_to || 'Destinatario'}
+                  </p>
+                )}
+                
+                <p className="text-xs text-muted-foreground">
+                  {selectedTimelineComm.received_at && format(new Date(selectedTimelineComm.received_at), "d 'de' MMMM 'de' yyyy, HH:mm", { locale: es })}
+                </p>
+              </div>
+              
+              <div className="pt-4 border-t">
+                {selectedTimelineComm.body_html ? (
+                  <div 
+                    className="prose prose-sm max-w-none dark:prose-invert break-words overflow-hidden"
+                    dangerouslySetInnerHTML={{ __html: selectedTimelineComm.body_html }}
+                  />
+                ) : (
+                  <p className="text-sm whitespace-pre-wrap break-words">
+                    {selectedTimelineComm.body || selectedTimelineComm.body_preview || '[Sin contenido]'}
+                  </p>
+                )}
+              </div>
+            </div>
+          ) : null}
+        </SheetContent>
+      </Sheet>
       
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>

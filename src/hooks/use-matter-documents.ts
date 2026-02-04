@@ -29,16 +29,15 @@ export function useMatterDocuments(matterId?: string, filters?: DocumentFilters)
       if (!matterId) return [];
       
       const client: any = supabase;
+      // Simple query without JOINs to avoid failures when created_by is null
       let query = client
         .from('matter_documents')
-        .select(`
-          *,
-          template:document_templates(id, code, name),
-          creator:users!created_by(id, full_name)
-        `)
+        .select('*')
         .eq('matter_id', matterId)
-        .neq('status', 'deleted')
         .order('created_at', { ascending: false });
+
+      // Filter out deleted documents (handle NULL status as well)
+      query = query.or('status.is.null,status.neq.deleted');
 
       if (filters?.category?.length) {
         query = query.in('category', filters.category);
@@ -57,7 +56,11 @@ export function useMatterDocuments(matterId?: string, filters?: DocumentFilters)
       }
 
       const { data, error } = await query;
-      if (error) throw error;
+      
+      if (error) {
+        console.error('Error fetching matter documents:', error);
+        throw error;
+      }
       
       // Map to include file_url for backwards compatibility
       return (data || []).map((doc: any) => ({

@@ -33,6 +33,9 @@ interface TimelineProfesionalProps {
   matterId: string;
   className?: string;
   maxHeight?: string;
+  onOpenCommunication?: (id: string) => void;
+  onOpenDocument?: (id: string, filePath?: string) => void;
+  onOpenTask?: (id: string) => void;
 }
 
 type TimelineItemType = 
@@ -175,11 +178,42 @@ const TYPE_CONFIG: Record<TimelineItemType, {
 export function TimelineProfesional({ 
   matterId, 
   className,
-  maxHeight = '600px'
+  maxHeight = '600px',
+  onOpenCommunication,
+  onOpenDocument,
+  onOpenTask,
 }: TimelineProfesionalProps) {
   const [filter, setFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  // Handle opening timeline items
+  const handleOpenItem = (item: TimelineItem) => {
+    switch (item.type) {
+      case 'email':
+      case 'whatsapp':
+      case 'call':
+      case 'sms':
+      case 'phone':
+        if (item.source === 'communications' && onOpenCommunication) {
+          onOpenCommunication(item.id);
+        }
+        break;
+      case 'document':
+        if (onOpenDocument) {
+          onOpenDocument(item.id, item.metadata?.file_path);
+        }
+        break;
+      case 'task':
+        if (onOpenTask) {
+          onOpenTask(item.id);
+        }
+        break;
+      default:
+        // For system/phase_change/deadline events, just log or do nothing
+        console.log('Opening item:', item.type, item.id);
+    }
+  };
 
   // Fetch all timeline data
   const { data: timelineData, isLoading, refetch } = useQuery({
@@ -452,6 +486,7 @@ export function TimelineProfesional({
                             expanded={expandedItems.has(item.id)}
                             onToggleExpand={() => toggleExpand(item.id)}
                             isLast={idx === items.length - 1}
+                            onOpenItem={handleOpenItem}
                           />
                         ))}
                       </div>
@@ -483,12 +518,18 @@ interface TimelineItemCardProps {
   expanded: boolean;
   onToggleExpand: () => void;
   isLast: boolean;
+  onOpenItem?: (item: TimelineItem) => void;
 }
 
-function TimelineItemCard({ item, expanded, onToggleExpand, isLast }: TimelineItemCardProps) {
+function TimelineItemCard({ item, expanded, onToggleExpand, isLast, onOpenItem }: TimelineItemCardProps) {
   const config = TYPE_CONFIG[item.type] || TYPE_CONFIG.system;
   const Icon = config.icon;
   const hasContent = !!(item.description && item.description.length > 0);
+
+  const handleOpenClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onOpenItem?.(item);
+  };
 
   const DirectionIcon = item.direction === 'inbound' 
     ? ArrowDownLeft 
@@ -655,7 +696,12 @@ function TimelineItemCard({ item, expanded, onToggleExpand, isLast }: TimelineIt
                 </Button>
               )}
 
-              <Button variant="ghost" size="sm" className="h-7 text-xs ml-auto">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7 text-xs ml-auto"
+                onClick={handleOpenClick}
+              >
                 <ExternalLink className="h-3 w-3 mr-1" />
                 Abrir
               </Button>
