@@ -559,6 +559,8 @@ const App = () => (
                 <Route path="expedientes/revision" element={<ReviewQueuePage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
                 <Route path="tools" element={<ToolsPage />} />
+                <Route path="tools/ocr" element={<Navigate to="/app/tools" replace />} />
+                <Route path="tools/comparador" element={<Navigate to="/app/tools" replace />} />
                 {/* Migrator redirect to Data Hub */}
                 <Route path="migrator" element={<Navigate to="/app/data-hub?tab=migrator" replace />} />
                 <Route path="migrator/new" element={<Navigate to="/app/data-hub?tab=migrator" replace />} />
