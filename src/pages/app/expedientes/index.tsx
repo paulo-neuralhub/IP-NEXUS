@@ -8,10 +8,10 @@ import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Search, LayoutList, LayoutGrid, Kanban,
   Briefcase, ChevronRight, MoreHorizontal, Eye, FileText, Mail,
-  Download, Trash2, Building2, Clock
+  Download, Building2, Clock
 } from 'lucide-react';
 import { useMattersWithDeadlines, useUrgencyStats, type MatterWithDeadline, type MattersWithDeadlinesFilters } from '@/hooks/useMattersWithDeadlines';
-import { useMatterJurisdictions, useDeleteMatterV2 } from '@/hooks/use-matters-v2';
+import { useMatterJurisdictions } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -33,16 +33,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
   Table,
   TableBody,
   TableCell,
@@ -51,7 +41,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { useToast } from '@/hooks/use-toast';
 import { usePageTitle } from '@/contexts/page-context';
 import { format, differenceInYears } from 'date-fns';
 import { es } from 'date-fns/locale';
@@ -116,14 +105,11 @@ export default function ExpedientesPage() {
   usePageTitle('Expedientes');
   
   const navigate = useNavigate();
-  const { toast } = useToast();
-  const deleteMatter = useDeleteMatterV2();
   const { data: jurisdictions } = useMatterJurisdictions();
   
   const [filters, setFilters] = useState<MattersWithDeadlinesFilters>({});
   const [searchInput, setSearchInput] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'cards' | 'kanban'>('table');
-  const [deleteId, setDeleteId] = useState<string | null>(null);
   const [urgencyFilter, setUrgencyFilter] = useState<string>('all');
   const [typeFilter, setTypeFilter] = useState<string>('all');
   
@@ -183,17 +169,6 @@ export default function ExpedientesPage() {
       design: allMatters.filter(m => m.matter_type.startsWith('DS_') || m.matter_type === 'design').length,
     };
   }, [allMatters]);
-
-  const handleDelete = async () => {
-    if (!deleteId) return;
-    try {
-      await deleteMatter.mutateAsync(deleteId);
-      toast({ title: 'Expediente eliminado' });
-      setDeleteId(null);
-    } catch {
-      toast({ title: 'Error al eliminar', variant: 'destructive' });
-    }
-  };
 
   if (error) {
     return (
@@ -416,7 +391,6 @@ export default function ExpedientesPage() {
                     key={matter.id} 
                     matter={matter} 
                     onClick={() => navigate(`/app/expedientes/${matter.id}`)}
-                    onDelete={() => setDeleteId(matter.id)}
                   />
                 ))}
               </TableBody>
@@ -442,23 +416,7 @@ export default function ExpedientesPage() {
         </div>
       </div>
 
-      {/* Delete Dialog */}
-      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>¿Eliminar expediente?</AlertDialogTitle>
-            <AlertDialogDescription>
-              Esta acción no se puede deshacer. El expediente será eliminado permanentemente.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90">
-              Eliminar
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {/* Delete Dialog REMOVED - funcionalidad deshabilitada */}
     </div>
   );
 }
@@ -508,10 +466,9 @@ function UrgencyKpiCard({
 // TABLE ROW (NIVEL DIOS)
 // ============================================================
 
-function MatterTableRowNew({ matter, onClick, onDelete }: { 
+function MatterTableRowNew({ matter, onClick }: { 
   matter: MatterWithDeadline; 
   onClick: () => void; 
-  onDelete: () => void;
 }) {
   const typeConfig = TYPE_CONFIG[matter.matter_type] || DEFAULT_TYPE;
   const phaseConfig = PHASE_CONFIG[matter.current_phase || 'F0'] || DEFAULT_PHASE;
@@ -717,12 +674,7 @@ function MatterTableRowNew({ matter, onClick, onDelete }: {
               <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                 <Download className="h-4 w-4 mr-2" /> Exportar PDF
               </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                className="text-destructive focus:text-destructive"
-              >
-                <Trash2 className="h-4 w-4 mr-2" /> Archivar
-              </DropdownMenuItem>
+              {/* OCULTO: Funcionalidad de eliminar expedientes deshabilitada por seguridad */}
             </DropdownMenuContent>
           </DropdownMenu>
           

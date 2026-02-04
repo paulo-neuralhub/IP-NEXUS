@@ -16,21 +16,9 @@ interface ContextualHelpPopupProps {
 }
 
 export const ContextualHelpPopup = React.forwardRef<HTMLDivElement, ContextualHelpPopupProps>(
-  function ContextualHelpPopup({ className }, _ref) {
-    const { activeRule, isVisible, dismiss, complete } = useContextualHelp();
-
-    if (!activeRule || !isVisible) return null;
-
-    return (
-      <AnimatePresence>
-        <ContextualHelpContent 
-          rule={activeRule} 
-          onDismiss={dismiss} 
-          onComplete={complete}
-          className={className}
-        />
-      </AnimatePresence>
-    );
+  function ContextualHelpPopup({ className: _className }, _ref) {
+    // DESACTIVADO: Popups de ayuda contextual deshabilitados temporalmente
+    return null;
   }
 );
 
