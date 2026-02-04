@@ -10,6 +10,7 @@ import {
   Briefcase, ChevronRight, MoreHorizontal, Eye, FileText, Mail,
   Download, Building2, Clock
 } from 'lucide-react';
+import { NeoBadge, NeoBadgeInline } from '@/components/ui/neo-badge';
 import { useMattersWithDeadlines, useUrgencyStats, type MatterWithDeadline, type MattersWithDeadlinesFilters } from '@/hooks/useMattersWithDeadlines';
 import { useMatterJurisdictions } from '@/hooks/use-matters-v2';
 import { Button } from '@/components/ui/button';
@@ -93,6 +94,20 @@ const PHASE_CONFIG: Record<string, { label: string; progress: number; color: str
   F7: { label: 'Pre-Registro', progress: 85, color: 'bg-emerald-500', bgLight: 'bg-emerald-100 text-emerald-700' },
   F8: { label: 'Registrado', progress: 95, color: 'bg-green-500', bgLight: 'bg-green-100 text-green-700' },
   F9: { label: 'Post-Registro', progress: 100, color: 'bg-purple-500', bgLight: 'bg-purple-100 text-purple-700' },
+};
+
+// Colores hex para badges neumórficos de fase
+const PHASE_COLORS: Record<string, string> = {
+  F0: '#94a3b8', // slate
+  F1: '#60a5fa', // blue
+  F2: '#3b82f6', // blue-500
+  F3: '#eab308', // yellow
+  F4: '#f97316', // orange
+  F5: '#f87171', // red
+  F6: '#34d399', // emerald
+  F7: '#10b981', // emerald-500
+  F8: '#22c55e', // green
+  F9: '#a855f7', // purple
 };
 
 const DEFAULT_PHASE = { label: '—', progress: 0, color: 'bg-gray-400', bgLight: 'bg-gray-100 text-gray-700' };
@@ -213,8 +228,8 @@ export default function ExpedientesPage() {
           <UrgencyKpiCard 
             label="Vencidos" 
             value={stats.overdue} 
-            icon="🔴"
-            colorClass="bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 hover:bg-red-100"
+            urgencyKey="overdue"
+            colorClass="bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800"
             textClass="text-red-700 dark:text-red-300"
             isActive={urgencyFilter === 'overdue'}
             onClick={() => setUrgencyFilter(urgencyFilter === 'overdue' ? 'all' : 'overdue')}
@@ -223,8 +238,8 @@ export default function ExpedientesPage() {
           <UrgencyKpiCard 
             label="Próximos 7 días" 
             value={stats.next7Days} 
-            icon="🟠"
-            colorClass="bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800 hover:bg-orange-100"
+            urgencyKey="next7Days"
+            colorClass="bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800"
             textClass="text-orange-700 dark:text-orange-300"
             isActive={urgencyFilter === 'next7Days'}
             onClick={() => setUrgencyFilter(urgencyFilter === 'next7Days' ? 'all' : 'next7Days')}
@@ -233,8 +248,8 @@ export default function ExpedientesPage() {
           <UrgencyKpiCard 
             label="Este mes" 
             value={stats.next30Days} 
-            icon="🟡"
-            colorClass="bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800 hover:bg-yellow-100"
+            urgencyKey="next30Days"
+            colorClass="bg-yellow-50 dark:bg-yellow-950 border-yellow-200 dark:border-yellow-800"
             textClass="text-yellow-700 dark:text-yellow-300"
             isActive={urgencyFilter === 'next30Days'}
             onClick={() => setUrgencyFilter(urgencyFilter === 'next30Days' ? 'all' : 'next30Days')}
@@ -242,8 +257,8 @@ export default function ExpedientesPage() {
           <UrgencyKpiCard 
             label="Sin urgencia" 
             value={stats.ok} 
-            icon="🟢"
-            colorClass="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 hover:bg-green-100"
+            urgencyKey="ok"
+            colorClass="bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800"
             textClass="text-green-700 dark:text-green-300"
             isActive={urgencyFilter === 'ok'}
             onClick={() => setUrgencyFilter(urgencyFilter === 'ok' ? 'all' : 'ok')}
@@ -425,39 +440,56 @@ export default function ExpedientesPage() {
 // URGENCY KPI CARD
 // ============================================================
 
+// Color mapping for urgency states (hex)
+const URGENCY_COLORS: Record<string, string> = {
+  overdue: '#ef4444',   // red
+  next7Days: '#f97316', // orange
+  next30Days: '#eab308', // yellow
+  ok: '#22c55e',        // green
+};
+
 function UrgencyKpiCard({ 
-  label, value, icon, colorClass, textClass, isActive, onClick, showWarning 
+  label, value, colorClass, textClass, isActive, onClick, showWarning, urgencyKey
 }: {
   label: string;
   value: number;
-  icon: string;
   colorClass: string;
   textClass: string;
   isActive: boolean;
   onClick: () => void;
   showWarning?: boolean;
+  urgencyKey: string;
 }) {
+  const stateColor = URGENCY_COLORS[urgencyKey] || '#64748b';
+  
   return (
     <button
       onClick={onClick}
       className={cn(
-        "p-4 rounded-xl border transition-all text-left",
-        colorClass,
+        "p-4 rounded-[14px] border border-[rgba(0,0,0,0.06)] transition-all text-left bg-[#f1f4f9]",
+        "hover:border-[rgba(0,180,216,0.15)]",
         isActive && "ring-2 ring-offset-2 ring-primary"
       )}
     >
-      <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-medium text-muted-foreground">{label}</span>
-        <span className="text-lg">{icon}</span>
+      <div className="flex items-center justify-between">
+        {/* Left: Label + warning */}
+        <div className="flex flex-col gap-1">
+          <span className="text-sm font-medium text-muted-foreground">{label}</span>
+          {showWarning && value > 0 && (
+            <span className="text-[10px] text-muted-foreground">
+              ⚠️ Requiere atención
+            </span>
+          )}
+        </div>
+        
+        {/* Right: Neumorphic badge */}
+        <NeoBadge 
+          value={value} 
+          color={stateColor}
+          size="md"
+          active={isActive}
+        />
       </div>
-      <p className={cn("text-3xl font-bold", textClass)}>
-        {value}
-      </p>
-      {showWarning && value > 0 && (
-        <p className="text-xs mt-1 text-muted-foreground">
-          ⚠️ Requiere atención
-        </p>
-      )}
     </button>
   );
 }
@@ -606,26 +638,21 @@ function MatterTableRowNew({ matter, onClick }: {
       
       {/* FASE */}
       <TableCell className="py-3">
-        <div className="space-y-1.5">
-          {/* Progress bar */}
-          <div className="relative h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-            <div 
-              className={cn("absolute inset-y-0 left-0 rounded-full transition-all", phaseConfig.color)}
-              style={{ width: `${phaseConfig.progress}%` }}
-            />
-            {/* Phase markers */}
-            <div className="absolute inset-0 flex justify-between px-0.5">
-              {[...Array(10)].map((_, i) => (
-                <div key={i} className="w-px h-full bg-white/40 dark:bg-slate-600/50" />
-              ))}
-            </div>
-          </div>
+        <div className="flex items-center gap-3">
+          {/* Neumorphic phase badge */}
+          <NeoBadgeInline 
+            value={matter.current_phase || 'F0'}
+            color={PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}
+          />
           
-          {/* Phase label */}
-          <div className="flex items-center gap-1.5">
-            <Badge variant="outline" className={cn("font-mono text-[10px] h-5", phaseConfig.bgLight)}>
-              {matter.current_phase || 'F0'}
-            </Badge>
+          {/* Progress bar + label */}
+          <div className="flex-1 space-y-1">
+            <div className="relative h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
+              <div 
+                className={cn("absolute inset-y-0 left-0 rounded-full transition-all", phaseConfig.color)}
+                style={{ width: `${phaseConfig.progress}%` }}
+              />
+            </div>
             <span className="text-xs text-muted-foreground">{phaseConfig.label}</span>
           </div>
         </div>
@@ -794,12 +821,18 @@ function MatterKanbanNew({ matters }: { matters: MatterWithDeadline[] }) {
             <div key={phaseKey} className="w-72 shrink-0">
               <div className="flex items-center justify-between mb-3 px-1">
                 <div className="flex items-center gap-2">
-                  <div className={cn("w-3 h-3 rounded-full", phaseConfig.color)} />
-                  <span className="font-medium text-sm">{phaseKey} - {phaseConfig.label}</span>
+                  {/* Neumorphic phase badge for column header */}
+                  <NeoBadgeInline 
+                    value={phaseKey}
+                    color={PHASE_COLORS[phaseKey] || '#64748b'}
+                  />
+                  <span className="font-medium text-sm">{phaseConfig.label}</span>
                 </div>
-                <Badge variant="secondary" className="text-xs">
-                  {phasedMatters.length}
-                </Badge>
+                <NeoBadge 
+                  value={phasedMatters.length} 
+                  color={PHASE_COLORS[phaseKey] || '#64748b'}
+                  size="sm"
+                />
               </div>
               <div className="space-y-2 min-h-[200px] bg-muted/30 rounded-lg p-2">
                 {phasedMatters.map((matter) => {

@@ -18,8 +18,8 @@ const badgeVariants = cva(
         success: "border-transparent bg-success text-success-foreground",
         warning: "border-transparent bg-warning text-warning-foreground",
         outline: "text-foreground border-border",
-        // SILK: Badge neumórfico (firma visual)
-        neu: "border-none bg-background shadow-neu relative overflow-hidden",
+        // SILK: Badge neumórfico (firma visual) - bg #f1f4f9
+        neu: "border-none bg-[#f1f4f9] shadow-neu relative overflow-hidden",
       },
       size: {
         default: "px-2.5 py-0.5 text-xs font-semibold rounded-full",

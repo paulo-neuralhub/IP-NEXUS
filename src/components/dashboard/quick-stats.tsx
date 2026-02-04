@@ -1,8 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { NeoBadge } from "@/components/ui/neo-badge";
 import { LucideIcon, AlertTriangle, FileText, Eye, Handshake, Users, Calendar } from "lucide-react";
 import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
+
+// Color mapping for stat types (hex)
+const STAT_COLORS: Record<string, string> = {
+  docket: '#0ea5e9',     // module-docket (cyan)
+  spider: '#2563eb',     // module-spider (blue)
+  crm: '#ec4899',        // module-crm (pink)
+  finance: '#14b8a6',    // module-finance (teal)
+  alerts: '#ef4444',     // destructive (red)
+  default: '#3b82f6',    // primary blue
+};
 
 interface StatCardProps {
   title: string;
@@ -12,6 +23,7 @@ interface StatCardProps {
   badge?: string;
   badgeVariant?: "default" | "destructive" | "secondary" | "outline";
   color?: string;
+  colorKey?: string;
   description?: string;
 }
 
@@ -23,8 +35,11 @@ export function StatCard({
   badge,
   badgeVariant = "secondary",
   color = "text-primary",
+  colorKey = "default",
   description,
 }: StatCardProps) {
+  const stateColor = STAT_COLORS[colorKey] || STAT_COLORS.default;
+  
   const content = (
     <Card className={cn(
       "transition-all border border-[rgba(0,0,0,0.06)] rounded-[14px] hover:border-[rgba(0,180,216,0.15)]",
@@ -38,7 +53,12 @@ export function StatCard({
       </CardHeader>
       <CardContent>
         <div className="flex items-center justify-between">
-          <div className="text-2xl font-bold">{value}</div>
+          {/* Neumorphic badge for the value */}
+          <NeoBadge 
+            value={value} 
+            color={stateColor}
+            size="md"
+          />
           {badge && (
             <Badge variant={badgeVariant} className="text-xs">
               {badge}
@@ -46,7 +66,7 @@ export function StatCard({
           )}
         </div>
         {description && (
-          <p className="text-xs text-muted-foreground mt-1">{description}</p>
+          <p className="text-xs text-muted-foreground mt-2">{description}</p>
         )}
       </CardContent>
     </Card>
@@ -84,6 +104,7 @@ export function QuickStats({
         icon={FileText}
         link="/app/docket"
         color="text-module-docket"
+        colorKey="docket"
       />
       <StatCard
         title="Vigilancias"
@@ -91,6 +112,7 @@ export function QuickStats({
         icon={Eye}
         link="/app/spider"
         color="text-module-spider"
+        colorKey="spider"
       />
       <StatCard
         title="Deals Abiertos"
@@ -99,6 +121,7 @@ export function QuickStats({
         link="/app/crm/deals"
         badge={pendingDeals > 0 ? "Activos" : undefined}
         color="text-module-crm"
+        colorKey="crm"
       />
       <StatCard
         title="Contactos"
@@ -106,6 +129,7 @@ export function QuickStats({
         icon={Users}
         link="/app/crm/contacts"
         color="text-module-crm"
+        colorKey="crm"
       />
       <StatCard
         title="Plazos"
@@ -114,6 +138,7 @@ export function QuickStats({
         link="/app/docket"
         badge={upcomingDeadlines > 5 ? "⚠️" : undefined}
         color="text-module-finance"
+        colorKey="finance"
       />
       <StatCard
         title="Alertas"
@@ -123,6 +148,7 @@ export function QuickStats({
         badge={criticalAlerts > 0 ? "Críticas" : undefined}
         badgeVariant={criticalAlerts > 0 ? "destructive" : "secondary"}
         color={criticalAlerts > 0 ? "text-destructive" : "text-module-spider"}
+        colorKey={criticalAlerts > 0 ? "alerts" : "spider"}
       />
     </div>
   );
