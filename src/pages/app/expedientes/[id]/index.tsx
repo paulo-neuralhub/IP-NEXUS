@@ -45,6 +45,7 @@ import { TimelineProfesional } from '@/components/matters/TimelineProfesional';
 import { SendWhatsAppFromMatterModal } from '@/components/matters/SendWhatsAppFromMatterModal';
 import { MatterChatModal } from '@/components/matters/MatterChatModal';
 import { AddFilingModal } from '@/components/matters/AddFilingModal';
+import { FilingDetailModal } from '@/components/matters/FilingDetailModal';
 import { AddPartyModal } from '@/components/matters/AddPartyModal';
 import { MatterDetailHeader } from '@/components/matters/MatterDetailHeader';
 import { MatterDetailSidebar } from '@/components/matters/MatterDetailSidebar';
@@ -75,6 +76,7 @@ export default function MatterDetailPage() {
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showMeetingModal, setShowMeetingModal] = useState(false);
   const [showFilingModal, setShowFilingModal] = useState(false);
+  const [selectedFiling, setSelectedFiling] = useState<any>(null);
   const [showPartyModal, setShowPartyModal] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   
@@ -348,7 +350,11 @@ export default function MatterDetailPage() {
                     ) : (
                       <div className="space-y-4">
                         {filings.map(filing => (
-                          <div key={filing.id} className="border rounded-lg p-4">
+                          <div 
+                            key={filing.id} 
+                            className="border rounded-lg p-4 cursor-pointer hover:bg-muted/50 transition-colors"
+                            onClick={() => setSelectedFiling(filing)}
+                          >
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <Badge variant="outline" className="text-lg px-3 py-1">
@@ -534,6 +540,14 @@ export default function MatterDetailPage() {
         onOpenChange={setShowFilingModal}
         matterId={id!}
       />
+      
+      {selectedFiling && (
+        <FilingDetailModal
+          open={!!selectedFiling}
+          onOpenChange={(open) => !open && setSelectedFiling(null)}
+          filing={selectedFiling}
+        />
+      )}
       
       <AddPartyModal
         open={showPartyModal}

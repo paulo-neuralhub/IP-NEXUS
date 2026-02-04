@@ -143,7 +143,7 @@ export default function DeadlinesPage() {
 
   // Navigate to matter
   const handleView = (matterId: string) => {
-    navigate(`/app/docket/${matterId}`);
+    navigate(`/app/expedientes/${matterId}`);
   };
 
   // KPI stats for the cards - use unified stats

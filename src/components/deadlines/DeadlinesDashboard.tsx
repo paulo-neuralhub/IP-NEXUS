@@ -233,7 +233,7 @@ function DeadlineItem({ deadline, onComplete, onPostpone }: DeadlineItemProps) {
               <>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem 
-                  onClick={() => navigate(`/docket/matters/${deadline.matter!.id}`)}
+                  onClick={() => navigate(`/app/expedientes/${deadline.matter!.id}`)}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   Ver expediente
