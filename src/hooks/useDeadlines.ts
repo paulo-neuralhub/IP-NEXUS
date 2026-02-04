@@ -87,7 +87,7 @@ export function useDeadlines(options: UseDeadlinesOptions = {}) {
             title, 
             type, 
             jurisdiction,
-            client:contacts!matters_client_id_fkey(id, name:nombre_fiscal)
+            client:contacts!matters_client_id_fkey(id, name)
           )
         `)
         .eq('organization_id', currentOrganization.id)
