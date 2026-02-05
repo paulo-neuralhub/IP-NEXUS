@@ -433,6 +433,22 @@ const URGENCY_COLORS: Record<string, string> = {
   ok: '#22c55e',        // green
 };
 
+// KPI descriptions
+const URGENCY_DESCRIPTIONS: Record<string, string> = {
+  overdue: 'Requiere atención urgente',
+  next7Days: 'Atención pronto',
+  next30Days: 'Programados este mes',
+  ok: 'Más de 30 días',
+};
+
+// KPI icons
+const URGENCY_ICONS: Record<string, string> = {
+  overdue: '⚠️',
+  next7Days: '⏰',
+  next30Days: '📅',
+  ok: '✅',
+};
+
 function UrgencyKpiCard({ 
   label, value, colorClass, textClass, isActive, onClick, showWarning, urgencyKey
 }: {
@@ -446,31 +462,51 @@ function UrgencyKpiCard({
   urgencyKey: string;
 }) {
   const stateColor = URGENCY_COLORS[urgencyKey] || '#64748b';
+  const description = URGENCY_DESCRIPTIONS[urgencyKey] || '';
+  const icon = URGENCY_ICONS[urgencyKey] || '';
+  
+  // Border color based on urgency
+  const getBorderStyle = () => {
+    if (urgencyKey === 'overdue' && value > 0) {
+      return { border: '2px solid rgba(239, 68, 68, 0.4)', boxShadow: '0 0 0 1px rgba(239, 68, 68, 0.1)' };
+    }
+    if (urgencyKey === 'next7Days' && value > 0) {
+      return { border: '1px solid rgba(249, 115, 22, 0.25)' };
+    }
+    return { border: '1px solid rgba(0, 0, 0, 0.06)' };
+  };
   
   return (
     <button
       onClick={onClick}
       className={cn(
-        "p-4 rounded-[14px] border border-[rgba(0,0,0,0.06)] transition-all text-left bg-[#f1f4f9]",
+        "p-4 rounded-[14px] transition-all text-left bg-[#f1f4f9]",
         "hover:border-[rgba(0,180,216,0.15)]",
         isActive && "ring-2 ring-offset-2 ring-primary"
       )}
+      style={getBorderStyle()}
     >
-      <div className="flex items-center justify-between">
-        {/* Left: Label + warning */}
-        <div className="flex flex-col gap-1">
-          <span className="text-sm font-medium text-muted-foreground">{label}</span>
-          {showWarning && value > 0 && (
-            <span className="text-[10px] text-muted-foreground">
-              ⚠️ Requiere atención
-            </span>
-          )}
+      <div className="flex items-center justify-between gap-3">
+        {/* Left: Label + description */}
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <span 
+            className="text-[11px] font-semibold uppercase tracking-wide"
+            style={{ color: '#0a2540' }}
+          >
+            {icon} {label}
+          </span>
+          <span 
+            className="text-[9px]"
+            style={{ color: value > 0 && (urgencyKey === 'overdue' || urgencyKey === 'next7Days') ? stateColor : '#94a3b8' }}
+          >
+            {description}
+          </span>
         </div>
         
         {/* Right: Neumorphic badge */}
         <NeoBadge 
           value={value} 
-          color={stateColor}
+          color={value > 0 ? stateColor : '#94a3b8'}
           size="md"
           active={isActive}
         />
@@ -697,21 +733,23 @@ function MatterListRowSilk({ matter, onClick }: {
         )}
         
         {/* Progress */}
-        <div style={{ width: '100px' }}>
+        {/* Progress bar - SILK 6px with gradient */}
+        <div style={{ width: '110px' }}>
           <div className="flex justify-between items-center mb-1">
             <span style={{ fontSize: '9px', color: '#94a3b8' }}>{phaseConfig.label}</span>
-            <span style={{ fontSize: '9px', fontWeight: 700, color: PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b' }}>
+            <span style={{ fontSize: '10px', fontWeight: 700, color: PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b' }}>
               {phaseConfig.progress}%
             </span>
           </div>
-          <div style={{ height: '4px', borderRadius: '3px', background: 'rgba(0,0,0,0.04)' }}>
+          <div style={{ height: '6px', borderRadius: '4px', background: 'rgba(0,0,0,0.04)', overflow: 'hidden' }}>
             <div 
               style={{
                 width: `${phaseConfig.progress}%`,
                 height: '100%',
-                borderRadius: '3px',
-                background: `linear-gradient(90deg, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}88)`,
-                boxShadow: `0 0 4px ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}18`
+                borderRadius: '4px',
+                background: `linear-gradient(90deg, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}99)`,
+                boxShadow: `0 1px 3px ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}30`,
+                transition: 'width 0.3s ease'
               }}
             />
           </div>
@@ -860,22 +898,23 @@ function MatterCardNew({ matter, onClick }: { matter: MatterWithDeadline; onClic
           </div>
          </div>
          
-         {/* Progress */}
+         {/* Progress bar - SILK 6px with gradient */}
          <div style={{ width: '120px' }}>
            <div className="flex justify-between items-center mb-1">
              <span style={{ fontSize: '9px', color: '#94a3b8' }}>Fase</span>
-             <span style={{ fontSize: '9px', fontWeight: 700, color: PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b' }}>
+             <span style={{ fontSize: '10px', fontWeight: 700, color: PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b' }}>
                {phaseConfig.progress}%
              </span>
            </div>
-           <div style={{ height: '4px', borderRadius: '3px', background: 'rgba(0,0,0,0.04)' }}>
+           <div style={{ height: '6px', borderRadius: '4px', background: 'rgba(0,0,0,0.04)', overflow: 'hidden' }}>
             <div 
                style={{
                  width: `${phaseConfig.progress}%`,
                  height: '100%',
-                 borderRadius: '3px',
-                 background: `linear-gradient(90deg, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}88)`,
-                 boxShadow: `0 0 4px ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}18`
+                 borderRadius: '4px',
+                 background: `linear-gradient(90deg, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}99)`,
+                 boxShadow: `0 1px 3px ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}30`,
+                 transition: 'width 0.3s ease'
                }}
             />
           </div>
