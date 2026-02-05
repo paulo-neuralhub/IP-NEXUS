@@ -1,6 +1,6 @@
 /**
- * PipelineKanbanColumn - Columna del pipeline con header profesional estilo Odoo
- * Barra de color superior, valor total, barra de progreso visual
+ * PipelineKanbanColumn - Columna del pipeline con header SILK
+ * NeoBadges para contadores, gradientes por estado, dots con glow
  */
 
 import { useDroppable } from '@dnd-kit/core';
@@ -25,6 +25,142 @@ function formatCurrency(value: number) {
   return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(value);
 }
 
+// Helper to get SILK gradient styles based on column color
+function getColumnStyles(color: string, isWon?: boolean, isLost?: boolean) {
+  // Won = green, Lost = red
+  if (isWon) {
+    return {
+      headerGradient: 'linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)',
+      headerBorder: '1px solid #86efac',
+      headerBorderBottom: '2px solid #4ade80',
+      dotGradient: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+      dotGlow: '0 0 8px rgba(34, 197, 94, 0.6)',
+      titleColor: '#166534',
+      counterBg: 'linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%)',
+      counterBorder: '#bbf7d0',
+      counterColor: '#15803d',
+      valueBg: 'linear-gradient(135deg, #f0fdf4 0%, #ffffff 100%)',
+      valueBorder: '#bbf7d0',
+      valueColor: '#15803d',
+      valueShadow: '0 2px 6px rgba(34, 197, 94, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+    };
+  }
+  
+  if (isLost) {
+    return {
+      headerGradient: 'linear-gradient(135deg, #fef2f2 0%, #fecaca 100%)',
+      headerBorder: '1px solid #fca5a5',
+      headerBorderBottom: '2px solid #f87171',
+      dotGradient: 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)',
+      dotGlow: '0 0 8px rgba(239, 68, 68, 0.6)',
+      titleColor: '#991b1b',
+      counterBg: 'linear-gradient(135deg, #ffffff 0%, #fef2f2 100%)',
+      counterBorder: '#fecaca',
+      counterColor: '#b91c1c',
+      valueBg: 'linear-gradient(135deg, #fef2f2 0%, #ffffff 100%)',
+      valueBorder: '#fecaca',
+      valueColor: '#b91c1c',
+      valueShadow: '0 2px 6px rgba(239, 68, 68, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+    };
+  }
+
+  // Map common colors to SILK gradients
+  const colorLower = color.toLowerCase();
+  
+  // Cyan / Blue tones (Contactado, etc.)
+  if (colorLower.includes('cyan') || colorLower.includes('#06b6d4') || colorLower.includes('#0ea5e9') || colorLower.includes('#00b4d8')) {
+    return {
+      headerGradient: 'linear-gradient(135deg, #ecfeff 0%, #cffafe 100%)',
+      headerBorder: '1px solid #a5f3fc',
+      headerBorderBottom: '2px solid #67e8f9',
+      dotGradient: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)',
+      dotGlow: '0 0 8px rgba(6, 182, 212, 0.6)',
+      titleColor: '#164e63',
+      counterBg: 'linear-gradient(135deg, #ffffff 0%, #ecfeff 100%)',
+      counterBorder: '#a5f3fc',
+      counterColor: '#0e7490',
+      valueBg: 'linear-gradient(135deg, #ecfeff 0%, #ffffff 100%)',
+      valueBorder: '#a5f3fc',
+      valueColor: '#0e7490',
+      valueShadow: '0 2px 6px rgba(0, 180, 216, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+    };
+  }
+  
+  // Orange tones (Propuesta, etc.)
+  if (colorLower.includes('orange') || colorLower.includes('#f97316') || colorLower.includes('#ea580c') || colorLower.includes('#fb923c')) {
+    return {
+      headerGradient: 'linear-gradient(135deg, #ffedd5 0%, #fed7aa 100%)',
+      headerBorder: '1px solid #fdba74',
+      headerBorderBottom: '2px solid #fb923c',
+      dotGradient: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+      dotGlow: '0 0 8px rgba(249, 115, 22, 0.6)',
+      titleColor: '#7c2d12',
+      counterBg: 'linear-gradient(135deg, #ffffff 0%, #ffedd5 100%)',
+      counterBorder: '#fed7aa',
+      counterColor: '#c2410c',
+      valueBg: 'linear-gradient(135deg, #ffedd5 0%, #ffffff 100%)',
+      valueBorder: '#fed7aa',
+      valueColor: '#c2410c',
+      valueShadow: '0 2px 6px rgba(249, 115, 22, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+    };
+  }
+  
+  // Purple / Violet tones (Negociación, etc.) - Using blue per SILK spec (no purple)
+  if (colorLower.includes('purple') || colorLower.includes('#a855f7') || colorLower.includes('#8b5cf6') || colorLower.includes('violet')) {
+    return {
+      headerGradient: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+      headerBorder: '1px solid #93c5fd',
+      headerBorderBottom: '2px solid #60a5fa',
+      dotGradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+      dotGlow: '0 0 8px rgba(59, 130, 246, 0.6)',
+      titleColor: '#1e40af',
+      counterBg: 'linear-gradient(135deg, #ffffff 0%, #eff6ff 100%)',
+      counterBorder: '#bfdbfe',
+      counterColor: '#1d4ed8',
+      valueBg: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 100%)',
+      valueBorder: '#bfdbfe',
+      valueColor: '#1d4ed8',
+      valueShadow: '0 2px 6px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+    };
+  }
+  
+  // Blue tones
+  if (colorLower.includes('blue') || colorLower.includes('#3b82f6') || colorLower.includes('#2563eb')) {
+    return {
+      headerGradient: 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%)',
+      headerBorder: '1px solid #93c5fd',
+      headerBorderBottom: '2px solid #60a5fa',
+      dotGradient: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+      dotGlow: '0 0 8px rgba(59, 130, 246, 0.6)',
+      titleColor: '#1e40af',
+      counterBg: 'linear-gradient(135deg, #ffffff 0%, #eff6ff 100%)',
+      counterBorder: '#bfdbfe',
+      counterColor: '#1d4ed8',
+      valueBg: 'linear-gradient(135deg, #eff6ff 0%, #ffffff 100%)',
+      valueBorder: '#bfdbfe',
+      valueColor: '#1d4ed8',
+      valueShadow: '0 2px 6px rgba(59, 130, 246, 0.15), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+    };
+  }
+  
+  // Default: Slate (Lead, etc.)
+  return {
+    headerGradient: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
+    headerBorder: '1px solid #e2e8f0',
+    headerBorderBottom: '2px solid #cbd5e1',
+    dotGradient: 'linear-gradient(135deg, #94a3b8 0%, #64748b 100%)',
+    dotGlow: '0 0 8px rgba(100, 116, 139, 0.4)',
+    titleColor: '#1e293b',
+    counterBg: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+    counterBorder: '#e2e8f0',
+    counterColor: '#475569',
+    valueBg: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+    valueBorder: '#e2e8f0',
+    valueColor: '#334155',
+    valueShadow: '0 2px 6px rgba(0, 0, 0, 0.08), inset 0 1px 2px rgba(255, 255, 255, 0.9)',
+  };
+}
+
 export function PipelineKanbanColumn({
   id,
   title,
@@ -38,95 +174,117 @@ export function PipelineKanbanColumn({
   onAddItem,
 }: PipelineKanbanColumnProps) {
   const { setNodeRef, isOver } = useDroppable({ id });
-
-  // Calculate weighted value for progress (for visualization)
-  const maxValue = 150000; // Reference max for progress bar
-  const barWidth = totalValue > 0 ? Math.min(100, (totalValue / maxValue) * 100) : 0;
+  const styles = getColumnStyles(color, isWon, isLost);
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        'flex flex-col rounded-[14px] overflow-hidden transition-all w-[320px] flex-shrink-0',
-        'border bg-slate-50 dark:bg-slate-900/50',
-        isOver && 'ring-2 ring-primary scale-[1.01]',
-        isWon && 'border-green-300 dark:border-green-800 bg-green-50/50 dark:bg-green-950/20',
-        isLost && 'border-red-300 dark:border-red-800 bg-red-50/50 dark:bg-red-950/20',
-        !isWon && !isLost && 'border-[rgba(0,0,0,0.06)]'
+        'flex flex-col rounded-xl overflow-hidden transition-all w-[320px] flex-shrink-0',
+        isOver && 'ring-2 ring-primary scale-[1.01]'
       )}
-      style={{ height: '100%' }}
+      style={{ 
+        height: '100%',
+        background: '#f1f4f9',
+        border: '1px solid rgba(0,0,0,0.06)',
+      }}
     >
-      {/* Color Bar on top - Odoo style */}
+      {/* SILK Header with gradient and NeoBadges */}
       <div 
-        className="h-1.5 w-full"
-        style={{ backgroundColor: color }}
-      />
-
-      {/* Header */}
-      <div className={cn(
-        'p-4 border-b',
-        isWon && 'bg-green-50 dark:bg-green-950/30',
-        isLost && 'bg-red-50 dark:bg-red-950/30',
-        !isWon && !isLost && 'bg-card'
-      )}>
-        {/* Title + Count + Value */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <h3 className="font-semibold text-foreground truncate">{title}</h3>
-              <span 
-                className="text-xs font-bold px-2 py-0.5 rounded-full shrink-0"
-                style={{ backgroundColor: `${color}20`, color }}
-              >
-                {count}
-              </span>
-            </div>
-            {probability !== undefined && (
-              <p className="text-xs text-muted-foreground mt-0.5">
-                {probability}% probabilidad
-              </p>
-            )}
+        className="flex items-center justify-between p-4 rounded-t-xl"
+        style={{
+          background: styles.headerGradient,
+          border: styles.headerBorder,
+          borderBottom: styles.headerBorderBottom,
+        }}
+      >
+        <div className="flex items-center gap-2">
+          {/* Dot with glow */}
+          <div 
+            className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+            style={{
+              background: styles.dotGradient,
+              boxShadow: styles.dotGlow,
+            }}
+          />
+          
+          <h3 
+            className="font-bold text-sm truncate"
+            style={{ color: styles.titleColor }}
+          >
+            {title}
+          </h3>
+          
+          {/* Counter NeoBadge */}
+          <div 
+            className="px-2 py-0.5 rounded flex-shrink-0"
+            style={{
+              background: styles.counterBg,
+              border: `1px solid ${styles.counterBorder}`,
+              boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)',
+            }}
+          >
+            <span 
+              className="text-xs font-bold"
+              style={{ color: styles.counterColor }}
+            >
+              {count}
+            </span>
           </div>
-          <span className="text-sm font-bold text-green-600 dark:text-green-400 shrink-0">
+          
+          {probability !== undefined && (
+            <span 
+              className="text-[10px] opacity-70"
+              style={{ color: styles.titleColor }}
+            >
+              {probability}%
+            </span>
+          )}
+        </div>
+        
+        {/* Value NeoBadge */}
+        <div 
+          className="px-3 py-1 rounded-lg flex-shrink-0"
+          style={{
+            background: styles.valueBg,
+            border: `1px solid ${styles.valueBorder}`,
+            boxShadow: styles.valueShadow,
+          }}
+        >
+          <span 
+            className="text-sm font-extrabold"
+            style={{ 
+              color: styles.valueColor,
+              letterSpacing: '-0.02em',
+            }}
+          >
             {formatCurrency(totalValue)}
           </span>
         </div>
-
-        {/* Progress bar - visual indicator */}
-        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-          <div 
-            className="h-full rounded-full transition-all duration-500 ease-out"
-            style={{ 
-              width: `${barWidth}%`,
-              backgroundColor: color,
-              opacity: 0.8,
-            }}
-          />
-        </div>
       </div>
 
-      {/* Content - Cards area with VISIBLE scrollbar */}
+      {/* Content - Cards area */}
       <div 
-        className={cn(
-          'flex-1 p-3 min-h-0 overflow-y-auto',
-          isWon && 'bg-green-50/30 dark:bg-green-950/10',
-          isLost && 'bg-red-50/30 dark:bg-red-950/10',
-          !isWon && !isLost && 'bg-transparent'
-        )}
+        className="flex-1 p-3 min-h-0 overflow-y-auto"
         style={{ 
           scrollbarWidth: 'thin',
           scrollbarColor: '#94a3b8 #e2e8f0',
-          maxHeight: 'calc(100% - 130px)',
+          maxHeight: 'calc(100% - 80px)',
         }}
       >
-        {/* Sin SortableContext - usamos useDroppable en columna + useDraggable en cards */}
         <div className="space-y-3 min-h-[100px]">
           {children}
         </div>
 
         {count === 0 && (
           <div className="flex flex-col items-center justify-center text-muted-foreground text-sm py-10">
-            <div className="w-12 h-12 rounded-full bg-muted/50 flex items-center justify-center mb-2">
+            <div 
+              className="w-12 h-12 rounded-full flex items-center justify-center mb-2"
+              style={{
+                background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+                boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)',
+              }}
+            >
               <span className="text-xl">
                 {isWon ? '🎉' : isLost ? '😔' : '📭'}
               </span>
@@ -139,7 +297,7 @@ export function PipelineKanbanColumn({
 
       {/* Add button */}
       {onAddItem && !isWon && !isLost && (
-        <div className="p-2 border-t bg-card">
+        <div className="p-2 border-t border-slate-200/50 bg-white/50">
           <Button 
             variant="ghost" 
             size="sm" 
