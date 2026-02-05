@@ -61,17 +61,16 @@ const TabCounter: React.FC<{ count: number; isUrgent?: boolean }> = ({ count, is
 const PRIMARY_TABS = [
   { id: 'general', label: 'General', icon: FileText, counterKey: null },
   { id: 'filings', label: 'Presentaciones', icon: Building2, counterKey: 'filings' },
-  { id: 'parties', label: 'Partes', icon: Users, counterKey: 'parties' },
-  { id: 'documents', label: 'Documentos', icon: FolderOpen, counterKey: 'documents' },
   { id: 'deadlines', label: 'Plazos', icon: Calendar, counterKey: 'deadlines' },
-  { id: 'communications', label: 'Comunicaciones', icon: Mail, counterKey: 'communications' },
+  { id: 'parties', label: 'Partes', icon: Users, counterKey: 'parties' },
+  { id: 'tasks', label: 'Tareas', icon: CheckSquare, counterKey: 'tasks', urgentKey: 'tasksUrgent' },
 ] as const;
 
 // Secondary tab configuration
 const SECONDARY_TABS = [
-  { id: 'tasks', label: 'Tareas', icon: CheckSquare, counterKey: 'tasks', urgentKey: 'tasksUrgent' },
-  { id: 'invoices', label: 'Facturas', icon: Receipt, counterKey: 'invoices' },
   { id: 'timeline', label: 'Timeline', icon: History, counterKey: 'timeline' },
+  { id: 'invoices', label: 'Facturas', icon: Receipt, counterKey: 'invoices' },
+  { id: 'documents', label: 'Documentos', icon: FolderOpen, counterKey: 'documents' },
 ] as const;
 
 export const MatterDetailTabs: React.FC<MatterDetailTabsProps> = ({
