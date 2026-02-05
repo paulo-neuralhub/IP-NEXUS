@@ -282,4 +282,32 @@
     background-size: 200% 100%;
     animation: shimmer 2s infinite;
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     SILK CALENDAR ANIMATIONS — Pulse for today
+     ═══════════════════════════════════════════════════════════ */
+  
+  @keyframes pulse-slow {
+    0%, 100% { 
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% { 
+      opacity: 0.7;
+      transform: scale(1.08);
+    }
+  }
+
+  .animate-pulse-slow {
+    animation: pulse-slow 3s ease-in-out infinite;
+  }
+
+  /* Calendar day hover */
+  .calendar-day-hover {
+    transition: all 0.2s ease;
+  }
+  .calendar-day-hover:hover {
+    background: #f1f5f9;
+    transform: scale(1.1);
+  }
 }

@@ -42,20 +42,38 @@ const calendarMessages = {
   showMore: (total: number) => `+ Ver ${total} más`,
 };
 
-// Función para aplicar estilos a los eventos
+// Función para aplicar estilos SILK a los eventos
 function eventStyleGetter(event: CalendarEvent) {
+  // Determine if color is a dark color for text contrast
+  const color = event.color || '#3b82f6';
+  
+  // Create gradient colors
+  const lighterColor = adjustColorBrightness(color, 20);
+  
   return {
     style: {
-      backgroundColor: event.color,
-      borderRadius: '4px',
-      opacity: 0.9,
+      background: `linear-gradient(135deg, ${color} 0%, ${lighterColor} 100%)`,
+      borderRadius: '8px',
+      opacity: 1,
       color: 'white',
-      border: 'none',
+      border: `1px solid ${color}`,
       fontSize: '12px',
-      padding: '2px 6px',
+      padding: '4px 8px',
       cursor: 'pointer',
+      boxShadow: `0 2px 6px ${color}40`,
+      transition: 'all 0.2s ease',
     },
   };
+}
+
+// Helper to adjust color brightness
+function adjustColorBrightness(hex: string, percent: number): string {
+  const num = parseInt(hex.replace('#', ''), 16);
+  const amt = Math.round(2.55 * percent);
+  const R = Math.min(255, (num >> 16) + amt);
+  const G = Math.min(255, ((num >> 8) & 0x00FF) + amt);
+  const B = Math.min(255, (num & 0x0000FF) + amt);
+  return `#${(0x1000000 + R * 0x10000 + G * 0x100 + B).toString(16).slice(1)}`;
 }
 
 // Cargar preferencias guardadas

@@ -49,8 +49,14 @@ export function CalendarSidebar({
   return (
     <ScrollArea className="h-full">
       <div className="p-4 space-y-6">
-        {/* Mini calendario */}
-        <div className="border rounded-lg p-2 bg-card">
+        {/* Mini calendario con estilos SILK */}
+        <div 
+          className="rounded-xl p-2"
+          style={{
+            background: '#f1f4f9',
+            border: '1px solid rgba(0,0,0,0.06)',
+          }}
+        >
           <Calendar
             mode="single"
             selected={date}
@@ -65,9 +71,9 @@ export function CalendarSidebar({
               head_cell: "flex-1 text-center text-xs font-medium text-muted-foreground",
               row: "flex w-full mt-1",
               cell: "flex-1 text-center p-0 relative",
-              day: "h-8 w-full text-sm p-0 font-normal hover:bg-muted rounded-md transition-colors aria-selected:opacity-100",
-              day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground",
-              day_today: "bg-accent text-accent-foreground font-bold",
+              day: "h-8 w-full text-sm p-0 font-normal calendar-day-hover rounded-md aria-selected:opacity-100",
+              day_selected: "bg-gradient-to-br from-[#00b4d8] to-[#00d4aa] text-white hover:from-[#00b4d8] hover:to-[#00d4aa] hover:text-white shadow-[0_2px_8px_rgba(0,180,216,0.3)]",
+              day_today: "relative font-bold text-[#00b4d8] before:absolute before:inset-0 before:rounded-full before:border-2 before:border-[#00b4d8] before:animate-pulse-slow",
               day_outside: "text-muted-foreground opacity-50",
               nav: "flex items-center justify-between mb-2",
               nav_button: "h-7 w-7 bg-transparent hover:bg-muted rounded-md inline-flex items-center justify-center",
@@ -232,7 +238,7 @@ export function CalendarSidebar({
   );
 }
 
-// Componente auxiliar para filtros
+// Componente auxiliar para filtros - SILK Style
 function FilterCheckbox({ 
   checked, 
   onChange, 
@@ -250,15 +256,42 @@ function FilterCheckbox({
 }) {
   return (
     <label className="flex items-center gap-2 cursor-pointer group">
-      <Checkbox checked={checked} onCheckedChange={onChange} />
+      {/* Custom checkbox SILK */}
+      <div
+        onClick={(e) => { e.preventDefault(); onChange(); }}
+        className="w-4 h-4 rounded flex items-center justify-center cursor-pointer transition-all duration-200"
+        style={{
+          background: checked 
+            ? 'linear-gradient(135deg, #00b4d8 0%, #00d4aa 100%)' 
+            : 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+          border: checked ? 'none' : '1px solid #e2e8f0',
+          boxShadow: checked 
+            ? '0 2px 6px rgba(0, 180, 216, 0.3)' 
+            : '0 1px 3px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.8)',
+        }}
+      >
+        {checked && (
+          <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+          </svg>
+        )}
+      </div>
       <div className={cn("w-3 h-3 rounded-sm flex items-center justify-center text-white", color)}>
         {icon}
       </div>
       <span className="text-sm flex-1">{label}</span>
       {count !== undefined && count > 0 && (
-        <Badge variant="secondary" className="text-[10px] h-5 px-1.5">
+        <div
+          className="px-1.5 py-0.5 rounded text-[10px] font-semibold"
+          style={{
+            background: 'linear-gradient(135deg, #f8fafc 0%, #ffffff 100%)',
+            border: '1px solid #e2e8f0',
+            color: '#64748b',
+            boxShadow: 'inset 0 1px 1px rgba(255, 255, 255, 0.9)',
+          }}
+        >
           {count}
-        </Badge>
+        </div>
       )}
     </label>
   );
