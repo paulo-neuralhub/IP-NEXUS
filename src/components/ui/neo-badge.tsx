@@ -79,14 +79,15 @@ export const NeoBadge: React.FC<NeoBadgeProps> = ({
         }}
       />
 
-      {/* Value */}
+      {/* Value - más legible */}
       <span
         style={{
           fontSize: s.valueSize,
-          fontWeight: 200,
+          fontWeight: 700,
           color: color,
           position: "relative",
           lineHeight: 1,
+          letterSpacing: "-0.02em",
         }}
       >
         {value}
@@ -141,10 +142,11 @@ export const NeoBadgeInline: React.FC<NeoBadgeInlineProps> = ({
       <span
         style={{
           fontSize: 11,
-          fontWeight: 200,
+          fontWeight: 600,
           color: color,
           position: "relative",
           lineHeight: 1,
+          letterSpacing: "-0.02em",
         }}
       >
         {value}

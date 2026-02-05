@@ -163,7 +163,7 @@ function UrgentBadgeCard({ badge }: { badge: UrgentBadgeData }) {
             }}
           />
           
-          {/* Badge neumórfico */}
+          {/* Badge neumórfico con borde de color visible */}
           <div
             className="relative flex items-center justify-center"
             style={{
@@ -171,8 +171,8 @@ function UrgentBadgeCard({ badge }: { badge: UrgentBadgeData }) {
               height: 46,
               borderRadius: 12,
               background: '#f1f4f9',
-              boxShadow: '6px 6px 14px #b5b9c4, -6px -6px 14px #ffffff, inset 0 2px 3px rgba(255,255,255,0.9), inset 0 -2px 3px rgba(0,0,0,0.06)',
-              border: `2px solid ${badge.ledColor}30`,
+              boxShadow: `0 0 0 1px ${badge.ledColor}25, 6px 6px 14px #b5b9c4, -6px -6px 14px #ffffff, inset 0 2px 3px rgba(255,255,255,0.9), inset 0 -2px 3px rgba(0,0,0,0.06)`,
+              border: `2px solid ${badge.ledColor}70`,
             }}
           >
             {/* Gradient inferior */}
@@ -184,7 +184,7 @@ function UrgentBadgeCard({ badge }: { badge: UrgentBadgeData }) {
                 right: 0,
                 height: '45%',
                 background: `linear-gradient(to top, ${badge.ledColor}15, transparent)`,
-                borderRadius: 12,
+                borderRadius: 10,
               }}
             />
             
@@ -198,19 +198,20 @@ function UrgentBadgeCard({ badge }: { badge: UrgentBadgeData }) {
                 height: 2,
                 background: badge.ledColor,
                 borderRadius: 2,
-                opacity: 0.4,
+                opacity: 0.5,
                 boxShadow: `0 0 6px ${badge.ledColor}50`,
               }}
             />
             
-            {/* Valor */}
+            {/* Valor - más legible */}
             <span
               style={{
                 fontSize: 18,
-                fontWeight: 200,
+                fontWeight: 700,
                 color: badge.ledColor,
                 position: 'relative',
                 lineHeight: 1,
+                letterSpacing: '-0.02em',
               }}
             >
               {badge.value}
