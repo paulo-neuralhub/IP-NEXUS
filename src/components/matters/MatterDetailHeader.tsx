@@ -10,9 +10,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { differenceInDays, format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import {
-  ArrowLeft, Mail, Phone, MessageCircle, Edit, MoreHorizontal,
-  Star, Building2, Copy, Download, Share2, FileText, Pencil,
-  Archive, Trash2, AlertTriangle, Clock, Calendar, User, Globe, Hash
+  ArrowLeft, Mail, Phone, MessageCircle, MoreHorizontal,
+  Star, Building2, Copy, Download, Share2, FileText, Settings,
+  Archive, Trash2, AlertTriangle, Calendar, User, Hash,
+  Shield, Lightbulb, Wrench, Palette, Store, BookOpen, Lock
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -34,25 +35,61 @@ import type { MatterV2 } from '@/hooks/use-matters-v2';
 import { WorkflowCards } from './WorkflowCards';
 import { PhasePanelContainer } from '@/components/phases';
 
-// Type configuration - colors for icon accents only
-const TYPE_CONFIG: Record<string, { label: string; icon: string; borderColor: string; textColor: string; bgLight: string; gradientFrom: string; gradientTo: string }> = {
-  TM_NAT: { label: 'Marca Nacional', icon: '®️', borderColor: 'border-cyan-300', textColor: 'text-cyan-700', bgLight: 'bg-cyan-50', gradientFrom: '#00b4d8', gradientTo: '#0891b2' },
-  TM_EU: { label: 'Marca UE', icon: '®️', borderColor: 'border-blue-300', textColor: 'text-blue-700', bgLight: 'bg-blue-50', gradientFrom: '#3b82f6', gradientTo: '#2563eb' },
-  TM_INT: { label: 'Marca Internacional', icon: '®️', borderColor: 'border-indigo-300', textColor: 'text-indigo-700', bgLight: 'bg-indigo-50', gradientFrom: '#6366f1', gradientTo: '#4f46e5' },
-  PT_NAT: { label: 'Patente Nacional', icon: '⚙️', borderColor: 'border-amber-300', textColor: 'text-amber-700', bgLight: 'bg-amber-50', gradientFrom: '#f59e0b', gradientTo: '#d97706' },
-  PT_EU: { label: 'Patente Europea', icon: '⚙️', borderColor: 'border-orange-300', textColor: 'text-orange-700', bgLight: 'bg-orange-50', gradientFrom: '#f97316', gradientTo: '#ea580c' },
-  PT_PCT: { label: 'Patente PCT', icon: '⚙️', borderColor: 'border-rose-300', textColor: 'text-rose-700', bgLight: 'bg-rose-50', gradientFrom: '#f43f5e', gradientTo: '#e11d48' },
-  UM: { label: 'Modelo Utilidad', icon: '🔧', borderColor: 'border-yellow-300', textColor: 'text-yellow-700', bgLight: 'bg-yellow-50', gradientFrom: '#eab308', gradientTo: '#ca8a04' },
-  DS_NAT: { label: 'Diseño Nacional', icon: '✏️', borderColor: 'border-pink-300', textColor: 'text-pink-700', bgLight: 'bg-pink-50', gradientFrom: '#ec4899', gradientTo: '#db2777' },
-  DS_EU: { label: 'Diseño Comunitario', icon: '✏️', borderColor: 'border-fuchsia-300', textColor: 'text-fuchsia-700', bgLight: 'bg-fuchsia-50', gradientFrom: '#d946ef', gradientTo: '#c026d3' },
-  DOM: { label: 'Dominio', icon: '🌐', borderColor: 'border-teal-300', textColor: 'text-teal-700', bgLight: 'bg-teal-50', gradientFrom: '#14b8a6', gradientTo: '#0d9488' },
-  NC: { label: 'Nombre Comercial', icon: '🏢', borderColor: 'border-emerald-300', textColor: 'text-emerald-700', bgLight: 'bg-emerald-50', gradientFrom: '#10b981', gradientTo: '#059669' },
-  OPO: { label: 'Oposición', icon: '⚖️', borderColor: 'border-red-300', textColor: 'text-red-700', bgLight: 'bg-red-50', gradientFrom: '#ef4444', gradientTo: '#dc2626' },
-  VIG: { label: 'Vigilancia', icon: '👁️', borderColor: 'border-slate-300', textColor: 'text-slate-700', bgLight: 'bg-slate-50', gradientFrom: '#64748b', gradientTo: '#475569' },
-  LIT: { label: 'Litigio', icon: '🏛️', borderColor: 'border-gray-300', textColor: 'text-gray-700', bgLight: 'bg-gray-50', gradientFrom: '#6b7280', gradientTo: '#4b5563' },
-  trademark: { label: 'Marca', icon: '®️', borderColor: 'border-cyan-300', textColor: 'text-cyan-700', bgLight: 'bg-cyan-50', gradientFrom: '#00b4d8', gradientTo: '#0891b2' },
-  patent: { label: 'Patente', icon: '⚙️', borderColor: 'border-amber-300', textColor: 'text-amber-700', bgLight: 'bg-amber-50', gradientFrom: '#f59e0b', gradientTo: '#d97706' },
-  design: { label: 'Diseño', icon: '✏️', borderColor: 'border-pink-300', textColor: 'text-pink-700', bgLight: 'bg-pink-50', gradientFrom: '#ec4899', gradientTo: '#db2777' },
+// Dynamic type configuration with Lucide icons for avatar
+const MATTER_TYPE_ICONS: Record<string, { 
+  icon: typeof Shield; 
+  gradientFrom: string; 
+  gradientTo: string; 
+  borderColor: string;
+  shadowColor: string;
+}> = {
+  // Trademarks
+  TM_NAT: { icon: Shield, gradientFrom: '#06b6d4', gradientTo: '#0891b2', borderColor: '#22d3ee', shadowColor: 'rgba(6, 182, 212, 0.4)' },
+  TM_EU: { icon: Shield, gradientFrom: '#06b6d4', gradientTo: '#0891b2', borderColor: '#22d3ee', shadowColor: 'rgba(6, 182, 212, 0.4)' },
+  TM_INT: { icon: Shield, gradientFrom: '#06b6d4', gradientTo: '#0891b2', borderColor: '#22d3ee', shadowColor: 'rgba(6, 182, 212, 0.4)' },
+  trademark: { icon: Shield, gradientFrom: '#06b6d4', gradientTo: '#0891b2', borderColor: '#22d3ee', shadowColor: 'rgba(6, 182, 212, 0.4)' },
+  // Patents
+  PT_NAT: { icon: Lightbulb, gradientFrom: '#3b82f6', gradientTo: '#2563eb', borderColor: '#60a5fa', shadowColor: 'rgba(59, 130, 246, 0.4)' },
+  PT_EU: { icon: Lightbulb, gradientFrom: '#3b82f6', gradientTo: '#2563eb', borderColor: '#60a5fa', shadowColor: 'rgba(59, 130, 246, 0.4)' },
+  PT_PCT: { icon: Lightbulb, gradientFrom: '#3b82f6', gradientTo: '#2563eb', borderColor: '#60a5fa', shadowColor: 'rgba(59, 130, 246, 0.4)' },
+  patent: { icon: Lightbulb, gradientFrom: '#3b82f6', gradientTo: '#2563eb', borderColor: '#60a5fa', shadowColor: 'rgba(59, 130, 246, 0.4)' },
+  // Utility Model
+  UM: { icon: Wrench, gradientFrom: '#8b5cf6', gradientTo: '#7c3aed', borderColor: '#a78bfa', shadowColor: 'rgba(139, 92, 246, 0.4)' },
+  utility_model: { icon: Wrench, gradientFrom: '#8b5cf6', gradientTo: '#7c3aed', borderColor: '#a78bfa', shadowColor: 'rgba(139, 92, 246, 0.4)' },
+  // Designs
+  DS_NAT: { icon: Palette, gradientFrom: '#f59e0b', gradientTo: '#d97706', borderColor: '#fbbf24', shadowColor: 'rgba(245, 158, 11, 0.4)' },
+  DS_EU: { icon: Palette, gradientFrom: '#f59e0b', gradientTo: '#d97706', borderColor: '#fbbf24', shadowColor: 'rgba(245, 158, 11, 0.4)' },
+  design: { icon: Palette, gradientFrom: '#f59e0b', gradientTo: '#d97706', borderColor: '#fbbf24', shadowColor: 'rgba(245, 158, 11, 0.4)' },
+  // Trade Name
+  NC: { icon: Store, gradientFrom: '#14b8a6', gradientTo: '#0d9488', borderColor: '#2dd4bf', shadowColor: 'rgba(20, 184, 166, 0.4)' },
+  trade_name: { icon: Store, gradientFrom: '#14b8a6', gradientTo: '#0d9488', borderColor: '#2dd4bf', shadowColor: 'rgba(20, 184, 166, 0.4)' },
+  // Copyright
+  copyright: { icon: BookOpen, gradientFrom: '#f43f5e', gradientTo: '#e11d48', borderColor: '#fb7185', shadowColor: 'rgba(244, 63, 94, 0.4)' },
+  // Trade Secret
+  trade_secret: { icon: Lock, gradientFrom: '#64748b', gradientTo: '#475569', borderColor: '#94a3b8', shadowColor: 'rgba(100, 116, 139, 0.4)' },
+  // Default
+  default: { icon: FileText, gradientFrom: '#94a3b8', gradientTo: '#64748b', borderColor: '#cbd5e1', shadowColor: 'rgba(148, 163, 184, 0.4)' },
+};
+
+// Type configuration - colors for badges
+const TYPE_CONFIG: Record<string, { label: string; borderColor: string; textColor: string; bgLight: string; gradientFrom: string; gradientTo: string }> = {
+  TM_NAT: { label: 'Marca Nacional', borderColor: 'border-cyan-300', textColor: 'text-cyan-700', bgLight: 'bg-cyan-50', gradientFrom: '#00b4d8', gradientTo: '#0891b2' },
+  TM_EU: { label: 'Marca UE', borderColor: 'border-blue-300', textColor: 'text-blue-700', bgLight: 'bg-blue-50', gradientFrom: '#3b82f6', gradientTo: '#2563eb' },
+  TM_INT: { label: 'Marca Internacional', borderColor: 'border-indigo-300', textColor: 'text-indigo-700', bgLight: 'bg-indigo-50', gradientFrom: '#6366f1', gradientTo: '#4f46e5' },
+  PT_NAT: { label: 'Patente Nacional', borderColor: 'border-amber-300', textColor: 'text-amber-700', bgLight: 'bg-amber-50', gradientFrom: '#f59e0b', gradientTo: '#d97706' },
+  PT_EU: { label: 'Patente Europea', borderColor: 'border-orange-300', textColor: 'text-orange-700', bgLight: 'bg-orange-50', gradientFrom: '#f97316', gradientTo: '#ea580c' },
+  PT_PCT: { label: 'Patente PCT', borderColor: 'border-rose-300', textColor: 'text-rose-700', bgLight: 'bg-rose-50', gradientFrom: '#f43f5e', gradientTo: '#e11d48' },
+  UM: { label: 'Modelo Utilidad', borderColor: 'border-yellow-300', textColor: 'text-yellow-700', bgLight: 'bg-yellow-50', gradientFrom: '#eab308', gradientTo: '#ca8a04' },
+  DS_NAT: { label: 'Diseño Nacional', borderColor: 'border-pink-300', textColor: 'text-pink-700', bgLight: 'bg-pink-50', gradientFrom: '#ec4899', gradientTo: '#db2777' },
+  DS_EU: { label: 'Diseño Comunitario', borderColor: 'border-fuchsia-300', textColor: 'text-fuchsia-700', bgLight: 'bg-fuchsia-50', gradientFrom: '#d946ef', gradientTo: '#c026d3' },
+  DOM: { label: 'Dominio', borderColor: 'border-teal-300', textColor: 'text-teal-700', bgLight: 'bg-teal-50', gradientFrom: '#14b8a6', gradientTo: '#0d9488' },
+  NC: { label: 'Nombre Comercial', borderColor: 'border-emerald-300', textColor: 'text-emerald-700', bgLight: 'bg-emerald-50', gradientFrom: '#10b981', gradientTo: '#059669' },
+  OPO: { label: 'Oposición', borderColor: 'border-red-300', textColor: 'text-red-700', bgLight: 'bg-red-50', gradientFrom: '#ef4444', gradientTo: '#dc2626' },
+  VIG: { label: 'Vigilancia', borderColor: 'border-slate-300', textColor: 'text-slate-700', bgLight: 'bg-slate-50', gradientFrom: '#64748b', gradientTo: '#475569' },
+  LIT: { label: 'Litigio', borderColor: 'border-gray-300', textColor: 'text-gray-700', bgLight: 'bg-gray-50', gradientFrom: '#6b7280', gradientTo: '#4b5563' },
+  trademark: { label: 'Marca', borderColor: 'border-cyan-300', textColor: 'text-cyan-700', bgLight: 'bg-cyan-50', gradientFrom: '#00b4d8', gradientTo: '#0891b2' },
+  patent: { label: 'Patente', borderColor: 'border-amber-300', textColor: 'text-amber-700', bgLight: 'bg-amber-50', gradientFrom: '#f59e0b', gradientTo: '#d97706' },
+  design: { label: 'Diseño', borderColor: 'border-pink-300', textColor: 'text-pink-700', bgLight: 'bg-pink-50', gradientFrom: '#ec4899', gradientTo: '#db2777' },
 };
 
 // Trademark type labels
@@ -178,6 +215,21 @@ export function MatterDetailHeader({
 
         {/* Quick Action Icons - Top Right */}
         <div className="flex items-center gap-1">
+          {/* Edit Matter - discrete gear icon */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => navigate(`/app/expedientes/${matter.id}/editar`)}
+                className="h-9 w-9 rounded-lg hover:bg-slate-100"
+              >
+                <Settings className="h-4.5 w-4.5 text-slate-500" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Editar expediente</TooltipContent>
+          </Tooltip>
+
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
@@ -233,25 +285,32 @@ export function MatterDetailHeader({
       <div className="px-6 py-6">
         <div className="flex items-start gap-6">
           
-          {/* Large Avatar/Logo with Phase Gradient Border */}
-          <div 
-            className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl shrink-0 shadow-lg relative overflow-hidden"
-            style={{
-              background: `linear-gradient(135deg, ${typeConfig.gradientFrom}, ${typeConfig.gradientTo})`,
-              border: `3px solid ${typeConfig.gradientFrom}`,
-            }}
-          >
-            {/* If has mark image, show it */}
-            {matter.mark_image_url ? (
-              <img 
-                src={matter.mark_image_url} 
-                alt={matter.title || 'Marca'} 
-                className="w-full h-full object-contain p-2 bg-white rounded-xl"
-              />
-            ) : (
-              <span className="filter drop-shadow-md">{typeConfig.icon}</span>
-            )}
-          </div>
+          {/* Large Avatar/Logo - Dynamic by matter type */}
+          {(() => {
+            const iconConfig = MATTER_TYPE_ICONS[matter.matter_type] || MATTER_TYPE_ICONS.default;
+            const IconComponent = iconConfig.icon;
+            return (
+              <div 
+                className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 relative"
+                style={{
+                  background: `linear-gradient(135deg, ${iconConfig.gradientFrom}, ${iconConfig.gradientTo})`,
+                  border: `3px solid ${iconConfig.borderColor}`,
+                  boxShadow: `0 8px 24px ${iconConfig.shadowColor}`,
+                }}
+              >
+                {/* If has mark image, show it */}
+                {matter.mark_image_url ? (
+                  <img 
+                    src={matter.mark_image_url} 
+                    alt={matter.title || 'Marca'} 
+                    className="w-full h-full object-contain p-1.5 bg-white rounded-xl"
+                  />
+                ) : (
+                  <IconComponent className="w-8 h-8 text-white drop-shadow-md" />
+                )}
+              </div>
+            );
+          })()}
 
           {/* Main Information */}
           <div className="flex-1 min-w-0">
@@ -358,56 +417,8 @@ export function MatterDetailHeader({
           </div>
         </div>
 
-        {/* Action Buttons Row */}
-        <div className="flex flex-wrap items-center gap-3 mt-6 pt-5 border-t border-slate-100">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onEmailClick}
-            className="border-slate-200 rounded-xl px-4 py-2 text-sm font-medium hover:bg-slate-50 hover:shadow-sm"
-          >
-            <div className="w-6 h-6 rounded-lg bg-blue-50 flex items-center justify-center mr-2">
-              <Mail className="h-3.5 w-3.5 text-blue-600" />
-            </div>
-            Email
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={onWhatsAppClick}
-            className="border-slate-200 rounded-xl px-4 py-2 text-sm font-medium hover:bg-slate-50 hover:shadow-sm"
-          >
-            <div className="w-6 h-6 rounded-lg bg-green-50 flex items-center justify-center mr-2">
-              <MessageCircle className="h-3.5 w-3.5 text-green-600" />
-            </div>
-            WhatsApp
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {/* TODO: Open document generator */}}
-            className="border-slate-200 rounded-xl px-4 py-2 text-sm font-medium hover:bg-slate-50 hover:shadow-sm"
-          >
-            <div className="w-6 h-6 rounded-lg bg-amber-50 flex items-center justify-center mr-2">
-              <FileText className="h-3.5 w-3.5 text-amber-600" />
-            </div>
-            Documento
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate(`/app/expedientes/${matter.id}/editar`)}
-            className="border-slate-200 rounded-xl px-4 py-2 text-sm font-medium hover:bg-slate-50 hover:shadow-sm"
-          >
-            <div className="w-6 h-6 rounded-lg bg-slate-100 flex items-center justify-center mr-2">
-              <Pencil className="h-3.5 w-3.5 text-slate-600" />
-            </div>
-            Editar
-          </Button>
-        </div>
+        {/* REMOVED: Email/WhatsApp/Document/Edit buttons - now accessed via Communications tab */}
+        {/* Edit action moved to top-right gear icon */}
       </div>
 
       {/* =============================================== */}
