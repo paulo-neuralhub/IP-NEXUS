@@ -64,48 +64,66 @@ type TaskRow = {
 type UrgencyLevel = "overdue" | "today" | "tomorrow" | "week" | "later";
 type FilterTab = "all" | "overdue" | "today" | "week" | "completed";
 
-// Colores de urgencia con border lateral
+// SILK: Colores de urgencia con border lateral 3px y NeoBadge style
 const URGENCY_CONFIG: Record<UrgencyLevel, { 
-  border: string; 
-  badge: string; 
+  borderColor: string;
+  badgeBg: string;
+  badgeBorder: string; 
   badgeText: string; 
-  dot: string;
+  dotColor: string;
+  shadowColor: string;
   label: string;
+  icon: string;
 }> = {
   overdue: { 
-    border: "border-l-red-500", 
-    badge: "bg-red-100 dark:bg-red-950/50", 
-    badgeText: "text-red-700 dark:text-red-400", 
-    dot: "bg-red-500",
-    label: "VENCIDA"
+    borderColor: "#ef4444",
+    badgeBg: "linear-gradient(135deg, #fef2f2 0%, white 100%)",
+    badgeBorder: "#fca5a5", 
+    badgeText: "#dc2626", 
+    dotColor: "#ef4444",
+    shadowColor: "rgba(239, 68, 68, 0.15)",
+    label: "VENCIDA",
+    icon: "🔴"
   },
   today: { 
-    border: "border-l-red-500", 
-    badge: "bg-red-100 dark:bg-red-950/50", 
-    badgeText: "text-red-700 dark:text-red-400", 
-    dot: "bg-red-500",
-    label: "HOY"
+    borderColor: "#ef4444",
+    badgeBg: "linear-gradient(135deg, #fef2f2 0%, white 100%)",
+    badgeBorder: "#fca5a5", 
+    badgeText: "#dc2626", 
+    dotColor: "#ef4444",
+    shadowColor: "rgba(239, 68, 68, 0.15)",
+    label: "HOY",
+    icon: "🔥"
   },
   tomorrow: { 
-    border: "border-l-orange-500", 
-    badge: "bg-orange-100 dark:bg-orange-950/50", 
-    badgeText: "text-orange-700 dark:text-orange-400", 
-    dot: "bg-orange-500",
-    label: "MAÑANA"
+    borderColor: "#f97316",
+    badgeBg: "linear-gradient(135deg, #fff7ed 0%, white 100%)",
+    badgeBorder: "#fdba74", 
+    badgeText: "#ea580c", 
+    dotColor: "#f97316",
+    shadowColor: "rgba(249, 115, 22, 0.15)",
+    label: "MAÑANA",
+    icon: "⚡"
   },
   week: { 
-    border: "border-l-yellow-500", 
-    badge: "bg-yellow-100 dark:bg-yellow-950/50", 
-    badgeText: "text-yellow-700 dark:text-yellow-400", 
-    dot: "bg-yellow-500",
-    label: "ESTA SEMANA"
+    borderColor: "#00b4d8",
+    badgeBg: "linear-gradient(135deg, #ecfeff 0%, white 100%)",
+    badgeBorder: "#67e8f9", 
+    badgeText: "#0891b2", 
+    dotColor: "#00b4d8",
+    shadowColor: "rgba(0, 180, 216, 0.15)",
+    label: "ESTA SEMANA",
+    icon: "📅"
   },
   later: { 
-    border: "border-l-green-500", 
-    badge: "bg-green-100 dark:bg-green-950/50", 
-    badgeText: "text-green-700 dark:text-green-400", 
-    dot: "bg-green-500",
-    label: "PRÓXIMA"
+    borderColor: "#22c55e",
+    badgeBg: "linear-gradient(135deg, #f0fdf4 0%, white 100%)",
+    badgeBorder: "#86efac", 
+    badgeText: "#16a34a", 
+    dotColor: "#22c55e",
+    shadowColor: "rgba(22, 163, 74, 0.15)",
+    label: "PRÓXIMA",
+    icon: "✅"
   },
 };
 
@@ -146,160 +164,193 @@ function TaskCard({ task, onComplete }: { task: TaskRow; onComplete: () => void 
   return (
     <div
       className={cn(
-        "bg-card border rounded-xl overflow-hidden transition-all duration-300",
-        "hover:shadow-lg hover:scale-[1.01]",
+        "rounded-xl overflow-hidden transition-all duration-300",
+        "hover:shadow-lg",
         isCompleted && "opacity-50",
         completing && "scale-95 opacity-50"
       )}
+      style={{
+        background: '#f1f4f9',
+        border: '1px solid rgba(0, 0, 0, 0.06)',
+        borderLeft: `3px solid ${config.borderColor}`,
+        boxShadow: `0 2px 8px rgba(0, 0, 0, 0.04), 0 0 0 1px ${config.shadowColor}`
+      }}
     >
-      {/* Colored Left Border */}
-      <div className={cn("border-l-4", config.border)}>
-        <div className="p-4">
-          {/* Row 1: Urgency Badge + Date */}
-          <div className="flex items-center justify-between mb-4">
-            <Badge className={cn("text-xs font-bold px-2.5 py-1", config.badge, config.badgeText)}>
-              <span className={cn("w-2 h-2 rounded-full mr-2", config.dot)} />
+      <div className="p-4">
+        {/* Row 1: Urgency Badge + Date - SILK NeoBadge style */}
+        <div className="flex items-center justify-between mb-4">
+          {/* SILK NeoBadge urgency */}
+          <div 
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border"
+            style={{
+              background: config.badgeBg,
+              borderColor: config.badgeBorder,
+              boxShadow: `0 2px 6px ${config.shadowColor}, inset 0 1px 2px rgba(255, 255, 255, 0.9)`
+            }}
+          >
+            <span className="text-xs">{config.icon}</span>
+            <span 
+              className="text-xs font-semibold uppercase tracking-wide"
+              style={{ color: config.badgeText }}
+            >
               {config.label}
-            </Badge>
-            <Badge variant="outline" className="text-xs font-mono gap-1.5">
-              <Calendar className="w-3 h-3" />
-              {dueDate ? format(dueDate, "d MMM HH:mm", { locale: es }) : "Sin fecha"}
-            </Badge>
+            </span>
           </div>
+          
+          {/* Date badge */}
+          <div 
+            className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border"
+            style={{
+              background: 'linear-gradient(135deg, #f8fafc 0%, white 100%)',
+              borderColor: '#e2e8f0',
+              boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            <Calendar className="w-3 h-3 text-slate-500" />
+            <span className="text-xs font-medium text-slate-600">
+              {dueDate ? format(dueDate, "d MMM HH:mm", { locale: es }) : "Sin fecha"}
+            </span>
+          </div>
+        </div>
 
-          {/* Row 2: Checkbox + Title */}
-          <div className="flex items-start gap-3 mb-4">
-            <Checkbox
-              checked={isCompleted}
-              onCheckedChange={handleComplete}
-              className="mt-1"
-            />
-            <div className="flex-1 min-w-0">
-              <h4 className={cn(
-                "font-semibold text-foreground leading-tight",
-                isCompleted && "line-through text-muted-foreground"
-              )}>
-                {task.title || "Tarea sin título"}
-              </h4>
+        {/* Row 2: Checkbox + Title */}
+        <div className="flex items-start gap-3 mb-4">
+          <Checkbox
+            checked={isCompleted}
+            onCheckedChange={handleComplete}
+            className="mt-1"
+          />
+          <div className="flex-1 min-w-0">
+            <h4 className={cn(
+              "font-semibold text-foreground leading-tight",
+              isCompleted && "line-through text-muted-foreground"
+            )}>
+              {task.title || "Tarea sin título"}
+            </h4>
+          </div>
+        </div>
+
+        {/* Row 3: Description */}
+        {task.description && (
+          <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground mb-4">
+            <div className="flex items-start gap-2">
+              <span className="text-muted-foreground">📝</span>
+              <p className="line-clamp-2">{task.description}</p>
             </div>
           </div>
+        )}
 
-          {/* Row 3: Description */}
-          {task.description && (
-            <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground mb-4">
-              <div className="flex items-start gap-2">
-                <span className="text-muted-foreground">📝</span>
-                <p className="line-clamp-2">{task.description}</p>
-              </div>
+        {/* Separator */}
+        <div className="h-px bg-border mb-4" />
+
+        {/* Row 4: Related Info */}
+        <div className="space-y-2 text-sm text-muted-foreground mb-4">
+          {task.account?.name && (
+            <div className="flex items-center gap-2">
+              <Building2 className="w-4 h-4 shrink-0" />
+              <span className="truncate font-medium text-foreground">{task.account.name}</span>
             </div>
           )}
+          {task.contact?.full_name && (
+            <div className="flex items-center gap-2">
+              <User className="w-4 h-4 shrink-0" />
+              <span className="truncate">{task.contact.full_name}</span>
+              {phone && (
+                <span className="text-xs text-muted-foreground">• {phone}</span>
+              )}
+            </div>
+          )}
+          {task.deal?.name && (
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4 shrink-0" />
+              <span className="truncate">{task.deal.name}</span>
+            </div>
+          )}
+        </div>
 
-          {/* Separator */}
-          <div className="h-px bg-border mb-4" />
+        {/* Separator */}
+        <div className="h-px bg-border mb-4" />
 
-          {/* Row 4: Related Info */}
-          <div className="space-y-2 text-sm text-muted-foreground mb-4">
-            {task.account?.name && (
-              <div className="flex items-center gap-2">
-                <Building2 className="w-4 h-4 shrink-0" />
-                <span className="truncate font-medium text-foreground">{task.account.name}</span>
-              </div>
-            )}
-            {task.contact?.full_name && (
-              <div className="flex items-center gap-2">
-                <User className="w-4 h-4 shrink-0" />
-                <span className="truncate">{task.contact.full_name}</span>
-                {phone && (
-                  <span className="text-xs text-muted-foreground">• {phone}</span>
-                )}
-              </div>
-            )}
-            {task.deal?.name && (
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-4 h-4 shrink-0" />
-                <span className="truncate">{task.deal.name}</span>
-              </div>
-            )}
+        {/* Row 5: Avatar + Actions */}
+        <div className="flex items-center justify-between">
+          {/* Avatar - SILK style */}
+          <div className="flex items-center gap-2">
+            <div 
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white"
+              style={{
+                background: 'linear-gradient(135deg, #00b4d8 0%, #00d4aa 100%)',
+                boxShadow: '0 2px 4px rgba(0, 180, 216, 0.3)'
+              }}
+            >
+              {task.assigned_to?.full_name 
+                ? getInitials(task.assigned_to.full_name) 
+                : "—"
+              }
+            </div>
+            <span className="text-xs text-muted-foreground truncate max-w-[100px]">
+              {task.assigned_to?.full_name || "Sin asignar"}
+            </span>
           </div>
 
-          {/* Separator */}
-          <div className="h-px bg-border mb-4" />
-
-          {/* Row 5: Avatar + Actions */}
-          <div className="flex items-center justify-between">
-            {/* Avatar */}
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-                {task.assigned_to?.full_name 
-                  ? getInitials(task.assigned_to.full_name) 
-                  : "—"
-                }
-              </div>
-              <span className="text-xs text-muted-foreground truncate max-w-[100px]">
-                {task.assigned_to?.full_name || "Sin asignar"}
-              </span>
-            </div>
-
-            {/* Actions - Iconos con COLORES */}
-            <TooltipProvider>
-              <div className="flex items-center gap-1.5">
-                {phone && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white dark:bg-blue-950/50 dark:text-blue-400 dark:hover:bg-blue-600 transition-colors"
-                      >
-                        <Phone className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Llamar</TooltipContent>
-                  </Tooltip>
-                )}
-                {phone && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-500 hover:text-white dark:bg-green-950/50 dark:text-green-400 dark:hover:bg-green-600 transition-colors"
-                      >
-                        <MessageCircle className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>WhatsApp</TooltipContent>
-                  </Tooltip>
-                )}
-                {email && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-500 hover:text-white dark:bg-purple-950/50 dark:text-purple-400 dark:hover:bg-purple-600 transition-colors"
-                      >
-                        <Mail className="w-4 h-4" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Email</TooltipContent>
-                  </Tooltip>
-                )}
+          {/* Actions - Iconos con COLORES */}
+          <TooltipProvider>
+            <div className="flex items-center gap-1.5">
+              {phone && (
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="h-8 w-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-500 hover:text-white dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-600 transition-colors"
+                      className="h-8 w-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-500 hover:text-white dark:bg-blue-950/50 dark:text-blue-400 dark:hover:bg-blue-600 transition-colors"
                     >
-                      <Edit className="w-4 h-4" />
+                      <Phone className="w-4 h-4" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Editar</TooltipContent>
+                  <TooltipContent>Llamar</TooltipContent>
                 </Tooltip>
-              </div>
-            </TooltipProvider>
-          </div>
+              )}
+              {phone && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-lg bg-green-50 text-green-600 hover:bg-green-500 hover:text-white dark:bg-green-950/50 dark:text-green-400 dark:hover:bg-green-600 transition-colors"
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>WhatsApp</TooltipContent>
+                </Tooltip>
+              )}
+              {email && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-8 w-8 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-500 hover:text-white dark:bg-purple-950/50 dark:text-purple-400 dark:hover:bg-purple-600 transition-colors"
+                    >
+                      <Mail className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>Email</TooltipContent>
+                </Tooltip>
+              )}
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-500 hover:text-white dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-600 transition-colors"
+                  >
+                    <Edit className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar</TooltipContent>
+              </Tooltip>
+            </div>
+          </TooltipProvider>
         </div>
       </div>
     </div>
