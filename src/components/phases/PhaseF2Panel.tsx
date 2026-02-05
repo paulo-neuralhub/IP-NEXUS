@@ -671,7 +671,16 @@ export function PhaseF2Panel({
           </div>
 
           {data.skipped && (
-            <Button variant="secondary" className="w-full">
+            <Button 
+              variant="secondary" 
+              className="w-full"
+              onClick={() => {
+                toast.success('Saltando a F3 sin presupuesto', {
+                  description: 'Debe cerrar este panel y avanzar manualmente a la siguiente fase.'
+                });
+              }}
+            >
+              <SkipForward className="w-4 h-4 mr-2" />
               Saltar a F3 sin presupuesto
             </Button>
           )}
