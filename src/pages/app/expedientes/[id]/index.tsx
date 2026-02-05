@@ -772,21 +772,21 @@ function TimelineEventRow({
 // Loading Skeleton
 function MatterDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-muted/30">
-      {/* Header Skeleton */}
-      <div className="bg-gradient-to-br from-blue-600 to-indigo-700 p-6">
+    <div className="min-h-screen" style={{ background: '#f1f4f9' }}>
+      {/* Header Skeleton - SILK neutral style */}
+      <div className="bg-white border-b border-slate-200 p-6">
         <div className="flex items-center gap-4 mb-6">
-          <Skeleton className="h-10 w-32 bg-white/20" />
+          <Skeleton className="h-10 w-32" />
         </div>
         <div className="flex items-start gap-6">
-          <Skeleton className="h-20 w-20 rounded-2xl bg-white/20" />
+          <Skeleton className="h-20 w-20 rounded-2xl" />
           <div className="space-y-3 flex-1">
-            <Skeleton className="h-8 w-64 bg-white/20" />
-            <Skeleton className="h-6 w-96 bg-white/20" />
-            <Skeleton className="h-4 w-48 bg-white/20" />
+            <Skeleton className="h-8 w-64" />
+            <Skeleton className="h-6 w-96" />
+            <Skeleton className="h-4 w-48" />
           </div>
         </div>
-        <Skeleton className="h-24 w-full mt-6 rounded-xl bg-white/10" />
+        <Skeleton className="h-24 w-full mt-6 rounded-xl" />
       </div>
       
       {/* Content Skeleton */}
