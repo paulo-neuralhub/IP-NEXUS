@@ -1,13 +1,11 @@
 // ============================================================
 // IP-NEXUS - SUCCESS MODAL COMPONENT
-// Celebration modal with animated check and confetti
+// Professional celebration modal with handshake badge (SILK Design)
 // ============================================================
 
-import { useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, ArrowRight, List } from 'lucide-react';
+import { ArrowRight, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import confetti from 'canvas-confetti';
 
 interface SuccessModalProps {
   isOpen: boolean;
@@ -34,45 +32,6 @@ export function SuccessModal({
   primaryAction,
   secondaryAction,
 }: SuccessModalProps) {
-  // Fire confetti when modal opens
-  const fireConfetti = useCallback(() => {
-    // Center burst
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6, x: 0.5 },
-      colors: ['#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ec4899'],
-      disableForReducedMotion: true,
-    });
-
-    // Side bursts
-    setTimeout(() => {
-      confetti({
-        particleCount: 50,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.65 },
-        colors: ['#3b82f6', '#8b5cf6', '#10b981'],
-      });
-    }, 150);
-
-    setTimeout(() => {
-      confetti({
-        particleCount: 50,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.65 },
-        colors: ['#f59e0b', '#ec4899', '#8b5cf6'],
-      });
-    }, 300);
-  }, []);
-
-  useEffect(() => {
-    if (isOpen) {
-      fireConfetti();
-    }
-  }, [isOpen, fireConfetti]);
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -94,13 +53,18 @@ export function SuccessModal({
             transition={{ type: 'spring', duration: 0.5 }}
             className="fixed left-1/2 top-1/2 z-50 -translate-x-1/2 -translate-y-1/2 w-full max-w-md"
           >
-            <div className="relative bg-card rounded-2xl shadow-2xl overflow-hidden border border-border/50">
-              {/* Top gradient decoration */}
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-purple-500 to-emerald-500" />
-              
+            <div 
+              className="relative overflow-hidden"
+              style={{
+                background: '#f1f4f9',
+                borderRadius: '20px',
+                boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+                border: '1px solid rgba(0, 0, 0, 0.06)',
+              }}
+            >
               {/* Content */}
               <div className="p-8 text-center">
-                {/* Animated Check Circle */}
+                {/* Handshake Badge - NeoBadge style */}
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
@@ -110,37 +74,45 @@ export function SuccessModal({
                     duration: 0.6,
                     bounce: 0.4 
                   }}
-                  className="relative mx-auto mb-6"
+                  className="flex justify-center mb-6"
                 >
-                  {/* Outer glow rings */}
-                  <div className="absolute inset-0 w-24 h-24 mx-auto">
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1.5, opacity: 0 }}
-                      transition={{ duration: 1, repeat: Infinity, repeatDelay: 0.5 }}
-                      className="absolute inset-0 rounded-full bg-emerald-500/30"
+                  <div
+                    className="relative inline-flex items-center justify-center overflow-hidden"
+                    style={{
+                      width: '88px',
+                      height: '88px',
+                      borderRadius: '20px',
+                      background: '#f1f4f9',
+                      boxShadow: '6px 6px 14px #cdd1dc, -6px -6px 14px #ffffff',
+                    }}
+                  >
+                    {/* Bottom gradient */}
+                    <div
+                      className="absolute bottom-0 left-0 right-0 pointer-events-none"
+                      style={{
+                        height: '45%',
+                        background: 'linear-gradient(to top, rgba(16, 185, 129, 0.08), transparent)',
+                      }}
                     />
-                    <motion.div
-                      initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1.3, opacity: 0 }}
-                      transition={{ duration: 1, delay: 0.2, repeat: Infinity, repeatDelay: 0.5 }}
-                      className="absolute inset-0 rounded-full bg-emerald-500/20"
-                    />
-                  </div>
-                  
-                  {/* Check circle */}
-                  <div className="relative w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-emerald-400 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/40">
-                    {/* Inner highlight */}
-                    <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/30 to-transparent" />
                     
-                    {/* Check mark with draw animation */}
-                    <motion.div
-                      initial={{ pathLength: 0, opacity: 0 }}
-                      animate={{ pathLength: 1, opacity: 1 }}
-                      transition={{ delay: 0.3, duration: 0.4 }}
-                    >
-                      <Check className="h-12 w-12 text-white" strokeWidth={3} />
-                    </motion.div>
+                    {/* Bottom accent line */}
+                    <div
+                      className="absolute rounded-full"
+                      style={{
+                        bottom: '6px',
+                        left: '18%',
+                        right: '18%',
+                        height: '3px',
+                        background: '#10b981',
+                        opacity: 0.35,
+                        boxShadow: '0 0 8px rgba(16, 185, 129, 0.4)',
+                      }}
+                    />
+                    
+                    {/* Handshake emoji */}
+                    <span style={{ fontSize: '42px', position: 'relative', zIndex: 10 }}>
+                      🤝
+                    </span>
                   </div>
                 </motion.div>
 
@@ -149,7 +121,12 @@ export function SuccessModal({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
-                  className="text-2xl font-bold text-foreground mb-2"
+                  style={{
+                    fontSize: '22px',
+                    fontWeight: 700,
+                    color: '#0a2540',
+                    marginBottom: '8px',
+                  }}
                 >
                   {title}
                 </motion.h2>
@@ -160,21 +137,44 @@ export function SuccessModal({
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-4"
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '8px',
+                      padding: '8px 16px',
+                      borderRadius: '10px',
+                      background: 'rgba(0, 180, 216, 0.08)',
+                      border: '1px solid rgba(0, 180, 216, 0.15)',
+                      marginBottom: '12px',
+                    }}
                   >
-                    <span className="text-sm font-mono font-medium text-primary">
+                    <span 
+                      style={{ 
+                        fontSize: '13px', 
+                        fontFamily: 'monospace', 
+                        fontWeight: 600, 
+                        color: '#00b4d8',
+                      }}
+                    >
                       {reference}
+                    </span>
+                    <span style={{ fontSize: '12px', color: '#64748b' }}>
+                      está listo para gestionar
                     </span>
                   </motion.div>
                 )}
 
                 {/* Description */}
-                {description && (
+                {description && !reference && (
                   <motion.p
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.6 }}
-                    className="text-muted-foreground mb-6"
+                    style={{
+                      fontSize: '13px',
+                      color: '#64748b',
+                      marginBottom: '20px',
+                    }}
                   >
                     {description}
                   </motion.p>
@@ -185,13 +185,19 @@ export function SuccessModal({
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
-                  className="flex flex-col sm:flex-row gap-3 justify-center"
+                  className="flex flex-col sm:flex-row gap-3 justify-center mt-6"
                 >
                   {secondaryAction && (
                     <Button
                       variant="outline"
                       onClick={secondaryAction.onClick}
                       className="order-2 sm:order-1"
+                      style={{
+                        background: 'transparent',
+                        border: '1px solid rgba(0, 0, 0, 0.1)',
+                        borderRadius: '10px',
+                        color: '#64748b',
+                      }}
                     >
                       <List className="h-4 w-4 mr-2" />
                       {secondaryAction.label}
@@ -200,10 +206,23 @@ export function SuccessModal({
                   {primaryAction && (
                     <Button
                       onClick={primaryAction.onClick}
-                      className="order-1 sm:order-2 bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-700 shadow-lg shadow-primary/30"
+                      className="order-1 sm:order-2 relative overflow-hidden group"
+                      style={{
+                        background: 'linear-gradient(135deg, #00b4d8, #00d4aa)',
+                        border: 'none',
+                        borderRadius: '10px',
+                        boxShadow: '0 4px 14px rgba(0, 180, 216, 0.35)',
+                        color: '#ffffff',
+                        fontWeight: 600,
+                      }}
                     >
+                      {/* Bottom white line */}
+                      <span
+                        className="absolute bottom-0 left-[20%] right-[20%] h-[2px] rounded-full opacity-40"
+                        style={{ background: '#ffffff' }}
+                      />
                       {primaryAction.label}
-                      <ArrowRight className="h-4 w-4 ml-2" />
+                      <ArrowRight className="h-4 w-4 ml-2 transition-transform group-hover:translate-x-1" />
                     </Button>
                   )}
                 </motion.div>
