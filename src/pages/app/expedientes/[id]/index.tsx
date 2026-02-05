@@ -55,6 +55,7 @@ import { FilingDetailModal } from '@/components/matters/FilingDetailModal';
 import { AddPartyModal } from '@/components/matters/AddPartyModal';
 import { MatterDetailHeader } from '@/components/matters/MatterDetailHeader';
 import { MatterDetailSidebar } from '@/components/matters/MatterDetailSidebar';
+import { MatterRightsInfoCard } from '@/components/matters/MatterRightsInfoCard';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useCommunication } from '@/hooks/legal-ops/useCommunications';
@@ -330,61 +331,8 @@ export default function MatterDetailPage() {
 
               {/* General Tab */}
               <TabsContent value="general" className="space-y-4">
-                {/* Right Info Card */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Tag className="h-5 w-5" />
-                      Información del Derecho
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    {matter.mark_name && (
-                      <div>
-                        <label className="text-sm font-medium text-muted-foreground">Marca</label>
-                        <p className="text-lg font-semibold">{matter.mark_name}</p>
-                      </div>
-                    )}
-                    {matter.invention_title && matter.invention_title !== matter.title && (
-                      <div>
-                        <label className="text-sm font-medium text-muted-foreground">Título de invención</label>
-                        <p className="text-lg">{matter.invention_title}</p>
-                      </div>
-                    )}
-                    {matter.nice_classes && matter.nice_classes.length > 0 && (
-                      <div>
-                        <label className="text-sm font-medium text-muted-foreground">Clases Nice</label>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {matter.nice_classes.map(c => (
-                            <Badge key={c} variant="outline">{c}</Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    {matter.goods_services && (
-                      <div>
-                        <label className="text-sm font-medium text-muted-foreground">Productos/Servicios</label>
-                        <p className="text-sm mt-1 whitespace-pre-wrap">{matter.goods_services}</p>
-                      </div>
-                    )}
-                    {matter.internal_notes && (
-                      <div>
-                        <label className="text-sm font-medium text-muted-foreground">Notas internas</label>
-                        <p className="text-sm mt-1 whitespace-pre-wrap">{matter.internal_notes}</p>
-                      </div>
-                    )}
-                    {matter.tags && matter.tags.length > 0 && (
-                      <div>
-                        <label className="text-sm font-medium text-muted-foreground">Etiquetas</label>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {matter.tags.map(tag => (
-                            <Badge key={tag} variant="secondary">{tag}</Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
+                {/* Rights Info Card - Now with trademark type support */}
+                <MatterRightsInfoCard matter={matter} />
 
                 {/* Recent Timeline Preview */}
                 <Card>

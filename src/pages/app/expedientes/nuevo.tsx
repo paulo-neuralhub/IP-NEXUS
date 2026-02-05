@@ -328,6 +328,7 @@ export default function NewMatterPage() {
                     matterTypeInfo={selectedTypeInfo}
                     jurisdictions={selectedJurisdictions}
                     previewNumber={previewNumber || undefined}
+                    trademarkType={trademarkType}
                   />
                 </motion.div>
               )}

@@ -54,6 +54,19 @@ const TYPE_CONFIG: Record<string, { label: string; icon: string; borderColor: st
   design: { label: 'Diseño', icon: '✏️', borderColor: 'border-rose-200 dark:border-rose-800', textColor: 'text-rose-600', bgLight: 'bg-rose-50 dark:bg-rose-950' },
 };
 
+// Trademark type labels
+const TRADEMARK_TYPE_LABELS: Record<string, string> = {
+  nominative: 'Nominativa',
+  figurative: 'Figurativa',
+  mixed: 'Mixta',
+  '3d': 'Tridimensional',
+  color: 'De color',
+  sound: 'Sonora',
+  olfactory: 'Olfativa',
+  motion: 'De movimiento',
+  position: 'De posición',
+};
+
 // Jurisdiction flags
 const JURISDICTION_FLAGS: Record<string, { flag: string; name: string }> = {
   ES: { flag: '🇪🇸', name: 'España' },
@@ -265,6 +278,16 @@ export function MatterDetailHeader({
               <Badge variant="secondary" className={cn("text-xs", typeConfig.bgLight, typeConfig.textColor)}>
                 {typeConfig.label}
               </Badge>
+              {/* Trademark Type Badge - Only for trademark matters */}
+              {(matter.matter_type?.startsWith('TM') || matter.matter_type === 'trademark' || matter.matter_type === 'NC') && 
+               (matter.custom_fields as any)?.trademark_type && (
+                <Badge 
+                  variant="secondary" 
+                  className="text-xs bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900/50 dark:to-purple-800/50 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-700"
+                >
+                  {TRADEMARK_TYPE_LABELS[(matter.custom_fields as any).trademark_type] || (matter.custom_fields as any).trademark_type}
+                </Badge>
+              )}
               <Badge 
                 variant={statusConfig.variant === 'success' ? 'default' : 'secondary'}
                 className={cn(

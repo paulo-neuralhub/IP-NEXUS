@@ -16,3 +16,4 @@ export { NiceClassSelectorDB } from './NiceClassSelectorDB';
 export { ClientSelector } from './ClientSelector';
 export { CreateClientDialog } from './CreateClientDialog';
 export { TrademarkTypeSelector, type TrademarkType, TRADEMARK_TYPES } from './TrademarkTypeSelector';
+export { DynamicDenominationField } from './DynamicDenominationField';

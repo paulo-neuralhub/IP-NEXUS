@@ -34,6 +34,19 @@ const TYPE_ICONS: Record<string, string> = {
   LIT: '🏛️',
 };
 
+// Trademark type labels
+const TRADEMARK_TYPE_LABELS: Record<string, string> = {
+  nominative: 'Nominativa',
+  figurative: 'Figurativa',
+  mixed: 'Mixta',
+  '3d': 'Tridimensional',
+  color: 'De color',
+  sound: 'Sonora',
+  olfactory: 'Olfativa',
+  motion: 'De movimiento',
+  position: 'De posición',
+};
+
 interface ReviewStepProps {
   formData: {
     title: string;
@@ -52,6 +65,7 @@ interface ReviewStepProps {
   matterTypeInfo?: MatterType;
   jurisdictions: string[];
   previewNumber?: string;
+  trademarkType?: string;
 }
 
 export function ReviewStep({
@@ -60,8 +74,10 @@ export function ReviewStep({
   matterTypeInfo,
   jurisdictions,
   previewNumber,
+  trademarkType,
 }: ReviewStepProps) {
   const typeIcon = TYPE_ICONS[matterType] || '📁';
+  const isTrademark = matterType?.startsWith('TM') || matterType === 'NC';
 
   return (
     <motion.div
@@ -87,8 +103,17 @@ export function ReviewStep({
               {typeIcon}
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-2 flex-wrap">
                 <Badge>{matterTypeInfo?.name_es || matterType}</Badge>
+                {/* Trademark Type Badge */}
+                {isTrademark && trademarkType && TRADEMARK_TYPE_LABELS[trademarkType] && (
+                  <Badge 
+                    variant="secondary" 
+                    className="bg-gradient-to-r from-purple-50 to-purple-100 text-purple-700 border border-purple-200"
+                  >
+                    {TRADEMARK_TYPE_LABELS[trademarkType]}
+                  </Badge>
+                )}
                 {formData.is_urgent && (
                   <Badge variant="destructive">Urgente</Badge>
                 )}

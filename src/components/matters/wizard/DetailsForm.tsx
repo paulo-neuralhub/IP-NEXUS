@@ -100,6 +100,7 @@ interface DetailsFormProps {
   jurisdiction?: string;
   previewNumber?: string;
   isGeneratingNumber?: boolean;
+  trademarkType?: string;
 }
 
 export function DetailsForm({
@@ -109,6 +110,7 @@ export function DetailsForm({
   jurisdiction,
   previewNumber,
   isGeneratingNumber,
+  trademarkType,
 }: DetailsFormProps) {
   const [showCreateClient, setShowCreateClient] = useState(false);
   const [clientSearch, setClientSearch] = useState('');
