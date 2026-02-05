@@ -185,17 +185,8 @@ export default function MatterDetailPage() {
           {/* Main Column (2/3) */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              {/* SILK Tabs - Professional style without overlap */}
-              <div 
-                className="mb-4 overflow-x-auto"
-                style={{
-                  padding: '8px 6px',
-                  borderRadius: '14px',
-                  background: '#f1f4f9',
-                  boxShadow: 'inset 2px 2px 5px #cdd1dc, inset -2px -2px 5px #ffffff',
-                }}
-              >
-                <TabsList className="bg-transparent border-0 flex flex-wrap gap-1 h-auto p-0">
+              {/* SILK Tabs - Neumorphic container */}
+              <TabsList className="mb-4 flex flex-wrap gap-1 h-auto p-2">
                   <TabsTrigger 
                     value="general" 
                     className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
@@ -327,7 +318,6 @@ export default function MatterDetailPage() {
                     )}
                   </TabsTrigger>
                 </TabsList>
-              </div>
 
               {/* General Tab */}
               <TabsContent value="general" className="space-y-4">
