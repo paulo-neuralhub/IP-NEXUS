@@ -1,13 +1,12 @@
 // =============================================
 // COMPONENTE: Header
-// Header principal con badges de módulos + Dark Mode Toggle
+// Header superior blanco vacío + header inferior azul con saludo/búsqueda/notificaciones/perfil
 // =============================================
 
 import * as React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
-import { usePageTitle } from "@/contexts/page-context";
 import { Menu, ChevronDown, Settings, LogOut, UserCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -28,64 +27,75 @@ interface HeaderProps {
   onMenuClick?: () => void;
 }
 
+// Helper para obtener saludo según hora
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Buenos días";
+  if (hour < 19) return "Buenas tardes";
+  return "Buenas noches";
+}
+
+// Helper para formatear fecha actual
+function getCurrentDate(): string {
+  const now = new Date();
+  const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  const months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  return `${days[now.getDay()]} ${now.getDate()} de ${months[now.getMonth()]} ${now.getFullYear()}`;
+}
+
 export function Header({ onMenuClick }: HeaderProps) {
   const navigate = useNavigate();
   const { profile, signOut } = useAuth();
-  const { currentOrganization } = useOrganization();
-
-  // Get plan badge text - check both plan_code and plan fields
-  const planBadge = React.useMemo(() => {
-    const org = currentOrganization as { plan_code?: string; plan?: string };
-    const planValue = org?.plan_code || org?.plan;
-    if (!planValue) return 'Free';
-    return planValue.charAt(0).toUpperCase() + planValue.slice(1);
-  }, [currentOrganization]);
 
   const handleSignOut = async () => {
     await signOut();
     navigate('/login');
   };
 
+  const userName = profile?.full_name?.split(' ')[0] || profile?.email?.split('@')[0] || 'Usuario';
+
   return (
     <TooltipProvider>
       <header className="sticky top-0 z-20 flex flex-col">
-        {/* Barra superior compacta - Solo logo IP-NEXUS */}
-        <div className="flex h-10 items-center justify-between px-4 sm:px-6 border-b border-border bg-background-card/95 backdrop-blur supports-[backdrop-filter]:bg-background-card/80 dark:bg-slate-900/95 dark:border-slate-700/50">
-          <div className="flex items-center gap-2">
-            <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-gradient-to-br from-[#00b4d8] to-[#00d4aa] text-[10px] font-bold text-white shadow-sm">
-              IP
-            </div>
-            <span className="text-sm font-bold text-foreground">IP-NEXUS</span>
-          </div>
+        {/* Barra superior - BLANCA y VACÍA */}
+        <div className="h-14 bg-white border-b border-slate-200 px-6">
+          {/* VACÍO - Logo solo en sidebar */}
           
           {/* Mobile menu button */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onMenuClick}
-            className="h-8 w-8 shrink-0 md:hidden"
-            aria-label="Abrir menú"
-          >
-            <Menu className="h-4 w-4" />
-          </Button>
+          <div className="h-full flex items-center md:hidden">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onMenuClick}
+              className="h-8 w-8 shrink-0"
+              aria-label="Abrir menú"
+            >
+              <Menu className="h-4 w-4" />
+            </Button>
+          </div>
         </div>
 
-        {/* Barra inferior azul oscuro - Con búsqueda + notificaciones + perfil */}
-        <div className="flex h-12 items-center justify-between gap-3 px-4 sm:px-6 bg-[#334155] dark:bg-slate-800">
-          {/* Lado izquierdo: Info contextual */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-white/60 hidden sm:inline">
-              {planBadge} Plan
-            </span>
+        {/* Barra inferior - AZUL OSCURO con saludo + búsqueda + notificaciones + perfil */}
+        <div className="h-12 bg-gradient-to-r from-slate-700 to-slate-600 px-6 flex items-center justify-between">
+          
+          {/* Lado izquierdo: Saludo */}
+          <div className="hidden sm:block">
+            <h2 className="text-white font-semibold text-base">
+              {getGreeting()}, {userName}
+            </h2>
+            <p className="text-slate-300 text-xs">
+              {getCurrentDate()}
+            </p>
           </div>
 
-          {/* Centro: Global Search */}
-          <div className="hidden flex-1 justify-center md:flex max-w-md mx-auto">
-            <GlobalSearchTrigger className="w-full bg-white/10 border-white/20 text-white placeholder:text-white/50" />
-          </div>
-
-          {/* Lado derecho: Mobile search + Theme + Notifications + User */}
-          <div className="flex items-center gap-1.5">
+          {/* Lado derecho: Búsqueda + Theme + Notificaciones + Perfil */}
+          <div className="flex items-center gap-3 ml-auto">
+            
+            {/* Búsqueda - Desktop */}
+            <div className="hidden md:block">
+              <GlobalSearchTrigger className="w-64 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-400 focus:border-cyan-400 focus:bg-slate-700" />
+            </div>
+            
             {/* Mobile search button */}
             <div className="md:hidden">
               <GlobalSearchTrigger variant="compact" />
@@ -94,23 +104,26 @@ export function Header({ onMenuClick }: HeaderProps) {
             {/* Dark Mode Toggle */}
             <ThemeToggle />
             
-            {/* Notifications */}
+            {/* Notificaciones */}
             <NotificationBell />
 
-            {/* User menu compacto */}
+            {/* Separador */}
+            <div className="h-6 w-px bg-slate-600 hidden sm:block" />
+
+            {/* User menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 gap-1.5 px-1.5 hover:bg-white/10">
-                  <Avatar className="h-6 w-6">
+                <Button variant="ghost" className="h-8 gap-2 px-2 hover:bg-slate-700/50">
+                  <Avatar className="h-7 w-7">
                     <AvatarImage src={profile?.avatar_url || undefined} />
-                    <AvatarFallback className="bg-gradient-to-br from-[#00b4d8] to-[#00d4aa] text-[10px] text-white">
+                    <AvatarFallback className="bg-gradient-to-br from-cyan-500 to-emerald-400 text-xs text-white font-semibold">
                       {getInitials(profile?.full_name || profile?.email || 'U')}
                     </AvatarFallback>
                   </Avatar>
-                  <span className="hidden text-xs font-medium text-white sm:inline">
-                    {profile?.full_name?.split(' ')[0] || profile?.email?.split('@')[0] || 'Usuario'}
+                  <span className="hidden text-sm font-medium text-slate-200 sm:inline">
+                    {userName}
                   </span>
-                  <ChevronDown className="h-3 w-3 text-white/60" />
+                  <ChevronDown className="h-3 w-3 text-slate-400" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-56">
@@ -135,4 +148,3 @@ export function Header({ onMenuClick }: HeaderProps) {
     </TooltipProvider>
   );
 }
-

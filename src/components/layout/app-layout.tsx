@@ -20,8 +20,7 @@ import { ModuleActivationDialog } from "@/components/modules";
 import { DemoTourNavigator, DemoScreenAnnotation } from "@/components/demo";
 import { useOrganization } from "@/contexts/organization-context";
 import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
-import { SuperAdminBar } from "@/components/super-admin";
-import { useSuperAdmin } from "@/hooks/useSuperAdmin";
+// Super Admin bar removed - not needed in header
 
 export function AppLayout() {
   const isMobile = useIsMobile();
@@ -30,8 +29,6 @@ export function AppLayout() {
   const [sidebarCollapsed, setSidebarCollapsed] = React.useState(false);
   const [annotationActive, setAnnotationActive] = React.useState(false);
   
-  // Super Admin check
-  const { isSuperAdmin } = useSuperAdmin();
   
   // Demo mode check - detectar por config O por slug "demo-*"
   const { currentOrganization } = useOrganization();
@@ -43,21 +40,17 @@ export function AppLayout() {
   // Adjust viewport height for mobile
   useViewportHeight();
   
-  // Offset for super admin bar (40px)
-  const superAdminOffset = isSuperAdmin ? 'pt-10' : '';
 
   return (
     <AuthGuard>
       <OrgGuard>
         <PageProvider>
           <ContextualHelpProvider>
-            {/* Super Admin Bar - Always on top */}
-            <SuperAdminBar />
             
             {isMobile ? (
               // Mobile Layout
               <div 
-                className={`h-screen-mobile flex flex-col bg-background overflow-hidden ${superAdminOffset}`}
+                className="h-screen-mobile flex flex-col bg-background overflow-hidden"
               >
                 {/* Offline Banner */}
                 {!isOnline && <OfflineBanner />}
@@ -120,7 +113,7 @@ export function AppLayout() {
             ) : (
               // SILK Desktop Shell
               <div 
-                className={`min-h-screen ${superAdminOffset}`}
+                className="min-h-screen"
                 style={{
                   background: 'linear-gradient(180deg, #f1f4f9, #ebeef5)',
                 }}
