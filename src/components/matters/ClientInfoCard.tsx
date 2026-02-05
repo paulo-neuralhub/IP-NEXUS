@@ -22,6 +22,7 @@ import {
 import { NeoBadge } from '@/components/ui/neo-badge';
 import { cn } from '@/lib/utils';
 import { useCRMAccount } from '@/hooks/crm/v2/accounts';
+import { toast } from 'sonner';
 
 interface ClientInfoCardProps {
   clientId: string | null;
@@ -527,7 +528,16 @@ export function ClientInfoCard({
       {/* Link to full profile */}
       <div style={{ padding: '0 16px 16px', background: '#f1f4f9' }}>
         <button
-          onClick={() => navigate(`/app/crm/accounts/${clientId}`)}
+          onClick={() => {
+            if (clientId) {
+              // Try to navigate to CRM account
+              navigate(`/app/crm/accounts/${clientId}`);
+            } else {
+              toast.info('Este cliente no tiene ficha CRM completa', {
+                description: 'Es un cliente asociado al expediente sin datos adicionales.',
+              });
+            }
+          }}
           className="w-full flex items-center justify-between py-2.5 px-3 rounded-xl transition-all hover:bg-white/80"
           style={{
             background: 'white',

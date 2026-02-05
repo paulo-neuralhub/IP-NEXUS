@@ -1,11 +1,11 @@
 // ============================================================
-// IP-NEXUS - Advance Phase Modal (L122 + PROMPT 17)
-// Premium modal for phase transitions with confirmation
+// IP-NEXUS - Advance Phase Modal (SILK Redesign)
+// Premium modal for phase transitions - NO confetti
 // ============================================================
 
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Loader2, Check, Clock, ListChecks, Bell, AlertCircle } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowRight, Loader2, Check, Clock, ListChecks } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -18,7 +18,6 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
-import confetti from 'canvas-confetti';
 import { useMatterPhase } from '@/hooks/use-workflow-phases';
 import { toast } from 'sonner';
 
@@ -36,18 +35,23 @@ const PHASE_NAMES: Record<string, string> = {
   F9: 'Seguimiento',
 };
 
-// Colores por fase
-const PHASE_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  F0: { bg: 'bg-slate-100 dark:bg-slate-800', border: 'border-slate-300', text: 'text-slate-700' },
-  F1: { bg: 'bg-blue-100 dark:bg-blue-900/30', border: 'border-blue-300', text: 'text-blue-700' },
-  F2: { bg: 'bg-amber-100 dark:bg-amber-900/30', border: 'border-amber-300', text: 'text-amber-700' },
-  F3: { bg: 'bg-green-100 dark:bg-green-900/30', border: 'border-green-300', text: 'text-green-700' },
-  F4: { bg: 'bg-cyan-100 dark:bg-cyan-900/30', border: 'border-cyan-300', text: 'text-cyan-700' },
-  F5: { bg: 'bg-indigo-100 dark:bg-indigo-900/30', border: 'border-indigo-300', text: 'text-indigo-700' },
-  F6: { bg: 'bg-violet-100 dark:bg-violet-900/30', border: 'border-violet-300', text: 'text-violet-700' },
-  F7: { bg: 'bg-purple-100 dark:bg-purple-900/30', border: 'border-purple-300', text: 'text-purple-700' },
-  F8: { bg: 'bg-pink-100 dark:bg-pink-900/30', border: 'border-pink-300', text: 'text-pink-700' },
-  F9: { bg: 'bg-emerald-100 dark:bg-emerald-900/30', border: 'border-emerald-300', text: 'text-emerald-700' },
+// SILK colors per phase
+const PHASE_COLORS: Record<string, { 
+  bgLight: string; 
+  border: string; 
+  text: string;
+  gradient: string;
+}> = {
+  F0: { bgLight: 'rgba(20, 184, 166, 0.08)', border: '#14b8a6', text: '#0d9488', gradient: 'linear-gradient(135deg, #14b8a6, #0d9488)' },
+  F1: { bgLight: 'rgba(59, 130, 246, 0.08)', border: '#3b82f6', text: '#2563eb', gradient: 'linear-gradient(135deg, #3b82f6, #2563eb)' },
+  F2: { bgLight: 'rgba(99, 102, 241, 0.08)', border: '#6366f1', text: '#4f46e5', gradient: 'linear-gradient(135deg, #6366f1, #4f46e5)' },
+  F3: { bgLight: 'rgba(168, 85, 247, 0.08)', border: '#a855f7', text: '#9333ea', gradient: 'linear-gradient(135deg, #a855f7, #9333ea)' },
+  F4: { bgLight: 'rgba(139, 92, 246, 0.08)', border: '#8b5cf6', text: '#7c3aed', gradient: 'linear-gradient(135deg, #8b5cf6, #7c3aed)' },
+  F5: { bgLight: 'rgba(217, 70, 239, 0.08)', border: '#d946ef', text: '#c026d3', gradient: 'linear-gradient(135deg, #d946ef, #c026d3)' },
+  F6: { bgLight: 'rgba(244, 63, 94, 0.08)', border: '#f43f5e', text: '#e11d48', gradient: 'linear-gradient(135deg, #f43f5e, #e11d48)' },
+  F7: { bgLight: 'rgba(245, 158, 11, 0.08)', border: '#f59e0b', text: '#d97706', gradient: 'linear-gradient(135deg, #f59e0b, #d97706)' },
+  F8: { bgLight: 'rgba(16, 185, 129, 0.08)', border: '#10b981', text: '#059669', gradient: 'linear-gradient(135deg, #10b981, #059669)' },
+  F9: { bgLight: 'rgba(20, 184, 166, 0.08)', border: '#14b8a6', text: '#0d9488', gradient: 'linear-gradient(135deg, #14b8a6, #0d9488)' },
 };
 
 function getNextPhase(currentPhase: string): string | null {
@@ -93,23 +97,30 @@ export function AdvancePhaseModal({
       },
       {
         onSuccess: () => {
-          // Celebration confetti
-          confetti({
-            particleCount: 80,
-            spread: 60,
-            origin: { y: 0.6 },
-            colors: ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b']
-          });
-          
-          // Second burst
-          setTimeout(() => {
-            confetti({
-              particleCount: 40,
-              spread: 80,
-              origin: { y: 0.7 },
-              colors: ['#3b82f6', '#10b981']
-            });
-          }, 150);
+          // Elegant toast notification instead of confetti
+          toast.success(
+            <div className="flex items-center gap-3">
+              <div 
+                className="w-8 h-8 rounded-lg flex items-center justify-center"
+                style={{ background: 'rgba(16, 185, 129, 0.1)' }}
+              >
+                <Check className="w-4 h-4 text-emerald-600" />
+              </div>
+              <div>
+                <p className="font-medium">Fase actualizada</p>
+                <p className="text-sm text-slate-500">{currentPhase} → {nextPhase}</p>
+              </div>
+            </div>,
+            {
+              duration: 3000,
+              style: {
+                background: 'white',
+                border: '1px solid rgba(16, 185, 129, 0.2)',
+                boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+                borderRadius: '12px',
+              },
+            }
+          );
           
           setNote('');
           onClose();
@@ -134,36 +145,61 @@ export function AdvancePhaseModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-              <ArrowRight className="h-4 w-4 text-primary" />
+      <DialogContent 
+        className="sm:max-w-md p-0 rounded-2xl border-0 overflow-hidden"
+        style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)' }}
+      >
+        {/* SILK Header */}
+        <div 
+          className="p-6 border-b"
+          style={{
+            background: `linear-gradient(135deg, ${nextColors.bgLight} 0%, white 100%)`,
+            borderColor: 'rgba(0, 0, 0, 0.06)',
+          }}
+        >
+          <DialogHeader>
+            <div className="flex items-center gap-3">
+              <div 
+                className="w-10 h-10 rounded-xl flex items-center justify-center"
+                style={{ 
+                  background: 'rgba(0, 180, 216, 0.1)',
+                  border: '1px solid rgba(0, 180, 216, 0.2)',
+                }}
+              >
+                <ArrowRight className="h-5 w-5" style={{ color: '#00b4d8' }} />
+              </div>
+              <div>
+                <DialogTitle style={{ color: '#0a2540', fontSize: '18px', fontWeight: 700 }}>
+                  Confirmar Avance de Fase
+                </DialogTitle>
+                <DialogDescription className="font-mono" style={{ fontSize: '12px' }}>
+                  {matterReference}
+                </DialogDescription>
+              </div>
             </div>
-            Confirmar Avance de Fase
-          </DialogTitle>
-          <DialogDescription>
-            ¿Estás seguro de avanzar el expediente <span className="font-mono font-medium text-foreground">{matterReference}</span>?
-          </DialogDescription>
-        </DialogHeader>
+          </DialogHeader>
+        </div>
 
-        <div className="space-y-4 py-4">
-          {/* Visualización del cambio de fase */}
+        <div className="p-6 space-y-5 bg-white">
+          {/* Phase transition visualization */}
           <div className="flex items-center justify-center gap-4">
             <motion.div
               initial={{ x: -10, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.1 }}
-              className={cn(
-                "px-4 py-3 rounded-xl border-2 text-center min-w-[100px]",
-                currentColors.bg,
-                currentColors.border
-              )}
+              className="px-5 py-3 rounded-xl text-center min-w-[110px]"
+              style={{
+                background: currentColors.bgLight,
+                border: `2px solid ${currentColors.border}30`,
+              }}
             >
-              <span className={cn("font-mono text-lg font-bold", currentColors.text)}>
+              <span 
+                className="font-mono text-lg font-bold block"
+                style={{ color: currentColors.text }}
+              >
                 {currentPhase}
               </span>
-              <p className="text-xs text-muted-foreground mt-0.5">
+              <p className="text-xs mt-0.5" style={{ color: '#64748b' }}>
                 {currentPhaseName}
               </p>
             </motion.div>
@@ -172,38 +208,45 @@ export function AdvancePhaseModal({
               initial={{ scale: 0, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="flex items-center justify-center"
+              className="w-10 h-10 rounded-full flex items-center justify-center"
+              style={{ 
+                background: 'linear-gradient(135deg, #00b4d8, #00d4aa)',
+                boxShadow: '0 4px 12px rgba(0, 180, 216, 0.3)',
+              }}
             >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <ArrowRight className="h-5 w-5 text-primary" />
-              </div>
+              <ArrowRight className="h-5 w-5 text-white" />
             </motion.div>
 
             <motion.div
               initial={{ x: 10, opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
               transition={{ delay: 0.3 }}
-              className={cn(
-                "px-4 py-3 rounded-xl border-2 text-center min-w-[100px] relative overflow-hidden",
-                nextColors.bg,
-                nextColors.border,
-                "ring-2 ring-primary/20"
-              )}
+              className="px-5 py-3 rounded-xl text-center min-w-[110px] relative overflow-hidden"
+              style={{
+                background: nextColors.bgLight,
+                border: `2px solid ${nextColors.border}`,
+                boxShadow: `0 4px 16px ${nextColors.border}30`,
+              }}
             >
-              {/* Shimmer effect */}
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer" />
-              <span className={cn("font-mono text-lg font-bold relative z-10", nextColors.text)}>
+              <span 
+                className="font-mono text-lg font-bold block relative z-10"
+                style={{ color: nextColors.text }}
+              >
                 {nextPhase}
               </span>
-              <p className="text-xs text-muted-foreground mt-0.5 relative z-10">
+              <p className="text-xs mt-0.5 relative z-10" style={{ color: '#64748b' }}>
                 {nextPhaseName}
               </p>
             </motion.div>
           </div>
 
-          {/* Nota opcional */}
+          {/* Note field */}
           <div className="space-y-2">
-            <Label htmlFor="advance-note" className="text-sm text-muted-foreground">
+            <Label 
+              htmlFor="advance-note" 
+              className="text-sm font-medium"
+              style={{ color: '#64748b' }}
+            >
               Nota sobre el avance (opcional)
             </Label>
             <Textarea
@@ -212,21 +255,25 @@ export function AdvancePhaseModal({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              className="resize-none"
+              className="resize-none rounded-lg border-slate-200 focus:ring-2 focus:ring-cyan-200 focus:border-cyan-400"
             />
           </div>
 
-          {/* Información */}
+          {/* Info box */}
           <motion.div 
             initial={{ y: 10, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4 }}
-            className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 space-y-2"
+            className="p-4 rounded-xl space-y-2"
+            style={{
+              background: 'rgba(59, 130, 246, 0.04)',
+              border: '1px solid rgba(59, 130, 246, 0.12)',
+            }}
           >
-            <p className="text-xs font-medium text-blue-700 dark:text-blue-300">
+            <p className="text-xs font-semibold" style={{ color: '#3b82f6' }}>
               Esta acción:
             </p>
-            <ul className="text-xs text-blue-600 dark:text-blue-400 space-y-1">
+            <ul className="text-xs space-y-1.5" style={{ color: '#2563eb' }}>
               <li className="flex items-center gap-2">
                 <Check className="h-3 w-3 shrink-0" />
                 Actualizará el estado del expediente
@@ -243,23 +290,29 @@ export function AdvancePhaseModal({
           </motion.div>
         </div>
 
-        <DialogFooter className="gap-2 sm:gap-2">
+        {/* Footer */}
+        <div 
+          className="p-6 border-t flex justify-end gap-3"
+          style={{ 
+            borderColor: 'rgba(0, 0, 0, 0.06)',
+            background: '#fafbfc',
+          }}
+        >
           <Button
             variant="outline"
             onClick={onClose}
             disabled={advancePhase.isPending}
+            className="rounded-xl border-slate-200 text-slate-600 px-6"
           >
             Cancelar
           </Button>
           <Button
             onClick={handleConfirm}
             disabled={advancePhase.isPending}
-            className={cn(
-              "gap-2",
-              "bg-gradient-to-r from-primary to-blue-600",
-              "hover:from-primary/90 hover:to-blue-600/90",
-              "shadow-lg shadow-primary/20"
-            )}
+            className="rounded-xl px-6 gap-2 text-white shadow-md"
+            style={{
+              background: 'linear-gradient(135deg, #00b4d8, #00d4aa)',
+            }}
           >
             {advancePhase.isPending ? (
               <>
@@ -273,7 +326,7 @@ export function AdvancePhaseModal({
               </>
             )}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
