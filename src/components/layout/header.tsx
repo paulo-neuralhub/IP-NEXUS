@@ -54,26 +54,22 @@ export function Header({ onMenuClick }: HeaderProps) {
 
   const userName = profile?.full_name?.split(' ')[0] || profile?.email?.split('@')[0] || 'Usuario';
 
+  // En desktop no se muestra nada - los controles están en el Dashboard
+  // Solo se muestra en móvil para el botón de menú
   return (
     <TooltipProvider>
-      {/* Header minimalista - Solo separador visual */}
-      <header className="sticky top-0 z-20 bg-white border-b border-slate-200">
+      {/* Header solo visible en móvil */}
+      <header className="sticky top-0 z-20 bg-white border-b border-slate-200 md:hidden">
         <div className="h-14 px-6 flex items-center">
-          
-          {/* Mobile menu button - Solo visible en móvil */}
-          <div className="flex items-center md:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={onMenuClick}
-              className="h-8 w-8 shrink-0"
-              aria-label="Abrir menú"
-            >
-              <Menu className="h-4 w-4" />
-            </Button>
-          </div>
-          
-          {/* En desktop está vacío - los controles están en el Dashboard */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onMenuClick}
+            className="h-8 w-8 shrink-0"
+            aria-label="Abrir menú"
+          >
+            <Menu className="h-4 w-4" />
+          </Button>
         </div>
       </header>
     </TooltipProvider>
