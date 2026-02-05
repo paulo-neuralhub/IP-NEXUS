@@ -387,29 +387,14 @@ export default function ExpedientesPage() {
             onCreateNew={() => navigate('/app/expedientes/nuevo')}
           />
         ) : viewMode === 'table' ? (
-          <div className="bg-white dark:bg-slate-900 rounded-xl border border-border/50 overflow-hidden">
-            <Table>
-              <TableHeader>
-                <TableRow className="bg-muted/30 hover:bg-muted/30">
-                  <TableHead className="w-[280px]">Marca / Título</TableHead>
-                  <TableHead className="w-[80px]">País</TableHead>
-                  <TableHead className="w-[140px]">Nº Solicitud</TableHead>
-                  <TableHead className="w-[180px]">Fase</TableHead>
-                  <TableHead className="w-[100px]">Plazo</TableHead>
-                  <TableHead className="w-[140px]">Acción</TableHead>
-                  <TableHead className="w-[40px]"></TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredMatters.map((matter) => (
-                  <MatterTableRowNew 
-                    key={matter.id} 
-                    matter={matter} 
-                    onClick={() => navigate(`/app/expedientes/${matter.id}`)}
-                  />
-                ))}
-              </TableBody>
-            </Table>
+          <div className="space-y-1.5">
+            {filteredMatters.map((matter) => (
+              <MatterListRowSilk 
+                key={matter.id} 
+                matter={matter} 
+                onClick={() => navigate(`/app/expedientes/${matter.id}`)}
+              />
+            ))}
           </div>
         ) : viewMode === 'cards' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -495,16 +480,38 @@ function UrgencyKpiCard({
 }
 
 // ============================================================
-// TABLE ROW (NIVEL DIOS)
+// LIST ROW SILK (Line-Defined Design)
 // ============================================================
 
-function MatterTableRowNew({ matter, onClick }: { 
+function MatterListRowSilk({ matter, onClick }: { 
   matter: MatterWithDeadline; 
   onClick: () => void; 
 }) {
   const typeConfig = TYPE_CONFIG[matter.matter_type] || DEFAULT_TYPE;
   const phaseConfig = PHASE_CONFIG[matter.current_phase || 'F0'] || DEFAULT_PHASE;
   const flag = FLAGS[matter.jurisdiction_code || ''] || '🌐';
+  
+  // Get color for type
+  const getTypeColor = (type: string): string => {
+    const colors: Record<string, string> = {
+      'TM_NAT': '#00b4d8',
+      'TM_EU': '#00b4d8',
+      'TM_INT': '#00b4d8',
+      'trademark': '#00b4d8',
+      'PT_NAT': '#10b981',
+      'PT_EU': '#10b981',
+      'PT_PCT': '#10b981',
+      'UM': '#10b981',
+      'patent': '#10b981',
+      'DS_NAT': '#ec4899',
+      'DS_EU': '#ec4899',
+      'design': '#ec4899',
+    };
+    return colors[type] || '#64748b';
+  };
+  
+  const typeColor = getTypeColor(matter.matter_type);
+  const isUrgent = matter.urgency_level === 'overdue' || matter.urgency_level === 'today';
   
   // Deadline display
   const getDeadlineDisplay = () => {
@@ -570,7 +577,7 @@ function MatterTableRowNew({ matter, onClick }: {
     return { 
       text: format(dueDate, 'dd/MM', { locale: es }), 
       subtext: `${days}d`, 
-      colorClass: 'text-green-600 dark:text-green-400', 
+      color: '#22c55e',
       bgClass: '',
       icon: '🟢'
     };
@@ -581,109 +588,140 @@ function MatterTableRowNew({ matter, onClick }: {
   const officialNumber = matter.application_number || matter.registration_number;
 
   return (
-    <TableRow 
+    <div 
       onClick={onClick}
-      className={cn(
-        "cursor-pointer group transition-all",
-        matter.urgency_level === 'overdue' && "bg-red-50/50 dark:bg-red-950/30",
-        matter.urgency_level === 'today' && "bg-red-50/50 dark:bg-red-950/30"
-      )}
+      className="group cursor-pointer transition-all duration-200"
+      style={{
+        padding: '14px 16px',
+        borderRadius: '14px',
+        border: '1px solid rgba(0, 0, 0, 0.06)',
+        background: '#f1f4f9',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.border = '1px solid rgba(0, 180, 216, 0.15)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.border = '1px solid rgba(0, 0, 0, 0.06)';
+      }}
     >
-      {/* MARCA / TÍTULO */}
-      <TableCell className="py-3">
-        <div className="flex items-center gap-3">
-          {/* Barra de color lateral */}
-          <div className={cn("w-1 h-12 rounded-full shrink-0", typeConfig.color)} />
-          
-          <div className="min-w-0">
-            <p className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+      <div className="flex items-center gap-4">
+        {/* Phase badge - neumorphic */}
+        <NeoBadge 
+          value={matter.current_phase || 'F0'} 
+          color={PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'} 
+          size="md" 
+        />
+        
+        {/* Main content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-3 mb-1">
+            {/* Matter name */}
+            <span 
+              className="truncate"
+              style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}
+            >
               {displayName}
-            </p>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground mt-0.5">
-              <span>{typeConfig.icon}</span>
-              <span className="truncate">{typeConfig.label}</span>
-              <span className="text-border">·</span>
-              <Building2 className="h-3 w-3 shrink-0" />
-              <span className="truncate">{matter.client_name || 'Sin cliente'}</span>
-            </div>
+            </span>
+            
+            {/* Type badge */}
+            <span 
+              style={{
+                fontSize: '9px',
+                fontWeight: 600,
+                padding: '2px 7px',
+                borderRadius: '5px',
+                background: `${typeColor}0a`,
+                color: typeColor,
+                flexShrink: 0
+              }}
+            >
+              {typeConfig.label}
+            </span>
+            
+            {/* Urgent badge */}
+            {isUrgent && (
+              <span 
+                style={{
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  padding: '2px 7px',
+                  borderRadius: '5px',
+                  background: '#ef44440a',
+                  color: '#ef4444',
+                  flexShrink: 0
+                }}
+              >
+                URGENTE
+              </span>
+            )}
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <span style={{ fontSize: '12px', color: '#64748b' }} className="truncate">
+              {matter.client_name || 'Sin cliente'}
+            </span>
+            {officialNumber && (
+              <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                {officialNumber}
+              </span>
+            )}
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+              {flag} {matter.jurisdiction_code}
+            </span>
           </div>
         </div>
-      </TableCell>
-      
-      {/* PAÍS */}
-      <TableCell className="py-3">
-        <Tooltip>
-          <TooltipTrigger>
-            <div className="flex flex-col items-center gap-0.5">
-              <span className="text-2xl leading-none">{flag}</span>
-              <span className="text-[10px] font-medium text-muted-foreground">
-                {matter.jurisdiction_code || '—'}
+        
+        {/* Deadline */}
+        {matter.next_deadline && (
+          <div 
+            style={{
+              padding: '6px 10px',
+              borderRadius: '8px',
+              background: isUrgent ? '#ef44440a' : 'rgba(0,0,0,0.04)',
+              textAlign: 'center',
+              minWidth: '60px'
+            }}
+          >
+            <div className="flex items-center justify-center gap-1">
+              {deadline.icon && <span style={{ fontSize: '10px' }}>{deadline.icon}</span>}
+              <span style={{ fontSize: '11px', fontWeight: 600, color: isUrgent ? '#ef4444' : '#64748b' }}>
+                {deadline.text}
               </span>
             </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            {matter.jurisdiction_code || 'Sin jurisdicción'}
-          </TooltipContent>
-        </Tooltip>
-      </TableCell>
-      
-      {/* Nº SOLICITUD */}
-      <TableCell className="py-3">
-        {officialNumber ? (
-          <span className="font-mono text-sm text-foreground">{officialNumber}</span>
-        ) : (
-          <span className="text-muted-foreground">—</span>
+            {deadline.subtext && (
+              <span style={{ fontSize: '9px', color: isUrgent ? '#ef4444' : '#94a3b8' }}>
+                {deadline.subtext}
+              </span>
+            )}
+          </div>
         )}
-      </TableCell>
-      
-      {/* FASE */}
-      <TableCell className="py-3">
-        <div className="flex items-center gap-3">
-          {/* Neumorphic phase badge */}
-          <NeoBadgeInline 
-            value={matter.current_phase || 'F0'}
-            color={PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}
-          />
-          
-          {/* Progress bar + label */}
-          <div className="flex-1 space-y-1">
-            <div className="relative h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div 
-                className={cn("absolute inset-y-0 left-0 rounded-full transition-all", phaseConfig.color)}
-                style={{ width: `${phaseConfig.progress}%` }}
-              />
-            </div>
-            <span className="text-xs text-muted-foreground">{phaseConfig.label}</span>
+        
+        {/* Progress */}
+        <div style={{ width: '100px' }}>
+          <div className="flex justify-between items-center mb-1">
+            <span style={{ fontSize: '9px', color: '#94a3b8' }}>{phaseConfig.label}</span>
+            <span style={{ fontSize: '9px', fontWeight: 700, color: PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b' }}>
+              {phaseConfig.progress}%
+            </span>
+          </div>
+          <div style={{ height: '4px', borderRadius: '3px', background: 'rgba(0,0,0,0.04)' }}>
+            <div 
+              style={{
+                width: `${phaseConfig.progress}%`,
+                height: '100%',
+                borderRadius: '3px',
+                background: `linear-gradient(90deg, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}, ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}88)`,
+                boxShadow: `0 0 4px ${PHASE_COLORS[matter.current_phase || 'F0'] || '#64748b'}18`
+              }}
+            />
           </div>
         </div>
-      </TableCell>
-      
-      {/* PLAZO */}
-      <TableCell className="py-3">
-        <div className={cn("inline-flex flex-col items-center px-2 py-1 rounded", deadline.bgClass)}>
-          <div className="flex items-center gap-1">
-            {deadline.icon && <span className="text-xs">{deadline.icon}</span>}
-            <span className={cn("text-sm", deadline.colorClass)}>{deadline.text}</span>
-          </div>
-          {deadline.subtext && (
-            <span className={cn("text-[10px]", deadline.colorClass)}>{deadline.subtext}</span>
-          )}
-        </div>
-      </TableCell>
-      
-      {/* ACCIÓN */}
-      <TableCell className="py-3">
-        <span className="text-sm text-muted-foreground truncate block max-w-[140px]">
-          {matter.next_deadline?.title || '—'}
-        </span>
-      </TableCell>
-      
-      {/* ACTIONS */}
-      <TableCell className="py-3">
-        <div className="flex items-center gap-1">
+        
+        {/* Actions */}
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
           <DropdownMenu>
             <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-              <Button variant="ghost" size="icon" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+              <Button variant="ghost" size="icon" className="h-8 w-8">
                 <MoreHorizontal className="h-4 w-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -701,14 +739,13 @@ function MatterTableRowNew({ matter, onClick }: {
               <DropdownMenuItem onClick={(e) => e.stopPropagation()}>
                 <Download className="h-4 w-4 mr-2" /> Exportar PDF
               </DropdownMenuItem>
-              {/* OCULTO: Funcionalidad de eliminar expedientes deshabilitada por seguridad */}
             </DropdownMenuContent>
           </DropdownMenu>
-          
-          <ChevronRight className="h-5 w-5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
         </div>
-      </TableCell>
-    </TableRow>
+        
+        <ChevronRight className="h-5 w-5 text-muted-foreground/50 group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
+      </div>
+    </div>
   );
 }
 
