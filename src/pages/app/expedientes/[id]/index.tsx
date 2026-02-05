@@ -189,7 +189,7 @@ export default function MatterDetailPage() {
               <div 
                 className="mb-4 overflow-x-auto"
                 style={{
-                  padding: '4px',
+                  padding: '8px 6px',
                   borderRadius: '14px',
                   background: '#f1f4f9',
                   boxShadow: 'inset 2px 2px 5px #cdd1dc, inset -2px -2px 5px #ffffff',
