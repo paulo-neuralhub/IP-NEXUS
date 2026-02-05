@@ -58,18 +58,62 @@ function StatCard({ label, value, icon: Icon, color }: {
   icon: React.ElementType;
   color: string;
 }) {
+  const hasValue = value !== '0 €' && value !== '€0,00' && value !== '0';
+  const isAlert = (label.toLowerCase().includes('pendiente') || label.toLowerCase().includes('vencid')) && hasValue;
+  
+  // Determine background gradient based on label
+  const getBgGradient = () => {
+    if (label.toLowerCase().includes('facturado')) return 'linear-gradient(135deg, #dbeafe 0%, #f1f4f9 100%)';
+    if (label.toLowerCase().includes('pendiente')) return 'linear-gradient(135deg, #fef3c7 0%, #f1f4f9 100%)';
+    if (label.toLowerCase().includes('cobrado')) return 'linear-gradient(135deg, #dcfce7 0%, #f1f4f9 100%)';
+    if (label.toLowerCase().includes('vencid')) return 'linear-gradient(135deg, #fee2e2 0%, #f1f4f9 100%)';
+    return '#f1f4f9';
+  };
+  
   return (
-    <div className="bg-card rounded-xl border p-4">
+    <div 
+      className="relative overflow-hidden transition-all duration-300 hover:shadow-md"
+      style={{
+        padding: '20px',
+        borderRadius: '14px',
+        border: isAlert ? `1px solid ${color}40` : '1px solid rgba(0, 0, 0, 0.06)',
+        borderLeft: isAlert ? `4px solid ${color}` : undefined,
+        background: getBgGradient(),
+      }}
+    >
       <div className="flex items-center justify-between">
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-2xl font-bold text-foreground mt-1">{value}</p>
+        <div className="flex-1">
+          <p 
+            className="text-[11px] font-semibold uppercase tracking-wider mb-2"
+            style={{ color: '#64748b' }}
+          >
+            {label}
+          </p>
+          <p 
+            style={{ 
+              fontSize: '24px', 
+              fontWeight: 800, 
+              color: hasValue ? color : '#94a3b8',
+              letterSpacing: '-0.02em',
+              textShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            }}
+          >
+            {value}
+          </p>
         </div>
         <div 
-          className="w-10 h-10 rounded-lg flex items-center justify-center"
-          style={{ backgroundColor: `${color}20` }}
+          style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '12px',
+            background: '#f1f4f9',
+            boxShadow: '6px 6px 14px #b5b9c4, -6px -6px 14px #ffffff, inset 0 2px 3px rgba(255,255,255,0.9), inset 0 -2px 3px rgba(0,0,0,0.06)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
-          <Icon className="w-5 h-5" style={{ color }} />
+          <Icon className="w-5 h-5" style={{ color: hasValue ? color : '#94a3b8' }} />
         </div>
       </div>
     </div>
@@ -378,33 +422,69 @@ export default function InvoiceListPage() {
         />
       </div>
       
-      {/* Filtros */}
+      {/* Filtros - SILK Tabs Style */}
       <div className="flex items-center gap-4">
-        <div className="flex gap-2">
+        <div 
+          className="flex gap-1 p-1"
+          style={{
+            background: '#f1f4f9',
+            borderRadius: '12px',
+            boxShadow: 'inset 2px 2px 5px #cdd1dc, inset -2px -2px 5px #ffffff',
+          }}
+        >
           <button
             onClick={() => setStatusFilter('all')}
             className={cn(
-              "px-3 py-1.5 text-sm rounded-lg transition-colors",
-              statusFilter === 'all' ? "bg-primary text-primary-foreground" : "bg-muted hover:bg-muted/80"
+              "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 relative",
+              statusFilter === 'all' 
+                ? "bg-white shadow-sm text-slate-800" 
+                : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
             )}
           >
             Todas
+            {statusFilter === 'all' && (
+              <span 
+                className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full"
+                style={{ background: 'linear-gradient(90deg, #00b4d8, #00d4aa)' }}
+              />
+            )}
           </button>
-          {(['draft', 'sent', 'paid', 'overdue'] as InvoiceStatus[]).map(status => (
-            <button
-              key={status}
-              onClick={() => setStatusFilter(status)}
-              className={cn(
-                "px-3 py-1.5 text-sm rounded-lg transition-colors",
-                statusFilter === status 
-                  ? "text-white" 
-                  : "bg-muted hover:bg-muted/80"
-              )}
-              style={statusFilter === status ? { backgroundColor: INVOICE_STATUSES[status].color } : undefined}
-            >
-              {INVOICE_STATUSES[status].label}
-            </button>
-          ))}
+          {(['draft', 'sent', 'paid', 'overdue'] as InvoiceStatus[]).map(status => {
+            const isActive = statusFilter === status;
+            const count = invoices.filter(i => i.status === status).length;
+            return (
+              <button
+                key={status}
+                onClick={() => setStatusFilter(status)}
+                className={cn(
+                  "px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 relative flex items-center gap-2",
+                  isActive 
+                    ? "bg-white shadow-sm" 
+                    : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
+                )}
+                style={isActive ? { color: INVOICE_STATUSES[status].color } : undefined}
+              >
+                {INVOICE_STATUSES[status].label}
+                {count > 0 && (
+                  <span 
+                    className="px-1.5 py-0.5 text-[10px] font-bold rounded-full"
+                    style={{
+                      background: isActive ? `${INVOICE_STATUSES[status].color}15` : '#e2e8f0',
+                      color: isActive ? INVOICE_STATUSES[status].color : '#64748b',
+                    }}
+                  >
+                    {count}
+                  </span>
+                )}
+                {isActive && (
+                  <span 
+                    className="absolute bottom-0 left-2 right-2 h-0.5 rounded-full"
+                    style={{ background: INVOICE_STATUSES[status].color }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
         
         <div className="flex-1 max-w-sm relative">
@@ -414,24 +494,31 @@ export default function InvoiceListPage() {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar por número o cliente..."
-            className="pl-10"
+            className="pl-10 rounded-lg"
           />
         </div>
       </div>
       
-      {/* Lista */}
-      <div className="border rounded-xl overflow-hidden bg-card">
+      {/* Lista - SILK Table Style */}
+      <div 
+        className="overflow-hidden"
+        style={{
+          borderRadius: '14px',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
+          background: '#f1f4f9',
+        }}
+      >
         <Table>
           <TableHeader>
-            <TableRow>
-              <TableHead>Nº Factura</TableHead>
-              <TableHead>Cliente</TableHead>
-              <TableHead>Fecha</TableHead>
-              <TableHead>Vencimiento</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="text-center">Estado</TableHead>
-              <TableHead className="text-center">Pago</TableHead>
-              <TableHead className="w-10"></TableHead>
+            <TableRow className="border-b border-slate-200/60">
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Nº Factura</TableHead>
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Cliente</TableHead>
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Fecha</TableHead>
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Vencimiento</TableHead>
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500 text-right">Total</TableHead>
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500 text-center">Estado</TableHead>
+              <TableHead className="bg-slate-50/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500 text-center">Pago</TableHead>
+              <TableHead className="bg-slate-50/80 w-10"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

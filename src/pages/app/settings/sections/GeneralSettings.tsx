@@ -2,7 +2,6 @@
 import { useState, useEffect } from 'react';
 import { useOrganization } from '@/contexts/organization-context';
 import { useOrganizationSettings, useUpdateOrganizationSettings } from '@/hooks/use-settings';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +14,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Save } from 'lucide-react';
+import { Save, Building2 } from 'lucide-react';
 
 const ORG_TYPES = [
   { value: 'law_firm', label: 'Despacho de PI' },
@@ -69,36 +68,62 @@ export default function GeneralSettings() {
 
   if (isLoading) {
     return (
-      <Card>
-        <CardHeader>
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-64" />
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <div 
+        style={{
+          padding: '24px',
+          borderRadius: '14px',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
+          background: '#f1f4f9',
+        }}
+      >
+        <Skeleton className="h-6 w-48 mb-2" />
+        <Skeleton className="h-4 w-64 mb-6" />
+        <div className="space-y-4">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-20 w-full" />
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Información General</CardTitle>
-        <CardDescription>
-          Datos básicos de tu organización
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
+    <div 
+      style={{
+        padding: '24px',
+        borderRadius: '14px',
+        border: '1px solid rgba(0, 0, 0, 0.06)',
+        background: '#f1f4f9',
+      }}
+    >
+      <div className="flex items-center gap-3 mb-6">
+        <div 
+          style={{
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            background: 'linear-gradient(135deg, #dbeafe 0%, #eff6ff 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Building2 className="h-5 w-5 text-blue-600" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-slate-800">Información General</h3>
+          <p className="text-sm text-slate-500">Datos básicos de tu organización</p>
+        </div>
+      </div>
+      
+      <div className="space-y-5">
         {/* Nombre (read-only from organization) */}
         <div className="space-y-2">
-          <Label>Nombre de la Organización</Label>
+          <Label className="text-sm font-medium text-slate-700">Nombre de la Organización</Label>
           <Input
             value={currentOrganization?.name || ''}
             disabled
-            className="bg-muted"
+            className="bg-slate-50 rounded-lg border-slate-200"
           />
           <p className="text-xs text-muted-foreground">
             Contacta con soporte para cambiar el nombre
@@ -107,12 +132,12 @@ export default function GeneralSettings() {
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label>Tipo de Organización</Label>
+            <Label className="text-sm font-medium text-slate-700">Tipo de Organización</Label>
             <Select
               value={formData.type}
               onValueChange={(v) => setFormData({ ...formData, type: v })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="rounded-lg border-slate-200">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -125,12 +150,12 @@ export default function GeneralSettings() {
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Industria</Label>
+            <Label className="text-sm font-medium text-slate-700">Industria</Label>
             <Select
               value={formData.industry}
               onValueChange={(v) => setFormData({ ...formData, industry: v })}
             >
-              <SelectTrigger>
+              <SelectTrigger className="rounded-lg border-slate-200">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -145,47 +170,51 @@ export default function GeneralSettings() {
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Descripción</Label>
+          <Label htmlFor="description" className="text-sm font-medium text-slate-700">Descripción</Label>
           <Textarea
             id="description"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
             placeholder="Describe brevemente tu organización..."
             rows={3}
+            className="rounded-lg border-slate-200"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="website">Sitio Web</Label>
+            <Label htmlFor="website" className="text-sm font-medium text-slate-700">Sitio Web</Label>
             <Input
               id="website"
               type="url"
               value={formData.website}
               onChange={(e) => setFormData({ ...formData, website: e.target.value })}
               placeholder="https://ejemplo.com"
+              className="rounded-lg border-slate-200"
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="phone">Teléfono</Label>
+            <Label htmlFor="phone" className="text-sm font-medium text-slate-700">Teléfono</Label>
             <Input
               id="phone"
               type="tel"
               value={formData.phone}
               onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
               placeholder="+34 91 123 4567"
+              className="rounded-lg border-slate-200"
             />
           </div>
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="support_email">Email de Soporte</Label>
+          <Label htmlFor="support_email" className="text-sm font-medium text-slate-700">Email de Soporte</Label>
           <Input
             id="support_email"
             type="email"
             value={formData.support_email}
             onChange={(e) => setFormData({ ...formData, support_email: e.target.value })}
             placeholder="soporte@ejemplo.com"
+            className="rounded-lg border-slate-200"
           />
         </div>
 
@@ -193,12 +222,16 @@ export default function GeneralSettings() {
           <Button 
             onClick={handleSave}
             disabled={updateMutation.isPending}
+            className="rounded-xl shadow-md"
+            style={{
+              background: 'linear-gradient(135deg, #00b4d8 0%, #00d4aa 100%)',
+            }}
           >
             <Save className="h-4 w-4 mr-2" />
             {updateMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
           </Button>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

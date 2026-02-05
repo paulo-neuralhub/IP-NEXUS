@@ -215,30 +215,72 @@ function StatCard({
   color: string;
 }) {
   const numericValue = typeof value === 'number' ? value : 0;
-  const hasValue = numericValue > 0 || (typeof value === 'string' && value !== '€0');
+  const hasValue = numericValue > 0 || (typeof value === 'string' && value !== '€0' && value !== '€0K');
+  const isAlert = (label.toLowerCase().includes('pendiente') || label.toLowerCase().includes('vencid')) && hasValue;
+  
+  // Determine background gradient based on label
+  const getBgGradient = () => {
+    if (label.toLowerCase().includes('facturado')) return 'linear-gradient(135deg, #dbeafe 0%, #f1f4f9 100%)';
+    if (label.toLowerCase().includes('pendiente')) return 'linear-gradient(135deg, #fef3c7 0%, #f1f4f9 100%)';
+    if (label.toLowerCase().includes('coste')) return 'linear-gradient(135deg, #dbeafe 0%, #f1f4f9 100%)';
+    if (label.toLowerCase().includes('renovacion')) return 'linear-gradient(135deg, #cffafe 0%, #f1f4f9 100%)';
+    return '#f1f4f9';
+  };
   
   return (
-    <Card 
-      className="border border-black/[0.06] rounded-[14px] hover:border-[rgba(0,180,216,0.15)] transition-colors"
-      style={{ background: '#f1f4f9' }}
+    <div 
+      className="relative overflow-hidden transition-all duration-300 hover:shadow-md"
+      style={{
+        padding: '20px',
+        borderRadius: '14px',
+        border: isAlert ? `1px solid ${color}40` : '1px solid rgba(0, 0, 0, 0.06)',
+        borderLeft: isAlert ? `4px solid ${color}` : undefined,
+        background: getBgGradient(),
+      }}
     >
-      <CardContent className="pt-6">
-        <div className="flex items-center gap-3">
-          <NeoBadge
-            value={value}
-            color={hasValue ? color : '#94a3b8'}
-            size="md"
-          />
-          <div>
-            <p 
-              className="text-[11px] font-semibold uppercase tracking-wide"
-              style={{ color: '#0a2540' }}
-            >
-              {label}
-            </p>
-          </div>
+      <div className="flex items-center justify-between">
+        <div className="flex-1">
+          <p 
+            className="text-[11px] font-semibold uppercase tracking-wider mb-2"
+            style={{ color: '#64748b' }}
+          >
+            {label}
+          </p>
+          <p 
+            style={{ 
+              fontSize: '24px', 
+              fontWeight: 800, 
+              color: hasValue ? color : '#94a3b8',
+              letterSpacing: '-0.02em',
+              textShadow: '0 1px 2px rgba(0,0,0,0.05)',
+            }}
+          >
+            {value}
+          </p>
         </div>
-      </CardContent>
-    </Card>
+        <div 
+          style={{
+            width: '46px',
+            height: '46px',
+            borderRadius: '12px',
+            background: '#f1f4f9',
+            boxShadow: '6px 6px 14px #b5b9c4, -6px -6px 14px #ffffff, inset 0 2px 3px rgba(255,255,255,0.9), inset 0 -2px 3px rgba(0,0,0,0.06)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <span 
+            style={{ 
+              fontSize: '16px', 
+              fontWeight: 700, 
+              color: hasValue ? color : '#94a3b8',
+            }}
+          >
+            {typeof value === 'number' ? value : '€'}
+          </span>
+        </div>
+      </div>
+    </div>
   );
 }
