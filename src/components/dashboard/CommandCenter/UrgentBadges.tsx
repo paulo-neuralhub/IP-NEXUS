@@ -77,46 +77,31 @@ export function UrgentBadges({
     <>
       {/* LED animation styles */}
       <style>{`
-        @keyframes led-pulse-glow {
+        @keyframes led-pulse {
           0%, 100% { 
             opacity: 1; 
             transform: scale(1);
-            filter: brightness(1);
           }
           50% { 
-            opacity: 0.7; 
-            transform: scale(1.03);
-            filter: brightness(1.2);
-          }
-        }
-        @keyframes led-pulse-slow {
-          0%, 100% { 
-            opacity: 0.4; 
-            transform: scale(1);
-          }
-          50% { 
-            opacity: 0.7; 
-            transform: scale(1.08);
-          }
-        }
-        @keyframes led-pulse-medium {
-          0%, 100% { 
             opacity: 0.5; 
+            transform: scale(1.02);
+          }
+        }
+        @keyframes led-ping {
+          0% { 
+            opacity: 0.6; 
             transform: scale(1);
           }
-          50% { 
-            opacity: 0.8; 
-            transform: scale(1.05);
+          100% { 
+            opacity: 0; 
+            transform: scale(1.3);
           }
         }
-        .led-glow-outer {
-          animation: led-pulse-slow 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .led-pulse {
+          animation: led-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
-        .led-glow-middle {
-          animation: led-pulse-medium 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        .led-glow-ring {
-          animation: led-pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        .led-ping {
+          animation: led-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
         }
       `}</style>
 
@@ -161,32 +146,20 @@ function UrgentBadgeCard({ badge }: { badge: UrgentBadgeData }) {
           </p>
         </div>
         
-        {/* NeoBadge con LED MEJORADO - Múltiples capas de glow */}
+        {/* NeoBadge con LED elegante SOLO en el badge */}
         <div className="relative flex-shrink-0">
-          {/* Capa 1: Glow exterior - más grande y sutil */}
+          {/* LED glow animado alrededor del badge */}
           <div 
-            className="absolute -inset-3 rounded-2xl led-glow-outer"
+            className="absolute inset-0 rounded-xl led-pulse"
+            style={{
+              background: `${badge.ledColor}20`,
+              filter: 'blur(4px)',
+            }}
+          />
+          <div 
+            className="absolute inset-0 rounded-xl led-ping"
             style={{
               background: `${badge.ledColor}15`,
-              filter: 'blur(12px)',
-            }}
-          />
-          
-          {/* Capa 2: Glow medio */}
-          <div 
-            className="absolute -inset-2 rounded-xl led-glow-middle"
-            style={{
-              background: `${badge.ledColor}25`,
-              filter: 'blur(8px)',
-            }}
-          />
-          
-          {/* Capa 3: Glow cercano */}
-          <div 
-            className="absolute -inset-1 rounded-xl led-glow-ring"
-            style={{
-              background: `${badge.ledColor}30`,
-              filter: 'blur(4px)',
             }}
           />
           
@@ -198,15 +171,8 @@ function UrgentBadgeCard({ badge }: { badge: UrgentBadgeData }) {
               height: 46,
               borderRadius: 12,
               background: '#f1f4f9',
-              boxShadow: `
-                4px 4px 10px #cdd1dc, 
-                -4px -4px 10px #ffffff,
-                0 0 8px ${badge.ledColor}60,
-                0 0 16px ${badge.ledColor}40,
-                0 0 24px ${badge.ledColor}25,
-                inset 0 0 6px ${badge.ledColor}15
-              `,
-              border: `2px solid ${badge.ledColor}50`,
+              boxShadow: '4px 4px 10px #cdd1dc, -4px -4px 10px #ffffff',
+              border: `2px solid ${badge.ledColor}30`,
             }}
           >
             {/* Gradient inferior */}
