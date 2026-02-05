@@ -245,4 +245,41 @@
   .terminal-skeleton {
     background-color: hsl(0 0% 100% / 0.05);
   }
+
+  /* ═══════════════════════════════════════════════════════════
+     SILK LED ANIMATIONS — For urgent badges
+     ═══════════════════════════════════════════════════════════ */
+  
+  @keyframes led-pulse {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.6;
+      transform: scale(1.02);
+    }
+  }
+
+  @keyframes led-ping {
+    0% {
+      opacity: 0.5;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1.15);
+    }
+  }
+
+  /* Shimmer animation for progress bars */
+  @keyframes shimmer {
+    0% { background-position: -100% 0; }
+    100% { background-position: 200% 0; }
+  }
+
+  .progress-shimmer {
+    background-size: 200% 100%;
+    animation: shimmer 2s infinite;
+  }
 }
