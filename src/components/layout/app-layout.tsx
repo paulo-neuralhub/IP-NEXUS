@@ -17,7 +17,7 @@ import { PageContainer } from "@/components/layout/PageContainer";
 import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
 import { CallManager } from "@/components/telephony/CallManager";
 import { ModuleActivationDialog } from "@/components/modules";
-import { DemoBadge, DemoTourNavigator, DemoScreenAnnotation } from "@/components/demo";
+import { DemoTourNavigator, DemoScreenAnnotation } from "@/components/demo";
 import { useOrganization } from "@/contexts/organization-context";
 import { useIsDemoMode } from "@/hooks/backoffice/useDemoMode";
 import { SuperAdminBar } from "@/components/super-admin";
@@ -106,7 +106,6 @@ export function AppLayout() {
                 {/* Demo Mode Components */}
                 {isDemoMode && (
                   <>
-                    <DemoBadge prospectCompany={config?.prospect_company} />
                     <DemoTourNavigator 
                       onToggleAnnotation={() => setAnnotationActive(v => !v)}
                       isAnnotationActive={annotationActive}
@@ -165,7 +164,6 @@ export function AppLayout() {
                 {/* Demo Mode Components */}
                 {isDemoMode && (
                   <>
-                    <DemoBadge prospectCompany={config?.prospect_company} />
                     <DemoTourNavigator 
                       onToggleAnnotation={() => setAnnotationActive(v => !v)}
                       isAnnotationActive={annotationActive}
