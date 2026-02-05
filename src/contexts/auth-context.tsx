@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useRef, ReactNode } from "react";
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -31,33 +31,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const isMountedRef = useRef(true);
 
   // Fetch user profile from public.users table
-  const fetchProfile = async (userId: string) => {
-    const { data, error } = await supabase
-      .from("users")
-      .select("*")
-      .eq("id", userId)
-      .maybeSingle();
+  const fetchProfile = async (userId: string, signal?: AbortSignal): Promise<UserProfile | null> => {
+    try {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", userId)
+        .abortSignal(signal as AbortSignal)
+        .maybeSingle();
 
-    if (error) {
-      console.error("Error fetching profile:", error);
+      if (error) {
+        // Ignore AbortError - expected during hot-reload/unmount
+        if (error.message?.includes('AbortError') || error.code === 'ABORT_ERR') {
+          return null;
+        }
+        console.error("Error fetching profile:", error);
+        return null;
+      }
+      return data as UserProfile | null;
+    } catch (err) {
+      // Ignore abort errors
+      if (err instanceof Error && err.name === 'AbortError') {
+        return null;
+      }
+      console.error("Error fetching profile:", err);
       return null;
     }
-    return data as UserProfile | null;
   };
 
   useEffect(() => {
+    isMountedRef.current = true;
+    const abortController = new AbortController();
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
+        if (!isMountedRef.current) return;
+        
         setSession(session);
         setUser(session?.user ?? null);
 
         // Defer profile fetch with setTimeout to avoid deadlock
         if (session?.user) {
           setTimeout(() => {
-            fetchProfile(session.user.id).then(setProfile);
+            if (isMountedRef.current) {
+              fetchProfile(session.user.id).then(p => {
+                if (isMountedRef.current) setProfile(p);
+              });
+            }
           }, 0);
         } else {
           setProfile(null);
@@ -71,20 +95,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     // THEN check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!isMountedRef.current) return;
+      
       setSession(session);
       setUser(session?.user ?? null);
       
       if (session?.user) {
-        fetchProfile(session.user.id).then((p) => {
+        fetchProfile(session.user.id, abortController.signal).then((p) => {
+          if (!isMountedRef.current) return;
           setProfile(p);
           setIsLoading(false);
+        }).catch(() => {
+          if (isMountedRef.current) setIsLoading(false);
         });
       } else {
         setIsLoading(false);
       }
+    }).catch(() => {
+      if (isMountedRef.current) setIsLoading(false);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMountedRef.current = false;
+      abortController.abort();
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
