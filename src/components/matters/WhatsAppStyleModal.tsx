@@ -232,7 +232,7 @@ export function WhatsAppStyleModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden max-h-[85vh]">
+      <DialogContent className="sm:max-w-lg p-0 gap-0 overflow-hidden max-h-[85vh] [&>button]:hidden">
         {/* WhatsApp Header - Dark Green */}
         <div className="flex items-center gap-3 px-3 py-2" style={{ background: '#075e54' }}>
           <Button 
@@ -380,13 +380,13 @@ export function WhatsAppStyleModal({
         </ScrollArea>
 
         {/* Input area - WhatsApp style */}
-        <div className="p-2" style={{ background: '#f0f2f5' }}>
-          <div className="flex items-end gap-1.5">
+        <div className="px-2 py-2" style={{ background: '#f0f2f5' }}>
+          <div className="flex items-center gap-1">
             {/* Emoji button */}
             <Button 
               variant="ghost" 
               size="icon" 
-              className="shrink-0 h-10 w-10 text-slate-500 hover:text-slate-700 rounded-full"
+              className="shrink-0 h-9 w-9 text-[#54656f] hover:text-[#3b4a54] hover:bg-transparent rounded-full"
             >
               <Smile className="h-6 w-6" />
             </Button>
@@ -397,7 +397,7 @@ export function WhatsAppStyleModal({
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="shrink-0 h-10 w-10 text-slate-500 hover:text-slate-700 rounded-full"
+                  className="shrink-0 h-9 w-9 text-[#54656f] hover:text-[#3b4a54] hover:bg-transparent rounded-full"
                 >
                   <FileText className="h-5 w-5" />
                 </Button>
@@ -418,34 +418,37 @@ export function WhatsAppStyleModal({
               </PopoverContent>
             </Popover>
 
-            {/* Message input */}
-            <div className="flex-1 relative">
-              <Textarea
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                onKeyPress={handleKeyPress}
-                placeholder="Escribe un mensaje"
-                className="min-h-[40px] max-h-24 resize-none rounded-3xl pr-10 py-2.5 pl-4 bg-white border-0 shadow-sm text-[14px]"
-                rows={1}
-              />
-            </div>
-
             {/* Attach button */}
             <Button 
               variant="ghost" 
               size="icon" 
-              className="shrink-0 h-10 w-10 text-slate-500 hover:text-slate-700 rounded-full"
+              className="shrink-0 h-9 w-9 text-[#54656f] hover:text-[#3b4a54] hover:bg-transparent rounded-full"
             >
               <Paperclip className="h-5 w-5" />
             </Button>
+
+            {/* Message input - WhatsApp style rounded field */}
+            <div className="flex-1">
+              <input
+                type="text"
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                placeholder="Escribe un mensaje"
+                className="w-full h-[42px] rounded-[21px] px-4 bg-white border-0 text-[15px] text-[#3b4a54] placeholder:text-[#8696a0] focus:outline-none"
+                style={{
+                  boxShadow: 'inset 0 0 0 1px rgba(0,0,0,0.08)',
+                }}
+              />
+            </div>
 
             {/* Send button - WhatsApp green circle */}
             <Button
               size="icon"
               className={cn(
-                "shrink-0 rounded-full h-10 w-10 transition-colors shadow-md",
+                "shrink-0 rounded-full h-[42px] w-[42px] transition-colors ml-1",
                 message.trim()
-                  ? "bg-[#00a884] hover:bg-[#008f72]"
+                  ? "bg-[#00a884] hover:bg-[#008f72] shadow-sm"
                   : "bg-[#00a884] opacity-50"
               )}
               onClick={handleSend}

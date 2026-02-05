@@ -225,7 +225,7 @@ export function PhasePanelContainer({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
-        className="max-w-4xl max-h-[90vh] overflow-hidden p-0 rounded-2xl border-0"
+        className="max-w-4xl max-h-[90vh] overflow-hidden p-0 rounded-2xl border-0 [&>button]:hidden"
         style={{
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         }}
