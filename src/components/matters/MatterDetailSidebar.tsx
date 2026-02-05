@@ -130,40 +130,57 @@ export function MatterDetailSidebar({
         <div className="space-y-3">
           {alertas.map((alerta, index) => {
             const isError = alerta.type === 'error';
-            const gradientColor = isError ? '239, 68, 68' : '245, 158, 11';
-            const borderColor = isError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(245, 158, 11, 0.08)';
+            const accentColor = isError ? '#ef4444' : '#f59e0b';
             
             return (
               <div
                 key={index}
                 className="flex items-start gap-3"
                 style={{
-                  padding: '11px 16px',
-                  borderRadius: '12px',
-                  background: `linear-gradient(135deg, rgba(${gradientColor}, 0.04), rgba(${gradientColor}, 0.02))`,
-                  border: `1px solid ${borderColor}`
+                  padding: '14px 16px',
+                  borderRadius: '14px',
+                  background: '#f1f4f9',
+                  border: '1px solid rgba(0, 0, 0, 0.06)',
+                  borderLeft: `3px solid ${accentColor}`,
                 }}
               >
-                <span style={{ fontSize: '15px', marginTop: '1px' }}>
-                  {isError ? '🚨' : '⚠️'}
-                </span>
+                {/* Icon in SILK square */}
+                <div 
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    background: `linear-gradient(135deg, ${accentColor}15, ${accentColor}08)`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0
+                  }}
+                >
+                  <span style={{ fontSize: '14px' }}>
+                    {isError ? '🚨' : '⚠️'}
+                  </span>
+                </div>
+                
                 <div className="flex-1 min-w-0">
-                  <p style={{ fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '2px' }}>
+                  <p style={{ fontSize: '12px', fontWeight: 700, color: '#0a2540', marginBottom: '3px' }}>
                     {alerta.title}
                   </p>
-                  <p style={{ fontSize: '11px', color: '#64748b' }}>
+                  <p style={{ fontSize: '11px', color: '#64748b', lineHeight: 1.4 }}>
                     {alerta.description}
                   </p>
                   {alerta.action && (
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="h-auto p-0 mt-1"
-                      style={{ fontSize: '11px', color: isError ? '#dc2626' : '#d97706' }}
+                    <button
+                      className="mt-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all hover:opacity-80"
+                      style={{ 
+                        background: `${accentColor}12`,
+                        color: accentColor,
+                        border: `1px solid ${accentColor}20`
+                      }}
                       onClick={alerta.action.onClick}
                     >
                       {alerta.action.label}
-                    </Button>
+                    </button>
                   )}
                 </div>
               </div>
@@ -290,11 +307,11 @@ export function MatterDetailSidebar({
                     onClick={onCallClick}
                     className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all"
                     style={{
-                      background: 'rgba(139, 92, 246, 0.08)',
-                      border: '1px solid rgba(139, 92, 246, 0.12)',
+                      background: 'rgba(0, 180, 216, 0.08)',
+                      border: '1px solid rgba(0, 180, 216, 0.12)',
                       fontSize: '11px',
                       fontWeight: 600,
-                      color: '#8b5cf6'
+                      color: '#00b4d8'
                     }}
                   >
                     <Phone className="h-3.5 w-3.5" />

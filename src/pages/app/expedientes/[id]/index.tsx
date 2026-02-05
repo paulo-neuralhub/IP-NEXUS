@@ -184,69 +184,149 @@ export default function MatterDetailPage() {
           {/* Main Column (2/3) */}
           <div className="lg:col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="mb-4 flex-wrap bg-background border">
-                <TabsTrigger value="general" className="gap-2">
-                  <FileText className="h-4 w-4" />
-                  General
-                </TabsTrigger>
-                <TabsTrigger value="filings" className="gap-2">
-                  <Building2 className="h-4 w-4" />
-                  Presentaciones
-                  {filings && filings.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {filings.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="parties" className="gap-2">
-                  <Users className="h-4 w-4" />
-                  Partes
-                  {parties && parties.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {parties.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-                <TabsTrigger value="documents" className="gap-2">
-                  <FolderOpen className="h-4 w-4" />
-                  Documentos
-                  {stats?.documentos ? (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {stats.documentos}
-                    </Badge>
-                  ) : null}
-                </TabsTrigger>
-                <TabsTrigger value="deadlines" className="gap-2">
-                  <Calendar className="h-4 w-4" />
-                  Plazos
-                </TabsTrigger>
-                <TabsTrigger value="communications" className="gap-2">
-                  <Mail className="h-4 w-4" />
-                  Comunicaciones
-                </TabsTrigger>
-                <TabsTrigger value="tasks" className="gap-2">
-                  <CheckSquare className="h-4 w-4" />
-                  Tareas
-                  {stats?.tareasPendientes ? (
-                    <Badge variant="destructive" className="ml-1 h-5 px-1.5 text-xs">
-                      {stats.tareasPendientes}
-                    </Badge>
-                  ) : null}
-                </TabsTrigger>
-                <TabsTrigger value="invoices" className="gap-2">
-                  <Receipt className="h-4 w-4" />
-                  Facturas
-                </TabsTrigger>
-                <TabsTrigger value="timeline" className="gap-2">
-                  <History className="h-4 w-4" />
-                  Timeline
-                  {timeline && timeline.length > 0 && (
-                    <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-xs">
-                      {timeline.length}
-                    </Badge>
-                  )}
-                </TabsTrigger>
-              </TabsList>
+              {/* SILK Tabs - Professional style without overlap */}
+              <div 
+                className="mb-4 overflow-x-auto"
+                style={{
+                  padding: '4px',
+                  borderRadius: '14px',
+                  background: '#f1f4f9',
+                  boxShadow: 'inset 2px 2px 5px #cdd1dc, inset -2px -2px 5px #ffffff',
+                }}
+              >
+                <TabsList className="bg-transparent border-0 flex flex-wrap gap-1 h-auto p-0">
+                  <TabsTrigger 
+                    value="general" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <FileText className="h-4 w-4" />
+                    General
+                    <span 
+                      className="absolute bottom-1 left-1/3 right-1/3 h-0.5 rounded-full data-[state=active]:opacity-100 opacity-0" 
+                      style={{ 
+                        background: 'linear-gradient(90deg, #00b4d8, #00d4aa)',
+                        display: activeTab === 'general' ? 'block' : 'none'
+                      }} 
+                    />
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="filings" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <Building2 className="h-4 w-4" />
+                    Presentaciones
+                    {filings && filings.length > 0 && (
+                      <span 
+                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
+                        style={{ 
+                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
+                          color: '#64748b',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
+                        }}
+                      >
+                        {filings.length}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="parties" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <Users className="h-4 w-4" />
+                    Partes
+                    {parties && parties.length > 0 && (
+                      <span 
+                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
+                        style={{ 
+                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
+                          color: '#64748b',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
+                        }}
+                      >
+                        {parties.length}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="documents" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <FolderOpen className="h-4 w-4" />
+                    Documentos
+                    {stats?.documentos ? (
+                      <span 
+                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
+                        style={{ 
+                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
+                          color: '#64748b',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
+                        }}
+                      >
+                        {stats.documentos}
+                      </span>
+                    ) : null}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="deadlines" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <Calendar className="h-4 w-4" />
+                    Plazos
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="communications" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <Mail className="h-4 w-4" />
+                    Comunicaciones
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="tasks" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <CheckSquare className="h-4 w-4" />
+                    Tareas
+                    {stats?.tareasPendientes ? (
+                      <span 
+                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-bold rounded-full flex items-center justify-center"
+                        style={{ 
+                          background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                          color: 'white',
+                          boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)'
+                        }}
+                      >
+                        {stats.tareasPendientes}
+                      </span>
+                    ) : null}
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="invoices" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <Receipt className="h-4 w-4" />
+                    Facturas
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="timeline" 
+                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
+                  >
+                    <History className="h-4 w-4" />
+                    Timeline
+                    {timeline && timeline.length > 0 && (
+                      <span 
+                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
+                        style={{ 
+                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
+                          color: '#64748b',
+                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
+                        }}
+                      >
+                        {timeline.length}
+                      </span>
+                    )}
+                  </TabsTrigger>
+                </TabsList>
+              </div>
 
               {/* General Tab */}
               <TabsContent value="general" className="space-y-4">
