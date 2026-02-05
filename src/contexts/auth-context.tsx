@@ -36,12 +36,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Fetch user profile from public.users table
   const fetchProfile = async (userId: string, signal?: AbortSignal): Promise<UserProfile | null> => {
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from("users")
         .select("*")
-        .eq("id", userId)
-        .abortSignal(signal as AbortSignal)
-        .maybeSingle();
+        .eq("id", userId);
+
+      // Only attach abort signal when provided (avoids edge cases with undefined).
+      if (signal) {
+        query = query.abortSignal(signal);
+      }
+
+      const { data, error } = await query.maybeSingle();
 
       if (error) {
         // Ignore AbortError - expected during hot-reload/unmount
@@ -62,11 +67,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const getSessionWithTimeout = async (timeoutMs: number) => {
+    return await Promise.race([
+      supabase.auth.getSession(),
+      new Promise<{ data: { session: Session | null } }>((_, reject) => {
+        setTimeout(() => reject(new Error("getSession timeout")), timeoutMs);
+      }),
+    ]);
+  };
+
   useEffect(() => {
     isMountedRef.current = true;
     const abortController = new AbortController();
 
-    // Set up auth state listener FIRST
+    // Listener for ongoing auth changes (does NOT control isLoading)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (!isMountedRef.current) return;
@@ -74,46 +88,46 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setSession(session);
         setUser(session?.user ?? null);
 
-        // Defer profile fetch with setTimeout to avoid deadlock
+        // Fire-and-forget: update profile without affecting loading state
         if (session?.user) {
-          setTimeout(() => {
-            if (isMountedRef.current) {
-              fetchProfile(session.user.id).then(p => {
-                if (isMountedRef.current) setProfile(p);
-              });
-            }
-          }, 0);
-        } else {
-          setProfile(null);
+          fetchProfile(session.user.id).then((p) => {
+            if (isMountedRef.current) setProfile(p);
+          });
+          return;
         }
 
-        if (event === "SIGNED_OUT") {
-          setProfile(null);
-        }
+        if (event === "SIGNED_OUT") setProfile(null);
       }
     );
 
-    // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!isMountedRef.current) return;
-      
-      setSession(session);
-      setUser(session?.user ?? null);
-      
-      if (session?.user) {
-        fetchProfile(session.user.id, abortController.signal).then((p) => {
+    // Initial load (controls isLoading)
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await getSessionWithTimeout(8000);
+        if (!isMountedRef.current) return;
+
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          const p = await fetchProfile(session.user.id, abortController.signal);
           if (!isMountedRef.current) return;
           setProfile(p);
-          setIsLoading(false);
-        }).catch(() => {
-          if (isMountedRef.current) setIsLoading(false);
-        });
-      } else {
-        setIsLoading(false);
+        } else {
+          setProfile(null);
+        }
+      } catch {
+        // If we can't load session (bad jwt, timeout, etc.), fall back to logged-out state.
+        if (!isMountedRef.current) return;
+        setSession(null);
+        setUser(null);
+        setProfile(null);
+      } finally {
+        if (isMountedRef.current) setIsLoading(false);
       }
-    }).catch(() => {
-      if (isMountedRef.current) setIsLoading(false);
-    });
+    };
+
+    initializeAuth();
 
     return () => {
       isMountedRef.current = false;
