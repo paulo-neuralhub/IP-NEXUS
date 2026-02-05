@@ -1,6 +1,6 @@
 // ============================================================
-// IP-NEXUS - Matter Detail Sidebar (L123 Redesign)
-// Sidebar with alerts, client actions, dates, billing
+// IP-NEXUS - Matter Detail Sidebar (SILK Design System)
+// Neumorphic sidebar with client card + insight banners
 // ============================================================
 
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
 import {
   Tooltip,
@@ -125,54 +124,42 @@ export function MatterDetailSidebar({
     <div className="space-y-4">
       
       {/* ======================================= */}
-      {/* ALERTS */}
+      {/* ALERTS - SILK Insight Banners */}
       {/* ======================================= */}
       {alertas.length > 0 && (
-        <Card className="border-amber-200 dark:border-amber-800 bg-amber-50/50 dark:bg-amber-950/20">
-          <CardHeader className="pb-2">
-            <CardTitle className="flex items-center justify-between text-base">
-              <span className="flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4 text-amber-600" />
-                Alertas
-              </span>
-              <Badge variant="secondary" className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300">
-                {alertas.length}
-              </Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {alertas.map((alerta, index) => (
+        <div className="space-y-3">
+          {alertas.map((alerta, index) => {
+            const isError = alerta.type === 'error';
+            const gradientColor = isError ? '239, 68, 68' : '245, 158, 11';
+            const borderColor = isError ? 'rgba(239, 68, 68, 0.12)' : 'rgba(245, 158, 11, 0.08)';
+            
+            return (
               <div
                 key={index}
-                className={cn(
-                  "flex gap-3 p-2.5 rounded-lg",
-                  alerta.type === 'error' 
-                    ? "bg-red-100/80 dark:bg-red-900/30" 
-                    : "bg-amber-100/80 dark:bg-amber-900/30"
-                )}
+                className="flex items-start gap-3"
+                style={{
+                  padding: '11px 16px',
+                  borderRadius: '12px',
+                  background: `linear-gradient(135deg, rgba(${gradientColor}, 0.04), rgba(${gradientColor}, 0.02))`,
+                  border: `1px solid ${borderColor}`
+                }}
               >
-                <div className="shrink-0 mt-0.5">
-                  {alerta.type === 'error' ? (
-                    <XCircle className="h-4 w-4 text-red-600" />
-                  ) : (
-                    <AlertTriangle className="h-4 w-4 text-amber-600" />
-                  )}
-                </div>
+                <span style={{ fontSize: '15px', marginTop: '1px' }}>
+                  {isError ? '🚨' : '⚠️'}
+                </span>
                 <div className="flex-1 min-w-0">
-                  <p className={cn(
-                    "text-sm font-medium",
-                    alerta.type === 'error' ? "text-red-800 dark:text-red-200" : "text-amber-800 dark:text-amber-200"
-                  )}>
+                  <p style={{ fontSize: '12px', fontWeight: 600, color: '#334155', marginBottom: '2px' }}>
                     {alerta.title}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
+                  <p style={{ fontSize: '11px', color: '#64748b' }}>
                     {alerta.description}
                   </p>
                   {alerta.action && (
                     <Button
                       variant="link"
                       size="sm"
-                      className="h-auto p-0 text-xs mt-1"
+                      className="h-auto p-0 mt-1"
+                      style={{ fontSize: '11px', color: isError ? '#dc2626' : '#d97706' }}
                       onClick={alerta.action.onClick}
                     >
                       {alerta.action.label}
@@ -180,148 +167,188 @@ export function MatterDetailSidebar({
                   )}
                 </div>
               </div>
-            ))}
-          </CardContent>
-        </Card>
+            );
+          })}
+        </div>
       )}
 
       {/* ======================================= */}
-      {/* CLIENT */}
+      {/* CLIENT - SILK Card */}
       {/* ======================================= */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Building2 className="h-4 w-4 text-blue-500" />
-            Cliente
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {matter.client_id && matter.client_name ? (
-            <div className="space-y-3">
-              {/* Client info */}
-              <div className="flex items-start gap-3">
-                <Avatar className="h-12 w-12 shrink-0">
-                  <AvatarFallback className="bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 text-sm font-semibold">
-                    {matter.client_name.substring(0, 2).toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate">{matter.client_name}</p>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    {matter.is_urgent && (
-                      <Badge variant="secondary" className="bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 text-[10px] px-1.5 py-0">
-                        <Star className="h-2.5 w-2.5 mr-0.5 fill-current" />
-                        VIP
-                      </Badge>
-                    )}
-                    <span className="text-xs text-muted-foreground">
-                      Desde {format(new Date(matter.created_at), 'yyyy')}
-                    </span>
-                  </div>
+      <div 
+        style={{
+          padding: '20px',
+          borderRadius: '14px',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
+          background: '#f1f4f9'
+        }}
+      >
+        {matter.client_id && matter.client_name ? (
+          <>
+            {/* Corporate badge */}
+            <div 
+              className="flex items-center gap-2 mb-4"
+              style={{
+                padding: '7px 10px',
+                borderRadius: '8px',
+                background: 'rgba(0, 180, 216, 0.06)',
+                border: '1px solid rgba(0, 180, 216, 0.1)'
+              }}
+            >
+              <div 
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '50%',
+                  background: '#00b4d8',
+                  boxShadow: '0 0 8px rgba(0, 180, 216, 0.5)'
+                }}
+              />
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#00b4d8' }}>
+                {matter.is_urgent ? 'Cliente VIP' : 'Cliente Corporativo'}
+              </span>
+            </div>
+            
+            {/* Client name */}
+            <h3 style={{ 
+              fontSize: '17px', 
+              fontWeight: 700, 
+              color: '#0a2540',
+              marginBottom: '12px'
+            }}>
+              {matter.client_name}
+            </h3>
+            
+            {/* Client data */}
+            <div style={{ fontSize: '12px', color: '#64748b', lineHeight: 1.8 }}>
+              {matter.client_email && (
+                <div className="flex items-center gap-2 mb-1">
+                  <span style={{ color: '#94a3b8' }}>✉️</span>
+                  <span className="truncate">{matter.client_email}</span>
                 </div>
+              )}
+              {matter.client_phone && (
+                <div className="flex items-center gap-2 mb-1">
+                  <span style={{ color: '#94a3b8' }}>📞</span>
+                  <span>{matter.client_phone}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <span style={{ color: '#94a3b8' }}>📅</span>
+                <span>Cliente desde {format(new Date(matter.created_at), 'yyyy')}</span>
               </div>
-
-              {/* Contact info */}
-              <div className="space-y-1.5 text-sm">
-                {matter.client_email && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Mail className="h-3.5 w-3.5 shrink-0" />
-                    <span className="truncate">{matter.client_email}</span>
-                  </div>
-                )}
-                {matter.client_phone && (
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Phone className="h-3.5 w-3.5 shrink-0" />
-                    <span>{matter.client_phone}</span>
-                  </div>
-                )}
-              </div>
-
-              <Separator />
-
-              {/* Action buttons */}
-              <div className="flex gap-2">
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 h-9"
-                      onClick={onEmailClick}
-                    >
-                      <Mail className="h-4 w-4 mr-1.5 text-blue-500" />
-                      Email
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Enviar email</TooltipContent>
-                </Tooltip>
-
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 h-9"
-                      onClick={onWhatsAppClick}
-                    >
-                      <MessageCircle className="h-4 w-4 mr-1.5 text-green-500" />
-                      WA
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Enviar WhatsApp</TooltipContent>
-                </Tooltip>
-
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 h-9"
-                      onClick={onCallClick}
-                    >
-                      <Phone className="h-4 w-4 mr-1.5 text-purple-500" />
-                      Llamar
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Llamar al cliente</TooltipContent>
-                </Tooltip>
-              </div>
-
-              {/* Link to client */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="w-full justify-between h-8 text-muted-foreground hover:text-foreground"
-                onClick={() => navigate(`/app/crm/clients/${matter.client_id}`)}
-              >
-                Ver ficha completa
-                <ChevronRight className="h-4 w-4" />
-              </Button>
             </div>
-          ) : (
-            <div className="text-center py-4">
-              <Building2 className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground mb-3">Sin cliente asignado</p>
-              <Button variant="outline" size="sm">
-                <Plus className="h-4 w-4 mr-1.5" />
-                Asignar cliente
-              </Button>
+
+            {/* Separator */}
+            <div style={{ height: '1px', background: 'rgba(0, 0, 0, 0.06)', margin: '14px 0' }} />
+
+            {/* Action buttons - SILK style */}
+            <div className="flex gap-2 mb-3">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onEmailClick}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all"
+                    style={{
+                      background: 'rgba(59, 130, 246, 0.08)',
+                      border: '1px solid rgba(59, 130, 246, 0.12)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      color: '#3b82f6'
+                    }}
+                  >
+                    <Mail className="h-3.5 w-3.5" />
+                    Email
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Enviar email</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onWhatsAppClick}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all"
+                    style={{
+                      background: 'rgba(34, 197, 94, 0.08)',
+                      border: '1px solid rgba(34, 197, 94, 0.12)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      color: '#22c55e'
+                    }}
+                  >
+                    <MessageCircle className="h-3.5 w-3.5" />
+                    WA
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Enviar WhatsApp</TooltipContent>
+              </Tooltip>
+
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button
+                    onClick={onCallClick}
+                    className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all"
+                    style={{
+                      background: 'rgba(139, 92, 246, 0.08)',
+                      border: '1px solid rgba(139, 92, 246, 0.12)',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      color: '#8b5cf6'
+                    }}
+                  >
+                    <Phone className="h-3.5 w-3.5" />
+                    Llamar
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent>Llamar al cliente</TooltipContent>
+              </Tooltip>
             </div>
-          )}
-        </CardContent>
-      </Card>
+
+            {/* Link to client */}
+            <button
+              onClick={() => navigate(`/app/crm/clients/${matter.client_id}`)}
+              className="w-full flex items-center justify-between py-2 px-3 rounded-lg transition-all"
+              style={{
+                background: 'rgba(0, 0, 0, 0.02)',
+                border: '1px solid rgba(0, 0, 0, 0.04)',
+                fontSize: '11px',
+                color: '#64748b'
+              }}
+            >
+              <span>Ver ficha completa</span>
+              <ChevronRight className="h-3.5 w-3.5" />
+            </button>
+          </>
+        ) : (
+          <div className="text-center py-4">
+            <Building2 className="h-8 w-8 mx-auto mb-2" style={{ color: '#94a3b8' }} />
+            <p style={{ fontSize: '12px', color: '#64748b', marginBottom: '12px' }}>Sin cliente asignado</p>
+            <Button variant="outline" size="sm" style={{ fontSize: '11px' }}>
+              <Plus className="h-3.5 w-3.5 mr-1.5" />
+              Asignar cliente
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* ======================================= */}
-      {/* KEY DATES */}
+      {/* KEY DATES - SILK Card */}
       {/* ======================================= */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Calendar className="h-4 w-4 text-purple-500" />
-            Fechas Clave
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <div 
+        style={{
+          padding: '20px',
+          borderRadius: '14px',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
+          background: '#f1f4f9'
+        }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Calendar className="h-4 w-4" style={{ color: '#8b5cf6' }} />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#0a2540' }}>Fechas Clave</span>
+        </div>
+        
+        <div className="space-y-3">
           {/* Created */}
           <DateRow
             label="Creado"
@@ -339,15 +366,15 @@ export function MatterDetailSidebar({
               danger={isOverdue}
             />
           ) : (
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Próximo plazo</span>
+            <div className="flex items-center justify-between">
+              <span style={{ fontSize: '12px', color: '#64748b' }}>Próximo plazo</span>
               <Button
                 variant="link"
                 size="sm"
-                className="h-auto p-0 text-xs text-amber-600 hover:text-amber-700"
+                className="h-auto p-0"
+                style={{ fontSize: '11px', color: '#d97706' }}
                 onClick={onAddDeadline}
               >
-                <AlertTriangle className="h-3 w-3 mr-1" />
                 No definido · Añadir
               </Button>
             </div>
@@ -378,64 +405,78 @@ export function MatterDetailSidebar({
               showRelative
             />
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       {/* ======================================= */}
-      {/* BILLING */}
+      {/* BILLING - SILK Card */}
       {/* ======================================= */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Euro className="h-4 w-4 text-emerald-500" />
-            Facturación
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
+      <div 
+        style={{
+          padding: '20px',
+          borderRadius: '14px',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
+          background: '#f1f4f9'
+        }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Euro className="h-4 w-4" style={{ color: '#10b981' }} />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#0a2540' }}>Facturación</span>
+        </div>
+        
+        <div className="space-y-3">
           {budget > 0 ? (
             <>
               {/* Budget */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Presupuestado</span>
-                  <span className="font-semibold">€{budget.toLocaleString()}</span>
+                <div className="flex items-center justify-between">
+                  <span style={{ fontSize: '12px', color: '#64748b' }}>Presupuestado</span>
+                  <span style={{ fontSize: '13px', fontWeight: 600, color: '#0a2540' }}>€{budget.toLocaleString()}</span>
                 </div>
-                <Progress value={Math.min(billingProgress, 100)} className="h-2" />
-                <p className="text-xs text-muted-foreground text-right">
+                <div style={{ height: '4px', borderRadius: '3px', background: 'rgba(0,0,0,0.04)' }}>
+                  <div style={{
+                    width: `${Math.min(billingProgress, 100)}%`,
+                    height: '100%',
+                    borderRadius: '3px',
+                    background: 'linear-gradient(90deg, #10b981, #10b98188)',
+                    boxShadow: '0 0 4px rgba(16, 185, 129, 0.2)'
+                  }} />
+                </div>
+                <p style={{ fontSize: '10px', color: '#94a3b8', textAlign: 'right' }}>
                   {Math.round(billingProgress)}% facturado
                 </p>
               </div>
 
-              <Separator />
+              <div style={{ height: '1px', background: 'rgba(0, 0, 0, 0.06)' }} />
 
               {/* Breakdown */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500" />
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5" style={{ fontSize: '12px', color: '#64748b' }}>
+                    <CheckCircle2 className="h-3.5 w-3.5" style={{ color: '#10b981' }} />
                     Facturado
                   </span>
-                  <span className="font-medium text-emerald-600">
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#10b981' }}>
                     €{facturado.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <TrendingUp className="h-3.5 w-3.5 text-blue-500" />
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5" style={{ fontSize: '12px', color: '#64748b' }}>
+                    <TrendingUp className="h-3.5 w-3.5" style={{ color: '#3b82f6' }} />
                     Cobrado
                   </span>
-                  <span className="font-medium text-blue-600">
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#3b82f6' }}>
                     €{cobrado.toLocaleString()}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between text-sm">
-                  <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <Clock className="h-3.5 w-3.5 text-amber-500" />
+                <div className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5" style={{ fontSize: '12px', color: '#64748b' }}>
+                    <Clock className="h-3.5 w-3.5" style={{ color: '#f59e0b' }} />
                     Pendiente cobro
                   </span>
-                  <span className="font-medium text-amber-600">
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#f59e0b' }}>
                     €{(stats?.pendienteCobro || 0).toLocaleString()}
                   </span>
                 </div>
@@ -443,48 +484,57 @@ export function MatterDetailSidebar({
             </>
           ) : (
             <div className="text-center py-2">
-              <p className="text-sm text-muted-foreground">Sin presupuesto definido</p>
+              <p style={{ fontSize: '12px', color: '#64748b' }}>Sin presupuesto definido</p>
             </div>
           )}
 
-          <Button
-            variant="outline"
-            size="sm"
-            className="w-full"
+          <button
             onClick={onNewInvoice}
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg transition-all"
+            style={{
+              background: 'rgba(16, 185, 129, 0.08)',
+              border: '1px solid rgba(16, 185, 129, 0.12)',
+              fontSize: '11px',
+              fontWeight: 600,
+              color: '#10b981'
+            }}
           >
-            <Plus className="h-4 w-4 mr-1.5" />
+            <Plus className="h-3.5 w-3.5" />
             Nueva factura
-          </Button>
-        </CardContent>
-      </Card>
+          </button>
+        </div>
+      </div>
 
       {/* ======================================= */}
-      {/* QUICK SUMMARY */}
+      {/* QUICK SUMMARY - SILK Card */}
       {/* ======================================= */}
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-base">
-            <Zap className="h-4 w-4 text-amber-500" />
-            Resumen
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-2 gap-3">
-            <StatBox
-              label="Documentos"
-              value={stats?.documentos || 0}
-              icon={<FileText className="h-4 w-4" />}
-            />
-            <StatBox
-              label="Tareas"
-              value={stats?.tareasPendientes || 0}
-              icon={<CheckSquare className="h-4 w-4" />}
-              highlight={(stats?.tareasPendientes || 0) > 0}
-            />
-          </div>
-        </CardContent>
-      </Card>
+      <div 
+        style={{
+          padding: '20px',
+          borderRadius: '14px',
+          border: '1px solid rgba(0, 0, 0, 0.06)',
+          background: '#f1f4f9'
+        }}
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Zap className="h-4 w-4" style={{ color: '#f59e0b' }} />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: '#0a2540' }}>Resumen</span>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-3">
+          <StatBox
+            label="Documentos"
+            value={stats?.documentos || 0}
+            icon={<FileText className="h-4 w-4" />}
+          />
+          <StatBox
+            label="Tareas"
+            value={stats?.tareasPendientes || 0}
+            icon={<CheckSquare className="h-4 w-4" />}
+            highlight={(stats?.tareasPendientes || 0) > 0}
+          />
+        </div>
+      </div>
     </div>
   );
 }
@@ -508,21 +558,21 @@ function DateRow({
   const isToday = differenceInDays(new Date(), dateObj) === 0;
 
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="text-muted-foreground">{label}</span>
+    <div className="flex items-center justify-between">
+      <span style={{ fontSize: '12px', color: '#64748b' }}>{label}</span>
       <div className="text-right">
-        <p className={cn(
-          "font-medium",
-          highlight && "text-amber-600 dark:text-amber-400",
-          danger && "text-red-600 dark:text-red-400"
-        )}>
+        <p style={{ 
+          fontSize: '12px', 
+          fontWeight: 500, 
+          color: danger ? '#dc2626' : highlight ? '#d97706' : '#0a2540' 
+        }}>
           {format(dateObj, "d MMM yyyy", { locale: es })}
         </p>
         {showRelative && (
-          <p className={cn(
-            "text-[11px]",
-            danger ? "text-red-500" : "text-muted-foreground"
-          )}>
+          <p style={{ 
+            fontSize: '10px', 
+            color: danger ? '#dc2626' : '#94a3b8' 
+          }}>
             {isToday 
               ? 'Hoy'
               : isPastDate
@@ -549,25 +599,24 @@ function StatBox({
   highlight?: boolean;
 }) {
   return (
-    <div className={cn(
-      "flex flex-col items-center p-3 rounded-lg border",
-      highlight 
-        ? "bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800" 
-        : "bg-muted/50"
-    )}>
-      <div className={cn(
-        "mb-1",
-        highlight ? "text-amber-600" : "text-muted-foreground"
-      )}>
+    <div 
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        padding: '12px',
+        borderRadius: '10px',
+        background: highlight ? 'rgba(245, 158, 11, 0.06)' : 'rgba(255, 255, 255, 0.6)',
+        border: highlight ? '1px solid rgba(245, 158, 11, 0.12)' : '1px solid rgba(0, 0, 0, 0.04)'
+      }}
+    >
+      <div style={{ marginBottom: '4px', color: highlight ? '#f59e0b' : '#94a3b8' }}>
         {icon}
       </div>
-      <span className={cn(
-        "text-xl font-bold",
-        highlight && "text-amber-700 dark:text-amber-300"
-      )}>
+      <span style={{ fontSize: '20px', fontWeight: 700, color: highlight ? '#f59e0b' : '#0a2540' }}>
         {value}
       </span>
-      <span className="text-xs text-muted-foreground">{label}</span>
+      <span style={{ fontSize: '11px', color: '#64748b' }}>{label}</span>
     </div>
   );
 }
