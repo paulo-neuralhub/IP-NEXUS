@@ -64,6 +64,7 @@ const PRIMARY_TABS = [
   { id: 'deadlines', label: 'Plazos', icon: Calendar, counterKey: 'deadlines' },
   { id: 'parties', label: 'Partes', icon: Users, counterKey: 'parties' },
   { id: 'tasks', label: 'Tareas', icon: CheckSquare, counterKey: 'tasks', urgentKey: 'tasksUrgent' },
+  { id: 'communications', label: 'Comunicaciones', icon: Mail, counterKey: 'communications' },
 ] as const;
 
 // Secondary tab configuration
