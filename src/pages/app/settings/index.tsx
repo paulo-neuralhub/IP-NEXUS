@@ -108,50 +108,80 @@ export default function SettingsPage() {
         </p>
       </div>
 
-      {/* Toggle Org/User */}
-      <div className="flex gap-2 mb-6">
+      {/* Toggle Org/User - SILK Style */}
+      <div 
+        className="flex gap-1 p-1 mb-6 w-fit"
+        style={{
+          background: '#f1f4f9',
+          borderRadius: '12px',
+          boxShadow: 'inset 2px 2px 5px #cdd1dc, inset -2px -2px 5px #ffffff',
+        }}
+      >
         <button
           onClick={() => handleTypeChange('organization')}
           className={cn(
-            "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            "inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
             settingsType === 'organization'
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted hover:bg-muted/80 text-foreground"
+              ? "bg-white shadow-sm text-slate-800"
+              : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
           )}
         >
           <Building2 className="h-4 w-4" />
           Organización
+          {settingsType === 'organization' && (
+            <span 
+              className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full"
+              style={{ background: 'linear-gradient(90deg, #00b4d8, #00d4aa)' }}
+            />
+          )}
         </button>
         <button
           onClick={() => handleTypeChange('user')}
           className={cn(
-            "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors",
+            "inline-flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 relative",
             settingsType === 'user'
-              ? "bg-primary text-primary-foreground"
-              : "bg-muted hover:bg-muted/80 text-foreground"
+              ? "bg-white shadow-sm text-slate-800"
+              : "text-slate-500 hover:text-slate-700 hover:bg-white/50"
           )}
         >
           <User className="h-4 w-4" />
           Mi Cuenta
+          {settingsType === 'user' && (
+            <span 
+              className="absolute bottom-0 left-3 right-3 h-0.5 rounded-full"
+              style={{ background: 'linear-gradient(90deg, #00b4d8, #00d4aa)' }}
+            />
+          )}
         </button>
       </div>
 
       <div className="grid grid-cols-12 gap-6">
-        {/* Sidebar */}
+        {/* Sidebar - SILK Style */}
         <div className="col-span-3">
-          <nav className="space-y-1">
+          <nav 
+            className="space-y-1 p-2"
+            style={{
+              background: '#f1f4f9',
+              borderRadius: '14px',
+              border: '1px solid rgba(0, 0, 0, 0.06)',
+            }}
+          >
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={cn(
-                  "w-full flex items-center gap-2 px-3 py-2 text-sm rounded-lg transition-colors",
+                  "w-full flex items-center gap-2 px-3 py-2.5 text-sm rounded-lg transition-all duration-200",
                   activeTab === tab.id
-                    ? "bg-primary text-primary-foreground"
-                    : "hover:bg-muted text-foreground"
+                    ? "bg-white shadow-sm font-medium"
+                    : "hover:bg-white/60 text-slate-600"
                 )}
+                style={activeTab === tab.id ? { 
+                  color: '#00b4d8',
+                  borderLeft: '3px solid #00b4d8',
+                } : undefined}
               >
-                <tab.icon className="h-4 w-4" />
+                <tab.icon className="h-4 w-4" style={activeTab === tab.id ? { color: '#00b4d8' } : undefined} />
                 {tab.label}
               </button>
             ))}
