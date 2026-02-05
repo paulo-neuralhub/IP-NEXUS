@@ -16,7 +16,6 @@ import { useOrganization } from '@/contexts/organization-context';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
@@ -57,6 +56,7 @@ import { MatterPartiesTab } from '@/components/matters/MatterPartiesTab';
 import { MatterDetailHeader } from '@/components/matters/MatterDetailHeader';
 import { MatterDetailSidebar } from '@/components/matters/MatterDetailSidebar';
 import { MatterRightsInfoCard } from '@/components/matters/MatterRightsInfoCard';
+import { MatterDetailTabs } from '@/components/matters/MatterDetailTabs';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useCommunication } from '@/hooks/legal-ops/useCommunications';
@@ -103,7 +103,7 @@ export default function MatterDetailPage() {
   
   usePageTitle(matter?.matter_number || 'Expediente');
 
-  // Fetch stats for sidebar
+  // Fetch stats for sidebar and tabs
   const { data: stats } = useQuery({
     queryKey: ['matter-stats', id, currentOrganization?.id],
     queryFn: async () => {
@@ -124,6 +124,7 @@ export default function MatterDetailPage() {
         comunicaciones: timeline?.filter(t => t.event_type?.includes('email') || t.event_type?.includes('call')).length || 0,
         tareas: tasksRes.data?.length || 0,
         tareasPendientes,
+        facturas: invoicesRes.data?.length || 0,
         facturado,
         pendienteCobro
       };
@@ -185,185 +186,70 @@ export default function MatterDetailPage() {
           
           {/* Main Column (2/3) */}
           <div className="lg:col-span-2">
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              {/* SILK Tabs - Neumorphic container with balanced padding */}
-              <TabsList className="mb-4 flex flex-wrap gap-1 h-auto pt-2.5 pb-1.5 px-2">
-                  <TabsTrigger 
-                    value="general" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <FileText className="h-4 w-4" />
-                    General
-                    <span 
-                      className="absolute bottom-1 left-1/3 right-1/3 h-0.5 rounded-full data-[state=active]:opacity-100 opacity-0" 
-                      style={{ 
-                        background: 'linear-gradient(90deg, #00b4d8, #00d4aa)',
-                        display: activeTab === 'general' ? 'block' : 'none'
-                      }} 
-                    />
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="filings" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <Building2 className="h-4 w-4" />
-                    Presentaciones
-                    {filings && filings.length > 0 && (
-                      <span 
-                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
-                        style={{ 
-                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
-                          color: '#64748b',
-                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
-                        }}
-                      >
-                        {filings.length}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="parties" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <Users className="h-4 w-4" />
-                    Partes
-                    {parties && parties.length > 0 && (
-                      <span 
-                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
-                        style={{ 
-                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
-                          color: '#64748b',
-                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
-                        }}
-                      >
-                        {parties.length}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="documents" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <FolderOpen className="h-4 w-4" />
-                    Documentos
-                    {stats?.documentos ? (
-                      <span 
-                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
-                        style={{ 
-                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
-                          color: '#64748b',
-                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
-                        }}
-                      >
-                        {stats.documentos}
-                      </span>
-                    ) : null}
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="deadlines" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <Calendar className="h-4 w-4" />
-                    Plazos
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="communications" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <Mail className="h-4 w-4" />
-                    Comunicaciones
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="tasks" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <CheckSquare className="h-4 w-4" />
-                    Tareas
-                    {stats?.tareasPendientes ? (
-                      <span 
-                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-bold rounded-full flex items-center justify-center"
-                        style={{ 
-                          background: 'linear-gradient(135deg, #ef4444, #dc2626)',
-                          color: 'white',
-                          boxShadow: '0 2px 4px rgba(239, 68, 68, 0.3)'
-                        }}
-                      >
-                        {stats.tareasPendientes}
-                      </span>
-                    ) : null}
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="invoices" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <Receipt className="h-4 w-4" />
-                    Facturas
-                  </TabsTrigger>
-                  <TabsTrigger 
-                    value="timeline" 
-                    className="gap-2 px-4 py-2.5 rounded-lg data-[state=active]:bg-white data-[state=active]:shadow-md data-[state=active]:text-slate-900 text-slate-500 hover:text-slate-700 transition-all relative"
-                  >
-                    <History className="h-4 w-4" />
-                    Timeline
-                    {timeline && timeline.length > 0 && (
-                      <span 
-                        className="ml-1 h-5 min-w-5 px-1.5 text-xs font-semibold rounded-full flex items-center justify-center"
-                        style={{ 
-                          background: 'linear-gradient(135deg, #f1f4f9, #e8ebf0)',
-                          color: '#64748b',
-                          boxShadow: 'inset 0 1px 2px rgba(0,0,0,0.05)'
-                        }}
-                      >
-                        {timeline.length}
-                      </span>
-                    )}
-                  </TabsTrigger>
-                </TabsList>
+            {/* New organized tabs with two rows */}
+            <MatterDetailTabs 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+              counters={{
+                filings: filings?.length || 0,
+                parties: parties?.length || 0,
+                documents: stats?.documentos || 0,
+                communications: stats?.comunicaciones || 0,
+                tasks: stats?.tareas || 0,
+                tasksUrgent: stats?.tareasPendientes || 0,
+                invoices: stats?.facturas || 0,
+                timeline: timeline?.length || 0,
+              }}
+            />
 
+            {/* Tab Contents */}
+            <div className="transition-all duration-200">
               {/* General Tab */}
-              <TabsContent value="general" className="space-y-4">
-                {/* Rights Info Card - Now with trademark type support */}
-                <MatterRightsInfoCard matter={matter} />
+              {activeTab === 'general' && (
+                <div className="space-y-4">
+                  {/* Rights Info Card - Now with trademark type support */}
+                  <MatterRightsInfoCard matter={matter} />
 
-                {/* Recent Timeline Preview */}
-                <Card>
-                  <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="flex items-center gap-2">
-                      <History className="h-5 w-5" />
-                      Actividad Reciente
-                    </CardTitle>
-                    <Button variant="ghost" size="sm" onClick={() => setActiveTab('timeline')}>
-                      Ver todo
-                    </Button>
-                  </CardHeader>
-                  <CardContent>
-                    {!timeline?.length ? (
-                      <p className="text-muted-foreground text-center py-4">
-                        Sin actividad registrada
-                      </p>
-                    ) : (
-                      <div className="space-y-3">
-                        {timeline.slice(0, 5).map((event) => (
-                          <div key={event.id} className="flex items-start gap-3">
-                            <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm shrink-0">
-                              {getEventIcon(event.event_type)}
+                  {/* Recent Timeline Preview */}
+                  <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <CardTitle className="flex items-center gap-2">
+                        <History className="h-5 w-5" />
+                        Actividad Reciente
+                      </CardTitle>
+                      <Button variant="ghost" size="sm" onClick={() => setActiveTab('timeline')}>
+                        Ver todo
+                      </Button>
+                    </CardHeader>
+                    <CardContent>
+                      {!timeline?.length ? (
+                        <p className="text-muted-foreground text-center py-4">
+                          Sin actividad registrada
+                        </p>
+                      ) : (
+                        <div className="space-y-3">
+                          {timeline.slice(0, 5).map((event) => (
+                            <div key={event.id} className="flex items-start gap-3">
+                              <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-sm shrink-0">
+                                {getEventIcon(event.event_type)}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="font-medium text-sm truncate">{event.title}</p>
+                                <p className="text-xs text-muted-foreground">
+                                  {formatDistanceToNow(new Date(event.event_date), { addSuffix: true, locale: es })}
+                                </p>
+                              </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-medium text-sm truncate">{event.title}</p>
-                              <p className="text-xs text-muted-foreground">
-                                {formatDistanceToNow(new Date(event.event_date), { addSuffix: true, locale: es })}
-                              </p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </TabsContent>
+                          ))}
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
 
               {/* Filings Tab */}
-              <TabsContent value="filings">
+              {activeTab === 'filings' && (
                 <Card>
                   <CardHeader className="flex flex-row items-center justify-between">
                     <CardTitle>Presentaciones por Jurisdicción</CardTitle>
@@ -427,25 +313,25 @@ export default function MatterDetailPage() {
                     )}
                   </CardContent>
                 </Card>
-              </TabsContent>
+              )}
 
               {/* Parties Tab - Enhanced with edit/delete */}
-              <TabsContent value="parties">
+              {activeTab === 'parties' && (
                 <MatterPartiesTab matterId={id!} matterType={matter.matter_type} />
-              </TabsContent>
+              )}
 
               {/* Documents Tab */}
-              <TabsContent value="documents">
+              {activeTab === 'documents' && (
                 <MatterDocumentsTab matterId={id!} />
-              </TabsContent>
+              )}
 
               {/* Deadlines Tab */}
-              <TabsContent value="deadlines">
+              {activeTab === 'deadlines' && (
                 <MatterDeadlinesTab matterId={id!} />
-              </TabsContent>
+              )}
 
               {/* Communications Tab - Enhanced with templates and locked reference */}
-              <TabsContent value="communications">
+              {activeTab === 'communications' && (
                 <MatterCommunicationsTab 
                   matterId={id!} 
                   matterReference={matter.reference || matter.id}
@@ -457,20 +343,20 @@ export default function MatterDetailPage() {
                   clientEmail={matter.client_email}
                   clientPhone={matter.client_phone}
                 />
-              </TabsContent>
+              )}
 
               {/* Tasks Tab */}
-              <TabsContent value="tasks">
+              {activeTab === 'tasks' && (
                 <MatterTasksTab matterId={id!} />
-              </TabsContent>
+              )}
 
               {/* Invoices Tab */}
-              <TabsContent value="invoices">
+              {activeTab === 'invoices' && (
                 <MatterInvoicesTab matterId={id!} clientId={matter.client_id} />
-              </TabsContent>
+              )}
 
               {/* Timeline Tab - Professional style */}
-              <TabsContent value="timeline">
+              {activeTab === 'timeline' && (
                 <TimelineProfesional 
                   matterId={id!} 
                   maxHeight="700px"
@@ -489,8 +375,8 @@ export default function MatterDetailPage() {
                   }}
                   onOpenTask={() => setActiveTab('tasks')}
                 />
-              </TabsContent>
-            </Tabs>
+              )}
+            </div>
           </div>
 
           {/* Sidebar Column (1/3) */}
