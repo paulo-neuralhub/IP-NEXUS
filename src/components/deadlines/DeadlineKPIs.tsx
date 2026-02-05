@@ -75,10 +75,20 @@ export function DeadlineKPIs({ stats, isLoading, activeFilter, onFilterChange }:
           <Card
             key={kpi.key}
             className={cn(
-              'cursor-pointer transition-all border border-black/[0.06] rounded-[14px] hover:border-[rgba(0,180,216,0.15)]',
+              'cursor-pointer transition-all border rounded-[14px] hover:border-[rgba(0,180,216,0.15)]',
               isActive && 'ring-2 ring-primary'
             )}
-            style={{ background: '#f1f4f9' }}
+            style={{ 
+              background: '#f1f4f9',
+              borderColor: kpi.value > 0 && kpi.key === 'overdue' 
+                ? 'rgba(239, 68, 68, 0.2)' 
+                : kpi.value > 0 && kpi.key === 'urgent'
+                ? 'rgba(245, 158, 11, 0.2)'
+                : 'rgba(0,0,0,0.06)',
+              boxShadow: kpi.value > 0 && (kpi.key === 'overdue' || kpi.key === 'urgent')
+                ? `0 0 0 1px ${kpi.color}15`
+                : 'none',
+            }}
             onClick={() => onFilterChange(isActive ? 'all' : kpi.key)}
           >
             <CardContent className="p-4">
@@ -100,7 +110,7 @@ export function DeadlineKPIs({ stats, isLoading, activeFilter, onFilterChange }:
                   </p>
                   
                   {kpi.showWarning && kpi.value > 0 ? (
-                    <p className="text-[9px] text-red-600 dark:text-red-400 flex items-center gap-1">
+                    <p className="text-[9px] flex items-center gap-1" style={{ color: '#ef4444' }}>
                       <AlertTriangle className="h-3 w-3" />
                       {kpi.description}
                     </p>

@@ -67,6 +67,20 @@ export function DeadlineItem({
   const esUrgente = diasRestantes <= 5 && !isCompleted;
   const color = getUrgencyColor(diasRestantes, isCompleted);
 
+  // Determine left border color based on urgency
+  const getBorderLeftStyle = () => {
+    if (isCompleted) return {};
+    if (diasRestantes <= 3) return { 
+      borderLeft: '3px solid #ef4444',
+      boxShadow: '0 0 0 1px rgba(239, 68, 68, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04)'
+    };
+    if (diasRestantes <= 7) return { 
+      borderLeft: '3px solid #f59e0b',
+      boxShadow: '0 0 0 1px rgba(245, 158, 11, 0.1), 0 2px 8px rgba(0, 0, 0, 0.04)'
+    };
+    return { boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)' };
+  };
+
   return (
     <div
       className="group cursor-pointer transition-all duration-200"
@@ -82,6 +96,7 @@ export function DeadlineItem({
         alignItems: 'center',
         gap: '12px',
         opacity: isCompleted ? 0.6 : 1,
+        ...getBorderLeftStyle(),
       }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}

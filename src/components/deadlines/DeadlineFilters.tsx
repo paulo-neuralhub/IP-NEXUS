@@ -74,40 +74,71 @@ export function DeadlineFilters({
     },
   ];
 
+  // Get badge color based on filter type
+  const getBadgeColor = (key: string) => {
+    switch (key) {
+      case 'overdue': return '#ef4444';
+      case 'urgent': return '#f59e0b';
+      case 'upcoming': return '#00b4d8';
+      case 'completed': return '#22c55e';
+      default: return '#64748b';
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       {/* Filter buttons */}
       <div className="flex flex-wrap items-center gap-2">
-        {filters.map((f) => (
-          <Button
-            key={f.key}
-            variant={filter === f.key ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => onFilterChange(f.key)}
-            className={cn(f.textColor)}
-          >
-            {f.label}
-            {f.count !== null && (
-              <Badge
-                variant={
-                  filter === f.key
-                    ? 'secondary'
-                    : f.badgeVariant === 'destructive'
-                    ? 'destructive'
-                    : 'secondary'
-                }
-                className="ml-1.5"
-              >
-                {f.count}
-              </Badge>
-            )}
-          </Button>
-        ))}
+        {filters.map((f) => {
+          const isActive = filter === f.key;
+          const badgeColor = getBadgeColor(f.key);
+          
+          return (
+            <Button
+              key={f.key}
+              variant={isActive ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => onFilterChange(f.key)}
+              className={cn(
+                'flex items-center gap-2 transition-all',
+                !isActive && 'bg-white hover:bg-slate-50'
+              )}
+              style={{
+                borderRadius: '10px',
+              }}
+            >
+              <span>{f.label}</span>
+              {f.count !== null && (
+                <span
+                  className="px-1.5 py-0.5 rounded text-[10px] font-bold"
+                  style={{
+                    background: isActive 
+                      ? 'rgba(255,255,255,0.2)' 
+                      : `${badgeColor}15`,
+                    color: isActive ? 'white' : badgeColor,
+                    boxShadow: isActive 
+                      ? 'inset 0 1px 2px rgba(0,0,0,0.1)' 
+                      : 'inset 0 1px 1px rgba(255,255,255,0.9)',
+                  }}
+                >
+                  {f.count}
+                </span>
+              )}
+            </Button>
+          );
+        })}
       </div>
 
       {/* Sort control */}
       <Select value={sortBy} onValueChange={(v) => onSortChange(v as 'date' | 'priority')}>
-        <SelectTrigger className="w-[160px]">
+        <SelectTrigger 
+          className="w-[160px]"
+          style={{
+            background: '#f1f4f9',
+            borderRadius: '10px',
+            border: '1px solid rgba(0,0,0,0.06)',
+          }}
+        >
           <ArrowUpDown className="h-4 w-4 mr-2" />
           <SelectValue />
         </SelectTrigger>
