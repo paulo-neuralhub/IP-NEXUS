@@ -67,17 +67,27 @@
    // Fecha actual formateada
    const fechaActual = format(new Date(), "EEEE d 'de' MMMM yyyy", { locale: es });
  
-   // Mapear métricas para badges urgentes
-   const urgentMetrics = useMemo(() => {
-     const plazosHoy = metrics.find(m => m.label === 'Plazos hoy')?.value ?? 0;
-     const urgentes = metrics.find(m => m.label === 'Urgentes')?.value ?? 0;
-     const alertas = metrics.find(m => m.label === 'Alertas Spider')?.value ?? 0;
-     return {
-       plazosHoy: typeof plazosHoy === 'number' ? plazosHoy : parseInt(String(plazosHoy)) || 0,
-       expedientesUrgentes: typeof urgentes === 'number' ? urgentes : parseInt(String(urgentes)) || 0,
-       alertasSpider: typeof alertas === 'number' ? alertas : parseInt(String(alertas)) || 0,
-     };
-   }, [metrics]);
+    // Mapear métricas para badges urgentes
+    const urgentMetrics = useMemo(() => {
+      const plazosHoy = metrics.find(m => m.label === 'Plazos hoy')?.value ?? 0;
+      const urgentes = metrics.find(m => m.label === 'Urgentes')?.value ?? 0;
+      const alertas = metrics.find(m => m.label === 'Alertas Spider')?.value ?? 0;
+      
+      // Calcular plazos urgentes (próximos 7 días) desde los deadlines
+      const plazosUrgentesCount = data?.deadlines?.filter(d => {
+        const dueDate = new Date(d.dueDate);
+        const today = new Date();
+        const diffDays = Math.ceil((dueDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+        return diffDays >= 0 && diffDays <= 7;
+      }).length ?? 0;
+      
+      return {
+        plazosHoy: typeof plazosHoy === 'number' ? plazosHoy : parseInt(String(plazosHoy)) || 0,
+        expedientesUrgentes: typeof urgentes === 'number' ? urgentes : parseInt(String(urgentes)) || 0,
+        alertasSpider: typeof alertas === 'number' ? alertas : parseInt(String(alertas)) || 0,
+        plazosUrgentes: plazosUrgentesCount,
+      };
+    }, [metrics, data?.deadlines]);
  
    // Mapear métricas operacionales
    const operationalMetrics = useMemo(() => {
@@ -211,12 +221,13 @@
          </div>
        </div>
  
-       {/* 1. BADGES URGENTES (Solo si hay valores > 0) */}
-       <UrgentBadges 
-         plazosHoy={urgentMetrics.plazosHoy}
-         expedientesUrgentes={urgentMetrics.expedientesUrgentes}
-         alertasSpider={urgentMetrics.alertasSpider}
-       />
+        {/* 1. BADGES URGENTES (Solo si hay valores > 0) */}
+        <UrgentBadges 
+          plazosHoy={urgentMetrics.plazosHoy}
+          expedientesUrgentes={urgentMetrics.expedientesUrgentes}
+          alertasSpider={urgentMetrics.alertasSpider}
+          plazosUrgentes={urgentMetrics.plazosUrgentes}
+        />
  
        {/* 2. KPIs OPERACIONALES */}
        <OperationalKPIs 

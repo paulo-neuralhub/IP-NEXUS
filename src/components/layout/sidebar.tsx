@@ -47,14 +47,26 @@ export function Sidebar() {
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar flex flex-col z-50">
-      {/* Logo */}
-      <div className="p-6">
+      {/* Logo + Nombre empresa */}
+      <div className="p-4 pb-2">
         <Link to="/app" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-primary flex items-center justify-center">
-            <Shield className="h-5 w-5 text-primary-foreground" />
+          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#00b4d8] to-[#00d4aa] flex items-center justify-center shadow-lg">
+            <Shield className="h-5 w-5 text-white" />
           </div>
           <span className="text-xl font-bold text-white">IP-NEXUS</span>
         </Link>
+        
+        {/* Nombre empresa */}
+        {currentOrganization?.name && (
+          <div className="mt-3 flex items-center gap-2 px-1">
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/10 text-[9px] font-bold text-white/80">
+              {currentOrganization.name.charAt(0)}
+            </div>
+            <span className="text-xs text-white/60 truncate">
+              {currentOrganization.name}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Navigation */}
