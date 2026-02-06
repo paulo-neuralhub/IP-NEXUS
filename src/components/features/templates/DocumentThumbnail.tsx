@@ -605,9 +605,9 @@ export function DocumentThumbnail({ typeId, styleName, colors, className }: Docu
     if (id === 'cease-desist' || id === 'cease' || id.includes('cease')) return <CeaseDesistSVG />;
     if (id === 'meeting-minutes' || id === 'acta' || id.includes('meeting') || id.includes('minutes')) return <MeetingMinutesSVG accent={accent} />;
     
-    // Informes
-    if (id === 'portfolio-report' || id === 'informe' || id.includes('portfolio')) return <ReportSVG accent={accent} />;
-    if (id === 'watch-report' || id === 'vigilancia' || id.includes('surveillance') || id.includes('watch')) return <ReportSVG accent={accent} />;
+    // Informes - IDs específicos de la BD
+    if (id === 'informe' || id === 'portfolio-report' || id.includes('portfolio')) return <ReportSVG accent={accent} />;
+    if (id === 'vigilancia' || id === 'watch-report' || id.includes('surveillance') || id.includes('watch')) return <ReportSVG accent={accent} />;
     
     // Legal
     if (id === 'contract' || id === 'contrato') return <ContractSVG accent={accent} label="CONTRATO" />;
