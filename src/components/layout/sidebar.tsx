@@ -1,3 +1,4 @@
+import * as React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/auth-context";
 import { useOrganization } from "@/contexts/organization-context";
@@ -46,11 +47,11 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-sidebar flex flex-col z-50">
+    <aside className="fixed left-0 top-0 h-screen w-64 ip-sidebar-gradient flex flex-col z-50">
       {/* Logo + Nombre empresa */}
       <div className="p-4 pb-2">
         <Link to="/app" className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#00b4d8] to-[#00d4aa] flex items-center justify-center shadow-lg">
+          <div className="h-8 w-8 rounded-lg ip-sidebar-accent flex items-center justify-center">
             <Shield className="h-5 w-5 text-white" />
           </div>
           <span className="text-xl font-bold text-white">IP-NEXUS</span>
@@ -58,11 +59,9 @@ export function Sidebar() {
         
         {/* Nombre empresa */}
         {currentOrganization?.name && (
-          <div className="mt-3 flex items-center gap-2 px-1">
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-white/10 text-[9px] font-bold text-white/80">
-              {currentOrganization.name.charAt(0)}
-            </div>
-            <span className="text-xs text-white/60 truncate">
+          <div className="mt-3 silk-company-badge">
+            <div className="silk-dot-glow" />
+            <span className="text-xs text-white/80 truncate">
               {currentOrganization.name}
             </span>
           </div>
@@ -70,7 +69,7 @@ export function Sidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 overflow-y-auto">
+      <nav className="flex-1 px-3 overflow-y-auto py-2">
         {navItems.map((item, idx) => {
           if (item.separator) {
             return <div key={idx} className="my-2 border-t border-white/10" />;
@@ -82,55 +81,87 @@ export function Sidebar() {
           const Icon = item.icon!;
 
           return (
-            <Link
-              key={item.path}
-              to={isLocked ? "#" : item.path}
+            <div 
+              key={item.path} 
               className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors relative",
-                isActive
-                  ? "bg-white/15 text-white"
-                  : isLocked
-                  ? "text-white/40 cursor-not-allowed"
-                  : "text-white/70 hover:bg-white/10 hover:text-white"
+                "relative my-1",
+                // Add padding for tongue curves (needs space above and below)
+                isActive && "py-0"
               )}
-              style={isActive ? { borderLeft: `3px solid ${moduleColor}` } : undefined}
-              onClick={(e) => isLocked && e.preventDefault()}
             >
-              <Icon className="h-5 w-5" style={{ color: isActive ? moduleColor : undefined }} />
-              <span className="flex-1">{item.label}</span>
-              {isLocked && <Lock className="h-4 w-4" />}
-              {item.addon && !isLocked && (
-                <Badge variant="secondary" className="text-[10px] px-1.5 py-0">PRO</Badge>
-              )}
-            </Link>
+              <Link
+                to={isLocked ? "#" : item.path}
+                className={cn(
+                  "flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 relative",
+                  isActive
+                    ? "silk-menu-active text-slate-800 font-medium"
+                    : isLocked
+                    ? "text-white/40 cursor-not-allowed rounded-lg"
+                    : "text-white/70 hover:bg-white/10 hover:text-white rounded-lg"
+                )}
+                onClick={(e) => isLocked && e.preventDefault()}
+              >
+                {/* Accent bar for active item */}
+                {isActive && <div className="silk-accent-bar" />}
+                
+                <Icon 
+                  className="h-5 w-5 transition-colors duration-200" 
+                  style={{ color: isActive ? moduleColor : undefined }} 
+                />
+                <span className="flex-1">{item.label}</span>
+                
+                {isLocked && <Lock className="h-4 w-4" />}
+                {item.addon && !isLocked && (
+                  <span className={cn(
+                    "text-[10px] font-bold px-2 py-0.5 rounded-full",
+                    isActive ? "silk-badge-active" : "silk-badge-inactive"
+                  )}>
+                    PRO
+                  </span>
+                )}
+              </Link>
+            </div>
           );
         })}
       </nav>
 
       {/* Settings */}
       <div className="px-3 py-2 border-t border-white/10">
-        <Link
-          to="/app/settings"
-          className={cn(
-            "flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white",
-            location.pathname.startsWith("/app/settings") && "bg-white/15 text-white"
-          )}
-        >
-          <Settings className="h-5 w-5" />
-          Configuración
-        </Link>
+        <div className="relative my-1">
+          <Link
+            to="/app/settings"
+            className={cn(
+              "flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 relative",
+              location.pathname.startsWith("/app/settings")
+                ? "silk-menu-active text-slate-800 font-medium"
+                : "text-white/70 hover:bg-white/10 hover:text-white rounded-lg"
+            )}
+          >
+            {location.pathname.startsWith("/app/settings") && (
+              <div className="silk-accent-bar" />
+            )}
+            <Settings className="h-5 w-5" />
+            Configuración
+          </Link>
+        </div>
       </div>
 
       {/* User Menu */}
       <div className="p-4 border-t border-white/10">
         <DropdownMenu>
           <DropdownMenuTrigger className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-white/10 transition-colors">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={profile?.avatar_url || undefined} />
-              <AvatarFallback className="bg-primary text-xs">
-                {getInitials(profile?.full_name || profile?.email || "U")}
-              </AvatarFallback>
-            </Avatar>
+            <div className="silk-avatar">
+              {profile?.avatar_url ? (
+                <Avatar className="h-full w-full">
+                  <AvatarImage src={profile.avatar_url} />
+                  <AvatarFallback className="bg-transparent text-xs text-white">
+                    {getInitials(profile?.full_name || profile?.email || "U")}
+                  </AvatarFallback>
+                </Avatar>
+              ) : (
+                getInitials(profile?.full_name || profile?.email || "U")
+              )}
+            </div>
             <div className="flex-1 text-left min-w-0">
               <p className="text-sm text-white truncate">{profile?.full_name || "Usuario"}</p>
               <p className="text-xs text-white/60 truncate">{currentOrganization?.name}</p>
