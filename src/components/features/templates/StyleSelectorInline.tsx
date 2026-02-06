@@ -40,7 +40,7 @@ export function StyleSelectorInline({
   
   return (
     <ScrollArea className={cn('w-full whitespace-nowrap', className)}>
-      <div className="flex items-center gap-2 pb-3">
+      <div className="flex items-center gap-3 pb-3">
         {styles.map((style) => {
           const isSelected = selectedStyleId === style.id;
           const colors = style.colors;
@@ -57,18 +57,18 @@ export function StyleSelectorInline({
               )}
               title={style.name}
             >
-              {/* Mini preview swatch */}
+              {/* Mini preview swatch - LARGER SIZE */}
               <div
-                className="w-12 h-16 rounded-md overflow-hidden border border-slate-200 shadow-sm"
+                className="w-16 h-20 rounded-md overflow-hidden border border-slate-200 shadow-sm"
                 style={{ backgroundColor: colors.background }}
               >
                 {/* Header */}
                 <div
-                  className="h-3"
+                  className="h-4"
                   style={{ backgroundColor: colors.headerBg }}
                 />
                 {/* Content lines */}
-                <div className="p-1 space-y-0.5">
+                <div className="p-1.5 space-y-1">
                   <div 
                     className="h-1 rounded-full w-2/3"
                     style={{ backgroundColor: colors.text, opacity: 0.3 }}
@@ -81,19 +81,27 @@ export function StyleSelectorInline({
                     className="h-0.5 rounded-full w-4/5"
                     style={{ backgroundColor: colors.text, opacity: 0.15 }}
                   />
+                  <div 
+                    className="h-0.5 rounded-full w-3/5"
+                    style={{ backgroundColor: colors.text, opacity: 0.15 }}
+                  />
                 </div>
                 {/* Table */}
-                <div className="mx-1">
+                <div className="mx-1.5">
                   <div 
-                    className="h-1.5 rounded-sm"
+                    className="h-2 rounded-sm"
                     style={{ backgroundColor: colors.tableHeadBg }}
                   />
+                  <div className="mt-0.5 space-y-0.5">
+                    <div className="h-1 rounded-sm" style={{ backgroundColor: colors.backgroundAlt }} />
+                    <div className="h-1 rounded-sm bg-slate-100" />
+                  </div>
                 </div>
               </div>
               
               {/* Label */}
               <span className={cn(
-                'text-[10px] font-medium truncate max-w-14',
+                'text-xs font-medium truncate max-w-16',
                 isSelected ? 'text-cyan-600' : 'text-slate-500'
               )}>
                 {style.name}
@@ -101,8 +109,8 @@ export function StyleSelectorInline({
               
               {/* Check indicator */}
               {isSelected && (
-                <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-cyan-500 flex items-center justify-center">
-                  <Check className="h-2.5 w-2.5 text-white" />
+                <div className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-cyan-500 flex items-center justify-center shadow-sm">
+                  <Check className="h-3 w-3 text-white" />
                 </div>
               )}
             </button>

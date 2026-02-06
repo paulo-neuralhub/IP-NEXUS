@@ -134,24 +134,25 @@ export function TemplatePreviewModal({
         {/* Main content */}
         <div className="flex-1 flex overflow-hidden">
           {/* Left: Document preview */}
-          <div className="flex-1 bg-slate-100 p-6 overflow-auto">
+          <div className="flex-1 bg-slate-100 p-6 overflow-auto flex items-start justify-center">
             <div 
-              className="mx-auto bg-white rounded-lg shadow-lg overflow-hidden"
+              className="bg-white rounded-lg shadow-lg overflow-hidden"
               style={{ 
-                width: '595px', // A4 width at 72dpi
-                minHeight: '842px', // A4 height
+                width: '480px', // Slightly smaller for better scaling
+                minHeight: '680px', // Proportional A4
                 backgroundColor: colors?.background || '#ffffff',
+                fontSize: '11px', // Reduced font size for realistic scaling
               }}
             >
               {/* Document Header */}
               <div
-                className="p-6"
+                className="px-5 py-4"
                 style={{ backgroundColor: colors?.headerBg || '#2563eb' }}
               >
                 <div className="flex items-center justify-between">
                   <div>
                     <div 
-                      className="w-32 h-10 rounded flex items-center justify-center text-xs font-medium"
+                      className="w-20 h-6 rounded flex items-center justify-center text-[9px] font-medium"
                       style={{ 
                         backgroundColor: 'rgba(255,255,255,0.2)',
                         color: colors?.headerText || '#ffffff',
@@ -160,13 +161,13 @@ export function TemplatePreviewModal({
                       [Logo]
                     </div>
                     <h2 
-                      className="text-xl font-bold mt-3"
+                      className="text-sm font-bold mt-2"
                       style={{ color: colors?.headerText || '#ffffff' }}
                     >
                       {orgName}
                     </h2>
                     <p 
-                      className="text-sm opacity-80"
+                      className="text-[10px] opacity-80"
                       style={{ color: colors?.headerText || '#ffffff' }}
                     >
                       C/ Gran Vía 42, 28013 Madrid
@@ -174,13 +175,13 @@ export function TemplatePreviewModal({
                   </div>
                   <div className="text-right">
                     <h1 
-                      className="text-2xl font-bold uppercase"
+                      className="text-base font-bold uppercase"
                       style={{ color: colors?.headerText || '#ffffff' }}
                     >
                       {documentType.name}
                     </h1>
                     <p 
-                      className="text-sm opacity-80 mt-1"
+                      className="text-[10px] opacity-80 mt-0.5"
                       style={{ color: colors?.headerText || '#ffffff' }}
                     >
                       Nº: [Referencia]
@@ -190,48 +191,48 @@ export function TemplatePreviewModal({
               </div>
               
               {/* Document Body */}
-              <div className="p-8" style={{ color: colors?.text || '#333333' }}>
+              <div className="p-5" style={{ color: colors?.text || '#333333' }}>
                 {/* Client info */}
-                <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: colors?.backgroundAlt || '#f8fafc' }}>
-                  <h3 className="text-sm font-semibold mb-2" style={{ color: colors?.text }}>
+                <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: colors?.backgroundAlt || '#f8fafc' }}>
+                  <h3 className="text-[10px] font-semibold mb-1" style={{ color: colors?.text }}>
                     Cliente
                   </h3>
-                  <p className="text-lg font-medium">[Nombre del cliente]</p>
-                  <p className="text-sm" style={{ color: colors?.textMuted || '#999' }}>
+                  <p className="text-xs font-medium">[Nombre del cliente]</p>
+                  <p className="text-[10px]" style={{ color: colors?.textMuted || '#999' }}>
                     [Dirección del cliente]
                   </p>
-                  <p className="text-sm" style={{ color: colors?.textMuted || '#999' }}>
+                  <p className="text-[10px]" style={{ color: colors?.textMuted || '#999' }}>
                     NIF: [NIF Cliente]
                   </p>
                 </div>
                 
                 {/* Content placeholder */}
-                <div className="space-y-4 mb-8">
-                  <p style={{ color: colors?.text }}>
+                <div className="space-y-3 mb-5">
+                  <p className="text-xs" style={{ color: colors?.text }}>
                     Estimado/a <span className="font-medium">[Nombre del cliente]</span>,
                   </p>
-                  <p style={{ color: colors?.text }}>
+                  <p className="text-xs leading-relaxed" style={{ color: colors?.text }}>
                     En relación con el expediente <span className="font-medium">[Referencia]</span> 
                     correspondiente a <span className="font-medium">[Denominación]</span>, 
                     le comunicamos que...
                   </p>
                   <div 
-                    className="h-24 rounded border-2 border-dashed flex items-center justify-center"
+                    className="h-16 rounded border-2 border-dashed flex items-center justify-center"
                     style={{ borderColor: colors?.border || '#e2e8f0' }}
                   >
-                    <span className="text-sm" style={{ color: colors?.textMuted }}>
+                    <span className="text-[10px]" style={{ color: colors?.textMuted }}>
                       [Contenido del documento]
                     </span>
                   </div>
                 </div>
                 
                 {/* Table example */}
-                <div className="mb-8">
-                  <table className="w-full border-collapse">
+                <div className="mb-5">
+                  <table className="w-full border-collapse text-[10px]">
                     <thead>
                       <tr>
                         <th 
-                          className="text-left p-3 text-sm font-semibold"
+                          className="text-left p-2 font-semibold"
                           style={{ 
                             backgroundColor: colors?.tableHeadBg || '#2563eb',
                             color: colors?.tableHeadText || '#ffffff',
@@ -240,7 +241,7 @@ export function TemplatePreviewModal({
                           Concepto
                         </th>
                         <th 
-                          className="text-right p-3 text-sm font-semibold"
+                          className="text-right p-2 font-semibold"
                           style={{ 
                             backgroundColor: colors?.tableHeadBg || '#2563eb',
                             color: colors?.tableHeadText || '#ffffff',
@@ -253,13 +254,13 @@ export function TemplatePreviewModal({
                     <tbody>
                       <tr>
                         <td 
-                          className="p-3 text-sm border-b"
+                          className="p-2 border-b"
                           style={{ borderColor: colors?.border, backgroundColor: colors?.backgroundAlt }}
                         >
                           [Concepto 1]
                         </td>
                         <td 
-                          className="p-3 text-sm text-right border-b"
+                          className="p-2 text-right border-b"
                           style={{ borderColor: colors?.border, backgroundColor: colors?.backgroundAlt }}
                         >
                           [Importe]
@@ -267,13 +268,13 @@ export function TemplatePreviewModal({
                       </tr>
                       <tr>
                         <td 
-                          className="p-3 text-sm border-b"
+                          className="p-2 border-b"
                           style={{ borderColor: colors?.border }}
                         >
                           [Concepto 2]
                         </td>
                         <td 
-                          className="p-3 text-sm text-right border-b"
+                          className="p-2 text-right border-b"
                           style={{ borderColor: colors?.border }}
                         >
                           [Importe]
@@ -283,7 +284,7 @@ export function TemplatePreviewModal({
                     <tfoot>
                       <tr>
                         <td 
-                          className="p-3 text-sm font-bold"
+                          className="p-2 font-bold"
                           style={{ 
                             backgroundColor: colors?.totalBg || '#2563eb',
                             color: colors?.totalText || '#ffffff',
@@ -292,7 +293,7 @@ export function TemplatePreviewModal({
                           TOTAL
                         </td>
                         <td 
-                          className="p-3 text-sm font-bold text-right"
+                          className="p-2 font-bold text-right"
                           style={{ 
                             backgroundColor: colors?.totalBg || '#2563eb',
                             color: colors?.totalText || '#ffffff',
@@ -306,24 +307,24 @@ export function TemplatePreviewModal({
                 </div>
                 
                 {/* Footer */}
-                <div className="pt-6 border-t" style={{ borderColor: colors?.border }}>
-                  <p className="text-sm" style={{ color: colors?.textMuted }}>
+                <div className="pt-4 border-t" style={{ borderColor: colors?.border }}>
+                  <p className="text-[10px]" style={{ color: colors?.textMuted }}>
                     Fecha: [Fecha actual]
                   </p>
-                  <p className="text-sm mt-4" style={{ color: colors?.text }}>
+                  <p className="text-[10px] mt-3" style={{ color: colors?.text }}>
                     Atentamente,
                   </p>
-                  <p className="text-sm font-semibold mt-2" style={{ color: colors?.text }}>
+                  <p className="text-[10px] font-semibold mt-1" style={{ color: colors?.text }}>
                     [Nombre del agente]
                   </p>
-                  <p className="text-sm" style={{ color: colors?.textMuted }}>
+                  <p className="text-[10px]" style={{ color: colors?.textMuted }}>
                     {orgName}
                   </p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Right: Settings panel */}
           <div className="w-80 border-l bg-white flex flex-col">
             <ScrollArea className="flex-1">

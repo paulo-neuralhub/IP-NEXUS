@@ -63,12 +63,13 @@ export default function TemplatesSettings() {
         </div>
 
         <Button asChild>
-          <Link to="/app/settings/templates">
+          <Link to="/app/settings/templates" className="gap-1">
             Gestionar plantillas
-            <ChevronRight className="w-4 h-4 ml-1" />
+            <span>→</span>
           </Link>
         </Button>
       </div>
+
 
       {/* Stats Row */}
       <div className="grid grid-cols-3 gap-4">
