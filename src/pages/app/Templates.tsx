@@ -93,8 +93,9 @@ export default function TemplatesPage() {
     setIsPreviewOpen(true);
   };
 
-  const handleModalStyleChange = (style: DesignTokens) => {
-    setDefaultStyleMutation.mutate(style.id);
+  const handleModalStyleChange = (style: GlobalStyleId) => {
+    setLocalStyle(style);
+    handleApplyToAll(style);
   };
 
   if (isLoading) {
@@ -213,8 +214,7 @@ export default function TemplatesPage() {
         open={isPreviewOpen}
         onOpenChange={setIsPreviewOpen}
         documentType={previewType}
-        defaultStyle={currentDefaultStyle}
-        allStyles={styles || []}
+        activeStyle={localStyle as any}
         isEnabled={previewType ? isTypeEnabled(previewType.id) : true}
         onToggle={(enabled) => previewType && handleToggle(previewType.id, enabled)}
         onStyleChange={handleModalStyleChange}

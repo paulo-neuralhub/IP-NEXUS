@@ -145,7 +145,8 @@ export default function TemplateCatalogPage() {
     toggleTypeMutation.mutate({ typeId, enabled });
   };
   
-  const handleStyleChange = (style: DesignTokens) => {
+  const handleStyleChange = (style: any) => {
+    if (typeof style === 'string') return; // StyleKey from new modal
     setDefaultStyleMutation.mutate(style.id);
   };
   
@@ -283,11 +284,10 @@ export default function TemplateCatalogPage() {
         open={isPreviewOpen}
         onOpenChange={setIsPreviewOpen}
         documentType={previewType}
-        defaultStyle={currentDefaultStyle}
-        allStyles={styles || []}
+        activeStyle="moderno"
         isEnabled={previewType ? isTypeEnabled(previewType.id) : true}
         onToggle={(enabled) => previewType && handleToggle(previewType.id, enabled)}
-        onStyleChange={handleStyleChange}
+        onStyleChange={handleStyleChange as any}
       />
     </div>
   );
