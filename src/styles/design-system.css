@@ -280,55 +280,14 @@
   box-shadow: 0 3px 14px rgba(0, 180, 216, 0.30);
 }
 
-/* SILK Menu item active with tongue connector curves */
+/* SILK Menu item active - SIMPLE CONSISTENT VERSION */
+/* Removed tongue connector due to inconsistencies across pages */
 .silk-menu-active {
   position: relative;
-  background: hsl(var(--ip-bg-primary));
-  border-radius: 14px 0 0 14px;
-  margin-right: 0 !important;
-  z-index: 5;
-  /* Make a stable stacking context (prevents repaint artifacts) */
-  isolation: isolate;
-}
-
-/* Ensure contents stay above tongue shapes */
-.silk-menu-active > * {
-  position: relative;
-  z-index: 2;
-}
-
-/* SILK Tongue curve - top (stable: no box-shadow spill) */
-.silk-menu-active::before {
-  content: '';
-  position: absolute;
-  right: -14px;
-  top: -14px;
-  width: 28px;
-  height: 28px;
-  background: hsl(var(--ip-bg-primary));
-  border-radius: 14px;
-  pointer-events: none;
+  background: rgba(0, 180, 216, 0.08);
+  border-radius: 12px;
+  margin-right: 16px !important;
   z-index: 1;
-}
-
-/* SILK Tongue curve - bottom */
-.silk-menu-active::after {
-  content: '';
-  position: absolute;
-  right: -14px;
-  bottom: -14px;
-  width: 28px;
-  height: 28px;
-  background: hsl(var(--ip-bg-primary));
-  border-radius: 14px;
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* Hide curves when menu item is first/last to prevent orphan curves */
-.silk-menu-active:first-child::before,
-.silk-menu-active:last-child::after {
-  display: none;
 }
 
 /* SILK Accent bar for active item */
