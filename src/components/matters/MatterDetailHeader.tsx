@@ -289,24 +289,48 @@ export function MatterDetailHeader({
           {(() => {
             const iconConfig = MATTER_TYPE_ICONS[matter.matter_type] || MATTER_TYPE_ICONS.default;
             const IconComponent = iconConfig.icon;
+            
+            // Determine the short type label and color for the subtle text
+            const getTypeLabel = (type: string) => {
+              if (type?.startsWith('TM') || type === 'trademark') return { label: 'MARCA', color: '#06b6d4' };
+              if (type?.startsWith('PT') || type === 'patent') return { label: 'PATENTE', color: '#3b82f6' };
+              if (type?.startsWith('DS') || type === 'design') return { label: 'DISEÑO', color: '#f59e0b' };
+              if (type === 'UM' || type === 'utility_model') return { label: 'MODELO U.', color: '#8b5cf6' };
+              if (type === 'NC' || type === 'trade_name') return { label: 'NOMBRE C.', color: '#14b8a6' };
+              if (type === 'copyright') return { label: 'COPYRIGHT', color: '#f43f5e' };
+              return { label: '', color: '#64748b' };
+            };
+            const typeLabel = getTypeLabel(matter.matter_type);
+            
             return (
-              <div 
-                className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 relative"
-                style={{
-                  background: `linear-gradient(135deg, ${iconConfig.gradientFrom}, ${iconConfig.gradientTo})`,
-                  border: `3px solid ${iconConfig.borderColor}`,
-                  boxShadow: `0 8px 24px ${iconConfig.shadowColor}`,
-                }}
-              >
-                {/* If has mark image, show it */}
-                {matter.mark_image_url ? (
-                  <img 
-                    src={matter.mark_image_url} 
-                    alt={matter.title || 'Marca'} 
-                    className="w-full h-full object-contain p-1.5 bg-white rounded-xl"
-                  />
-                ) : (
-                  <IconComponent className="w-8 h-8 text-white drop-shadow-md" />
+              <div className="flex flex-col items-center shrink-0">
+                <div 
+                  className="w-16 h-16 rounded-2xl flex items-center justify-center relative"
+                  style={{
+                    background: `linear-gradient(135deg, ${iconConfig.gradientFrom}, ${iconConfig.gradientTo})`,
+                    border: `3px solid ${iconConfig.borderColor}`,
+                    boxShadow: `0 8px 24px ${iconConfig.shadowColor}`,
+                  }}
+                >
+                  {/* If has mark image, show it */}
+                  {matter.mark_image_url ? (
+                    <img 
+                      src={matter.mark_image_url} 
+                      alt={matter.title || 'Marca'} 
+                      className="w-full h-full object-contain p-1.5 bg-white rounded-xl"
+                    />
+                  ) : (
+                    <IconComponent className="w-8 h-8 text-white drop-shadow-md" />
+                  )}
+                </div>
+                {/* Subtle type label below avatar */}
+                {typeLabel.label && (
+                  <span 
+                    className="mt-1.5 text-[10px] font-semibold uppercase tracking-widest opacity-80"
+                    style={{ color: typeLabel.color }}
+                  >
+                    {typeLabel.label}
+                  </span>
                 )}
               </div>
             );
