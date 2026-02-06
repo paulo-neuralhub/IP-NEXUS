@@ -21,7 +21,7 @@ import {
   PhoneCall,
   PackageSearch,
   CalendarClock,
-  FileText,
+  
   Zap,
   Hash,
 } from 'lucide-react';
@@ -48,7 +48,7 @@ import CrmSettings from './sections/CrmSettings';
 import EmailSettings from './sections/EmailSettings';
 import DeadlineConfigPage from './deadlines';
 import InternalReferenceConfigPage from './internal-reference';
-import TemplatesSettings from './sections/TemplatesSettings';
+
 import TenantTelephonySettingsPage from './telephony';
 import { ServicesDashboard } from '@/components/services';
 import ModulesSettings from './sections/ModulesSettings';
@@ -69,7 +69,7 @@ const ORG_TABS = [
   { id: 'crm', label: 'CRM', icon: TrendingUp, permission: 'settings.view' },
   { id: 'voip', label: 'Telefonía', icon: PhoneCall, permission: 'settings.view' },
   { id: 'catalog', label: 'Catálogo Servicios', icon: PackageSearch, permission: 'settings.view' },
-  { id: 'templates', label: 'Plantillas', icon: FileText, permission: 'settings.view' },
+  
   { id: 'automations', label: 'Automatizaciones', icon: Zap, permission: 'settings.update' },
   { id: 'deadlines', label: 'Reglas de Plazos', icon: CalendarClock, permission: 'settings.update' },
   { id: 'internal-reference', label: 'Referencia Interna', icon: Hash, permission: 'settings.update' },
@@ -278,11 +278,6 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
         </RequirePermission>
       )}
 
-      {activeTab === 'templates' && (
-        <RequirePermission permission="settings.view">
-          <TemplatesSettings />
-        </RequirePermission>
-      )}
 
       {activeTab === 'automations' && (
         <RequirePermission permission="settings.update">
