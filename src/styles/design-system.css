@@ -283,26 +283,30 @@
 /* SILK Menu item active with tongue connector curves */
 .silk-menu-active {
   position: relative;
-  background: #f1f4f9;
+  background: hsl(var(--ip-bg-primary));
   border-radius: 14px 0 0 14px;
   margin-right: 0 !important;
   z-index: 5;
-  /* Contain pseudo-elements within stacking context */
+  /* Make a stable stacking context (prevents repaint artifacts) */
   isolation: isolate;
 }
 
-/* SILK Tongue curve - top 
-   Uses clip-path to prevent "ghost legs" during React re-renders */
+/* Ensure contents stay above tongue shapes */
+.silk-menu-active > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* SILK Tongue curve - top (stable: no box-shadow spill) */
 .silk-menu-active::before {
   content: '';
   position: absolute;
-  right: 0;
+  right: -14px;
   top: -14px;
-  width: 14px;
-  height: 14px;
-  background: transparent;
-  border-bottom-right-radius: 10px;
-  box-shadow: 5px 5px 0 5px #f1f4f9;
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--ip-bg-primary));
+  border-radius: 14px;
   pointer-events: none;
   z-index: 1;
 }
@@ -311,13 +315,12 @@
 .silk-menu-active::after {
   content: '';
   position: absolute;
-  right: 0;
+  right: -14px;
   bottom: -14px;
-  width: 14px;
-  height: 14px;
-  background: transparent;
-  border-top-right-radius: 10px;
-  box-shadow: 5px -5px 0 5px #f1f4f9;
+  width: 28px;
+  height: 28px;
+  background: hsl(var(--ip-bg-primary));
+  border-radius: 14px;
   pointer-events: none;
   z-index: 1;
 }
