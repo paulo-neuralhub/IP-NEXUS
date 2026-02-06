@@ -287,22 +287,24 @@
   border-radius: 14px 0 0 14px;
   margin-right: 0 !important;
   z-index: 5;
-  /* Instant background, no delay */
+  /* Contain pseudo-elements within stacking context */
+  isolation: isolate;
 }
 
-/* SILK Tongue curve - top */
+/* SILK Tongue curve - top 
+   Uses clip-path to prevent "ghost legs" during React re-renders */
 .silk-menu-active::before {
   content: '';
   position: absolute;
   right: 0;
-  top: -20px;
-  width: 20px;
-  height: 20px;
+  top: -14px;
+  width: 14px;
+  height: 14px;
   background: transparent;
-  border-bottom-right-radius: 14px;
-  box-shadow: 6px 6px 0 6px #f1f4f9;
-  /* No animation - instant appearance */
+  border-bottom-right-radius: 10px;
+  box-shadow: 5px 5px 0 5px #f1f4f9;
   pointer-events: none;
+  z-index: 1;
 }
 
 /* SILK Tongue curve - bottom */
@@ -310,14 +312,20 @@
   content: '';
   position: absolute;
   right: 0;
-  bottom: -20px;
-  width: 20px;
-  height: 20px;
+  bottom: -14px;
+  width: 14px;
+  height: 14px;
   background: transparent;
-  border-top-right-radius: 14px;
-  box-shadow: 6px -6px 0 6px #f1f4f9;
-  /* No animation - instant appearance */
+  border-top-right-radius: 10px;
+  box-shadow: 5px -5px 0 5px #f1f4f9;
   pointer-events: none;
+  z-index: 1;
+}
+
+/* Hide curves when menu item is first/last to prevent orphan curves */
+.silk-menu-active:first-child::before,
+.silk-menu-active:last-child::after {
+  display: none;
 }
 
 /* SILK Accent bar for active item */
@@ -330,7 +338,6 @@
   background: #00b4d8;
   border-radius: 0 3px 3px 0;
   box-shadow: 0 0 8px rgba(0, 180, 216, 0.30);
-  /* No animation - instant appearance */
 }
 
 /* SILK Company badge */

@@ -81,69 +81,58 @@ export function Sidebar() {
           const Icon = item.icon!;
 
           return (
-            <div 
-              key={item.path} 
+            <Link
+              key={item.path}
+              to={isLocked ? "#" : item.path}
               className={cn(
-                "relative my-1",
-                // Add padding for tongue curves (needs space above and below)
-                isActive && "py-0"
+                "flex items-center gap-3 px-4 py-2.5 my-0.5 text-sm relative",
+                isActive
+                  ? "silk-menu-active text-slate-800 font-medium"
+                  : isLocked
+                  ? "text-white/40 cursor-not-allowed rounded-lg"
+                  : "text-white/70 hover:bg-white/10 hover:text-white rounded-lg"
               )}
+              onClick={(e) => isLocked && e.preventDefault()}
             >
-              <Link
-                to={isLocked ? "#" : item.path}
-                className={cn(
-                  "flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 relative",
-                  isActive
-                    ? "silk-menu-active text-slate-800 font-medium"
-                    : isLocked
-                    ? "text-white/40 cursor-not-allowed rounded-lg"
-                    : "text-white/70 hover:bg-white/10 hover:text-white rounded-lg"
-                )}
-                onClick={(e) => isLocked && e.preventDefault()}
-              >
-                {/* Accent bar for active item */}
-                {isActive && <div className="silk-accent-bar" />}
-                
-                <Icon 
-                  className="h-5 w-5 transition-colors duration-200" 
-                  style={{ color: isActive ? moduleColor : undefined }} 
-                />
-                <span className="flex-1">{item.label}</span>
-                
-                {isLocked && <Lock className="h-4 w-4" />}
-                {item.addon && !isLocked && (
-                  <span className={cn(
-                    "text-[10px] font-bold px-2 py-0.5 rounded-full",
-                    isActive ? "silk-badge-active" : "silk-badge-inactive"
-                  )}>
-                    PRO
-                  </span>
-                )}
-              </Link>
-            </div>
+              {isActive && <span className="silk-accent-bar" />}
+              
+              <Icon 
+                className="h-5 w-5" 
+                style={{ color: isActive ? moduleColor : undefined }} 
+              />
+              <span className="flex-1">{item.label}</span>
+              
+              {isLocked && <Lock className="h-4 w-4" />}
+              {item.addon && !isLocked && (
+                <span className={cn(
+                  "text-[10px] font-bold px-2 py-0.5 rounded-full",
+                  isActive ? "silk-badge-active" : "silk-badge-inactive"
+                )}>
+                  PRO
+                </span>
+              )}
+            </Link>
           );
         })}
       </nav>
 
       {/* Settings */}
       <div className="px-3 py-2 border-t border-white/10">
-        <div className="relative my-1">
-          <Link
-            to="/app/settings"
-            className={cn(
-              "flex items-center gap-3 px-4 py-3 text-sm transition-all duration-200 relative",
-              location.pathname.startsWith("/app/settings")
-                ? "silk-menu-active text-slate-800 font-medium"
-                : "text-white/70 hover:bg-white/10 hover:text-white rounded-lg"
-            )}
-          >
-            {location.pathname.startsWith("/app/settings") && (
-              <div className="silk-accent-bar" />
-            )}
-            <Settings className="h-5 w-5" />
-            Configuración
-          </Link>
-        </div>
+        <Link
+          to="/app/settings"
+          className={cn(
+            "flex items-center gap-3 px-4 py-2.5 text-sm relative",
+            location.pathname.startsWith("/app/settings")
+              ? "silk-menu-active text-slate-800 font-medium"
+              : "text-white/70 hover:bg-white/10 hover:text-white rounded-lg"
+          )}
+        >
+          {location.pathname.startsWith("/app/settings") && (
+            <span className="silk-accent-bar" />
+          )}
+          <Settings className="h-5 w-5" />
+          Configuración
+        </Link>
       </div>
 
       {/* User Menu */}
