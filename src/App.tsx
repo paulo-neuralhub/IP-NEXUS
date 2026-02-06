@@ -151,6 +151,7 @@ import TranslatorPage from "./pages/app/genius/translator";
 import DocumentTemplatesPage from "./pages/app/genius/templates";
 import DocumentTemplatesDashboard from "./pages/app/settings/templates";
 import TemplatesPage from "./pages/app/Templates";
+import TemplateCategoryModels from "./pages/app/TemplateCategoryModels";
 import DocumentTemplateBrandingPage from "./pages/app/settings/templates/branding";
 import DocumentTemplateListPage from "./pages/app/settings/templates/[type]";
 import DocumentTemplateEditPage from "./pages/app/settings/templates/[id]/edit";
@@ -552,6 +553,7 @@ const App = () => (
                 <Route path="settings/telephony/historial" element={<TenantTelephonyHistoryPage />} />
                 {/* Document Templates */}
                 <Route path="templates" element={<TemplatesPage />} />
+                <Route path="templates/:category" element={<TemplateCategoryModels />} />
                 <Route path="settings/templates" element={<DocumentTemplatesDashboard />} />
                 <Route path="settings/templates/branding" element={<DocumentTemplateBrandingPage />} />
                 <Route path="settings/templates/:type" element={<DocumentTemplateListPage />} />
