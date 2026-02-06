@@ -15,7 +15,7 @@ import { NexusGuideButton } from "@/components/nexus-guide";
 import { GlobalTimer } from "@/components/timetracking";
 import { usePresence } from "@/hooks/use-realtime-collab";
 import { PageContainer } from "@/components/layout/PageContainer";
-import { SoftphoneWidget } from "@/components/voip/SoftphoneWidget";
+// SoftphoneWidget removed — only NexusGuide floating button allowed
 import { CallManager } from "@/components/telephony/CallManager";
 import { ModuleActivationDialog } from "@/components/modules";
 import { DemoTourNavigator, DemoScreenAnnotation } from "@/components/demo";
@@ -94,8 +94,7 @@ export function AppLayout() {
                 {/* Global Timer for mobile */}
                 <GlobalTimer />
 
-                {/* Softphone Widget (VoIP) */}
-                <SoftphoneWidget />
+                {/* Softphone removed */}
                 
                 {/* Demo Mode Components */}
                 {isDemoMode && (
@@ -150,8 +149,7 @@ export function AppLayout() {
                 {/* Timer stays floating on mobile; on desktop it's embedded in the sidebar */}
                 <NexusGuideButton />
 
-                {/* Softphone Widget (VoIP) */}
-                <SoftphoneWidget />
+                {/* Softphone removed */}
                 
                 {/* Click-to-Call Manager */}
                 <CallManager />

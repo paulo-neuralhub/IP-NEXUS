@@ -47,7 +47,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { useIsBackofficeStaff } from '@/hooks/backoffice/useBackofficeAccess';
 import { usePendingEventsCount } from '@/hooks/useSystemEvents';
 import { Spinner } from '@/components/ui/spinner';
-import { SoftphoneWidget } from '@/components/voip/SoftphoneWidget';
+// SoftphoneWidget removed
 import { AiAgentFloatingButton } from '@/components/backoffice/AiAgent/AiAgentFloatingButton';
 import {
   Collapsible,
@@ -378,8 +378,7 @@ export default function BackofficeLayout() {
         </div>
       </main>
 
-      {/* Softphone Widget (VoIP) */}
-      <SoftphoneWidget />
+      {/* Softphone removed */}
 
       {/* Backoffice AI Agent */}
       <AiAgentFloatingButton />
