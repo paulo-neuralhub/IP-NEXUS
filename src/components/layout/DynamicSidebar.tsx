@@ -30,7 +30,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GlobalTimer } from "@/components/timetracking";
+import { CompactTimerBadge } from "@/components/timetracking/CompactTimerBadge";
 import {
   Collapsible,
   CollapsibleContent,
@@ -521,10 +521,10 @@ export function DynamicSidebar({
         )}
       </nav>
 
-      {/* Timer */}
+      {/* Compact Timer Badge */}
       {!collapsed && (
-        <div className="px-3 py-3">
-          <GlobalTimer placement="sidebar" />
+        <div className="px-3 py-2">
+          <CompactTimerBadge />
         </div>
       )}
 
