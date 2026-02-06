@@ -92,15 +92,23 @@ export function useMatterPhase(matterId: string) {
       return result;
     },
     onSuccess: (data) => {
-      // Invalidate ALL related queries to refresh UI
+      // Update cache optimistically BEFORE invalidating to prevent flash
+      // Set the new phase data directly in cache
+      queryClient.setQueryData(['matter-v2', matterId], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          current_phase: data.to_phase,
+          phase_entered_at: new Date().toISOString(),
+        };
+      });
+      
+      // Invalidate in background (won't cause flash since cache is already updated)
       queryClient.invalidateQueries({ queryKey: ['matter', matterId] });
       queryClient.invalidateQueries({ queryKey: ['matter-v2', matterId] });
       queryClient.invalidateQueries({ queryKey: ['matter-timeline', matterId] });
       queryClient.invalidateQueries({ queryKey: ['matters'] });
       queryClient.invalidateQueries({ queryKey: ['matters-v2'] });
-      
-      // Force refetch to ensure UI updates immediately
-      queryClient.refetchQueries({ queryKey: ['matter-v2', matterId] });
       
       toast.success(`Fase actualizada: ${data.from_phase} → ${data.to_phase}`);
     },

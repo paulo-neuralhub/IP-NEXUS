@@ -237,7 +237,7 @@ export function WorkflowCards({
   const nextPhaseConfig = currentIndex < PHASES_CONFIG.length - 1 ? PHASES_CONFIG[currentIndex + 1] : null;
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-5">
+    <div className="bg-white border border-slate-200 rounded-xl p-5 transition-all duration-300 ease-out">
       {/* Phase Circles with Connectors */}
       <div className="flex items-center justify-between mb-6">
         {PHASES_CONFIG.map((phase, index) => {
@@ -282,7 +282,8 @@ export function WorkflowCards({
                   <button
                     onClick={() => onPhaseClick?.(phase.key)}
                     className={cn(
-                      "relative flex flex-col items-center justify-center transition-all duration-300 shrink-0",
+                      "relative flex flex-col items-center justify-center shrink-0",
+                      "transition-all duration-300 ease-out",
                       // ACTIVE: Large, solid color, prominent
                       isCurrent && cn(
                         "w-16 h-16 rounded-2xl text-white font-bold shadow-xl",
