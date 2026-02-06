@@ -1,5 +1,6 @@
 import * as React from "react";
 import { Outlet } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import { AuthGuard } from "@/components/layout/auth-guard";
 import { OrgGuard } from "@/components/layout/org-guard";
 import { DynamicSidebar } from "@/components/layout/DynamicSidebar";
@@ -111,29 +112,33 @@ export function AppLayout() {
                 )}
               </div>
             ) : (
-              // SILK Desktop Shell
+              // SILK Desktop Shell - Fixed layout with no gaps
               <div 
-                className="min-h-screen"
+                className="h-screen flex overflow-hidden"
                 style={{
                   background: 'linear-gradient(180deg, #f1f4f9, #ebeef5)',
                 }}
               >
+                {/* Sidebar - Fixed position, full height */}
                 <DynamicSidebar
                   variant="desktop"
                   collapsed={sidebarCollapsed}
                   onToggleCollapsed={() => setSidebarCollapsed(v => !v)}
                 />
-                {/* SILK: Content area with proper margin for sidebar */}
+                
+                {/* SILK: Content area - flex-1 fills remaining space, no margin needed since sidebar is fixed */}
                 <div 
-                  className={sidebarCollapsed ? "ml-16" : "ml-[230px]"}
-                  style={{ minHeight: '100vh' }}
+                  className={cn(
+                    "flex-1 flex flex-col h-screen overflow-hidden",
+                    sidebarCollapsed ? "ml-16" : "ml-[230px]"
+                  )}
                 >
                   <AlertBanner />
                   <TrialBanner />
                   <Header />
-                  {/* SILK: Main content area */}
+                  {/* SILK: Main content area with independent scroll */}
                   <main 
-                    className="overflow-auto"
+                    className="flex-1 overflow-y-auto overflow-x-hidden"
                     style={{ 
                       padding: '24px',
                       background: '#f1f4f9',
