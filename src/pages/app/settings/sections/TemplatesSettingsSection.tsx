@@ -799,7 +799,7 @@ export default function TemplatesSettingsSection() {
       </div>
 
       {/* ── DOCUMENT GRID ───────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
         {filtered.map((doc) => {
           const catColor = CAT_COLORS[doc.cat] || CAT_COLORS.Financiero;
           const enabled = enabledDocs[doc.id];
@@ -809,7 +809,7 @@ export default function TemplatesSettingsSection() {
             const raw = generateDocumentHTML(selectedStyleId, doc.id, tenant, {});
             thumbHTML = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
               html,body{margin:0;padding:0;overflow:hidden;pointer-events:none;}
-              body{transform-origin:top left;transform:scale(0.22);width:454.5%;}
+              body{transform-origin:top left;transform:scale(0.18);width:555.5%;}
             </style></head><body>${raw}</body></html>`;
           } catch {}
 
@@ -822,14 +822,14 @@ export default function TemplatesSettingsSection() {
                   : "border-slate-100 opacity-60"
               }`}
             >
-              {/* Thumbnail — real document scaled down */}
+              {/* Thumbnail — edge to edge */}
               <div
                 className="relative cursor-pointer"
                 onClick={() => setPreviewDoc(doc)}
               >
                 <div
-                  className="mx-4 mt-4 rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm transition-shadow group-hover:shadow-md"
-                  style={{ aspectRatio: "170/220" }}
+                  className="overflow-hidden bg-white"
+                  style={{ aspectRatio: "210/297" }}
                 >
                   {thumbHTML && (
                     <iframe
@@ -842,61 +842,40 @@ export default function TemplatesSettingsSection() {
                   )}
                 </div>
                 {/* Hover overlay */}
-                <div className="absolute inset-0 mx-4 mt-4 rounded-lg bg-slate-900/0 group-hover:bg-slate-900/5 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-lg shadow-lg text-sm font-medium text-slate-700">
+                <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/5 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                  <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg shadow-lg text-xs font-medium text-slate-700">
                     Vista previa
                   </div>
                 </div>
               </div>
 
-              {/* Info */}
-              <div className="p-4 pt-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="text-base">{doc.icon}</span>
-                      <h3 className="font-semibold text-slate-900 text-sm truncate">
-                        {doc.name}
-                      </h3>
-                    </div>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      {doc.desc}
-                    </p>
+              {/* Compact info */}
+              <div className="px-3 py-2.5 border-t border-slate-100">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 min-w-0 flex-1">
+                    <span className="text-sm flex-shrink-0">{doc.icon}</span>
+                    <h3 className="font-semibold text-slate-900 text-xs truncate">
+                      {doc.name}
+                    </h3>
                   </div>
-
                   {/* Toggle */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       toggleDoc(doc.id);
                     }}
-                    className={`relative flex-shrink-0 ml-3 w-10 rounded-full transition-colors duration-200 ${
+                    className={`relative flex-shrink-0 ml-2 w-8 rounded-full transition-colors duration-200 ${
                       enabled ? "bg-indigo-500" : "bg-slate-200"
                     }`}
-                    style={{ height: "22px" }}
+                    style={{ height: "18px" }}
                   >
                     <div
                       className={`absolute top-0.5 bg-white rounded-full shadow-sm transition-transform duration-200 ${
-                        enabled ? "translate-x-5" : "translate-x-0.5"
+                        enabled ? "translate-x-3.5" : "translate-x-0.5"
                       }`}
-                      style={{
-                        width: "18px",
-                        height: "18px",
-                      }}
+                      style={{ width: "14px", height: "14px" }}
                     />
                   </button>
-                </div>
-
-                {/* Category badge */}
-                <div className="mt-2 flex items-center gap-2">
-                  <span
-                    className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${catColor.bg} ${catColor.text} ${catColor.border}`}
-                  >
-                    {doc.cat}
-                  </span>
-                  <span className="text-[10px] text-slate-300">
-                    18 estilos
-                  </span>
                 </div>
               </div>
             </div>
