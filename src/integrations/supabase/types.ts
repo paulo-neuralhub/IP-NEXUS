@@ -26565,13 +26565,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "market_notifications_offer_id_fkey"
-            columns: ["offer_id"]
-            isOneToOne: false
-            referencedRelation: "market_service_offers"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "market_notifications_organization_id_fkey"
             columns: ["organization_id"]
             isOneToOne: false
@@ -26590,20 +26583,6 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "market_notifications_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "market_requests"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "market_notifications_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "market_service_transactions"
             referencedColumns: ["id"]
           },
         ]
