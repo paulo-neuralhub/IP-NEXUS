@@ -316,6 +316,14 @@
   z-index: 10;
 }
 
+/* Force Collapsible wrappers in sidebar to not clip pseudo-elements */
+.silk-sidebar-collapsible {
+  overflow: visible !important;
+}
+.silk-sidebar-collapsible > [data-state] {
+  overflow: visible !important;
+}
+
 /* SILK Accent bar for active item */
 .silk-accent-bar {
   position: absolute;

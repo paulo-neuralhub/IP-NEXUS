@@ -247,7 +247,9 @@ export function DynamicSidebar({
           key={mod.moduleCode}
           open={isExpanded}
           onOpenChange={() => toggleModule(mod.moduleCode)}
+          className="silk-sidebar-collapsible"
         >
+          {/* Tongue target: ONLY the trigger button gets silk-menu-active */}
           <CollapsibleTrigger asChild>
             <button
               type="button"
@@ -278,7 +280,8 @@ export function DynamicSidebar({
               />
             </button>
           </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-0.5 py-1">
+          {/* Sub-items: OUTSIDE the silk-menu-active element, with relative positioning to not overlap curves */}
+          <CollapsibleContent className="space-y-0.5 py-1 relative z-[5]">
             {mod.moduleMenuItems.map(item => renderMenuItem(item, mod.moduleColor))}
           </CollapsibleContent>
         </Collapsible>
@@ -367,7 +370,7 @@ export function DynamicSidebar({
     return (
       <div key={section.sectionCode} className="mb-1">
         {!collapsed && (
-          <Collapsible open={isExpanded} onOpenChange={() => toggleSection(section.sectionCode)}>
+          <Collapsible open={isExpanded} onOpenChange={() => toggleSection(section.sectionCode)} className="silk-sidebar-collapsible">
             <CollapsibleTrigger asChild>
               <button
                 type="button"
