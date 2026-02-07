@@ -35,6 +35,7 @@ interface DocumentGeneratorProps {
   clientId?: string;
   initialTemplate?: DocumentTemplateConfig;
   initialVariables?: DocumentVariables;
+  initialTemplateHint?: { id: string; name: string; category: string };
 }
 
 // Template categories (WITHOUT invoices)
@@ -52,6 +53,7 @@ export function DocumentGenerator({
   clientId,
   initialTemplate,
   initialVariables = {},
+  initialTemplateHint,
 }: DocumentGeneratorProps) {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -82,6 +84,28 @@ export function DocumentGenerator({
       generateTempDocumentNumber();
     }
   }, [isOpen, matterId, clientId]);
+
+  // Auto-select template when initialTemplateHint is provided and templates are loaded
+  useEffect(() => {
+    if (initialTemplateHint && templates.length > 0 && !selectedTemplate) {
+      // Try to find matching template by name or category
+      const match = templates.find(t => 
+        t.name.toLowerCase().includes(initialTemplateHint.name.toLowerCase()) ||
+        t.code === initialTemplateHint.id
+      );
+      if (match) {
+        handleSelectTemplate(match);
+      } else if (templates.length > 0) {
+        // If no exact match, select first template in matching category or first available
+        const categoryMatch = templates.find(t => t.category === initialTemplateHint.category);
+        if (categoryMatch) {
+          handleSelectTemplate(categoryMatch);
+        } else {
+          handleSelectTemplate(templates[0]);
+        }
+      }
+    }
+  }, [initialTemplateHint, templates]);
 
   const loadTenantSettings = async () => {
     try {

@@ -176,6 +176,7 @@ export function MatterDocumentsTab({
 }: MatterDocumentsTabProps) {
   const [showUploader, setShowUploader] = useState(false);
   const [showDocGenerator, setShowDocGenerator] = useState(false);
+  const [selectedTemplateForGenerator, setSelectedTemplateForGenerator] = useState<{ id: string; name: string; category: string } | null>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [generatedDocs, setGeneratedDocs] = useState<any[]>([]);
   const [isLoadingGenerated, setIsLoadingGenerated] = useState(true);
@@ -297,8 +298,9 @@ export function MatterDocumentsTab({
   const totalDocs = (uploadedDocuments?.length || 0) + generatedDocs.length;
   const isLoading = isLoadingUploaded || isLoadingGenerated;
 
-  // Handle template click - opens the document generator
-  const handleTemplateClick = (templateId: string) => {
+  // Handle template click - opens the document generator with the selected template
+  const handleTemplateClick = (template: { id: string; name: string; category: string }) => {
+    setSelectedTemplateForGenerator(template);
     setShowDocGenerator(true);
   };
 
@@ -576,7 +578,7 @@ export function MatterDocumentsTab({
                   <div
                     key={template.id}
                     className="group p-4 rounded-xl border border-slate-200 bg-white transition-all cursor-pointer hover:shadow-md hover:border-cyan-300"
-                    onClick={() => handleTemplateClick(template.id)}
+                    onClick={() => handleTemplateClick({ id: template.id, name: template.name, category: category.id })}
                   >
                     <div className="flex items-start gap-3">
                       <div 
@@ -637,10 +639,12 @@ export function MatterDocumentsTab({
         isOpen={showDocGenerator}
         onClose={() => {
           setShowDocGenerator(false);
+          setSelectedTemplateForGenerator(null);
           loadGeneratedDocuments();
         }}
         matterId={matterId}
         clientId={clientId}
+        initialTemplateHint={selectedTemplateForGenerator || undefined}
       />
 
       {/* Document Preview Modal */}
