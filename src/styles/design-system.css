@@ -316,6 +316,11 @@
   z-index: 10;
 }
 
+/* Hide bottom curve when submenu is expanded (prevents "legs" artifact) */
+.silk-menu-active.silk-tongue-no-bottom::after {
+  display: none;
+}
+
 /* Force Collapsible wrappers in sidebar to not clip pseudo-elements */
 .silk-sidebar-collapsible {
   overflow: visible !important;

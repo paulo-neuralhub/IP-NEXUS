@@ -258,7 +258,7 @@ export function DynamicSidebar({
                 "w-full flex items-center gap-3 text-[13px] transition-colors relative",
                 "py-[10px] px-3",
                 isActive
-                  ? "silk-menu-active text-[#0a2540] font-bold"
+                  ? cn("silk-menu-active text-[#0a2540] font-bold", isExpanded && "silk-tongue-no-bottom")
                   : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4"
               )}
             >
