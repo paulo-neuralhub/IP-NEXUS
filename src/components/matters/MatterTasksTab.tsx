@@ -29,6 +29,7 @@ const PRIORITY_CONFIG: Record<string, { label: string; color: string }> = {
 export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState<MatterTask | null>(null);
+  const [filter, setFilter] = useState<'pending' | 'overdue' | 'all'>('pending');
   const { toast } = useToast();
   
   const { data: tasks, isLoading } = useMatterTasks(matterId);
@@ -44,31 +45,63 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
     }
   };
 
-  const sortedTasks = [...(tasks || [])].sort((a, b) => {
-    // Completed at the end
+  const allSorted = [...(tasks || [])].sort((a, b) => {
     if (a.is_completed !== b.is_completed) return a.is_completed ? 1 : -1;
-    // Then by priority (urgent first)
     const priorityOrder = { urgent: 0, high: 1, medium: 2, low: 3 };
     return (priorityOrder[a.priority as keyof typeof priorityOrder] || 2) - 
            (priorityOrder[b.priority as keyof typeof priorityOrder] || 2);
   });
 
+  const sortedTasks = allSorted.filter((task) => {
+    if (filter === 'pending') return !task.is_completed;
+    if (filter === 'overdue') return !task.is_completed && task.due_date && isPast(new Date(task.due_date));
+    return true;
+  });
+
+  const overdueCount = (tasks || []).filter(t => !t.is_completed && t.due_date && isPast(new Date(t.due_date))).length;
+  const pendingCount = (tasks || []).filter(t => !t.is_completed).length;
+
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle className="flex items-center gap-2">
-          <CheckSquare className="h-5 w-5" />
-          Tareas
-          {tasks && tasks.length > 0 && (
-            <Badge variant="secondary">{tasks.length}</Badge>
-          )}
-        </CardTitle>
+    <div className="space-y-3">
+      {/* Sub-tabs outside the card */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant={filter === 'pending' ? 'default' : 'outline'}
+            onClick={() => setFilter('pending')}
+          >
+            Pendientes
+            {pendingCount > 0 && (
+              <Badge variant="secondary" className="ml-1.5 h-5 px-1.5 text-xs">{pendingCount}</Badge>
+            )}
+          </Button>
+          <Button
+            size="sm"
+            variant={filter === 'overdue' ? 'destructive' : 'outline'}
+            onClick={() => setFilter('overdue')}
+          >
+            Vencidas
+            {overdueCount > 0 && (
+              <Badge variant="destructive" className="ml-1.5 h-5 px-1.5 text-xs">{overdueCount}</Badge>
+            )}
+          </Button>
+          <Button
+            size="sm"
+            variant={filter === 'all' ? 'default' : 'outline'}
+            onClick={() => setFilter('all')}
+          >
+            Todas
+          </Button>
+        </div>
         <Button size="sm" onClick={() => setShowAddModal(true)}>
           <Plus className="h-4 w-4 mr-1" />
           Nueva tarea
         </Button>
-      </CardHeader>
-      <CardContent>
+      </div>
+
+    <Card>
+      <CardContent className="pt-6">
         {isLoading ? (
           <div className="text-center py-8 text-muted-foreground">Cargando...</div>
         ) : !sortedTasks?.length ? (
@@ -76,7 +109,7 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
             <CheckSquare className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
             <p className="text-muted-foreground">No hay tareas</p>
             <p className="text-sm text-muted-foreground mt-1">
-              Crea la primera tarea del expediente
+              {filter === 'overdue' ? 'Sin tareas vencidas' : filter === 'pending' ? 'Crea la primera tarea del expediente' : 'Sin tareas registradas'}
             </p>
           </div>
         ) : (
@@ -152,6 +185,7 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
           </div>
         )}
       </CardContent>
+    </Card>
 
       <AddTaskModal
         open={showAddModal}
@@ -166,6 +200,6 @@ export function MatterTasksTab({ matterId }: MatterTasksTabProps) {
           task={selectedTask}
         />
       )}
-    </Card>
+    </div>
   );
 }
