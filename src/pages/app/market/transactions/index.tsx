@@ -269,7 +269,7 @@ function TransactionCard({ transaction: tx }: { transaction: ServiceTransaction 
 
           {/* Review (completed, not yet reviewed) */}
           {tx.status === 'completed' && isBuyer && !tx.buyer_reviewed && (
-            <ReviewButton transactionId={tx.id} reviewedUserId={tx.seller_user_id || ''} />
+            <ReviewButton transactionId={tx.id} reviewedUserId={(tx as any).offer?.agent_id || tx.seller_user_id || ''} />
           )}
           {tx.status === 'completed' && !isBuyer && !tx.seller_reviewed && (
             <ReviewButton transactionId={tx.id} reviewedUserId={tx.buyer_user_id || ''} />

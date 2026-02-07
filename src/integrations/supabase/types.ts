@@ -27369,6 +27369,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "market_service_transactions_offer_id_rfq_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "rfq_quotes"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "market_service_transactions_seller_organization_id_fkey"
             columns: ["seller_organization_id"]
             isOneToOne: false
@@ -40012,13 +40019,6 @@ export type Database = {
             columns: ["requester_id"]
             isOneToOne: false
             referencedRelation: "market_users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "rfq_requests_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "market_transactions"
             referencedColumns: ["id"]
           },
         ]

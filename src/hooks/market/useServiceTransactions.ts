@@ -85,7 +85,8 @@ export function useServiceTransactions(role: 'buyer' | 'seller' | 'all' = 'all')
         .from('market_service_transactions')
         .select(`
           *,
-          milestones:market_milestones(*)
+          milestones:market_milestones(*),
+          offer:rfq_quotes!market_service_transactions_offer_id_rfq_fkey(agent_id)
         `)
         .order('created_at', { ascending: false });
 
@@ -283,17 +284,6 @@ export function useSimulateEscrowPayment() {
 
   return useMutation({
     mutationFn: async (transactionId: string) => {
-      const { error } = await supabase
-        .from('market_service_transactions')
-        .update({
-          escrow_held: undefined, // Will be set from total_amount below
-          status: 'in_progress',
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', transactionId);
-
-      if (error) throw error;
-
       // Get total to set escrow_held
       const { data: tx } = await supabase
         .from('market_service_transactions')
@@ -301,15 +291,18 @@ export function useSimulateEscrowPayment() {
         .eq('id', transactionId)
         .single();
 
-      if (tx) {
-        await supabase
-          .from('market_service_transactions')
-          .update({
-            escrow_held: (tx as any).total_amount,
-            status: 'in_progress',
-          })
-          .eq('id', transactionId);
-      }
+      if (!tx) throw new Error('Transaction not found');
+
+      const { error } = await supabase
+        .from('market_service_transactions')
+        .update({
+          escrow_held: (tx as any).total_amount,
+          status: 'in_progress',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', transactionId);
+
+      if (error) throw error;
 
       // Set first milestone to in_progress
       const { data: milestones } = await supabase
@@ -500,26 +493,40 @@ export function useSubmitServiceReview() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      // Get market user ids
+      // Get reviewer's market_users id
       const { data: reviewer } = await supabase
         .from('market_users')
         .select('id')
         .eq('auth_user_id', user.id)
         .single();
 
-      const { data: reviewed } = await supabase
+      if (!reviewer) throw new Error('Reviewer profile not found');
+
+      // reviewedUserId could be a market_users.id directly (for demo agents without auth)
+      // or an auth user id — try market_users.id first, then auth_user_id
+      let reviewedMarketId = reviewedUserId;
+      const { data: reviewedCheck } = await supabase
         .from('market_users')
         .select('id')
-        .eq('auth_user_id', reviewedUserId)
-        .single();
+        .eq('id', reviewedUserId)
+        .maybeSingle();
 
-      if (!reviewer || !reviewed) throw new Error('User not found');
+      if (!reviewedCheck) {
+        // Try by auth_user_id
+        const { data: byAuth } = await supabase
+          .from('market_users')
+          .select('id')
+          .eq('auth_user_id', reviewedUserId)
+          .maybeSingle();
+        if (!byAuth) throw new Error('Reviewed user not found');
+        reviewedMarketId = (byAuth as any).id;
+      }
 
       await supabase
         .from('market_user_reviews')
         .insert({
           reviewer_id: (reviewer as any).id,
-          reviewed_user_id: (reviewed as any).id,
+          reviewed_user_id: reviewedMarketId,
           transaction_id: transactionId,
           rating_overall: ratingOverall,
           rating_communication: ratingCommunication || ratingOverall,
@@ -548,7 +555,7 @@ export function useSubmitServiceReview() {
       const { data: allReviews } = await supabase
         .from('market_user_reviews')
         .select('rating_overall')
-        .eq('reviewed_user_id', (reviewed as any).id)
+        .eq('reviewed_user_id', reviewedMarketId)
         .eq('is_visible', true);
 
       if (allReviews?.length) {
@@ -559,7 +566,7 @@ export function useSubmitServiceReview() {
             rating_avg: Math.round(avgRating * 10) / 10,
             ratings_count: allReviews.length,
           })
-          .eq('id', (reviewed as any).id);
+          .eq('id', reviewedMarketId);
       }
 
       return { success: true };
