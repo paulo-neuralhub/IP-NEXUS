@@ -440,7 +440,7 @@ export function DynamicSidebar({
       </div>
 
       {/* Navigation */}
-      <nav className={cn("flex-1 overflow-y-auto", collapsed ? "px-2" : "pr-0")}>
+      <nav className={cn("flex-1 overflow-y-auto overflow-x-visible", collapsed ? "px-2" : "pr-0")}>
         {isLoading ? (
           <div className="space-y-2 pr-4">
             {Array.from({ length: 8 }).map((_, i) => (
