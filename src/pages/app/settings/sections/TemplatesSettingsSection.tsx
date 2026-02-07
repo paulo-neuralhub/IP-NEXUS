@@ -808,8 +808,8 @@ export default function TemplatesSettingsSection() {
           try {
             const raw = generateDocumentHTML(selectedStyleId, doc.id, tenant, {});
             thumbHTML = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
-              html,body{margin:0;padding:0;overflow:hidden;pointer-events:none;}
-              body{transform-origin:top left;transform:scale(0.18);width:555.5%;}
+              html,body{margin:0;padding:0;overflow:hidden;pointer-events:none;background:#fff;}
+              body{transform-origin:top left;transform:scale(0.18);width:555.5%;height:555.5%;}
             </style></head><body>${raw}</body></html>`;
           } catch {}
 
@@ -829,7 +829,7 @@ export default function TemplatesSettingsSection() {
               >
                 <div
                   className="overflow-hidden bg-white"
-                  style={{ aspectRatio: "210/297" }}
+                  style={{ aspectRatio: "210/340" }}
                 >
                   {thumbHTML && (
                     <iframe
