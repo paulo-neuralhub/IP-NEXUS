@@ -2,549 +2,371 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Search, Plus, Package, ArrowRight, Bell, User, LayoutGrid, Terminal,
-  FileText, CheckCircle, Clock, Users, TrendingUp, Target,
-  ArrowUp, ArrowDown, Star, ShoppingBag, Globe, Zap, AlertTriangle,
-  ChevronRight, Eye
+  Search, Globe, Send, MessageSquare, Shield, Loader,
+  Clock, Plus, Tag, PenTool, FileText, Lightbulb, Scale,
+  DollarSign, HelpCircle, Zap, ChevronDown
 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMarketListings, useToggleFavorite, useMarketFavorites } from '@/hooks/use-market';
+import { useRfqRequests, RfqRequestFilters } from '@/hooks/market/useRfqRequests';
+import { useMarketTransactions } from '@/hooks/use-market';
+import { useMyRfqRequests, useMyRfqQuotes } from '@/hooks/market/useRfqRequests';
 import { 
-  ASSET_TYPE_CONFIG, TRANSACTION_TYPE_CONFIG,
-  type AssetType, type TransactionType 
-} from '@/types/market.types';
-import { ListingCard } from '@/components/market/listings/ListingCard';
-import { 
-  MarketSummaryCards, ActiveRequestsList, MyQuotesList,
-  type RfqRequest, type RfqQuote 
-} from '@/components/features/market';
-import { 
-  MarketTicker, TopAgents, RecentRequests, MarketStats, JurisdictionGrid 
-} from '@/components/market/terminal';
-import { cn } from '@/lib/utils';
+  SERVICE_CATEGORY_LABELS, SERVICE_TYPE_LABELS,
+  URGENCY_LABELS, JURISDICTIONS,
+  type ServiceCategory, type RfqRequest
+} from '@/types/quote-request';
+import { formatDistanceToNow } from 'date-fns';
+import { es } from 'date-fns/locale';
 
-// ─── KPI Data ───
-const kpiData = [
-  { label: 'Solicitudes Hoy', value: '23', trend: '+15%', trendUp: true, icon: FileText },
-  { label: 'Completadas (mes)', value: '156', trend: '+9%', trendUp: true, icon: CheckCircle },
-  { label: 'Tiempo Medio', value: '4.2', suffix: 'días', trend: '-12%', trendUp: true, icon: Clock },
-  { label: 'Agentes Activos', value: '89', trend: '+5%', trendUp: true, icon: Users },
-  { label: 'Volumen (mes)', value: '€245K', trend: '+22%', trendUp: true, icon: TrendingUp },
-  { label: 'Tasa Éxito', value: '94.8', suffix: '%', trend: '+2.3%', trendUp: true, icon: Target },
-];
+// ─── Service icon mapping ───
+const SERVICE_ICONS: Record<string, React.ComponentType<any>> = {
+  trademark: Tag,
+  patent: Lightbulb,
+  design: PenTool,
+  copyright: FileText,
+  litigation: Scale,
+  licensing: FileText,
+  valuation: DollarSign,
+  domain: Globe,
+  general: HelpCircle,
+};
 
-// ─── Mock data for sidebar cards ───
-const topAgentsData = [
-  { id: '1', name: 'Clarke, Modet & Co', initials: 'CM', avatarColor: '#2563eb', verified: true, jurisdictions: ['🇪🇸', '🇪🇺'], rating: '4.9' },
-  { id: '2', name: 'Elzaburu', initials: 'EL', avatarColor: '#0ea5e9', verified: true, jurisdictions: ['🇪🇸', '🇵🇹'], rating: '4.8' },
-  { id: '3', name: 'Pons IP', initials: 'PI', avatarColor: '#10b981', verified: true, jurisdictions: ['🇪🇸', '🇩🇪', '🇫🇷'], rating: '4.7' },
-  { id: '4', name: 'ABG IP', initials: 'AB', avatarColor: '#f59e0b', verified: false, jurisdictions: ['🇪🇸'], rating: '4.6' },
-  { id: '5', name: 'H&A IP', initials: 'HA', avatarColor: '#ec4899', verified: true, jurisdictions: ['🇬🇧', '🇺🇸'], rating: '4.5' },
-];
+const SERVICE_COLORS: Record<string, string> = {
+  trademark: '#00b4d8',
+  patent: '#6366f1',
+  design: '#ec4899',
+  copyright: '#f59e0b',
+  litigation: '#ef4444',
+  licensing: '#10b981',
+  valuation: '#0a2540',
+  domain: '#8b5cf6',
+  general: '#94a3b8',
+};
 
-const jurisdictionsData = [
-  { code: 'ES', name: 'España', flag: '🇪🇸', agents: 34 },
-  { code: 'EU', name: 'EUIPO', flag: '🇪🇺', agents: 28 },
-  { code: 'US', name: 'Estados Unidos', flag: '🇺🇸', agents: 21 },
-  { code: 'DE', name: 'Alemania', flag: '🇩🇪', agents: 15 },
-  { code: 'GB', name: 'Reino Unido', flag: '🇬🇧', agents: 12 },
-  { code: 'FR', name: 'Francia', flag: '🇫🇷', agents: 9 },
-];
+export default function MarketExplorePage() {
+  const [filters, setFilters] = useState<RfqRequestFilters>({});
+  const [searchInput, setSearchInput] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [jurisdictionFilter, setJurisdictionFilter] = useState('all');
+  const [sortBy, setSortBy] = useState('recent');
 
-const alertsData = [
-  { id: '1', type: 'opportunity' as const, title: 'Nuevo listing destacado', description: 'Marca registrada clase 9 en ES disponible para licenciamiento' },
-  { id: '2', type: 'warning' as const, title: 'Solicitud próxima a vencer', description: 'REQ-2026-001 vence en 2 días sin agente asignado' },
-  { id: '3', type: 'opportunity' as const, title: 'Agente verificado disponible', description: 'Nuevo agente con especialización en patentes farmacéuticas' },
-];
+  // Real data queries
+  const { data, isLoading, fetchNextPage, hasNextPage, isFetchingNextPage } = useRfqRequests(filters);
+  const { data: myRequests } = useMyRfqRequests();
+  const { data: myQuotes } = useMyRfqQuotes();
+  const { data: transactions } = useMarketTransactions();
 
-export default function MarketDashboard() {
-  const [viewMode, setViewMode] = useState<'dashboard' | 'terminal'>('dashboard');
-  const [activeTab, setActiveTab] = useState('overview');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [assetTypeFilter, setAssetTypeFilter] = useState<string>('all');
-  const [transactionTypeFilter, setTransactionTypeFilter] = useState<string>('all');
-  const [activePeriod, setActivePeriod] = useState('30D');
-  
-  const { data: listings, isLoading } = useMarketListings({
-    status: 'active',
-    asset_type: assetTypeFilter !== 'all' ? assetTypeFilter as AssetType : undefined,
-    transaction_type: transactionTypeFilter !== 'all' ? transactionTypeFilter as TransactionType : undefined,
-    search: searchQuery || undefined,
-  });
+  const requests = data?.pages.flatMap(p => p.requests) || [];
 
-  const { data: favorites } = useMarketFavorites();
-  const toggleFavorite = useToggleFavorite();
-  const favoriteIds = favorites?.map(f => f.listing_id) || [];
+  // KPI data from real queries
+  const kpis = [
+    { label: 'Solicitudes abiertas', value: String(requests.length || 0), icon: Globe, color: '#00b4d8' },
+    { label: 'Mis solicitudes', value: String(myRequests?.length || 0), icon: Send, color: '#10b981' },
+    { label: 'Ofertas enviadas', value: String(myQuotes?.length || 0), icon: MessageSquare, color: '#6366f1' },
+    { label: 'En ejecución', value: String(transactions?.filter(t => !['completed', 'cancelled'].includes(t.status)).length || 0), icon: Loader, color: '#f59e0b' },
+    { label: 'Completadas', value: String(transactions?.filter(t => t.status === 'completed').length || 0), icon: Shield, color: '#0a2540' },
+  ];
 
-  const handleFavoriteToggle = (listingId: string) => {
-    const isFav = favoriteIds.includes(listingId);
-    toggleFavorite.mutate({ listingId, isFavorite: isFav });
+  const handleSearch = () => {
+    setFilters(f => ({ ...f, search: searchInput || undefined }));
   };
 
-  const maxAgents = Math.max(...jurisdictionsData.map(j => j.agents));
+  const handleCategoryChange = (val: string) => {
+    setCategoryFilter(val);
+    setFilters(f => ({
+      ...f,
+      service_category: val === 'all' ? undefined : [val as ServiceCategory],
+    }));
+  };
 
-  // Mock RFQ data
-  const mockRequests: RfqRequest[] = [
-    { id: '1', reference: '#REQ-2026-001', title: 'Registro marca "TechBrand" España + EUIPO', service_category: 'trademark_registration', jurisdictions: ['ES', 'EUIPO'], budget_min: 2500, budget_max: 4000, currency: 'EUR', deadline: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(), quotes_count: 4, status: 'open', client_name: 'Cliente Corp', created_at: new Date().toISOString() },
-    { id: '2', reference: '#REQ-2026-002', title: 'Búsqueda de anterioridades EU-wide', service_category: 'trademark_search', jurisdictions: ['EU'], budget_min: 800, budget_max: 1500, currency: 'EUR', deadline: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(), quotes_count: 2, status: 'evaluating', client_name: 'Startup SL', created_at: new Date().toISOString() },
-  ];
+  const handleJurisdictionChange = (val: string) => {
+    setJurisdictionFilter(val);
+    setFilters(f => ({
+      ...f,
+      jurisdictions: val === 'all' ? undefined : [val],
+    }));
+  };
 
-  const mockQuotes: RfqQuote[] = [
-    { id: '1', rfq_request_id: '3', request_reference: '#REQ-2026-003', request_title: 'Oposición marca clase 9', client_name: 'Acme Inc', amount: 3200, currency: 'EUR', status: 'submitted', created_at: new Date().toISOString() },
-    { id: '2', rfq_request_id: '1', request_reference: '#REQ-2026-001', request_title: 'Registro marca España + EUIPO', client_name: 'Beta Corp', amount: 4500, currency: 'EUR', status: 'accepted', submitted_at: new Date().toISOString(), created_at: new Date().toISOString() },
-  ];
-
-  // ═══════════════════════════════════════
-  // TERMINAL VIEW
-  // ═══════════════════════════════════════
-  if (viewMode === 'terminal') {
-    return (
-      <div>
-        {/* View Toggle */}
-        <div className="flex items-center justify-end mb-5">
-          <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
-        </div>
-
-        <div className="rounded-2xl overflow-hidden" style={{ background: '#0a1628', border: '1px solid rgba(255,255,255,0.06)' }}>
-          {/* Terminal Header */}
-          <div className="flex items-center justify-between px-5 py-3" 
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-            <div className="flex items-center gap-3">
-              <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff', fontFamily: "'DM Sans', sans-serif" }}>
-                IP-MARKET TERMINAL
-              </span>
-              <div className="flex items-center gap-1.5">
-                <div className="relative">
-                  <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                  <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping opacity-40" />
-                </div>
-                <span style={{ fontSize: '9px', fontWeight: 600, color: '#10b981', letterSpacing: '1px' }}>LIVE</span>
-              </div>
-            </div>
-            <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.3)', fontFamily: 'monospace' }}>
-              {new Date().toLocaleString('es-ES')}
-            </span>
-          </div>
-          
-          {/* Ticker strip */}
-          <div className="flex items-center gap-6 px-5 py-2.5 overflow-x-auto"
-            style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: 'rgba(255,255,255,0.02)' }}>
-            {kpiData.map(kpi => (
-              <div key={kpi.label} className="flex items-center gap-2 whitespace-nowrap">
-                <span style={{ fontSize: '10px', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase' as const }}>{kpi.label}</span>
-                <span style={{ fontSize: '13px', fontWeight: 700, color: '#fff' }}>{kpi.value}{kpi.suffix ? kpi.suffix : ''}</span>
-                <span style={{ fontSize: '10px', fontWeight: 600, color: kpi.trendUp ? '#10b981' : '#ef4444' }}>{kpi.trend}</span>
-              </div>
-            ))}
-          </div>
-          
-          {/* 3-column grid */}
-          <div className="grid grid-cols-3 divide-x divide-white/5" style={{ minHeight: '480px' }}>
-            {/* Panel 1: Activity Feed */}
-            <div className="p-4">
-              <h3 style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' as const, letterSpacing: '1px', marginBottom: '12px' }}>
-                Feed de Actividad
-              </h3>
-              <div className="space-y-2">
-                {mockRequests.map(req => (
-                  <div key={req.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors">
-                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: '#00b4d8' }} />
-                    <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)' }} className="truncate">{req.title}</span>
-                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)', marginLeft: 'auto', whiteSpace: 'nowrap' as const }}>
-                      {req.quotes_count} ofertas
-                    </span>
-                  </div>
-                ))}
-                {mockQuotes.map(q => (
-                  <div key={q.id} className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors">
-                    <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: q.status === 'accepted' ? '#10b981' : '#f59e0b' }} />
-                    <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)' }} className="truncate">{q.request_title}</span>
-                    <span style={{ fontSize: '9px', color: 'rgba(255,255,255,0.2)', marginLeft: 'auto', whiteSpace: 'nowrap' as const }}>
-                      €{q.amount.toLocaleString()}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Panel 2: Active Requests */}
-            <div className="p-4">
-              <h3 style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' as const, letterSpacing: '1px', marginBottom: '12px' }}>
-                Solicitudes Activas
-              </h3>
-              <div className="space-y-1">
-                {mockRequests.map(sol => (
-                  <div key={sol.id} className="grid grid-cols-4 gap-2 py-2 px-2 rounded hover:bg-white/5"
-                    style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                    <span style={{ fontSize: '11px', color: '#fff', fontWeight: 600 }} className="truncate col-span-2">{sol.title}</span>
-                    <span style={{ fontSize: '11px', color: '#00b4d8', fontWeight: 600, textAlign: 'right' as const }}>
-                      €{sol.budget_min?.toLocaleString()}-{sol.budget_max?.toLocaleString()}
-                    </span>
-                    <span style={{ fontSize: '10px', color: sol.status === 'open' ? '#f59e0b' : '#10b981', textAlign: 'right' as const }}>
-                      {sol.status === 'open' ? 'Abierta' : 'Evaluando'}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            
-            {/* Panel 3: Rankings */}
-            <div className="p-4">
-              <h3 style={{ fontSize: '10px', fontWeight: 700, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase' as const, letterSpacing: '1px', marginBottom: '12px' }}>
-                Rankings
-              </h3>
-              <div className="space-y-2">
-                {topAgentsData.slice(0, 5).map((agent, i) => (
-                  <div key={agent.id} className="flex items-center gap-2">
-                    <span style={{ fontSize: '10px', color: i < 3 ? '#f59e0b' : 'rgba(255,255,255,0.3)', fontWeight: 700, width: '16px' }}>{i + 1}</span>
-                    <div className="w-6 h-6 rounded-md overflow-hidden shrink-0 flex items-center justify-center text-white text-[9px] font-bold"
-                      style={{ background: agent.avatarColor }}>
-                      {agent.initials}
-                    </div>
-                    <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.8)', fontWeight: 500 }} className="flex-1 truncate">{agent.name}</span>
-                    <div className="flex items-center gap-0.5">
-                      <Star className="w-2.5 h-2.5" style={{ color: '#f59e0b', fill: '#f59e0b' }} />
-                      <span style={{ fontSize: '10px', color: '#fff', fontWeight: 600 }}>{agent.rating}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // ═══════════════════════════════════════
-  // DASHBOARD VIEW (default)
-  // ═══════════════════════════════════════
   return (
     <div>
-      {/* View Toggle + Action */}
-      <div className="flex items-center justify-between mb-5">
-        <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
-        <Link 
-          to="/app/market/listings/new"
-          className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 3px 12px rgba(0, 180, 216, 0.15)' }}>
-          <Plus className="w-4 h-4" />
-          Nuevo Listing
-          <span className="absolute bottom-0 left-[22%] right-[22%] h-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.4)' }} />
-        </Link>
-      </div>
-
-      {/* KPI Strip */}
-      <div className="grid grid-cols-6 gap-3 mb-6">
-        {kpiData.map(kpi => (
-          <div key={kpi.label} className="rounded-2xl p-4"
+      {/* ═══ KPI Strip ═══ */}
+      <div className="grid grid-cols-5 gap-3 mb-6">
+        {kpis.map(kpi => (
+          <div key={kpi.label} className="flex items-center gap-3 rounded-2xl px-4 py-3"
             style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-3">
-              <kpi.icon className="w-4 h-4" style={{ color: '#94a3b8' }} />
-              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full"
-                style={{ 
-                  background: kpi.trendUp ? 'rgba(16, 185, 129, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                  color: kpi.trendUp ? '#10b981' : '#ef4444',
-                }}>
-                {kpi.trendUp ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-                <span style={{ fontSize: '10px', fontWeight: 700 }}>{kpi.trend}</span>
-              </div>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: '#f1f4f9', boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff' }}>
+              <kpi.icon className="w-4 h-4" style={{ color: kpi.color }} />
             </div>
-            <div className="flex items-baseline gap-1">
-              <span style={{ fontSize: '24px', fontWeight: 800, color: '#0a2540', letterSpacing: '-0.5px' }}>
+            <div>
+              <span style={{ fontSize: '20px', fontWeight: 200, color: '#0a2540', display: 'block', lineHeight: 1.1 }}>
                 {kpi.value}
               </span>
-              {kpi.suffix && (
-                <span style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8' }}>{kpi.suffix}</span>
-              )}
+              <span style={{ fontSize: '9px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
+                {kpi.label}
+              </span>
             </div>
-            <span style={{ fontSize: '10px', fontWeight: 500, color: '#94a3b8', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
-              {kpi.label}
-            </span>
           </div>
         ))}
       </div>
 
-      {/* Main 2/3 + 1/3 Layout */}
-      <div className="grid grid-cols-3 gap-5">
-        
-        {/* ═══ MAIN COLUMN (2/3) ═══ */}
-        <div className="col-span-2 space-y-5">
-          
-          {/* Activity Card */}
-          <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Actividad del Marketplace</h2>
-              <div className="flex gap-1">
-                {['7D', '30D', '90D', '1A'].map(period => (
-                  <button key={period} 
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all"
-                    style={activePeriod === period 
-                      ? { background: '#0a2540', color: '#fff' } 
-                      : { color: '#94a3b8', background: 'transparent' }}
-                    onClick={() => setActivePeriod(period)}>
-                    {period}
-                  </button>
-                ))}
-              </div>
-            </div>
-            {/* Placeholder chart area */}
-            <div className="h-[180px] rounded-xl flex items-center justify-center" style={{ background: '#f8fafc' }}>
-              <div className="text-center">
-                <TrendingUp className="w-8 h-8 mx-auto mb-2" style={{ color: '#00b4d8', opacity: 0.4 }} />
-                <p style={{ fontSize: '11px', color: '#94a3b8' }}>Gráfico de actividad</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Listings Table */}
-          <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Listings Destacados</h2>
-              <Link to="/app/market/listings" style={{ fontSize: '12px', fontWeight: 600, color: '#00b4d8' }}>
-                Ver todos →
-              </Link>
-            </div>
-            
-            {isLoading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map(i => (
-                  <div key={i} className="h-14 rounded-xl animate-pulse" style={{ background: '#f1f4f9' }} />
-                ))}
-              </div>
-            ) : listings && listings.length > 0 ? (
-              <div className="space-y-0">
-                {/* Header */}
-                <div className="grid grid-cols-12 gap-3 px-3 py-2" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-                  <span className="col-span-5 text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Activo</span>
-                  <span className="col-span-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#94a3b8' }}>Tipo</span>
-                  <span className="col-span-2 text-[10px] font-semibold uppercase tracking-wider text-right" style={{ color: '#94a3b8' }}>Precio</span>
-                  <span className="col-span-3 text-[10px] font-semibold uppercase tracking-wider text-right" style={{ color: '#94a3b8' }}>Estado</span>
-                </div>
-                {listings.slice(0, 5).map((listing: any, i: number) => (
-                  <Link 
-                    key={listing.id}
-                    to={`/app/market/listings/${listing.id}`}
-                    className="grid grid-cols-12 gap-3 px-3 py-3 rounded-xl transition-colors hover:bg-slate-50 cursor-pointer"
-                    style={{ borderBottom: i < Math.min(listings.length, 5) - 1 ? '1px solid rgba(0,0,0,0.03)' : 'none' }}>
-                    <div className="col-span-5 flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-                        style={{ background: 'rgba(0,180,216,0.08)', color: '#00b4d8' }}>
-                        <Package className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <p style={{ fontSize: '13px', fontWeight: 600, color: '#0a2540' }} className="truncate">{listing.title}</p>
-                        <p style={{ fontSize: '10px', color: '#94a3b8' }} className="truncate">{listing.asset?.owner_name || 'Sin propietario'}</p>
-                      </div>
-                    </div>
-                    <div className="col-span-2 flex items-center">
-                      <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold"
-                        style={{ background: 'rgba(0,180,216,0.08)', color: '#00b4d8' }}>
-                        {listing.asset?.asset_type || 'N/A'}
-                      </span>
-                    </div>
-                    <div className="col-span-2 flex items-center justify-end">
-                      <span style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540' }}>
-                        {listing.asking_price ? `€${Number(listing.asking_price).toLocaleString()}` : 'Negociable'}
-                      </span>
-                    </div>
-                    <div className="col-span-3 flex items-center justify-end">
-                      <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold"
-                        style={{ 
-                          background: '#f1f4f9', 
-                          color: listing.status === 'active' ? '#10b981' : '#f59e0b',
-                          boxShadow: '2px 2px 5px #cdd1dc, -2px -2px 5px #ffffff',
-                        }}>
-                        {listing.status === 'active' ? 'Activo' : listing.status}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <EmptyState />
-            )}
-          </div>
-
-          {/* Recent Requests */}
-          <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540', marginBottom: '16px' }}>
-              Solicitudes Recientes
-            </h2>
-            <div className="space-y-3">
-              {mockRequests.map(sol => (
-                <div key={sol.id} className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0"
-                    style={{ background: sol.status === 'open' ? '#2563eb' : '#10b981' }}>
-                    {sol.reference.slice(-2)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p style={{ fontSize: '13px', fontWeight: 600, color: '#0a2540' }} className="truncate">{sol.title}</p>
-                    <p style={{ fontSize: '11px', color: '#94a3b8' }}>
-                      {sol.client_name} · {sol.jurisdictions.join(', ')} · {sol.quotes_count} ofertas
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2 shrink-0">
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540' }}>
-                      €{sol.budget_min?.toLocaleString()}-{sol.budget_max?.toLocaleString()}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold"
-                      style={{ 
-                        background: sol.status === 'open' ? 'rgba(245,158,11,0.1)' : 'rgba(16,185,129,0.1)',
-                        color: sol.status === 'open' ? '#f59e0b' : '#10b981',
-                      }}>
-                      {sol.status === 'open' ? 'Abierta' : 'Evaluando'}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+      {/* ═══ Filters ═══ */}
+      <div className="flex items-center gap-3 mb-5">
+        {/* Search */}
+        <div className="relative flex-1">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#94a3b8' }} />
+          <input 
+            placeholder="Buscar por servicio, jurisdicción, oficina..."
+            value={searchInput}
+            onChange={e => setSearchInput(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && handleSearch()}
+            className="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl outline-none transition-colors"
+            style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}
+          />
         </div>
 
-        {/* ═══ SIDEBAR (1/3) ═══ */}
-        <div className="space-y-5">
-          
-          {/* Top Agents */}
-          <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <div className="flex items-center justify-between mb-4">
-              <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Top Agentes</h2>
-              <Link to="/app/market/rankings" style={{ fontSize: '11px', fontWeight: 600, color: '#00b4d8' }}>Ver todos</Link>
-            </div>
-            <div className="space-y-3">
-              {topAgentsData.map((agent, i) => (
-                <div key={agent.id} className="flex items-center gap-3">
-                  {i < 3 ? (
-                    <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ 
-                        background: '#f1f4f9', 
-                        boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff',
-                        color: i === 0 ? '#f59e0b' : i === 1 ? '#94a3b8' : '#cd7f32',
-                        fontSize: '12px', fontWeight: 700,
-                      }}>
-                      {i + 1}
-                    </div>
-                  ) : (
-                    <div className="w-7 h-7 flex items-center justify-center shrink-0"
-                      style={{ fontSize: '12px', fontWeight: 600, color: '#94a3b8' }}>
-                      {i + 1}
-                    </div>
-                  )}
-                  <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 flex items-center justify-center text-white text-xs font-bold"
-                    style={{ background: agent.avatarColor }}>
-                    {agent.initials}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5">
-                      <p style={{ fontSize: '12px', fontWeight: 600, color: '#0a2540' }} className="truncate">{agent.name}</p>
-                      {agent.verified && <CheckCircle className="w-3 h-3 shrink-0" style={{ color: '#00b4d8' }} />}
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {agent.jurisdictions.map(j => <span key={j} className="text-[10px]">{j}</span>)}
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1 shrink-0">
-                    <Star className="w-3 h-3" style={{ color: '#f59e0b', fill: '#f59e0b' }} />
-                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#0a2540' }}>{agent.rating}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Category */}
+        <select 
+          value={categoryFilter}
+          onChange={e => handleCategoryChange(e.target.value)}
+          className="px-3 py-2.5 rounded-xl text-xs font-semibold appearance-none cursor-pointer"
+          style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)', color: '#334155', minWidth: '160px' }}>
+          <option value="all">Todos los servicios</option>
+          {Object.entries(SERVICE_CATEGORY_LABELS).map(([key, config]) => (
+            <option key={key} value={key}>{config.es}</option>
+          ))}
+        </select>
 
-          {/* Global Coverage */}
-          <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540', marginBottom: '16px' }}>Cobertura Global</h2>
-            <div className="space-y-2.5">
-              {jurisdictionsData.map(j => (
-                <div key={j.code} className="flex items-center gap-3">
-                  <span className="text-lg w-6 text-center">{j.flag}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span style={{ fontSize: '12px', fontWeight: 600, color: '#334155' }}>{j.name}</span>
-                      <span style={{ fontSize: '11px', fontWeight: 700, color: '#0a2540' }}>{j.agents}</span>
-                    </div>
-                    <div className="w-full h-1.5 rounded-full" style={{ background: '#e8ecf3' }}>
-                      <div className="h-full rounded-full transition-all duration-500"
-                        style={{ width: `${(j.agents / maxAgents) * 100}%`, background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Jurisdiction */}
+        <select
+          value={jurisdictionFilter}
+          onChange={e => handleJurisdictionChange(e.target.value)}
+          className="px-3 py-2.5 rounded-xl text-xs font-semibold appearance-none cursor-pointer"
+          style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)', color: '#334155', minWidth: '160px' }}>
+          <option value="all">Todas las jurisdicciones</option>
+          {JURISDICTIONS.map(j => (
+            <option key={j.code} value={j.code}>{j.name}</option>
+          ))}
+        </select>
 
-          {/* Market Alerts */}
-          <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-            <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540', marginBottom: '16px' }}>Alertas de Mercado</h2>
-            <div className="space-y-3">
-              {alertsData.map(alert => (
-                <div key={alert.id} className="flex items-start gap-3 p-2.5 rounded-xl"
-                  style={{ background: alert.type === 'opportunity' ? 'rgba(0,180,216,0.04)' : 'rgba(245,158,11,0.04)' }}>
-                  <div className="w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5"
-                    style={{ 
-                      background: alert.type === 'opportunity' ? 'rgba(0,180,216,0.1)' : 'rgba(245,158,11,0.1)',
-                      color: alert.type === 'opportunity' ? '#00b4d8' : '#f59e0b',
-                    }}>
-                    {alert.type === 'opportunity' ? <Zap className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-                  </div>
-                  <div>
-                    <p style={{ fontSize: '12px', fontWeight: 600, color: '#0a2540' }}>{alert.title}</p>
-                    <p style={{ fontSize: '10px', color: '#94a3b8', marginTop: '2px' }}>{alert.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        {/* Sort */}
+        <select
+          value={sortBy}
+          onChange={e => setSortBy(e.target.value)}
+          className="px-3 py-2.5 rounded-xl text-xs font-semibold appearance-none cursor-pointer"
+          style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)', color: '#334155', minWidth: '140px' }}>
+          <option value="recent">Más recientes</option>
+          <option value="budget">Mayor presupuesto</option>
+          <option value="urgent">Más urgentes</option>
+        </select>
       </div>
+
+      {/* ═══ Request Feed ═══ */}
+      {isLoading ? (
+        <div className="space-y-3">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="rounded-2xl p-5 animate-pulse" 
+              style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+              <div className="flex items-start gap-3">
+                <div className="w-11 h-11 rounded-xl" style={{ background: '#f1f4f9' }} />
+                <div className="flex-1 space-y-2">
+                  <div className="h-4 rounded-lg w-3/4" style={{ background: '#f1f4f9' }} />
+                  <div className="h-3 rounded-lg w-1/2" style={{ background: '#f1f4f9' }} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : requests.length === 0 ? (
+        <EmptyExplore />
+      ) : (
+        <div className="space-y-3">
+          {requests.map(req => (
+            <RequestCard key={req.id} request={req} />
+          ))}
+
+          {hasNextPage && (
+            <div className="text-center pt-4">
+              <button
+                onClick={() => fetchNextPage()}
+                disabled={isFetchingNextPage}
+                className="px-5 py-2.5 rounded-xl text-xs font-semibold transition-all"
+                style={{ 
+                  background: '#fff', border: '1px solid rgba(0,0,0,0.06)', 
+                  color: isFetchingNextPage ? '#94a3b8' : '#0a2540' 
+                }}>
+                {isFetchingNextPage ? 'Cargando...' : 'Cargar más solicitudes'}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
-// ─── View Toggle Component ───
-function ViewToggle({ viewMode, setViewMode }: { viewMode: string; setViewMode: (v: 'dashboard' | 'terminal') => void }) {
+// ─── Request Card ───
+function RequestCard({ request }: { request: RfqRequest }) {
+  const category = request.service_category || 'general';
+  const ServiceIcon = SERVICE_ICONS[category] || HelpCircle;
+  const serviceColor = SERVICE_COLORS[category] || '#94a3b8';
+  const serviceLabel = SERVICE_TYPE_LABELS[request.service_type]?.es || SERVICE_CATEGORY_LABELS[category]?.es || category;
+  const urgencyConfig = URGENCY_LABELS[request.urgency];
+
+  const formatBudget = () => {
+    if (!request.budget_min && !request.budget_max) return null;
+    const cur = request.budget_currency || 'EUR';
+    if (request.budget_min && request.budget_max) {
+      return `${request.budget_min.toLocaleString()}-${request.budget_max.toLocaleString()} ${cur}`;
+    }
+    if (request.budget_max) return `Hasta ${request.budget_max.toLocaleString()} ${cur}`;
+    return `Desde ${request.budget_min?.toLocaleString()} ${cur}`;
+  };
+
+  const timeAgo = request.published_at || request.created_at
+    ? formatDistanceToNow(new Date(request.published_at || request.created_at), { addSuffix: true, locale: es })
+    : '';
+
   return (
-    <div className="flex p-1 rounded-xl" 
-      style={{ background: '#e8ecf3', boxShadow: 'inset 2px 2px 5px #cdd1dc, inset -2px -2px 5px #ffffff' }}>
-      <button className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
-        style={viewMode === 'dashboard' ? { background: '#f1f4f9', boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff', color: '#0a2540' } : { color: '#94a3b8' }}
-        onClick={() => setViewMode('dashboard')}>
-        <LayoutGrid className="w-3.5 h-3.5 inline mr-1.5" />
-        Dashboard
-      </button>
-      <button className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
-        style={viewMode === 'terminal' ? { background: '#f1f4f9', boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff', color: '#0a2540' } : { color: '#94a3b8' }}
-        onClick={() => setViewMode('terminal')}>
-        <Terminal className="w-3.5 h-3.5 inline mr-1.5" />
-        Terminal
-      </button>
-    </div>
+    <Link to={`/app/market/rfq/${request.id}`} className="block no-underline">
+      <div className="rounded-2xl p-5 transition-all hover:translate-y-[-1px] cursor-pointer"
+        style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+        
+        {/* Row 1: Header */}
+        <div className="flex items-start justify-between mb-3">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+              style={{ background: serviceColor + '10' }}>
+              <ServiceIcon className="w-5 h-5" style={{ color: serviceColor }} />
+            </div>
+            <div>
+              <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>
+                {request.title}
+              </h3>
+              {request.description && (
+                <p style={{ fontSize: '12px', color: '#64748b', marginTop: '2px', lineHeight: 1.4 }}
+                  className="line-clamp-1">
+                  {request.description}
+                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex flex-col items-end gap-1 shrink-0 ml-4">
+            <span style={{ fontSize: '11px', color: '#94a3b8' }}>{timeAgo}</span>
+            <span style={{ fontSize: '10px', color: '#94a3b8', fontFamily: 'monospace' }}>
+              {request.reference_number}
+            </span>
+          </div>
+        </div>
+
+        {/* Row 2: Tags */}
+        <div className="flex flex-wrap items-center gap-1.5 mb-4">
+          {/* Service type */}
+          <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold"
+            style={{ background: serviceColor + '10', color: serviceColor }}>
+            {serviceLabel}
+          </span>
+
+          {/* Jurisdictions */}
+          {request.jurisdictions?.slice(0, 3).map(j => (
+            <span key={j} className="flex items-center gap-1 px-2.5 py-1 rounded-lg"
+              style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.04)' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#334155' }}>{j}</span>
+            </span>
+          ))}
+          {(request.jurisdictions?.length || 0) > 3 && (
+            <span className="px-2 py-1 rounded-lg text-[10px] font-semibold"
+              style={{ background: '#f1f4f9', color: '#94a3b8' }}>
+              +{request.jurisdictions.length - 3}
+            </span>
+          )}
+
+          {/* Nice classes */}
+          {request.nice_classes && request.nice_classes.length > 0 && (
+            <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold"
+              style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.04)', color: '#334155' }}>
+              {request.nice_classes.length} {request.nice_classes.length === 1 ? 'clase' : 'clases'}
+            </span>
+          )}
+
+          {/* Urgency */}
+          <span className="px-2.5 py-1 rounded-lg text-[11px] font-semibold"
+            style={{
+              background: request.urgency === 'urgent' ? 'rgba(239,68,68,0.06)' 
+                : request.urgency === 'normal' ? 'rgba(59,130,246,0.06)' : 'rgba(16,185,129,0.06)',
+              color: request.urgency === 'urgent' ? '#ef4444' 
+                : request.urgency === 'normal' ? '#3b82f6' : '#10b981',
+            }}>
+            {request.urgency === 'urgent' ? '⚡ Urgente' : urgencyConfig?.es || request.urgency}
+          </span>
+        </div>
+
+        {/* Row 3: Footer */}
+        <div className="flex items-center justify-between pt-3" style={{ borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+          <div className="flex items-center gap-5">
+            {/* Quotes received */}
+            <div className="flex items-center gap-1.5">
+              <MessageSquare className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
+              <span style={{ fontSize: '12px', color: '#64748b' }}>
+                <strong style={{ color: '#0a2540' }}>{request.quotes_received || 0}</strong>
+                /{request.max_quotes || '∞'} ofertas
+              </span>
+            </div>
+
+            {/* Budget */}
+            {formatBudget() && (
+              <div className="flex items-center gap-1.5">
+                <DollarSign className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
+                <span style={{ fontSize: '12px', color: '#64748b' }}>
+                  Est: <strong style={{ color: '#0a2540' }}>{formatBudget()}</strong>
+                </span>
+              </div>
+            )}
+
+            {/* Deadline */}
+            {request.deadline_response && (
+              <div className="flex items-center gap-1.5">
+                <Clock className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
+                <span style={{ fontSize: '11px', color: '#94a3b8' }}>
+                  Cierra {formatDistanceToNow(new Date(request.deadline_response), { addSuffix: true, locale: es })}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* CTA */}
+          <span className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white"
+            style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 2px 8px rgba(0,180,216,0.15)' }}>
+            <Send className="w-3.5 h-3.5" />
+            Ver Solicitud
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }
 
 // ─── Empty State ───
-function EmptyState() {
+function EmptyExplore() {
   return (
-    <div className="flex flex-col items-center justify-center py-16">
-      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-5"
+    <div className="text-center py-16">
+      <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
         style={{ background: '#f1f4f9', boxShadow: '6px 6px 14px #cdd1dc, -6px -6px 14px #ffffff' }}>
-        <ShoppingBag className="w-7 h-7" style={{ color: '#00b4d8' }} />
+        <Globe className="w-7 h-7" style={{ color: '#94a3b8' }} />
       </div>
       <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0a2540', marginBottom: '6px' }}>
-        Marketplace listo
+        No hay solicitudes abiertas
       </h3>
-      <p style={{ fontSize: '13px', color: '#64748b', textAlign: 'center' as const, maxWidth: '360px', marginBottom: '20px' }}>
-        Publica tu primer listing o explora agentes verificados en cualquier jurisdicción
+      <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '360px', margin: '0 auto 20px' }}>
+        Las solicitudes de servicios IP aparecerán aquí. También puedes publicar tu propia solicitud.
       </p>
-      <Link 
-        to="/app/market/listings/new"
-        className="relative flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white"
-        style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 4px 15px rgba(0, 180, 216, 0.2)' }}>
-        <Globe className="w-4 h-4" />
-        Explorar Marketplace
-        <span className="absolute bottom-0 left-[22%] right-[22%] h-[2px] rounded-full" style={{ background: 'rgba(255,255,255,0.4)' }} />
+      <Link
+        to="/app/market/rfq/new"
+        className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white no-underline"
+        style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 4px 15px rgba(0,180,216,0.2)' }}>
+        <Plus className="w-4 h-4" />
+        Publicar Solicitud
+        <span className="absolute bottom-0 left-[22%] right-[22%] h-[2px] rounded-full"
+          style={{ background: 'rgba(255,255,255,0.4)' }} />
       </Link>
     </div>
   );

@@ -27,7 +27,7 @@ import NewTicketPage from "./pages/app/help/tickets/new";
 import TicketDetailPage from "./pages/app/help/tickets/[id]";
 import HelpAnnouncementsPage from "./pages/app/help/announcements";
 import MarketLayout from "./pages/app/market/MarketLayout";
-import MarketDashboard from "./pages/app/market";
+import MarketExplorePage from "./pages/app/market";
 import MarketListings from "./pages/app/market/listings";
 import CreateListingPage from "./pages/app/market/listings/new";
 import ListingDetailPage from "./pages/app/market/listings/[id]";
@@ -47,6 +47,7 @@ import CreateRfqRequestPage from "./pages/app/market/rfq/new";
 import RfqRequestDetailPage from "./pages/app/market/rfq/[id]";
 import WorkDetailPage from "./pages/app/market/work/[id]";
 import RankingsPage from "./pages/app/market/RankingsPage";
+import MyOffersPage from "./pages/app/market/offers";
 import DataHubPage from "./pages/app/data-hub";
 import ImportExportPage from "./pages/app/data-hub/import-export";
 import GeniusLayout from "./pages/app/genius/GeniusLayout";
@@ -433,7 +434,8 @@ const App = () => (
                 {/* Tareas Unificadas */}
                 <Route path="tareas" element={<TareasPage />} />
                 <Route path="market" element={<MarketLayout />}>
-                  <Route index element={<MarketDashboard />} />
+                  <Route index element={<MarketExplorePage />} />
+                  <Route path="offers" element={<MyOffersPage />} />
                   <Route path="listings" element={<MarketListings />} />
                   <Route path="listings/new" element={<CreateListingPage />} />
                   <Route path="listings/:id" element={<ListingDetailPage />} />
