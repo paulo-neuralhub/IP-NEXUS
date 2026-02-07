@@ -659,7 +659,24 @@ export default function TemplatesSettingsSection() {
     if (!previewDoc) return '';
     const activeStyleId = hoverStyle || selectedStyleId;
     try {
-      return generateDocumentHTML(activeStyleId, previewDoc.id, tenant, {});
+      const rawHTML = generateDocumentHTML(activeStyleId, previewDoc.id, tenant, {});
+      // Wrap with scaling so the full document fits without scroll
+      return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+        html, body { margin:0; padding:0; height:100vh; overflow:hidden; }
+        body { display:flex; align-items:flex-start; justify-content:center; background:#f1f5f9; }
+        .scale-wrapper { transform-origin: top center; width:210mm; }
+      </style>
+      <script>
+        function fitPage() {
+          var w = document.querySelector('.scale-wrapper');
+          if (!w) return;
+          var s = window.innerHeight / w.scrollHeight;
+          if (s < 1) w.style.transform = 'scale(' + s + ')';
+          else w.style.transform = 'scale(1)';
+        }
+        window.addEventListener('load', fitPage);
+        window.addEventListener('resize', fitPage);
+      </script></head><body><div class="scale-wrapper">${rawHTML}</div></body></html>`;
     } catch (e) {
       console.error('Preview generation error:', e);
       return '';
