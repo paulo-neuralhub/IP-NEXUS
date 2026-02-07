@@ -5,6 +5,7 @@
 
 import * as React from 'react';
 import { useState, useCallback, useMemo } from 'react';
+import { generateDocumentHTML } from '@/lib/document-templates/pdf-engine';
 
 // ── DESIGN TOKENS (18 estilos) ──────────────────────────────
 interface StyleToken {
@@ -643,6 +644,28 @@ export default function TemplatesSettingsSection() {
     setEnabledDocs((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
 
+  const tenant = useMemo(() => ({
+    name: 'Meridian IP Consulting',
+    subtitle: 'Intellectual Property',
+    email: 'info@meridian-ip.com',
+    phone: '+34 912 345 678',
+    address: 'Paseo de la Castellana 89, 28046 Madrid',
+    cif: 'B-87654321',
+    iban: 'ES12 3456 7890 1234 5678 9012',
+    city: 'Madrid'
+  }), []);
+
+  const previewHTML = useMemo(() => {
+    if (!previewDoc) return '';
+    const activeStyleId = hoverStyle || selectedStyleId;
+    try {
+      return generateDocumentHTML(activeStyleId, previewDoc.id, tenant, {});
+    } catch (e) {
+      console.error('Preview generation error:', e);
+      return '';
+    }
+  }, [previewDoc, hoverStyle, selectedStyleId, tenant]);
+
   return (
     <div>
       {/* ── HEADER ──────────────────────────────────── */}
@@ -903,26 +926,15 @@ export default function TemplatesSettingsSection() {
 
             {/* Modal body */}
             <div className="flex-1 overflow-y-auto flex">
-              {/* Document preview */}
+              {/* Document preview — real HTML via iframe */}
               <div className="flex-1 bg-slate-100 p-8 flex items-start justify-center overflow-y-auto">
-                <div
-                  className={`w-full max-w-md rounded-lg shadow-xl overflow-hidden border ${
-                    previewStyle.dark
-                      ? "border-slate-600"
-                      : "border-slate-200"
-                  }`}
-                  style={{
-                    aspectRatio: "170/220",
-                    background: previewStyle.dark
-                      ? previewStyle.headerBg
-                      : "#fff",
-                  }}
-                >
-                  {THUMB_MAP[previewDoc.id] &&
-                    (() => {
-                      const Comp = THUMB_MAP[previewDoc.id];
-                      return <Comp style={previewStyle} />;
-                    })()}
+                <div className="w-full max-w-lg rounded-lg shadow-xl overflow-hidden border border-slate-200 bg-white" style={{ height: '70vh' }}>
+                  <iframe
+                    srcDoc={previewHTML}
+                    title="Document preview"
+                    className="w-full h-full border-0"
+                    sandbox="allow-same-origin"
+                  />
                 </div>
               </div>
 
