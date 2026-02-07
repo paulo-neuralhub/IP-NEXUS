@@ -13,9 +13,18 @@ export interface ConnectAccountStatus {
 export function useMarketConnectStatus() {
   return useQuery({
     queryKey: ['market-connect-status'],
-    queryFn: async () => {
+    queryFn: async (): Promise<ConnectAccountStatus> => {
       const { data, error } = await supabase.functions.invoke('market-stripe-account-status');
-      if (error) throw error;
+      // 503 = Stripe not configured yet — treat as not_created gracefully
+      if (error) {
+        const isNotConfigured =
+          error.message?.includes('Stripe not configured') ||
+          error.message?.includes('503');
+        if (isNotConfigured) {
+          return { status: 'not_created', chargesEnabled: false, payoutsEnabled: false, detailsSubmitted: false };
+        }
+        throw error;
+      }
       return data as ConnectAccountStatus;
     },
     retry: false,
