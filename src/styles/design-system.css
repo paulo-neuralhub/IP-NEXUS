@@ -290,38 +290,30 @@
   isolation: isolate;
 }
 
-/* Tongue: upper concave curve */
-.silk-menu-active::before {
-  content: '';
-  position: absolute;
-  right: 0;
-  top: -16px;
-  width: 16px;
-  height: 16px;
-  background: radial-gradient(circle at 0% 100%, transparent 14px, #f1f4f9 14.5px);
-  pointer-events: none;
-  z-index: 10;
+/* Tongue curves as real divs (no pseudo-elements) */
+.silk-curve-top {
+  position: absolute !important;
+  right: 0 !important;
+  top: -16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: radial-gradient(circle at 0% 100%, transparent 14px, #f1f4f9 14.5px) !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
 }
 
-/* Tongue: lower concave curve */
-.silk-menu-active::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: -16px;
-  width: 16px;
-  height: 16px;
-  background: radial-gradient(circle at 0% 0%, transparent 14px, #f1f4f9 14.5px);
-  pointer-events: none;
-  z-index: 10;
+.silk-curve-bottom {
+  position: absolute !important;
+  right: 0 !important;
+  bottom: -16px !important;
+  width: 16px !important;
+  height: 16px !important;
+  background: radial-gradient(circle at 0% 0%, transparent 14px, #f1f4f9 14.5px) !important;
+  pointer-events: none !important;
+  z-index: 10 !important;
 }
 
-/* Hide bottom curve when submenu is expanded (prevents "legs" artifact) */
-.silk-menu-active.silk-tongue-no-bottom::after {
-  display: none;
-}
-
-/* Force Collapsible wrappers in sidebar to not clip pseudo-elements */
+/* Force Collapsible wrappers in sidebar to not clip tongue divs */
 .silk-sidebar-collapsible,
 .silk-sidebar-collapsible > [data-state],
 .silk-sidebar-collapsible [data-state="open"],
@@ -329,7 +321,6 @@
   overflow: visible !important;
 }
 
-/* Ensure section-level CollapsibleContent also doesn't clip */
 nav [data-state] {
   overflow: visible !important;
 }

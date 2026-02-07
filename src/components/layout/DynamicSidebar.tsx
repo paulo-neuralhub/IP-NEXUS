@@ -37,6 +37,15 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
+/** Tongue connector decorative divs — replaces pseudo-elements for debuggability */
+const TongueCurves = ({ hideBottom = false }: { hideBottom?: boolean }) => (
+  <>
+    <div className="silk-curve-top" />
+    {!hideBottom && <div className="silk-curve-bottom" />}
+    <span className="silk-accent-bar" />
+  </>
+);
+
 interface DynamicSidebarProps {
   variant?: "desktop" | "mobile";
   collapsed?: boolean;
@@ -288,8 +297,7 @@ export function DynamicSidebar({
                   : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4"
               )}
             >
-              {/* SILK: Accent bar */}
-              {isActive && <span className="silk-accent-bar" />}
+              {isActive && <TongueCurves hideBottom={isExpanded} />}
               <Icon 
                 className="h-3 w-3 shrink-0" 
                 style={isActive ? { 
@@ -330,8 +338,7 @@ export function DynamicSidebar({
             : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
         )}
       >
-        {/* SILK: Accent bar */}
-        {isActive && <span className="silk-accent-bar" />}
+        {isActive && <TongueCurves />}
         <Icon 
           className="h-3 w-3 shrink-0" 
           style={isActive ? { 
@@ -378,7 +385,7 @@ export function DynamicSidebar({
                 : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
             )}
           >
-            {isDashboardActive && <span className="silk-accent-bar" />}
+            {isDashboardActive && <TongueCurves />}
             <LayoutDashboard 
               className="h-3 w-3 shrink-0" 
               style={isDashboardActive ? { 
@@ -499,7 +506,7 @@ export function DynamicSidebar({
                       : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
                   )}
                 >
-                  {isAlertsActive && <span className="silk-accent-bar" />}
+                  {isAlertsActive && <TongueCurves />}
                   <Bell 
                     className="h-3 w-3 shrink-0" 
                     style={isAlertsActive ? { 
@@ -534,7 +541,7 @@ export function DynamicSidebar({
                       : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl mr-4 z-[1]"
                   )}
                 >
-                  {isHelpActive && <span className="silk-accent-bar" />}
+                  {isHelpActive && <TongueCurves />}
                   <HelpCircle 
                     className="h-3 w-3 shrink-0" 
                     style={isHelpActive ? { 
@@ -573,7 +580,7 @@ export function DynamicSidebar({
                   : "text-white/[0.48] font-normal hover:text-white/70 rounded-xl z-[1]"
               )}
             >
-              {isSettingsActive && <span className="silk-accent-bar" />}
+              {isSettingsActive && <TongueCurves />}
               <Settings 
                 className="h-3 w-3" 
                 style={isSettingsActive ? { 

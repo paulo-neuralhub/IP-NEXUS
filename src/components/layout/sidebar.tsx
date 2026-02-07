@@ -94,7 +94,13 @@ export function Sidebar() {
               )}
               onClick={(e) => isLocked && e.preventDefault()}
             >
-              {isActive && <span className="silk-accent-bar" />}
+              {isActive && (
+                <>
+                  <div className="silk-curve-top" />
+                  <div className="silk-curve-bottom" />
+                  <span className="silk-accent-bar" />
+                </>
+              )}
               
               <Icon 
                 className="h-5 w-5" 
@@ -128,7 +134,11 @@ export function Sidebar() {
           )}
         >
           {location.pathname.startsWith("/app/settings") && (
-            <span className="silk-accent-bar" />
+            <>
+              <div className="silk-curve-top" />
+              <div className="silk-curve-bottom" />
+              <span className="silk-accent-bar" />
+            </>
           )}
           <Settings className="h-5 w-5" />
           Configuración
