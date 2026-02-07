@@ -551,9 +551,8 @@ const App = () => (
                 <Route path="settings/telephony" element={<TenantTelephonySettingsPage />} />
                 <Route path="settings/telephony/packs" element={<TenantTelephonyPacksPage />} />
                 <Route path="settings/telephony/historial" element={<TenantTelephonyHistoryPage />} />
-                {/* Document Templates */}
+                {/* Document Templates — now inline in Settings > Plantillas tab */}
                 <Route path="templates" element={<TemplatesPage />} />
-                {/* templates/:category removed — all in /app/templates */}
                 <Route path="settings/templates" element={<DocumentTemplatesDashboard />} />
                 <Route path="settings/templates/branding" element={<DocumentTemplateBrandingPage />} />
                 <Route path="settings/templates/:type" element={<DocumentTemplateListPage />} />
