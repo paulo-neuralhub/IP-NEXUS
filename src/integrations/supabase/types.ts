@@ -27369,20 +27369,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "market_service_transactions_offer_id_fkey"
-            columns: ["offer_id"]
-            isOneToOne: false
-            referencedRelation: "market_service_offers"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "market_service_transactions_request_id_fkey"
-            columns: ["request_id"]
-            isOneToOne: false
-            referencedRelation: "market_requests"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "market_service_transactions_seller_organization_id_fkey"
             columns: ["seller_organization_id"]
             isOneToOne: false
@@ -27743,13 +27729,6 @@ export type Database = {
             columns: ["reviewer_id"]
             isOneToOne: false
             referencedRelation: "market_users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "market_user_reviews_transaction_id_fkey"
-            columns: ["transaction_id"]
-            isOneToOne: false
-            referencedRelation: "market_transactions"
             referencedColumns: ["id"]
           },
         ]
