@@ -25560,6 +25560,97 @@ export type Database = {
           },
         ]
       }
+      market_agent_profiles: {
+        Row: {
+          avg_rating: number | null
+          avg_response_time_hours: number | null
+          bio: string | null
+          completed_jobs: number | null
+          created_at: string | null
+          custom_seller_fee_pct: number | null
+          display_name: string
+          id: string
+          is_verified: boolean | null
+          jurisdictions: Json | null
+          languages: Json | null
+          logo_url: string | null
+          organization_id: string
+          services: Json | null
+          stripe_connected_account_id: string | null
+          stripe_onboarding_complete: boolean | null
+          total_reviews: number | null
+          updated_at: string | null
+          verification_documents: Json | null
+          verified_at: string | null
+        }
+        Insert: {
+          avg_rating?: number | null
+          avg_response_time_hours?: number | null
+          bio?: string | null
+          completed_jobs?: number | null
+          created_at?: string | null
+          custom_seller_fee_pct?: number | null
+          display_name: string
+          id?: string
+          is_verified?: boolean | null
+          jurisdictions?: Json | null
+          languages?: Json | null
+          logo_url?: string | null
+          organization_id: string
+          services?: Json | null
+          stripe_connected_account_id?: string | null
+          stripe_onboarding_complete?: boolean | null
+          total_reviews?: number | null
+          updated_at?: string | null
+          verification_documents?: Json | null
+          verified_at?: string | null
+        }
+        Update: {
+          avg_rating?: number | null
+          avg_response_time_hours?: number | null
+          bio?: string | null
+          completed_jobs?: number | null
+          created_at?: string | null
+          custom_seller_fee_pct?: number | null
+          display_name?: string
+          id?: string
+          is_verified?: boolean | null
+          jurisdictions?: Json | null
+          languages?: Json | null
+          logo_url?: string | null
+          organization_id?: string
+          services?: Json | null
+          stripe_connected_account_id?: string | null
+          stripe_onboarding_complete?: boolean | null
+          total_reviews?: number | null
+          updated_at?: string | null
+          verification_documents?: Json | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_agent_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_agent_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_agent_profiles_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_alerts: {
         Row: {
           asset_types: Database["public"]["Enums"]["market_asset_type"][] | null
@@ -25974,6 +26065,69 @@ export type Database = {
         }
         Relationships: []
       }
+      market_disputes: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          evidence_urls: Json | null
+          id: string
+          milestone_id: string | null
+          opened_by: string
+          reason: string
+          resolution: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string | null
+          transaction_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          evidence_urls?: Json | null
+          id?: string
+          milestone_id?: string | null
+          opened_by: string
+          reason: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          transaction_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          evidence_urls?: Json | null
+          id?: string
+          milestone_id?: string | null
+          opened_by?: string
+          reason?: string
+          resolution?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string | null
+          transaction_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_disputes_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "market_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_disputes_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_favorites: {
         Row: {
           created_at: string | null
@@ -26260,6 +26414,68 @@ export type Database = {
           },
         ]
       }
+      market_milestones: {
+        Row: {
+          amount: number | null
+          approved_at: string | null
+          approved_note: string | null
+          created_at: string | null
+          delivered_at: string | null
+          delivered_note: string | null
+          description: string | null
+          id: string
+          name: string
+          payment_released: boolean | null
+          payment_released_at: string | null
+          percentage: number | null
+          sequence_order: number
+          status: string | null
+          transaction_id: string
+        }
+        Insert: {
+          amount?: number | null
+          approved_at?: string | null
+          approved_note?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          delivered_note?: string | null
+          description?: string | null
+          id?: string
+          name: string
+          payment_released?: boolean | null
+          payment_released_at?: string | null
+          percentage?: number | null
+          sequence_order: number
+          status?: string | null
+          transaction_id: string
+        }
+        Update: {
+          amount?: number | null
+          approved_at?: string | null
+          approved_note?: string | null
+          created_at?: string | null
+          delivered_at?: string | null
+          delivered_note?: string | null
+          description?: string | null
+          id?: string
+          name?: string
+          payment_released?: boolean | null
+          payment_released_at?: string | null
+          percentage?: number | null
+          sequence_order?: number
+          status?: string | null
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_milestones_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_moderation_actions: {
         Row: {
           action: string
@@ -26300,6 +26516,94 @@ export type Database = {
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "market_content_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_notifications: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_read: boolean | null
+          message: string
+          offer_id: string | null
+          organization_id: string | null
+          read_at: string | null
+          request_id: string | null
+          title: string
+          transaction_id: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message: string
+          offer_id?: string | null
+          organization_id?: string | null
+          read_at?: string | null
+          request_id?: string | null
+          title: string
+          transaction_id?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_read?: boolean | null
+          message?: string
+          offer_id?: string | null
+          organization_id?: string | null
+          read_at?: string | null
+          request_id?: string | null
+          title?: string
+          transaction_id?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_notifications_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_notifications_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_notifications_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "market_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_notifications_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
             referencedColumns: ["id"]
           },
         ]
@@ -26379,6 +26683,160 @@ export type Database = {
             columns: ["transaction_id"]
             isOneToOne: false
             referencedRelation: "market_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_platform_fees: {
+        Row: {
+          amount: number
+          collected: boolean | null
+          collected_at: string | null
+          created_at: string | null
+          fee_type: string
+          id: string
+          milestone_id: string | null
+          percentage: number
+          transaction_id: string
+        }
+        Insert: {
+          amount: number
+          collected?: boolean | null
+          collected_at?: string | null
+          created_at?: string | null
+          fee_type: string
+          id?: string
+          milestone_id?: string | null
+          percentage: number
+          transaction_id: string
+        }
+        Update: {
+          amount?: number
+          collected?: boolean | null
+          collected_at?: string | null
+          created_at?: string | null
+          fee_type?: string
+          id?: string
+          milestone_id?: string | null
+          percentage?: number
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_platform_fees_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "market_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_platform_fees_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_requests: {
+        Row: {
+          accepted_offer_id: string | null
+          budget_max: number | null
+          budget_min: number | null
+          created_at: string | null
+          currency: string | null
+          description: string | null
+          expires_at: string | null
+          id: string
+          jurisdiction_code: string
+          jurisdiction_name: string
+          offers_count: number | null
+          office_code: string | null
+          office_name: string | null
+          organization_id: string | null
+          request_number: string
+          requester_type: string | null
+          service_details: Json | null
+          service_type: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          urgency: string | null
+          user_id: string
+          views_count: number | null
+        }
+        Insert: {
+          accepted_offer_id?: string | null
+          budget_max?: number | null
+          budget_min?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          jurisdiction_code: string
+          jurisdiction_name: string
+          offers_count?: number | null
+          office_code?: string | null
+          office_name?: string | null
+          organization_id?: string | null
+          request_number?: string
+          requester_type?: string | null
+          service_details?: Json | null
+          service_type: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          urgency?: string | null
+          user_id: string
+          views_count?: number | null
+        }
+        Update: {
+          accepted_offer_id?: string | null
+          budget_max?: number | null
+          budget_min?: number | null
+          created_at?: string | null
+          currency?: string | null
+          description?: string | null
+          expires_at?: string | null
+          id?: string
+          jurisdiction_code?: string
+          jurisdiction_name?: string
+          offers_count?: number | null
+          office_code?: string | null
+          office_name?: string | null
+          organization_id?: string | null
+          request_number?: string
+          requester_type?: string | null
+          service_details?: Json | null
+          service_type?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          urgency?: string | null
+          user_id?: string
+          views_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -26486,6 +26944,466 @@ export type Database = {
           valid_until?: string | null
         }
         Relationships: []
+      }
+      market_service_documents: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          file_name: string
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          milestone_id: string | null
+          transaction_id: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          file_name: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url: string
+          id?: string
+          milestone_id?: string | null
+          transaction_id: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          file_name?: string
+          file_size?: number | null
+          file_type?: string | null
+          file_url?: string
+          id?: string
+          milestone_id?: string | null
+          transaction_id?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_service_documents_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "market_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_documents_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_service_messages: {
+        Row: {
+          content: string
+          created_at: string | null
+          file_name: string | null
+          file_url: string | null
+          id: string
+          is_read: boolean | null
+          message_type: string | null
+          read_at: string | null
+          sender_user_id: string
+          transaction_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          read_at?: string | null
+          sender_user_id: string
+          transaction_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string | null
+          file_name?: string | null
+          file_url?: string | null
+          id?: string
+          is_read?: boolean | null
+          message_type?: string | null
+          read_at?: string | null
+          sender_user_id?: string
+          transaction_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_service_messages_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_service_offers: {
+        Row: {
+          created_at: string | null
+          currency: string | null
+          estimated_days: number | null
+          id: string
+          includes: Json | null
+          message: string | null
+          milestones_proposed: Json | null
+          official_fees: number | null
+          organization_id: string
+          platform_fee_buyer: number | null
+          platform_fee_seller: number | null
+          professional_fees: number
+          relevant_experience: string | null
+          request_id: string
+          status: string | null
+          total_buyer_pays: number
+          total_seller_receives: number
+          updated_at: string | null
+          user_id: string
+          valid_until: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          currency?: string | null
+          estimated_days?: number | null
+          id?: string
+          includes?: Json | null
+          message?: string | null
+          milestones_proposed?: Json | null
+          official_fees?: number | null
+          organization_id: string
+          platform_fee_buyer?: number | null
+          platform_fee_seller?: number | null
+          professional_fees: number
+          relevant_experience?: string | null
+          request_id: string
+          status?: string | null
+          total_buyer_pays: number
+          total_seller_receives: number
+          updated_at?: string | null
+          user_id: string
+          valid_until?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          currency?: string | null
+          estimated_days?: number | null
+          id?: string
+          includes?: Json | null
+          message?: string | null
+          milestones_proposed?: Json | null
+          official_fees?: number | null
+          organization_id?: string
+          platform_fee_buyer?: number | null
+          platform_fee_seller?: number | null
+          professional_fees?: number
+          relevant_experience?: string | null
+          request_id?: string
+          status?: string | null
+          total_buyer_pays?: number
+          total_seller_receives?: number
+          updated_at?: string | null
+          user_id?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_service_offers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_offers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_service_offers_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_offers_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "market_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_service_reviews: {
+        Row: {
+          comment: string | null
+          communication_rating: number | null
+          created_at: string | null
+          id: string
+          overall_rating: number
+          quality_rating: number | null
+          request_id: string | null
+          responded_at: string | null
+          response: string | null
+          reviewed_organization_id: string | null
+          reviewer_organization_id: string | null
+          reviewer_user_id: string
+          timeliness_rating: number | null
+          transaction_id: string
+          value_rating: number | null
+        }
+        Insert: {
+          comment?: string | null
+          communication_rating?: number | null
+          created_at?: string | null
+          id?: string
+          overall_rating: number
+          quality_rating?: number | null
+          request_id?: string | null
+          responded_at?: string | null
+          response?: string | null
+          reviewed_organization_id?: string | null
+          reviewer_organization_id?: string | null
+          reviewer_user_id: string
+          timeliness_rating?: number | null
+          transaction_id: string
+          value_rating?: number | null
+        }
+        Update: {
+          comment?: string | null
+          communication_rating?: number | null
+          created_at?: string | null
+          id?: string
+          overall_rating?: number
+          quality_rating?: number | null
+          request_id?: string | null
+          responded_at?: string | null
+          response?: string | null
+          reviewed_organization_id?: string | null
+          reviewer_organization_id?: string | null
+          reviewer_user_id?: string
+          timeliness_rating?: number | null
+          transaction_id?: string
+          value_rating?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_service_reviews_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "market_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_reviewed_organization_id_fkey"
+            columns: ["reviewed_organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_reviewed_organization_id_fkey"
+            columns: ["reviewed_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_reviewed_organization_id_fkey"
+            columns: ["reviewed_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_reviewer_organization_id_fkey"
+            columns: ["reviewer_organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_reviewer_organization_id_fkey"
+            columns: ["reviewer_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_reviewer_organization_id_fkey"
+            columns: ["reviewer_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_reviews_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      market_service_transactions: {
+        Row: {
+          buyer_confirmed: boolean | null
+          buyer_organization_id: string | null
+          buyer_reviewed: boolean | null
+          buyer_user_id: string | null
+          completed_at: string | null
+          confidential_data: Json | null
+          created_at: string | null
+          currency: string | null
+          escrow_held: number | null
+          escrow_released: number | null
+          id: string
+          offer_id: string | null
+          official_fees: number | null
+          platform_fee_buyer: number | null
+          platform_fee_seller: number | null
+          professional_fees: number | null
+          request_id: string | null
+          seller_confirmed: boolean | null
+          seller_organization_id: string | null
+          seller_reviewed: boolean | null
+          seller_user_id: string | null
+          status: string | null
+          stripe_connected_account_id: string | null
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          total_amount: number
+          transaction_number: string
+          updated_at: string | null
+        }
+        Insert: {
+          buyer_confirmed?: boolean | null
+          buyer_organization_id?: string | null
+          buyer_reviewed?: boolean | null
+          buyer_user_id?: string | null
+          completed_at?: string | null
+          confidential_data?: Json | null
+          created_at?: string | null
+          currency?: string | null
+          escrow_held?: number | null
+          escrow_released?: number | null
+          id?: string
+          offer_id?: string | null
+          official_fees?: number | null
+          platform_fee_buyer?: number | null
+          platform_fee_seller?: number | null
+          professional_fees?: number | null
+          request_id?: string | null
+          seller_confirmed?: boolean | null
+          seller_organization_id?: string | null
+          seller_reviewed?: boolean | null
+          seller_user_id?: string | null
+          status?: string | null
+          stripe_connected_account_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          total_amount: number
+          transaction_number?: string
+          updated_at?: string | null
+        }
+        Update: {
+          buyer_confirmed?: boolean | null
+          buyer_organization_id?: string | null
+          buyer_reviewed?: boolean | null
+          buyer_user_id?: string | null
+          completed_at?: string | null
+          confidential_data?: Json | null
+          created_at?: string | null
+          currency?: string | null
+          escrow_held?: number | null
+          escrow_released?: number | null
+          id?: string
+          offer_id?: string | null
+          official_fees?: number | null
+          platform_fee_buyer?: number | null
+          platform_fee_seller?: number | null
+          professional_fees?: number | null
+          request_id?: string | null
+          seller_confirmed?: boolean | null
+          seller_organization_id?: string | null
+          seller_reviewed?: boolean | null
+          seller_user_id?: string | null
+          status?: string | null
+          stripe_connected_account_id?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          total_amount?: number
+          transaction_number?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_service_transactions_buyer_organization_id_fkey"
+            columns: ["buyer_organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_buyer_organization_id_fkey"
+            columns: ["buyer_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_buyer_organization_id_fkey"
+            columns: ["buyer_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_request_id_fkey"
+            columns: ["request_id"]
+            isOneToOne: false
+            referencedRelation: "market_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_seller_organization_id_fkey"
+            columns: ["seller_organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_seller_organization_id_fkey"
+            columns: ["seller_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "market_service_transactions_seller_organization_id_fkey"
+            columns: ["seller_organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       market_transactions: {
         Row: {
