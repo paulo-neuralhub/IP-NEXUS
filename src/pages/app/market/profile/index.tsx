@@ -3,11 +3,12 @@ import { useState } from 'react';
 import {
   Star, CheckCircle, Clock, Shield, Globe, Briefcase,
   Edit3, Save, X, User, Building2, ExternalLink,
-  Award, MessageSquare,
+  Award, MessageSquare, CreditCard, XCircle, Loader2,
 } from 'lucide-react';
 import { useCurrentMarketUser, useUpdateMarketUser } from '@/hooks/market/useMarketUsers';
 import { useMarketUserReviews, useReviewsSummary } from '@/hooks/market/useMarketUserReviews';
 import { useMarketProfile, useUpdateMarketProfile } from '@/hooks/use-market';
+import { useMarketConnectStatus, useMarketConnectOnboard, useMarketConnectDashboard } from '@/hooks/market/useMarketStripeConnect';
 import { KYC_LEVEL_CONFIG, type KycLevel } from '@/types/market.types';
 import { Skeleton } from '@/components/ui/skeleton';
 import { toast } from 'sonner';
@@ -238,6 +239,9 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {/* ═══ Stripe Connect Card ═══ */}
+      <StripeConnectCard />
+
       {/* ═══ Reviews Section ═══ */}
       <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="flex items-center justify-between mb-4">
@@ -458,6 +462,149 @@ function FormField({
         {label}
       </label>
       {multiline ? <textarea {...shared} rows={3} /> : <input {...shared} />}
+    </div>
+  );
+}
+
+// ── Stripe Connect Card ──
+
+function StripeConnectCard() {
+  const { data: connectStatus, isLoading } = useMarketConnectStatus();
+  const onboard = useMarketConnectOnboard();
+  const dashboard = useMarketConnectDashboard();
+
+  const status = connectStatus?.status || 'not_created';
+  const isOnboarding = onboard.isPending;
+  const isOpening = dashboard.isPending;
+
+  const statusLabels: Record<string, { label: string; color: string; bg: string }> = {
+    not_created: { label: 'No configurado', color: '#94a3b8', bg: 'rgba(148,163,184,0.08)' },
+    pending: { label: 'Pendiente', color: '#f59e0b', bg: 'rgba(245,158,11,0.08)' },
+    active: { label: 'Activo', color: '#10b981', bg: 'rgba(16,185,129,0.08)' },
+    restricted: { label: 'Restringido', color: '#ef4444', bg: 'rgba(239,68,68,0.08)' },
+  };
+  const sc = statusLabels[status] || statusLabels.not_created;
+
+  return (
+    <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: '#f1f4f9', boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff' }}
+          >
+            <CreditCard className="w-5 h-5" style={{ color: '#6366f1' }} />
+          </div>
+          <div>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Pagos — Stripe Connect</h3>
+            <p style={{ fontSize: '11px', color: '#64748b' }}>
+              {status === 'not_created'
+                ? 'Configura tu cuenta para recibir pagos de transacciones'
+                : status === 'active'
+                ? 'Tu cuenta está lista para recibir pagos'
+                : 'Completa la verificación para activar pagos'}
+            </p>
+          </div>
+        </div>
+        <span
+          className="px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider"
+          style={{ background: sc.bg, color: sc.color }}
+        >
+          {sc.label}
+        </span>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-full rounded-lg" />
+          <Skeleton className="h-8 w-2/3 rounded-lg" />
+        </div>
+      ) : status === 'not_created' ? (
+        <div className="space-y-3">
+          <div className="grid grid-cols-3 gap-3">
+            {[
+              { icon: Building2, label: 'Información del negocio', desc: 'Datos básicos de tu empresa' },
+              { icon: Shield, label: 'Verificación KYC', desc: 'Stripe verifica tu identidad' },
+              { icon: CreditCard, label: 'Cuenta bancaria', desc: 'Para recibir tus pagos' },
+            ].map(item => (
+              <div key={item.label} className="flex items-start gap-2.5 p-3 rounded-xl" style={{ background: '#f8fafc', border: '1px solid rgba(0,0,0,0.04)' }}>
+                <item.icon className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#94a3b8' }} />
+                <div>
+                  <span style={{ fontSize: '11px', fontWeight: 600, color: '#0a2540', display: 'block' }}>{item.label}</span>
+                  <span style={{ fontSize: '10px', color: '#94a3b8' }}>{item.desc}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => onboard.mutate(window.location.href)}
+            disabled={isOnboarding}
+            className="w-full flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
+            style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', boxShadow: '0 3px 12px rgba(99,102,241,0.15)' }}
+          >
+            {isOnboarding ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+            {isOnboarding ? 'Configurando...' : 'Configurar cuenta de pagos'}
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {/* Status checklist */}
+          <div className="space-y-1.5">
+            {[
+              { label: 'Onboarding completado', done: connectStatus?.detailsSubmitted },
+              { label: 'Cobros habilitados', done: connectStatus?.chargesEnabled },
+              { label: 'Pagos habilitados', done: connectStatus?.payoutsEnabled },
+            ].map(item => (
+              <div key={item.label} className="flex items-center gap-2">
+                {item.done ? (
+                  <CheckCircle className="w-4 h-4" style={{ color: '#10b981' }} />
+                ) : (
+                  <XCircle className="w-4 h-4" style={{ color: '#94a3b8' }} />
+                )}
+                <span style={{ fontSize: '12px', color: item.done ? '#0a2540' : '#94a3b8' }}>{item.label}</span>
+              </div>
+            ))}
+          </div>
+
+          {/* Pending requirements */}
+          {connectStatus?.requirements && connectStatus.requirements.length > 0 && (
+            <div className="p-3 rounded-xl" style={{ background: 'rgba(245,158,11,0.06)', border: '1px solid rgba(245,158,11,0.12)' }}>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#92400e', display: 'block', marginBottom: '4px' }}>
+                Acciones requeridas:
+              </span>
+              <ul className="space-y-1">
+                {connectStatus.requirements.map((req, i) => (
+                  <li key={i} style={{ fontSize: '10px', color: '#92400e' }}>• {req}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          <div className="flex gap-2">
+            {status === 'active' ? (
+              <button
+                onClick={() => dashboard.mutate()}
+                disabled={isOpening}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold"
+                style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}
+              >
+                <ExternalLink className="w-3 h-3" />
+                {isOpening ? 'Abriendo...' : 'Gestionar cuenta Stripe'}
+              </button>
+            ) : (
+              <button
+                onClick={() => onboard.mutate(window.location.href)}
+                disabled={isOnboarding}
+                className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, #6366f1, #8b5cf6)' }}
+              >
+                {isOnboarding ? <Loader2 className="w-4 h-4 animate-spin" /> : <ExternalLink className="w-4 h-4" />}
+                {isOnboarding ? 'Cargando...' : 'Completar configuración'}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
