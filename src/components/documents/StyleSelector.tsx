@@ -14,6 +14,7 @@ interface StyleSelectorProps {
   selectedStyle: DocumentStyleCode;
   onSelectStyle: (style: DocumentStyleCode) => void;
   tenantColors?: Partial<StyleColors>;
+  defaultStyleCode?: DocumentStyleCode;
 }
 
 const styleIcons: Record<DocumentStyleCode, string> = {
@@ -28,7 +29,8 @@ const styleIcons: Record<DocumentStyleCode, string> = {
 export function StyleSelector({ 
   selectedStyle, 
   onSelectStyle,
-  tenantColors 
+  tenantColors,
+  defaultStyleCode,
 }: StyleSelectorProps) {
   return (
     <div className="space-y-4">
@@ -52,13 +54,22 @@ export function StyleSelector({
             <Card
               key={code}
               className={cn(
-                'cursor-pointer transition-all duration-200 hover:shadow-md',
+                'cursor-pointer transition-all duration-200 hover:shadow-md relative',
                 isSelected 
                   ? 'ring-2 ring-primary shadow-md' 
                   : 'hover:border-primary/50'
               )}
               onClick={() => onSelectStyle(code as DocumentStyleCode)}
             >
+              {/* DEFAULT badge */}
+              {defaultStyleCode === code && (
+                <div
+                  className="absolute -top-1.5 -right-1.5 z-10 px-1.5 py-0.5 rounded-md text-[8px] font-bold text-white tracking-wider"
+                  style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}
+                >
+                  DEFAULT
+                </div>
+              )}
               <CardContent className="p-3">
                 {/* Mini preview del estilo */}
                 <div 
