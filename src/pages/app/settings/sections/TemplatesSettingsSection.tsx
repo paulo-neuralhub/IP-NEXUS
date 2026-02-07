@@ -829,7 +829,7 @@ export default function TemplatesSettingsSection() {
               >
                 <div
                   className="overflow-hidden bg-white"
-                  style={{ aspectRatio: "210/340" }}
+                  style={{ height: 180 }}
                 >
                   {thumbHTML && (
                     <iframe
