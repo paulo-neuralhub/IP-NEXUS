@@ -218,7 +218,12 @@ export function DocumentGenerator({
   const handleSelectTemplate = async (template: DocumentTemplateConfig) => {
     setSelectedTemplate(template);
     setTitle(template.name);
-    setSelectedStyle(template.preferredStyleCode);
+    // Use the tenant's default style instead of template's preferred style
+    // The tenant default was already loaded in loadTenantSettings (line 106)
+    // Only fallback to template's preferredStyleCode if no tenant default
+    if (!tenantSettings?.defaultStyleCode) {
+      setSelectedStyle(template.preferredStyleCode);
+    }
     
     // Get sequential document number from database
     const docNumber = await getNextDocumentNumber(template.category);
@@ -242,7 +247,8 @@ export function DocumentGenerator({
     setContent(processedContent);
     setVariables(mergedVars);
     
-    setActiveTab('style');
+    // Go directly to preview instead of style tab
+    setActiveTab('preview');
   };
 
   // Guardar documento
@@ -353,6 +359,23 @@ export function DocumentGenerator({
             <div className="flex items-center gap-3">
               <FileText className="h-5 w-5 text-primary" />
               <DialogTitle>Generador de Documentos</DialogTitle>
+              {/* Style indicator */}
+              {selectedTemplate && (
+                <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted border border-border">
+                  <div
+                    className="w-3.5 h-3.5 rounded"
+                    style={{ backgroundColor: currentStyle.colors.primary }}
+                  />
+                  <span className="text-[11px] font-semibold text-foreground">
+                    {currentStyle.name}
+                  </span>
+                  {selectedStyle === tenantSettings?.defaultStyleCode && (
+                    <span className="text-[9px] font-semibold" style={{ color: '#00b4d8' }}>
+                      (default)
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-2">
               <Button
@@ -460,6 +483,7 @@ export function DocumentGenerator({
                   selectedStyle={selectedStyle}
                   onSelectStyle={setSelectedStyle}
                   tenantColors={tenantSettings?.customColors}
+                  defaultStyleCode={tenantSettings?.defaultStyleCode}
                 />
                 <div className="mt-6 space-y-4">
                   <div className="space-y-2">

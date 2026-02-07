@@ -7,6 +7,8 @@ import * as React from 'react';
 import { useState, useCallback, useMemo } from 'react';
 import { generateDocumentHTML } from '@/lib/document-templates/pdf-engine';
 import { TemplateCustomizationEditor, DEFAULT_CUSTOMIZATIONS, hasAnyCustomization, type TemplateCustomizations } from '@/components/features/settings/TemplateCustomizationEditor';
+import { supabase } from '@/integrations/supabase/client';
+import { useOrganization } from '@/contexts/organization-context';
 
 // ── DESIGN TOKENS (18 estilos) ──────────────────────────────
 interface StyleToken {
@@ -615,8 +617,45 @@ const PACK_COLORS: Record<string, string> = {
 // ═══════════════════════════════════════════════════════════════
 
 export default function TemplatesSettingsSection() {
+  const { currentOrganization } = useOrganization();
   const [activeCategory, setActiveCategory] = useState("all");
+  const [savedDefaultStyleId, setSavedDefaultStyleId] = useState<string | null>(null);
   const [selectedStyleId, setSelectedStyleId] = useState("moderno");
+  const [isSavingDefault, setIsSavingDefault] = useState(false);
+
+  // Load default style from DB on mount
+  React.useEffect(() => {
+    if (!currentOrganization?.id) return;
+    supabase
+      .from('tenant_document_settings')
+      .select('default_style_code')
+      .eq('organization_id', currentOrganization.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.default_style_code) {
+          setSelectedStyleId(data.default_style_code);
+          setSavedDefaultStyleId(data.default_style_code);
+        }
+      });
+  }, [currentOrganization?.id]);
+
+  const saveDefaultStyle = useCallback(async (styleId: string) => {
+    if (!currentOrganization?.id) return;
+    setIsSavingDefault(true);
+    try {
+      await supabase
+        .from('tenant_document_settings')
+        .upsert({
+          organization_id: currentOrganization.id,
+          default_style_code: styleId,
+        }, { onConflict: 'organization_id' });
+      setSavedDefaultStyleId(styleId);
+    } catch (e) {
+      console.error('Error saving default style:', e);
+    } finally {
+      setIsSavingDefault(false);
+    }
+  }, [currentOrganization?.id]);
   const [enabledDocs, setEnabledDocs] = useState<Record<string, boolean>>(() =>
     DOC_TYPES.reduce((acc, d) => ({ ...acc, [d.id]: true }), {} as Record<string, boolean>)
   );
@@ -786,12 +825,20 @@ export default function TemplatesSettingsSection() {
                             setSelectedStyleId(s.id);
                             setShowStylePicker(false);
                           }}
-                          className={`flex flex-col items-center gap-1 p-2 rounded-lg border transition-all text-center ${
+                          className={`relative flex flex-col items-center gap-1 p-2 rounded-lg border transition-all text-center ${
                             selectedStyleId === s.id
                               ? "border-indigo-400 bg-indigo-50 shadow-sm"
                               : "border-transparent hover:bg-slate-50"
                           }`}
                         >
+                          {savedDefaultStyleId === s.id && (
+                            <span
+                              className="absolute -top-1 -right-1 px-1 py-px rounded text-[7px] font-bold text-white"
+                              style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}
+                            >
+                              DEF
+                            </span>
+                          )}
                           <div
                             className="w-6 h-6 rounded-md shadow-sm"
                             style={{
@@ -1036,7 +1083,7 @@ export default function TemplatesSettingsSection() {
                                 onClick={() => setSelectedStyleId(s.id)}
                                 onMouseEnter={() => setHoverStyle(s.id)}
                                 onMouseLeave={() => setHoverStyle(null)}
-                                className={`flex flex-col items-center gap-1 p-2 rounded-lg border text-center transition-all ${
+                                className={`relative flex flex-col items-center gap-1 p-2 rounded-lg border text-center transition-all ${
                                   selectedStyleId === s.id
                                     ? "border-indigo-400 bg-indigo-50 shadow-sm"
                                     : hoverStyle === s.id
@@ -1044,6 +1091,14 @@ export default function TemplatesSettingsSection() {
                                       : "border-transparent hover:bg-slate-50"
                                 }`}
                               >
+                                {savedDefaultStyleId === s.id && (
+                                  <span
+                                    className="absolute -top-1 -right-1 px-1 py-px rounded text-[7px] font-bold text-white"
+                                    style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}
+                                  >
+                                    DEF
+                                  </span>
+                                )}
                                 <div
                                   className="w-5 h-5 rounded shadow-sm"
                                   style={{
@@ -1083,8 +1138,16 @@ export default function TemplatesSettingsSection() {
                 <button className="px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 rounded-lg transition-colors">
                   Descargar ejemplo PDF
                 </button>
-                <button className="px-4 py-2 text-sm font-medium bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors shadow-sm">
-                  Usar este estilo
+                <button
+                  onClick={() => {
+                    saveDefaultStyle(selectedStyleId);
+                    setPreviewDoc(null);
+                    setHoverStyle(null);
+                  }}
+                  disabled={isSavingDefault}
+                  className="px-4 py-2 text-sm font-medium bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition-colors shadow-sm disabled:opacity-50"
+                >
+                  {isSavingDefault ? 'Guardando...' : 'Usar como estilo por defecto'}
                 </button>
               </div>
             </div>
