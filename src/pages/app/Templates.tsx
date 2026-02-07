@@ -4,14 +4,13 @@
 // ============================================================
 
 import * as React from 'react';
-import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Loader2, Eye, Receipt, Mail, BarChart3, Scale, Shield } from 'lucide-react';
+import { Loader2, Receipt, Mail, BarChart3, Scale, Shield } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 
 import { TemplateThumbnailSVG, type StyleKey } from '@/components/templates/TemplateThumbnailSVG';
 import { GlobalStyleBar, type GlobalStyleId } from '@/components/templates/GlobalStyleBar';
-import { TemplatePreviewModal } from '@/components/features/templates/TemplatePreviewModal';
+
 import { useDocumentTypesByCategory } from '@/hooks/documents/useDocumentTypes';
 import { useDocumentStyles, useDocumentStyle } from '@/hooks/documents/useDocumentStyles';
 import {
@@ -46,9 +45,7 @@ function resolveStyleKey(defaultStyle: DesignTokens | null): GlobalStyleId {
 }
 
 export default function TemplatesPage() {
-  const [previewType, setPreviewType] = useState<DocumentType | null>(null);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const [localStyle, setLocalStyle] = useState<GlobalStyleId>('moderno');
+  const [localStyle, setLocalStyle] = React.useState<GlobalStyleId>('moderno');
 
   const { currentOrganization } = useOrganization();
   const { data: typesByCategory, isLoading: typesLoading } = useDocumentTypesByCategory();
@@ -86,16 +83,6 @@ export default function TemplatesPage() {
 
   const handleToggle = (typeId: string, enabled: boolean) => {
     toggleTypeMutation.mutate({ typeId, enabled });
-  };
-
-  const handlePreview = (type: DocumentType) => {
-    setPreviewType(type);
-    setIsPreviewOpen(true);
-  };
-
-  const handleModalStyleChange = (style: GlobalStyleId) => {
-    setLocalStyle(style);
-    handleApplyToAll(style);
   };
 
   if (isLoading) {
@@ -159,8 +146,7 @@ export default function TemplatesPage() {
                     >
                       {/* THUMBNAIL */}
                       <div
-                        className="relative cursor-pointer bg-gradient-to-b from-slate-50 to-white p-3"
-                        onClick={() => handlePreview(docType)}
+                        className="bg-gradient-to-b from-slate-50 to-white p-3"
                         style={{ aspectRatio: '210 / 220' }}
                       >
                         <div className="w-full h-full rounded-lg overflow-hidden shadow-sm border border-slate-100">
@@ -169,13 +155,6 @@ export default function TemplatesPage() {
                             style={localStyle as StyleKey}
                             tenantName={tenantName}
                           />
-                        </div>
-                        {/* Hover overlay */}
-                        <div className="absolute inset-3 rounded-lg bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                          <span className="bg-white/90 backdrop-blur-sm text-blue-700 text-xs font-medium px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
-                            <Eye className="w-3.5 h-3.5" />
-                            Vista previa
-                          </span>
                         </div>
                       </div>
 
@@ -209,16 +188,6 @@ export default function TemplatesPage() {
         })}
       </div>
 
-      {/* PREVIEW MODAL */}
-      <TemplatePreviewModal
-        open={isPreviewOpen}
-        onOpenChange={setIsPreviewOpen}
-        documentType={previewType}
-        activeStyle={localStyle as any}
-        isEnabled={previewType ? isTypeEnabled(previewType.id) : true}
-        onToggle={(enabled) => previewType && handleToggle(previewType.id, enabled)}
-        onStyleChange={handleModalStyleChange}
-      />
     </div>
   );
 }
