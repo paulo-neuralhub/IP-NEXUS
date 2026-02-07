@@ -801,9 +801,17 @@ export default function TemplatesSettingsSection() {
       {/* ── DOCUMENT GRID ───────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {filtered.map((doc) => {
-          const ThumbComponent = THUMB_MAP[doc.id];
           const catColor = CAT_COLORS[doc.cat] || CAT_COLORS.Financiero;
           const enabled = enabledDocs[doc.id];
+
+          let thumbHTML = '';
+          try {
+            const raw = generateDocumentHTML(selectedStyleId, doc.id, tenant, {});
+            thumbHTML = `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+              html,body{margin:0;padding:0;overflow:hidden;pointer-events:none;}
+              body{transform-origin:top left;transform:scale(0.22);width:454.5%;}
+            </style></head><body>${raw}</body></html>`;
+          } catch {}
 
           return (
             <div
@@ -814,21 +822,23 @@ export default function TemplatesSettingsSection() {
                   : "border-slate-100 opacity-60"
               }`}
             >
-              {/* Thumbnail */}
+              {/* Thumbnail — real document scaled down */}
               <div
                 className="relative cursor-pointer"
                 onClick={() => setPreviewDoc(doc)}
               >
                 <div
-                  className={`mx-4 mt-4 rounded-lg overflow-hidden border shadow-sm transition-shadow group-hover:shadow-md ${
-                    selectedStyle.dark
-                      ? "border-slate-600 bg-slate-800"
-                      : "border-slate-200 bg-white"
-                  }`}
+                  className="mx-4 mt-4 rounded-lg overflow-hidden border border-slate-200 bg-white shadow-sm transition-shadow group-hover:shadow-md"
                   style={{ aspectRatio: "170/220" }}
                 >
-                  {ThumbComponent && (
-                    <ThumbComponent style={selectedStyle} />
+                  {thumbHTML && (
+                    <iframe
+                      srcDoc={thumbHTML}
+                      title={doc.name}
+                      className="w-full h-full border-0 pointer-events-none"
+                      tabIndex={-1}
+                      sandbox="allow-same-origin"
+                    />
                   )}
                 </div>
                 {/* Hover overlay */}
