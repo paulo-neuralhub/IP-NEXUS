@@ -1,4 +1,5 @@
 // src/pages/app/settings/index.tsx
+import * as React from 'react';
 import { useState } from 'react';
 import { 
   Building2, 
@@ -21,7 +22,7 @@ import {
   PhoneCall,
   PackageSearch,
   CalendarClock,
-  
+  FileStack,
   Zap,
   Hash,
 } from 'lucide-react';
@@ -50,6 +51,7 @@ import DeadlineConfigPage from './deadlines';
 import InternalReferenceConfigPage from './internal-reference';
 
 import TenantTelephonySettingsPage from './telephony';
+import TemplatesSettingsSection from './sections/TemplatesSettingsSection';
 import { ServicesDashboard } from '@/components/services';
 import ModulesSettings from './sections/ModulesSettings';
 
@@ -70,6 +72,7 @@ const ORG_TABS = [
   { id: 'voip', label: 'Telefonía', icon: PhoneCall, permission: 'settings.view' },
   { id: 'catalog', label: 'Catálogo Servicios', icon: PackageSearch, permission: 'settings.view' },
   
+  { id: 'templates', label: 'Plantillas', icon: FileStack, permission: 'settings.view' },
   { id: 'automations', label: 'Automatizaciones', icon: Zap, permission: 'settings.update' },
   { id: 'deadlines', label: 'Reglas de Plazos', icon: CalendarClock, permission: 'settings.update' },
   { id: 'internal-reference', label: 'Referencia Interna', icon: Hash, permission: 'settings.update' },
@@ -275,6 +278,12 @@ function OrganizationSettingsContent({ activeTab }: { activeTab: string }) {
       {activeTab === 'catalog' && (
         <RequirePermission permission="settings.view">
           <ServicesDashboard />
+        </RequirePermission>
+      )}
+
+      {activeTab === 'templates' && (
+        <RequirePermission permission="settings.view">
+          <TemplatesSettingsSection />
         </RequirePermission>
       )}
 
