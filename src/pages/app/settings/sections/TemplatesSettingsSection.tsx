@@ -6,6 +6,7 @@
 import * as React from 'react';
 import { useState, useCallback, useMemo } from 'react';
 import { generateDocumentHTML } from '@/lib/document-templates/pdf-engine';
+import { TemplateCustomizationEditor, DEFAULT_CUSTOMIZATIONS, hasAnyCustomization, type TemplateCustomizations } from '@/components/features/settings/TemplateCustomizationEditor';
 
 // ── DESIGN TOKENS (18 estilos) ──────────────────────────────
 interface StyleToken {
@@ -622,6 +623,10 @@ export default function TemplatesSettingsSection() {
   const [previewDoc, setPreviewDoc] = useState<DocType | null>(null);
   const [showStylePicker, setShowStylePicker] = useState(false);
   const [hoverStyle, setHoverStyle] = useState<string | null>(null);
+  const [modalTab, setModalTab] = useState<'styles' | 'customize'>('styles');
+  const [customizations, setCustomizations] = useState<TemplateCustomizations>(DEFAULT_CUSTOMIZATIONS);
+
+  const resetCustomizations = useCallback(() => setCustomizations(DEFAULT_CUSTOMIZATIONS), []);
 
   const selectedStyle = useMemo(
     () => STYLES.find((s) => s.id === selectedStyleId) || STYLES[2],
@@ -645,27 +650,63 @@ export default function TemplatesSettingsSection() {
   }, []);
 
   const tenant = useMemo(() => ({
-    name: 'Meridian IP Consulting',
-    subtitle: 'Intellectual Property',
-    email: 'info@meridian-ip.com',
-    phone: '+34 912 345 678',
-    address: 'Paseo de la Castellana 89, 28046 Madrid',
-    cif: 'B-87654321',
-    iban: 'ES12 3456 7890 1234 5678 9012',
-    city: 'Madrid'
-  }), []);
+    name: customizations.companyName || 'Meridian IP Consulting',
+    subtitle: customizations.companySubtitle || 'Intellectual Property',
+    email: customizations.headerEmail || 'info@meridian-ip.com',
+    phone: customizations.headerPhone || '+34 912 345 678',
+    address: customizations.headerAddress || 'Paseo de la Castellana 89, 28046 Madrid',
+    cif: customizations.headerCif || 'B-87654321',
+    iban: customizations.headerIban || 'ES12 3456 7890 1234 5678 9012',
+    city: 'Madrid',
+    logoBase64: customizations.logoBase64 || '',
+  }), [customizations.companyName, customizations.companySubtitle, customizations.headerEmail, customizations.headerPhone, customizations.headerAddress, customizations.headerCif, customizations.headerIban, customizations.logoBase64]);
 
   const previewHTML = useMemo(() => {
     if (!previewDoc) return '';
     const activeStyleId = hoverStyle || selectedStyleId;
     try {
-      const rawHTML = generateDocumentHTML(activeStyleId, previewDoc.id, tenant, {});
-      // Wrap with scaling so the full document fits without scroll
+      let rawHTML = generateDocumentHTML(activeStyleId, previewDoc.id, tenant, {});
+
+      // Build CSS overrides from customizations
+      const ov: string[] = [];
+      if (customizations.primaryColor) ov.push(`.hd, .lo, .dt { color: ${customizations.primaryColor} !important; }`);
+      if (customizations.accentColor) ov.push(`.acc, a, .lnk { color: ${customizations.accentColor} !important; }`);
+      if (customizations.headerBgColor) ov.push(`.hd { background: ${customizations.headerBgColor} !important; }`);
+      if (customizations.headerTextColor) ov.push(`.hd, .hd * { color: ${customizations.headerTextColor} !important; }`);
+      if (customizations.tableBgColor) ov.push(`th { background: ${customizations.tableBgColor} !important; color: #fff !important; }`);
+      if (customizations.totalBgColor) ov.push(`.tr.tt { background: ${customizations.totalBgColor} !important; color: #fff !important; }`);
+      if (customizations.headFont) ov.push(`.lo, .dt, .rp-t, .cert-title, .lt-s, .rp-h, .cl-n, .clause-h, .sgn, .lt-sg-n, .mv { font-family: ${customizations.headFont} !important; }`);
+      if (customizations.bodyFont) ov.push(`.doc, td, .lt-b, .cl-t, .rp-p, .clause-p, .ms, .ml { font-family: ${customizations.bodyFont} !important; }`);
+      if (customizations.headerPadding) ov.push(`.hd { padding: ${customizations.headerPadding}px !important; }`);
+      if (customizations.bodyPadding) ov.push(`.doc { padding: ${customizations.bodyPadding}px !important; }`);
+      if (customizations.fontSize) ov.push(`.doc { font-size: ${customizations.fontSize}px !important; }`);
+      if (customizations.tableFontSize) ov.push(`th, td { font-size: ${customizations.tableFontSize}px !important; }`);
+      if (customizations.lineHeight) ov.push(`.lt-b, .cl-t, .rp-p, .clause-p { line-height: ${customizations.lineHeight} !important; }`);
+      if (customizations.tableRadius) ov.push(`table { border-radius: ${customizations.tableRadius}px !important; overflow: hidden; }`);
+      if (customizations.footerMode === 'custom' && (customizations.footerLeft || customizations.footerRight)) {
+        ov.push(`.ft { display: none !important; }`);
+      }
+
+      // Logo override
+      if (customizations.logoBase64) {
+        rawHTML = rawHTML.replace(
+          /<div class="lo">[^<]*<\/div>\s*<div class="ms">[^<]*<\/div>/g,
+          `<img src="${customizations.logoBase64}" style="max-height:48px;max-width:180px;object-fit:contain;" />`
+        );
+      }
+
+      const overrideCSS = ov.length > 0 ? `<style>${ov.join('\n')}</style>` : '';
+      const customFooter = (customizations.footerMode === 'custom' && (customizations.footerLeft || customizations.footerRight))
+        ? `<div style="position:fixed;bottom:0;left:0;right:0;padding:8px 32px;display:flex;justify-content:space-between;font-size:9px;color:#999;border-top:1px solid #eee;background:#fff;">
+            <span>${customizations.footerLeft || ''}</span><span>${customizations.footerRight || ''}</span>
+           </div>`
+        : '';
+
       return `<!DOCTYPE html><html><head><meta charset="utf-8"><style>
         html, body { margin:0; padding:0; height:100vh; overflow:hidden; }
         body { display:flex; align-items:flex-start; justify-content:center; background:#f1f5f9; }
         .scale-wrapper { transform-origin: top center; width:210mm; }
-      </style>
+      </style>${overrideCSS}
       <script>
         function fitPage() {
           var w = document.querySelector('.scale-wrapper');
@@ -676,12 +717,12 @@ export default function TemplatesSettingsSection() {
         }
         window.addEventListener('load', fitPage);
         window.addEventListener('resize', fitPage);
-      </script></head><body><div class="scale-wrapper">${rawHTML}</div></body></html>`;
+      </script></head><body><div class="scale-wrapper">${rawHTML}${customFooter}</div></body></html>`;
     } catch (e) {
       console.error('Preview generation error:', e);
       return '';
     }
-  }, [previewDoc, hoverStyle, selectedStyleId, tenant]);
+  }, [previewDoc, hoverStyle, selectedStyleId, tenant, customizations]);
 
   return (
     <div>
@@ -945,47 +986,87 @@ export default function TemplatesSettingsSection() {
                 </div>
               </div>
 
-              {/* Style picker sidebar */}
-              <div className="w-64 border-l border-slate-100 p-4 overflow-y-auto bg-white">
-                <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
-                  Estilos disponibles
+              {/* Sidebar with tabs */}
+              <div className="w-72 border-l border-slate-100 flex flex-col bg-white">
+                {/* Tab buttons */}
+                <div className="flex border-b border-slate-100 flex-shrink-0">
+                  <button
+                    onClick={() => setModalTab('styles')}
+                    className={`flex-1 px-3 py-2.5 text-xs font-semibold transition-colors ${
+                      modalTab === 'styles'
+                        ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/50'
+                        : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    🎨 Estilos
+                  </button>
+                  <button
+                    onClick={() => setModalTab('customize')}
+                    className={`flex-1 px-3 py-2.5 text-xs font-semibold transition-colors relative ${
+                      modalTab === 'customize'
+                        ? 'text-indigo-600 border-b-2 border-indigo-500 bg-indigo-50/50'
+                        : 'text-slate-400 hover:text-slate-600'
+                    }`}
+                  >
+                    ✏️ Personalizar
+                    {hasAnyCustomization(customizations) && (
+                      <span className="absolute top-1.5 right-2 w-1.5 h-1.5 bg-indigo-500 rounded-full" />
+                    )}
+                  </button>
                 </div>
-                {(["Classic", "Modern", "Executive"] as const).map((pack) => (
-                  <div key={pack} className="mb-4">
-                    <div
-                      className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded mb-2 inline-block ${PACK_COLORS[pack]}`}
-                    >
-                      {pack}
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {STYLES.filter((s) => s.pack === pack).map((s) => (
-                        <button
-                          key={s.id}
-                          onClick={() => setSelectedStyleId(s.id)}
-                          onMouseEnter={() => setHoverStyle(s.id)}
-                          onMouseLeave={() => setHoverStyle(null)}
-                          className={`flex flex-col items-center gap-1 p-2 rounded-lg border text-center transition-all ${
-                            selectedStyleId === s.id
-                              ? "border-indigo-400 bg-indigo-50 shadow-sm"
-                              : hoverStyle === s.id
-                                ? "border-slate-300 bg-slate-50"
-                                : "border-transparent hover:bg-slate-50"
-                          }`}
-                        >
+
+                {/* Tab content */}
+                <div className="flex-1 overflow-y-auto p-4">
+                  {modalTab === 'styles' ? (
+                    <>
+                      <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-3">
+                        Estilos disponibles
+                      </div>
+                      {(["Classic", "Modern", "Executive"] as const).map((pack) => (
+                        <div key={pack} className="mb-4">
                           <div
-                            className="w-5 h-5 rounded shadow-sm"
-                            style={{
-                              background: s.gradient || s.accent,
-                            }}
-                          />
-                          <span className="text-[9px] font-medium text-slate-600 leading-tight">
-                            {s.name}
-                          </span>
-                        </button>
+                            className={`text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded mb-2 inline-block ${PACK_COLORS[pack]}`}
+                          >
+                            {pack}
+                          </div>
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {STYLES.filter((s) => s.pack === pack).map((s) => (
+                              <button
+                                key={s.id}
+                                onClick={() => setSelectedStyleId(s.id)}
+                                onMouseEnter={() => setHoverStyle(s.id)}
+                                onMouseLeave={() => setHoverStyle(null)}
+                                className={`flex flex-col items-center gap-1 p-2 rounded-lg border text-center transition-all ${
+                                  selectedStyleId === s.id
+                                    ? "border-indigo-400 bg-indigo-50 shadow-sm"
+                                    : hoverStyle === s.id
+                                      ? "border-slate-300 bg-slate-50"
+                                      : "border-transparent hover:bg-slate-50"
+                                }`}
+                              >
+                                <div
+                                  className="w-5 h-5 rounded shadow-sm"
+                                  style={{
+                                    background: s.gradient || s.accent,
+                                  }}
+                                />
+                                <span className="text-[9px] font-medium text-slate-600 leading-tight">
+                                  {s.name}
+                                </span>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
                       ))}
-                    </div>
-                  </div>
-                ))}
+                    </>
+                  ) : (
+                    <TemplateCustomizationEditor
+                      customizations={customizations}
+                      onChange={setCustomizations}
+                      onReset={resetCustomizations}
+                    />
+                  )}
+                </div>
               </div>
             </div>
 
