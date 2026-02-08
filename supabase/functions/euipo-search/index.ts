@@ -3,235 +3,182 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version',
 };
 
-// EUIPO eSearch Plus API - Enhanced with connection management
-// Documentation: https://euipo.europa.eu/tunnel-web/secure/webdav/guest/document_library/contentPdfs/about_euipo/euipo_development_services/eSearch_Plus_API_Guide_en.pdf
+/**
+ * EUIPO Trademark Search via official dev.euipo.europa.eu REST API
+ * Auth: OAuth2 client_credentials → Bearer token
+ * Docs: https://dev.euipo.europa.eu/product/trademark-search_100
+ */
+
+const AUTH_URL = 'https://auth.euipo.europa.eu/oidc/accessToken';
+const API_BASE = 'https://api.euipo.europa.eu/trademark-search/1.0.0';
+
+async function getAccessToken(clientId: string, clientSecret: string): Promise<string> {
+  const res = await fetch(AUTH_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: 'openid',
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`EUIPO auth failed (${res.status}): ${text}`);
+  }
+  const data = await res.json();
+  return data.access_token;
+}
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
-  
+
   const startTime = Date.now();
-  
+
   try {
-    const { 
-      query,
-      trademark_name,
-      applicant_name,
-      representative_name,
-      nice_classes,
-      status,
-      filing_date_from,
-      filing_date_to,
-      page = 1,
-      page_size = 20
+    const {
+      query, trademark_name, applicant_name, representative_name,
+      nice_classes, status, filing_date_from, filing_date_to,
+      page = 1, page_size = 20,
     } = await req.json();
-    
+
     console.log('EUIPO Search params:', { query, trademark_name, applicant_name, nice_classes });
-    
+
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     const supabase = createClient(supabaseUrl, supabaseKey);
-    
-    // Get EUIPO connection config
-    const { data: connection, error: connError } = await supabase
+
+    // Look for credentials in external_api_connections
+    const { data: connection } = await supabase
       .from('external_api_connections')
       .select('*')
       .eq('provider', 'euipo')
+      .eq('status', 'active')
       .single();
 
-    // Build search params
-    const searchParams = new URLSearchParams();
-    
-    if (trademark_name) {
-      searchParams.append('basicSearch', trademark_name);
-    } else if (query) {
-      searchParams.append('basicSearch', query);
-    }
-    
-    if (applicant_name) {
-      searchParams.append('applicantName', applicant_name);
-    }
-    
-    if (representative_name) {
-      searchParams.append('representativeName', representative_name);
-    }
-    
-    if (nice_classes && nice_classes.length > 0) {
-      searchParams.append('niceClass', nice_classes.join(','));
-    }
-    
-    if (status) {
-      searchParams.append('trademarkStatus', status);
-    }
-    
-    if (filing_date_from) {
-      searchParams.append('applicationDateFrom', filing_date_from);
-    }
-    
-    if (filing_date_to) {
-      searchParams.append('applicationDateTo', filing_date_to);
-    }
-    
-    searchParams.append('pageNumber', String(page));
-    searchParams.append('pageSize', String(page_size));
-    searchParams.append('territories', 'EM');
-    
-    // Check if we have active connection with credentials
-    const hasActiveConnection = connection && 
-      connection.status === 'active' && 
-      (connection.access_token_encrypted || connection.api_key_encrypted);
-    
-    let responseData;
-    
-    if (hasActiveConnection) {
-      // Try to call actual EUIPO API
+    const clientId = connection?.api_key_encrypted || Deno.env.get('EUIPO_CLIENT_ID');
+    const clientSecret = connection?.access_token_encrypted || Deno.env.get('EUIPO_CLIENT_SECRET');
+
+    let responseData: any;
+
+    if (clientId && clientSecret) {
       try {
-        const apiResponse = await fetch(
-          `${connection.api_base_url || 'https://api.euipo.europa.eu/v1'}/trademark/search?${searchParams.toString()}`,
-          {
-            headers: {
-              'Authorization': `Bearer ${connection.access_token_encrypted}`,
-              'Accept': 'application/json',
-            },
-            signal: AbortSignal.timeout(connection.timeout_seconds * 1000 || 30000),
-          }
-        );
-        
-        if (apiResponse.ok) {
-          const data = await apiResponse.json();
+        const token = await getAccessToken(clientId, clientSecret);
+
+        // Build query params
+        const params = new URLSearchParams();
+        const term = trademark_name || query;
+        if (term) params.append('tradeMarkName', term);
+        if (applicant_name) params.append('applicantName', applicant_name);
+        if (representative_name) params.append('representativeName', representative_name);
+        if (nice_classes?.length) params.append('niceClass', nice_classes.join(','));
+        if (status) params.append('tradeMarkStatus', status);
+        if (filing_date_from) params.append('applicationDateFrom', filing_date_from);
+        if (filing_date_to) params.append('applicationDateTo', filing_date_to);
+        params.append('pageNumber', String(page));
+        params.append('pageSize', String(page_size));
+
+        const apiRes = await fetch(`${API_BASE}/trademarks?${params}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
+          signal: AbortSignal.timeout(30000),
+        });
+
+        if (apiRes.ok) {
+          const data = await apiRes.json();
           responseData = transformEUIPOResponse(data, page, page_size);
+          console.log('EUIPO real API returned', responseData.total_count, 'results');
         } else {
-          console.log('EUIPO API returned error, falling back to mock data');
-          responseData = generateMockResponse(trademark_name || query, nice_classes, page, page_size);
+          const errText = await apiRes.text();
+          console.warn('EUIPO API error, status', apiRes.status, errText);
+          responseData = safeResponse(trademark_name || query, nice_classes, page, page_size,
+            `EUIPO API respondió ${apiRes.status}`);
         }
-      } catch (apiError) {
-        console.error('EUIPO API call failed:', apiError);
-        responseData = generateMockResponse(trademark_name || query, nice_classes, page, page_size);
+      } catch (apiErr) {
+        console.error('EUIPO API call failed:', apiErr);
+        responseData = safeResponse(trademark_name || query, nice_classes, page, page_size,
+          (apiErr as Error).message);
       }
     } else {
-      // No active connection, return mock data
-      console.log('No active EUIPO connection, returning mock data');
-      responseData = generateMockResponse(trademark_name || query, nice_classes, page, page_size);
+      // SAFE MODE
+      console.log('No EUIPO credentials configured – safe mode');
+      responseData = safeResponse(trademark_name || query, nice_classes, page, page_size,
+        'Configure EUIPO_CLIENT_ID y EUIPO_CLIENT_SECRET para datos reales');
     }
-    
-    // Log the request
+
+    // Log request
     if (connection) {
       await supabase.from('external_api_logs').insert({
         connection_id: connection.id,
         provider: 'euipo',
-        endpoint: '/trademark/search',
+        endpoint: '/trademarks',
         method: 'GET',
         request_params: { query, trademark_name, applicant_name, nice_classes, status },
         response_status: 200,
         response_time_ms: Date.now() - startTime,
-        success: true,
+        success: !responseData.is_safe_mode,
         triggered_by: 'api',
-      });
+      }).catch(() => {});
 
-      // Update request counters
-      await supabase
-        .from('external_api_connections')
-        .update({
-          requests_today: (connection.requests_today || 0) + 1,
-          total_requests: (connection.total_requests || 0) + 1,
-          avg_response_ms: Math.round(((connection.avg_response_ms || 0) + (Date.now() - startTime)) / 2),
-        })
-        .eq('id', connection.id);
+      await supabase.from('external_api_connections').update({
+        requests_today: (connection.requests_today || 0) + 1,
+        total_requests: (connection.total_requests || 0) + 1,
+        avg_response_ms: Math.round(((connection.avg_response_ms || 0) + (Date.now() - startTime)) / 2),
+      }).eq('id', connection.id).catch(() => {});
     }
-    
-    console.log('EUIPO Search results:', responseData.total_count);
-    
-    return new Response(
-      JSON.stringify(responseData),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
-    
+
+    return new Response(JSON.stringify(responseData), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   } catch (error) {
     console.error('EUIPO search error:', error);
-    return new Response(
-      JSON.stringify({ error: (error as Error).message }),
-      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    );
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 });
 
 function transformEUIPOResponse(data: any, page: number, pageSize: number) {
-  // Transform actual EUIPO API response to our format
+  const items = data.items || data.trademarks || data.results || [];
   return {
-    trademarks: (data.items || []).map((item: any) => ({
-      application_number: item.applicationNumber,
+    trademarks: items.map((item: any) => ({
+      application_number: item.applicationNumber || item.applicationNo,
       registration_number: item.registrationNumber,
-      mark_name: item.wordElement || item.markVerbalElement,
-      mark_type: item.markType,
-      nice_classes: item.niceClasses || [],
-      applicant_name: item.applicantName,
-      applicant_country: item.applicantCountryCode,
-      representative_name: item.representativeName,
-      filing_date: item.filingDate,
+      mark_name: item.wordElement || item.markVerbalElement || item.tradeMarkName || item.name,
+      mark_type: item.markType || item.tradeMarkType,
+      nice_classes: item.niceClasses || item.niceClassNumbers || [],
+      applicant_name: item.applicantName || item.applicant?.name,
+      applicant_country: item.applicantCountryCode || item.applicant?.countryCode,
+      representative_name: item.representativeName || item.representative?.name,
+      filing_date: item.filingDate || item.applicationDate,
       registration_date: item.registrationDate,
       expiry_date: item.expiryDate,
-      status: item.status,
-      image_url: item.imageUrl,
+      status: item.status || item.tradeMarkStatus,
+      image_url: item.imageUrl || item.markImageURI,
     })),
-    total_count: data.totalCount || data.items?.length || 0,
+    total_count: data.totalCount ?? data.totalResults ?? items.length,
     page,
     page_size: pageSize,
+    source: 'euipo',
   };
 }
 
-function generateMockResponse(searchTerm: string, niceClasses: number[] | null, page: number, pageSize: number) {
-  // Generate realistic mock data based on search term
-  const baseName = searchTerm?.toUpperCase() || 'EXAMPLE';
-  
+function safeResponse(searchTerm: string, niceClasses: number[] | null, page: number, pageSize: number, message: string) {
   return {
-    trademarks: [
-      {
-        application_number: '018' + Math.random().toString().slice(2, 8),
-        registration_number: '018' + Math.random().toString().slice(2, 8),
-        mark_name: baseName,
-        mark_type: 'Word',
-        nice_classes: niceClasses || [9, 42],
-        applicant_name: 'Example Company S.L.',
-        applicant_country: 'ES',
-        representative_name: 'IP Law Firm',
-        filing_date: '2024-01-15',
-        registration_date: '2024-06-15',
-        expiry_date: '2034-01-15',
-        status: 'Registered',
-        image_url: null,
-      },
-      {
-        application_number: '018' + Math.random().toString().slice(2, 8),
-        mark_name: baseName + ' PLUS',
-        mark_type: 'Word',
-        nice_classes: niceClasses || [9],
-        applicant_name: 'Tech Solutions GmbH',
-        applicant_country: 'DE',
-        representative_name: 'German IP Attorneys',
-        filing_date: '2023-09-20',
-        status: 'Pending',
-        image_url: null,
-      },
-      {
-        application_number: '018' + Math.random().toString().slice(2, 8),
-        mark_name: baseName + ' PRO',
-        mark_type: 'Figurative',
-        nice_classes: niceClasses || [35, 42],
-        applicant_name: 'Innovation Corp',
-        applicant_country: 'FR',
-        filing_date: '2023-11-10',
-        status: 'Registered',
-        image_url: null,
-      },
-    ],
-    total_count: 3,
+    trademarks: [],
+    total_count: 0,
     page,
     page_size: pageSize,
-    is_mock: true,
-    message: 'EUIPO API no configurada - datos de ejemplo',
+    is_safe_mode: true,
+    message,
   };
 }
