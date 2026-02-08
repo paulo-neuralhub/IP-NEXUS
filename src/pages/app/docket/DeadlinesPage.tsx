@@ -141,9 +141,9 @@ export default function DeadlinesPage() {
     extendDeadline(id, newDate, `Pospuesto ${days} días`);
   };
 
-  // Navigate to matter
+  // Navigate to matter deadlines tab
   const handleView = (matterId: string) => {
-    navigate(`/app/expedientes/${matterId}`);
+    navigate(`/app/expedientes/${matterId}?tab=plazos`);
   };
 
   // KPI stats for the cards - use unified stats
