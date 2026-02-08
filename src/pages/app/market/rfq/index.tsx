@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Plus, MessageSquare, CheckCircle, Star, Send,
+  Plus, MessageSquare, CheckCircle, Star, Send, MessageCircle,
   Clock, Globe, Tag, Shield, Zap, ChevronRight, Loader2
 } from 'lucide-react';
 import { useMyRequestsWithQuotes, type RfqRequestWithQuotes, type QuoteWithAgent } from '@/hooks/market/useMyRequestsWithQuotes';
@@ -18,6 +18,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { Skeleton } from '@/components/ui/skeleton';
+import { PreAcceptanceChat } from '@/components/market/chat/PreAcceptanceChat';
 
 // ── Helpers ──────────────────────────────────────────
 
@@ -224,6 +225,7 @@ function QuoteRow({ quote, idx, total, requestId, requestStatus }: {
   const acceptQuote = useAcceptQuoteAndCreateTransaction();
   const navigate = useNavigate();
   const [confirming, setConfirming] = useState(false);
+  const [chatOpen, setChatOpen] = useState(false);
   const agent = quote.agent;
   const name = agent?.display_name || 'Agente';
   const initials = getAgentInitials(name);
@@ -301,6 +303,17 @@ function QuoteRow({ quote, idx, total, requestId, requestStatus }: {
       </div>
 
       <div className="flex gap-2 shrink-0">
+        {/* Pre-acceptance chat button */}
+        {quote.status !== 'rejected' && (
+          <button
+            onClick={() => setChatOpen(true)}
+            className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-[11px] font-semibold"
+            style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}
+          >
+            <MessageCircle className="w-3.5 h-3.5" style={{ color: '#00b4d8' }} />
+            Chat
+          </button>
+        )}
         <Link to={`/app/market/rfq/${quote.request_id}?from=mis-pedidos`}
           className="px-3 py-1.5 rounded-lg text-[11px] font-semibold no-underline"
           style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}>
@@ -318,6 +331,15 @@ function QuoteRow({ quote, idx, total, requestId, requestStatus }: {
           </button>
         )}
       </div>
+
+      {/* Pre-acceptance chat panel */}
+      <PreAcceptanceChat
+        isOpen={chatOpen}
+        onClose={() => setChatOpen(false)}
+        requestId={requestId}
+        otherUserId={(agent as any)?.auth_user_id || quote.agent_id}
+        otherUserName={name}
+      />
     </div>
   );
 }

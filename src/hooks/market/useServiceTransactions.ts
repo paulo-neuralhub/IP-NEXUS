@@ -263,6 +263,24 @@ export function useAcceptQuoteAndCreateTransaction() {
         .update({ transaction_id: (transaction as any).id })
         .eq('id', requestId);
 
+      // 11. Insert system message: proposal_accepted
+      await insertSystemMessage((transaction as any).id, 'proposal_accepted');
+
+      // 12. Insert market notification for seller (agent)
+      if ((agent as any)?.auth_user_id) {
+        await supabase
+          .from('market_notifications' as any)
+          .insert({
+            user_id: (agent as any).auth_user_id,
+            title: 'Propuesta aceptada',
+            message: 'Tu propuesta ha sido aceptada. El siguiente paso es el depósito en escrow.',
+            type: 'market_offer_accepted',
+            request_id: requestId,
+            offer_id: quoteId,
+            transaction_id: (transaction as any).id,
+          });
+      }
+
       return transaction;
     },
     onSuccess: () => {
@@ -270,6 +288,8 @@ export function useAcceptQuoteAndCreateTransaction() {
       queryClient.invalidateQueries({ queryKey: ['rfq-requests'] });
       queryClient.invalidateQueries({ queryKey: ['service-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['my-rfq-quotes'] });
+      queryClient.invalidateQueries({ queryKey: ['market-notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['market-notifications-unread'] });
       toast.success('¡Oferta aceptada! Transacción creada.');
     },
     onError: (error: Error) => {
@@ -336,6 +356,22 @@ export function useSimulateEscrowPayment() {
         description: 'Depósito en escrow',
       });
 
+      // Notify seller: funds deposited
+      const { data: txFull } = await supabase
+        .from('market_service_transactions')
+        .select('seller_user_id')
+        .eq('id', transactionId)
+        .single();
+      if ((txFull as any)?.seller_user_id) {
+        await supabase.from('market_notifications' as any).insert({
+          user_id: (txFull as any).seller_user_id,
+          title: 'Fondos depositados en escrow',
+          message: `€${totalAmount.toLocaleString()} depositados. Puedes comenzar a trabajar.`,
+          type: 'market_payment_received',
+          transaction_id: transactionId,
+        });
+      }
+
       return { success: true };
     },
     onSuccess: (_, transactionId) => {
@@ -343,6 +379,7 @@ export function useSimulateEscrowPayment() {
       queryClient.invalidateQueries({ queryKey: ['service-transaction', transactionId] });
       queryClient.invalidateQueries({ queryKey: ['production-messages', transactionId] });
       queryClient.invalidateQueries({ queryKey: ['payment-events', transactionId] });
+      queryClient.invalidateQueries({ queryKey: ['market-notifications'] });
       toast.success('Pago simulado — fondos en escrow');
     },
     onError: () => {
@@ -387,12 +424,29 @@ export function useDeliverMilestone() {
           phase_number: String((msData as any).sequence_order),
           phase_name: (msData as any).name,
         });
+
+        // Notify buyer: phase delivered
+        const { data: txInfo } = await supabase
+          .from('market_service_transactions')
+          .select('buyer_user_id')
+          .eq('id', (msData as any).transaction_id)
+          .single();
+        if ((txInfo as any)?.buyer_user_id) {
+          await supabase.from('market_notifications' as any).insert({
+            user_id: (txInfo as any).buyer_user_id,
+            title: `Fase ${(msData as any).sequence_order} entregada`,
+            message: `${(msData as any).name} — Revisa y confirma la entrega.`,
+            type: 'market_milestone_completed',
+            transaction_id: (msData as any).transaction_id,
+          });
+        }
       }
 
       return { success: true, transactionId: (msData as any)?.transaction_id };
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['service-transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['market-notifications'] });
       if (data?.transactionId) {
         queryClient.invalidateQueries({ queryKey: ['production-messages', data.transactionId] });
       }
@@ -518,6 +572,22 @@ export function useApproveMilestone() {
         await insertSystemMessage(transactionId, 'work_completed');
       }
 
+      // Notify seller: phase approved & paid
+      const { data: txInfo2 } = await supabase
+        .from('market_service_transactions')
+        .select('seller_user_id')
+        .eq('id', transactionId)
+        .single();
+      if ((txInfo2 as any)?.seller_user_id) {
+        await supabase.from('market_notifications' as any).insert({
+          user_id: (txInfo2 as any).seller_user_id,
+          title: 'Fase confirmada — Pago liberado',
+          message: `€${msAmount.toFixed(2)} liberados a tu cuenta.`,
+          type: 'market_milestone_approved',
+          transaction_id: transactionId,
+        });
+      }
+
       return { success: true, amountReleased: msAmount, transactionId };
     },
     onSuccess: (data) => {
@@ -525,6 +595,7 @@ export function useApproveMilestone() {
       queryClient.invalidateQueries({ queryKey: ['service-transaction', data.transactionId] });
       queryClient.invalidateQueries({ queryKey: ['production-messages', data.transactionId] });
       queryClient.invalidateQueries({ queryKey: ['payment-events', data.transactionId] });
+      queryClient.invalidateQueries({ queryKey: ['market-notifications'] });
       toast.success(`€${(data.amountReleased || 0).toFixed(2)} liberados al agente`);
     },
     onError: () => {

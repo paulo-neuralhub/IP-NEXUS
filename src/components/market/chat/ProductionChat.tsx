@@ -4,8 +4,9 @@
  */
 import * as React from 'react';
 import { useRef, useEffect, useState } from 'react';
-import { MessageCircle, Send, Paperclip, FileText, Download } from 'lucide-react';
+import { MessageCircle, Send, FileText, Download } from 'lucide-react';
 import { useProductionMessages, useSendProductionMessage, type ProductionMessage } from '@/hooks/market/useProductionChat';
+import { ChatFileUpload } from './ChatFileUpload';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
@@ -69,6 +70,13 @@ export function ProductionChat({ transactionId, currentUserId, isReadOnly }: Pro
       {!isReadOnly && (
         <div className="p-3 shrink-0" style={{ borderTop: '1px solid rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2">
+            <ChatFileUpload
+              transactionId={transactionId}
+              onFileUploaded={(fileName, fileUrl) => {
+                sendMessage.mutate({ transactionId, content: `📎 ${fileName}`, fileName, fileUrl });
+              }}
+              disabled={sendMessage.isPending}
+            />
             <input
               type="text"
               value={newMessage}
