@@ -27722,6 +27722,7 @@ export type Database = {
       market_users: {
         Row: {
           accepts_new_clients: boolean | null
+          address: string | null
           agent_type: string | null
           agent_verification_notes: string | null
           agent_verified_at: string | null
@@ -27754,10 +27755,14 @@ export type Database = {
           kyc_verified_at: string | null
           languages: string[] | null
           last_active_at: string | null
+          legal_name: string | null
           license_number: string | null
           notification_preferences: Json | null
           organization_id: string | null
           phone: string | null
+          postal_code: string | null
+          professional_email: string | null
+          professional_registration: string | null
           rank_percentile: number | null
           rank_position: number | null
           rate_currency: string | null
@@ -27768,15 +27773,18 @@ export type Database = {
           specializations: string[] | null
           success_rate: number | null
           successful_transactions: number | null
+          tax_id: string | null
           timezone: string | null
           total_transactions: number | null
           total_volume: number | null
           updated_at: string | null
           user_type: string
+          website: string | null
           years_experience: number | null
         }
         Insert: {
           accepts_new_clients?: boolean | null
+          address?: string | null
           agent_type?: string | null
           agent_verification_notes?: string | null
           agent_verified_at?: string | null
@@ -27809,10 +27817,14 @@ export type Database = {
           kyc_verified_at?: string | null
           languages?: string[] | null
           last_active_at?: string | null
+          legal_name?: string | null
           license_number?: string | null
           notification_preferences?: Json | null
           organization_id?: string | null
           phone?: string | null
+          postal_code?: string | null
+          professional_email?: string | null
+          professional_registration?: string | null
           rank_percentile?: number | null
           rank_position?: number | null
           rate_currency?: string | null
@@ -27823,15 +27835,18 @@ export type Database = {
           specializations?: string[] | null
           success_rate?: number | null
           successful_transactions?: number | null
+          tax_id?: string | null
           timezone?: string | null
           total_transactions?: number | null
           total_volume?: number | null
           updated_at?: string | null
           user_type: string
+          website?: string | null
           years_experience?: number | null
         }
         Update: {
           accepts_new_clients?: boolean | null
+          address?: string | null
           agent_type?: string | null
           agent_verification_notes?: string | null
           agent_verified_at?: string | null
@@ -27864,10 +27879,14 @@ export type Database = {
           kyc_verified_at?: string | null
           languages?: string[] | null
           last_active_at?: string | null
+          legal_name?: string | null
           license_number?: string | null
           notification_preferences?: Json | null
           organization_id?: string | null
           phone?: string | null
+          postal_code?: string | null
+          professional_email?: string | null
+          professional_registration?: string | null
           rank_percentile?: number | null
           rank_position?: number | null
           rate_currency?: string | null
@@ -27878,11 +27897,13 @@ export type Database = {
           specializations?: string[] | null
           success_rate?: number | null
           successful_transactions?: number | null
+          tax_id?: string | null
           timezone?: string | null
           total_transactions?: number | null
           total_volume?: number | null
           updated_at?: string | null
           user_type?: string
+          website?: string | null
           years_experience?: number | null
         }
         Relationships: [

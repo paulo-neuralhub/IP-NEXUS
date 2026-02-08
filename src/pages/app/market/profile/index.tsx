@@ -193,7 +193,7 @@ export default function ProfilePage() {
             <Shield className="w-5 h-5" style={{ color: '#00b4d8' }} />
           </div>
           <div>
-            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Verificación KYC</h3>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Verificación de Agente</h3>
             <p style={{ fontSize: '11px', color: '#64748b' }}>
               Nivel actual: <strong style={{ color: '#0a2540' }}>{kycConfig?.name || 'Sin verificar'}</strong>
               {kycConfig?.transactionLimit && (
@@ -524,7 +524,7 @@ function StripeConnectCard() {
           <div className="grid grid-cols-3 gap-3">
             {[
               { icon: Building2, label: 'Información del negocio', desc: 'Datos básicos de tu empresa' },
-              { icon: Shield, label: 'Verificación KYC', desc: 'Stripe verifica tu identidad' },
+              { icon: Shield, label: 'Verificación de Agente', desc: 'Stripe verifica tu identidad' },
               { icon: CreditCard, label: 'Cuenta bancaria', desc: 'Para recibir tus pagos' },
             ].map(item => (
               <div key={item.label} className="flex items-start gap-2.5 p-3 rounded-xl" style={{ background: '#f8fafc', border: '1px solid rgba(0,0,0,0.04)' }}>

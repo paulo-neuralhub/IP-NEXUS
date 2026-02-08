@@ -67,7 +67,7 @@ export default function RfqRequestDetailPage() {
           )
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       return data;
@@ -95,7 +95,7 @@ export default function RfqRequestDetailPage() {
   });
 
   const isRequester = currentMarketUser?.id === request?.requester_id;
-  const isAgent = currentMarketUser?.user_type === 'ip_agent';
+  const canSendQuote = !isRequester && !!currentMarketUser;
 
   if (isLoading) {
     return (
@@ -150,10 +150,11 @@ export default function RfqRequestDetailPage() {
         </div>
 
         <div className="flex gap-2">
-          {isAgent && request.status === 'open' && (
-            <Button onClick={() => setQuoteModalOpen(true)}>
+          {canSendQuote && (request.status === 'open' || request.status === 'evaluating') && (
+            <Button onClick={() => setQuoteModalOpen(true)}
+              style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', border: 'none' }}>
               <Send className="h-4 w-4 mr-2" />
-              Enviar Presupuesto
+              Enviar Propuesta
             </Button>
           )}
           {isRequester && request.status === 'open' && (
@@ -522,10 +523,11 @@ export default function RfqRequestDetailPage() {
                     : 'Sé el primero en enviar un presupuesto para esta solicitud.'
                   }
                 </p>
-                {isAgent && request.status === 'open' && (
-                  <Button className="mt-4" onClick={() => setQuoteModalOpen(true)}>
+                {canSendQuote && (request.status === 'open' || request.status === 'evaluating') && (
+                  <Button className="mt-4" onClick={() => setQuoteModalOpen(true)}
+                    style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', border: 'none' }}>
                     <Send className="h-4 w-4 mr-2" />
-                    Enviar Presupuesto
+                    Enviar Propuesta
                   </Button>
                 )}
               </CardContent>

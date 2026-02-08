@@ -131,7 +131,9 @@ export default function CreateRfqRequestPage() {
   }, [selectedJurisdictions, setValue]);
 
   const canStep1 = !!watch('service_type');
-  const canStep2 = (watch('title')?.length || 0) >= 5 && (watch('description')?.length || 0) >= 20 && selectedJurisdictions.length > 0;
+  const titleLen = watch('title')?.length || 0;
+  const descLen = watch('description')?.length || 0;
+  const canStep2 = titleLen >= 5 && descLen >= 20 && selectedJurisdictions.length > 0;
   const isSubmitting = createMutation.isPending || publishMutation.isPending;
 
   const onSubmit = async (data: FormData) => {
@@ -508,6 +510,17 @@ export default function CreateRfqRequestPage() {
               </div>
             )}
 
+            {/* Validation hints */}
+            {!canStep2 && (
+              <div className="mb-3 p-3 rounded-xl" style={{ background: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.1)' }}>
+                <span style={{ fontSize: '11px', fontWeight: 600, color: '#ef4444' }}>Para continuar necesitas:</span>
+                <ul className="mt-1 space-y-0.5">
+                  {titleLen < 5 && <li style={{ fontSize: '10px', color: '#ef4444' }}>• Título (mín. 5 caracteres) — actual: {titleLen}</li>}
+                  {descLen < 20 && <li style={{ fontSize: '10px', color: '#ef4444' }}>• Descripción (mín. 20 caracteres) — actual: {descLen}</li>}
+                  {selectedJurisdictions.length === 0 && <li style={{ fontSize: '10px', color: '#ef4444' }}>• Al menos una jurisdicción seleccionada</li>}
+                </ul>
+              </div>
+            )}
             <StepNav onPrev={() => setStep(1)} onNext={() => setStep(3)} canNext={canStep2} />
           </SilkCard>
         )}

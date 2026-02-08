@@ -119,7 +119,8 @@ function TransactionCard({ transaction: tx }: { transaction: ServiceTransaction 
   const currentMilestone = milestones.find(m => m.status === 'in_progress' || m.status === 'delivered');
 
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+    <Link to={`/app/market/transactions/${tx.id}`} className="block no-underline">
+    <div className="rounded-2xl overflow-hidden transition-all hover:translate-y-[-1px]" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
       {/* Header */}
       <div className="flex items-center justify-between px-5 py-4" style={{ borderBottom: '1px solid rgba(0,0,0,0.04)' }}>
         <div className="flex items-center gap-3">
@@ -277,6 +278,7 @@ function TransactionCard({ transaction: tx }: { transaction: ServiceTransaction 
         </div>
       </div>
     </div>
+    </Link>
   );
 }
 

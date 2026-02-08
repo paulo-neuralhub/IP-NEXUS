@@ -11,10 +11,10 @@ import { useMarketNotificationRealtime } from '@/hooks/market/useMarketNotificat
 import { useMarketTabCounts } from '@/hooks/market/useMarketNotifications';
 
 const tabs = [
-  { to: '/app/market', label: 'Explorar', icon: Globe, exact: true, badgeKey: null },
-  { to: '/app/market/rfq', label: 'Mis Solicitudes', icon: Send, badgeKey: 'rfq' as const },
-  { to: '/app/market/offers', label: 'Mis Ofertas', icon: MessageSquare, badgeKey: 'offers' as const },
-  { to: '/app/market/transactions', label: 'Transacciones', icon: ArrowLeftRight, badgeKey: 'transactions' as const },
+  { to: '/app/market', label: 'Marketplace', icon: Globe, exact: true, badgeKey: null },
+  { to: '/app/market/rfq', label: 'Mis Pedidos', icon: Send, badgeKey: 'rfq' as const },
+  { to: '/app/market/offers', label: 'Mis Propuestas', icon: MessageSquare, badgeKey: 'offers' as const },
+  { to: '/app/market/transactions', label: 'En Curso', icon: ArrowLeftRight, badgeKey: 'transactions' as const },
   { to: '/app/market/profile', label: 'Mi Perfil', icon: User, badgeKey: null },
 ];
 
