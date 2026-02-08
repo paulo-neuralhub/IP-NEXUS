@@ -1,6 +1,7 @@
+import * as React from 'react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Tag, FileText, PenTool, Gavel } from 'lucide-react';
+import { Search, Tag, FileText, PenTool, Gavel, User, Briefcase, ArrowRight, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,7 +13,12 @@ const QUICK_CATEGORIES = [
   { key: 'litigation', label: 'Litigios', icon: Gavel },
 ];
 
-export function HeroSection() {
+interface HeroSectionProps {
+  onParticularClick?: () => void;
+  onSelectorClick?: () => void;
+}
+
+export function HeroSection({ onParticularClick, onSelectorClick }: HeroSectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
 
   return (
@@ -36,22 +42,67 @@ export function HeroSection() {
             Solicita presupuestos, compara y contrata con total confianza.
           </p>
           
-          {/* Search Bar */}
-          <div className="mt-8 flex gap-3">
-            <div className="flex-1 relative max-w-lg">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-              <Input
-                placeholder="¿Qué servicio necesitas? Ej: Registro marca España..."
-                className="pl-12 h-14 text-lg rounded-xl"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+          {/* Dual CTA — Particular vs Professional */}
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+            <button
+              onClick={onParticularClick}
+              className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:scale-[1.02] hover:shadow-lg"
+              style={{
+                background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+                boxShadow: '0 4px 16px rgba(124,58,237,0.25)',
+              }}
+            >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(255,255,255,0.2)' }}>
+                <User className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#fff', display: 'block' }}>
+                  Proteger mi marca
+                </span>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)' }}>
+                  Soy empresa o particular
+                </span>
+              </div>
+              <ArrowRight className="w-4 h-4 text-white/60 ml-auto shrink-0" />
+            </button>
+
+            <Link
+              to="/login"
+              className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:scale-[1.02] hover:shadow-lg no-underline"
+              style={{
+                background: '#fff',
+                border: '2px solid rgba(0,0,0,0.06)',
+              }}
+            >
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                style={{ background: 'rgba(124,58,237,0.08)' }}>
+                <Briefcase className="w-5 h-5" style={{ color: '#7c3aed' }} />
+              </div>
+              <div>
+                <span style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540', display: 'block' }}>
+                  Soy profesional IP
+                </span>
+                <span style={{ fontSize: '11px', color: '#64748b' }}>
+                  Agente, abogado o despacho
+                </span>
+              </div>
+              <ArrowRight className="w-4 h-4 shrink-0" style={{ color: '#94a3b8' }} />
+            </Link>
+          </div>
+
+          {/* Trust badges */}
+          <div className="flex items-center gap-4 mt-6 flex-wrap">
+            <div className="flex items-center gap-1.5">
+              <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#10b981' }} />
+              <span style={{ fontSize: '11px', color: '#64748b' }}>Pago Protegido</span>
             </div>
-            <Button size="lg" className="h-14 px-8 rounded-xl bg-market hover:bg-market/90" asChild>
-              <Link to={`/app/market/rfq/new${searchQuery ? `?q=${searchQuery}` : ''}`}>
-                Solicitar presupuesto
-              </Link>
-            </Button>
+            <div className="flex items-center gap-1.5">
+              <span style={{ fontSize: '11px', color: '#64748b' }}>✅ Agentes verificados</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span style={{ fontSize: '11px', color: '#64748b' }}>⚡ Respuesta en &lt;24h</span>
+            </div>
           </div>
           
           {/* Quick Categories */}
