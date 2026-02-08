@@ -23,10 +23,9 @@ export default function MarketLandingPage() {
   const { data: topAgents } = useTopAgentsPublic(8);
   const [view, setView] = useState<LandingView>('landing');
 
-  // Profile selector
   if (view === 'selector') {
     return (
-      <div className="min-h-screen" style={{ background: '#f1f4f9' }}>
+      <div className="min-h-screen" style={{ background: '#F5F3FF', fontFamily: "'Inter', sans-serif" }}>
         <LandingHeader />
         <ProfileSelector onSelectParticular={() => setView('wizard')} />
         <LandingFooter />
@@ -34,10 +33,9 @@ export default function MarketLandingPage() {
     );
   }
 
-  // Particular wizard
   if (view === 'wizard') {
     return (
-      <div className="min-h-screen" style={{ background: '#f1f4f9' }}>
+      <div className="min-h-screen" style={{ background: '#F5F3FF', fontFamily: "'Inter', sans-serif" }}>
         <LandingHeader />
         <ParticularWizard onBack={() => setView('selector')} />
         <LandingFooter />
@@ -46,30 +44,21 @@ export default function MarketLandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ fontFamily: "'Inter', sans-serif" }}>
       <LandingHeader />
-      
       <HeroSection onParticularClick={() => setView('wizard')} onSelectorClick={() => setView('selector')} />
-      
       <StatsBar 
         totalAgents={stats?.totalAgents || 150}
         avgSuccess={stats?.avgSuccess || 98}
         totalTransactions={stats?.totalTransactions || 500}
         avgRating={stats?.avgRating || '4.8'}
       />
-      
       <TopAgentsSection agents={topAgents} />
-      
       <HowItWorksSection />
-      
       <ServiceCategoriesSection />
-      
       <ForAgentsCTA />
-      
       <TestimonialsSection />
-      
       <FinalCTA />
-      
       <LandingFooter />
     </div>
   );

@@ -1,37 +1,48 @@
+import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Store } from 'lucide-react';
 
 export function LandingHeader() {
   return (
-    <header className="sticky top-0 z-50 bg-background/90 backdrop-blur border-b">
+    <header className="sticky top-0 z-50" style={{ 
+      background: 'rgba(30,27,75,0.95)', 
+      backdropFilter: 'blur(12px)',
+      borderBottom: '1px solid rgba(255,255,255,0.06)',
+    }}>
       <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-        <Link to="/market" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-market rounded-lg flex items-center justify-center">
-            <Store className="h-4 w-4 text-primary-foreground" />
+        <Link to="/market" className="flex items-center gap-2.5 no-underline">
+          <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <Store className="h-4 w-4 text-white" />
           </div>
-          <span className="font-bold text-xl text-secondary">IP-MARKET</span>
+          <span style={{ fontFamily: "'Inter', sans-serif", fontWeight: 700, fontSize: '18px', color: '#fff', letterSpacing: '-0.02em' }}>
+            IP-Market
+          </span>
         </Link>
         
         <nav className="hidden md:flex items-center gap-6">
-          <Link to="/market/agents" className="text-muted-foreground hover:text-market transition-colors">
-            Explorar Agentes
-          </Link>
-          <Link to="/market/rankings" className="text-muted-foreground hover:text-market transition-colors">
-            Rankings
-          </Link>
-          <Link to="/market/requests" className="text-muted-foreground hover:text-market transition-colors">
-            Solicitudes
-          </Link>
+          {['Explorar Agentes', 'Rankings', 'Solicitudes'].map(item => (
+            <Link key={item} to={`/market/${item.toLowerCase().replace(' ', '-')}`} 
+              className="no-underline transition-colors"
+              style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.6)', fontFamily: "'Inter', sans-serif" }}>
+              {item}
+            </Link>
+          ))}
         </nav>
         
         <div className="flex items-center gap-3">
-          <Button variant="ghost" asChild>
-            <Link to="/login">Iniciar sesión</Link>
-          </Button>
-          <Button asChild className="bg-market hover:bg-market/90">
-            <Link to="/register">Registrarse</Link>
-          </Button>
+          <Link to="/login" className="no-underline px-4 py-2 rounded-lg text-sm font-medium transition-all"
+            style={{ color: 'rgba(255,255,255,0.7)' }}>
+            Iniciar sesión
+          </Link>
+          <Link to="/register" className="no-underline px-4 py-2 rounded-xl text-sm font-semibold text-white transition-all hover:scale-[1.02]"
+            style={{ 
+              background: 'rgba(255,255,255,0.12)', 
+              border: '1px solid rgba(255,255,255,0.15)',
+              backdropFilter: 'blur(10px)',
+            }}>
+            Registrarse
+          </Link>
         </div>
       </div>
     </header>

@@ -1,17 +1,6 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Tag, FileText, PenTool, Gavel, User, Briefcase, ArrowRight, ShieldCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-
-const QUICK_CATEGORIES = [
-  { key: 'trademark', label: 'Marcas', icon: Tag },
-  { key: 'patent', label: 'Patentes', icon: FileText },
-  { key: 'design', label: 'Diseños', icon: PenTool },
-  { key: 'litigation', label: 'Litigios', icon: Gavel },
-];
+import { User, Briefcase, ArrowRight, ShieldCheck, Users, Globe, Store } from 'lucide-react';
 
 interface HeroSectionProps {
   onParticularClick?: () => void;
@@ -19,103 +8,99 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onParticularClick, onSelectorClick }: HeroSectionProps) {
-  const [searchQuery, setSearchQuery] = useState('');
-
   return (
-    <section className="relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-market/5 via-purple-50 to-background" />
-      <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-market/10 to-transparent" />
+    <section className="relative overflow-hidden"
+      style={{ background: 'linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4C1D95 100%)' }}>
       
-      <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-32">
+      {/* Decorative patterns */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 80% 20%, rgba(139,92,246,0.2), transparent 60%)' }} />
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: 'radial-gradient(ellipse at 20% 80%, rgba(99,102,241,0.1), transparent 50%)' }} />
+      
+      <div className="relative max-w-7xl mx-auto px-4 py-20 md:py-28" style={{ fontFamily: "'Inter', sans-serif" }}>
         <div className="max-w-3xl">
-          <Badge variant="secondary" className="mb-4">
-            🚀 La plataforma líder de servicios de PI
-          </Badge>
+          {/* Brand badge */}
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.08)' }}>
+              <Store className="w-4 h-4 text-white" />
+            </div>
+            <span style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>IP-Market</span>
+          </div>
           
-          <h1 className="text-4xl md:text-6xl font-bold text-secondary leading-tight">
-            El Marketplace de{' '}
-            <span className="text-market">Propiedad Intelectual</span>
+          <h1 style={{ fontSize: '48px', fontWeight: 700, color: '#fff', lineHeight: 1.1, letterSpacing: '-0.03em' }}>
+            Protege tu marca.{' '}
+            <br />
+            <span style={{ color: '#A78BFA' }}>Encuentra al mejor profesional.</span>
           </h1>
           
-          <p className="text-xl text-muted-foreground mt-6 max-w-2xl">
-            Conectamos empresas con los mejores profesionales de PI. 
-            Solicita presupuestos, compara y contrata con total confianza.
+          <p style={{ fontSize: '18px', color: 'rgba(255,255,255,0.6)', marginTop: '20px', maxWidth: '540px', lineHeight: 1.6 }}>
+            Publica lo que necesitas, recibe presupuestos de profesionales verificados, 
+            y contrata con Pago Protegido. Sin riesgo, sin compromiso.
           </p>
           
-          {/* Dual CTA — Particular vs Professional */}
+          {/* Dual CTA */}
           <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
             <button
               onClick={onParticularClick}
-              className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:scale-[1.02] hover:shadow-lg"
+              className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:scale-[1.02]"
               style={{
-                background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
-                boxShadow: '0 4px 16px rgba(124,58,237,0.25)',
+                background: 'rgba(255,255,255,0.12)',
+                backdropFilter: 'blur(10px)',
+                border: '1px solid rgba(255,255,255,0.15)',
               }}
             >
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(255,255,255,0.2)' }}>
+                style={{ background: 'rgba(255,255,255,0.15)' }}>
                 <User className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: '#fff', display: 'block' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: '#fff', display: 'block' }}>
                   Proteger mi marca
                 </span>
-                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)' }}>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.5)' }}>
                   Soy empresa o particular
                 </span>
               </div>
-              <ArrowRight className="w-4 h-4 text-white/60 ml-auto shrink-0" />
+              <ArrowRight className="w-4 h-4 ml-auto shrink-0" style={{ color: 'rgba(255,255,255,0.4)' }} />
             </button>
 
             <Link
               to="/login"
-              className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:scale-[1.02] hover:shadow-lg no-underline"
+              className="flex items-center gap-3 p-4 rounded-2xl text-left transition-all hover:scale-[1.02] no-underline"
               style={{
-                background: '#fff',
-                border: '2px solid rgba(0,0,0,0.06)',
+                background: 'rgba(255,255,255,0.06)',
+                border: '1px solid rgba(255,255,255,0.08)',
               }}
             >
               <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                style={{ background: 'rgba(124,58,237,0.08)' }}>
-                <Briefcase className="w-5 h-5" style={{ color: '#7c3aed' }} />
+                style={{ background: 'rgba(255,255,255,0.1)' }}>
+                <Briefcase className="w-5 h-5" style={{ color: 'rgba(255,255,255,0.7)' }} />
               </div>
               <div>
-                <span style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540', display: 'block' }}>
+                <span style={{ fontSize: '14px', fontWeight: 600, color: 'rgba(255,255,255,0.9)', display: 'block' }}>
                   Soy profesional IP
                 </span>
-                <span style={{ fontSize: '11px', color: '#64748b' }}>
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.4)' }}>
                   Agente, abogado o despacho
                 </span>
               </div>
-              <ArrowRight className="w-4 h-4 shrink-0" style={{ color: '#94a3b8' }} />
+              <ArrowRight className="w-4 h-4 shrink-0" style={{ color: 'rgba(255,255,255,0.3)' }} />
             </Link>
           </div>
 
           {/* Trust badges */}
-          <div className="flex items-center gap-4 mt-6 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5" style={{ color: '#10b981' }} />
-              <span style={{ fontSize: '11px', color: '#64748b' }}>Pago Protegido</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span style={{ fontSize: '11px', color: '#64748b' }}>✅ Agentes verificados</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <span style={{ fontSize: '11px', color: '#64748b' }}>⚡ Respuesta en &lt;24h</span>
-            </div>
-          </div>
-          
-          {/* Quick Categories */}
-          <div className="flex flex-wrap gap-2 mt-6">
-            {QUICK_CATEGORIES.map((cat) => (
-              <Link
-                key={cat.key}
-                to={`/market/agents?category=${cat.key}`}
-                className="flex items-center gap-2 px-4 py-2 bg-background rounded-full border hover:border-market hover:shadow-md transition-all"
-              >
-                <cat.icon className="w-4 h-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{cat.label}</span>
-              </Link>
+          <div className="flex items-center gap-5 mt-8 flex-wrap">
+            {[
+              { icon: ShieldCheck, label: 'Pago Protegido' },
+              { icon: Users, label: 'Profesionales verificados' },
+              { icon: Globe, label: '+50 jurisdicciones' },
+            ].map(badge => (
+              <div key={badge.label} className="flex items-center gap-1.5">
+                <badge.icon className="w-3.5 h-3.5" style={{ color: 'rgba(255,255,255,0.4)' }} />
+                <span style={{ fontSize: '12px', color: 'rgba(255,255,255,0.5)' }}>{badge.label}</span>
+              </div>
             ))}
           </div>
         </div>

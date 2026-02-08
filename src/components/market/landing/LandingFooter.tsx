@@ -1,53 +1,69 @@
+import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { Store } from 'lucide-react';
+import { Store, Zap } from 'lucide-react';
 
 export function LandingFooter() {
   return (
-    <footer className="bg-secondary text-primary-foreground py-12">
+    <footer style={{ background: '#1E1B4B', fontFamily: "'Inter', sans-serif" }} className="py-12">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          <div>
-            <h4 className="font-semibold mb-4">IP-MARKET</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/market/agents" className="hover:text-primary-foreground">Explorar Agentes</Link></li>
-              <li><Link to="/market/rankings" className="hover:text-primary-foreground">Rankings</Link></li>
-              <li><Link to="/market/requests" className="hover:text-primary-foreground">Solicitudes</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Para Agentes</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/register?type=agent" className="hover:text-primary-foreground">Registrarse</Link></li>
-              <li><Link to="/market/for-agents" className="hover:text-primary-foreground">Beneficios</Link></li>
-              <li><Link to="/pricing" className="hover:text-primary-foreground">Precios</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Soporte</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/help" className="hover:text-primary-foreground">Centro de Ayuda</Link></li>
-              <li><Link to="/contact" className="hover:text-primary-foreground">Contacto</Link></li>
-              <li><Link to="/faq" className="hover:text-primary-foreground">FAQ</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4">Legal</h4>
-            <ul className="space-y-2 text-sm text-primary-foreground/70">
-              <li><Link to="/terms" className="hover:text-primary-foreground">Términos</Link></li>
-              <li><Link to="/privacy" className="hover:text-primary-foreground">Privacidad</Link></li>
-              <li><Link to="/cookies" className="hover:text-primary-foreground">Cookies</Link></li>
-            </ul>
-          </div>
+          {[
+            { title: 'IP-Market', links: [
+              { to: '/market/agents', label: 'Explorar Agentes' },
+              { to: '/market/rankings', label: 'Rankings' },
+              { to: '/market/requests', label: 'Solicitudes' },
+            ]},
+            { title: 'Para Agentes', links: [
+              { to: '/register?type=agent', label: 'Registrarse' },
+              { to: '/market/for-agents', label: 'Beneficios' },
+              { to: '/pricing', label: 'Precios' },
+            ]},
+            { title: 'Soporte', links: [
+              { to: '/help', label: 'Centro de Ayuda' },
+              { to: '/contact', label: 'Contacto' },
+              { to: '/faq', label: 'FAQ' },
+            ]},
+            { title: 'Legal', links: [
+              { to: '/terms', label: 'Términos' },
+              { to: '/privacy', label: 'Privacidad' },
+              { to: '/cookies', label: 'Cookies' },
+            ]},
+          ].map(section => (
+            <div key={section.title}>
+              <h4 style={{ fontSize: '13px', fontWeight: 600, color: 'rgba(255,255,255,0.8)', marginBottom: '12px' }}>
+                {section.title}
+              </h4>
+              <ul className="space-y-2 list-none p-0 m-0">
+                {section.links.map(link => (
+                  <li key={link.to}>
+                    <Link to={link.to} className="no-underline transition-colors"
+                      style={{ fontSize: '13px', color: 'rgba(255,255,255,0.4)' }}>
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
         
-        <div className="border-t border-primary-foreground/20 mt-8 pt-8 flex flex-col md:flex-row items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary-foreground/20 rounded-lg flex items-center justify-center">
-              <Store className="h-4 w-4 text-primary-foreground" />
+        <div className="mt-10 pt-8 flex flex-col md:flex-row items-center justify-between"
+          style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+          {/* Powered by IP-NEXUS */}
+          <div className="flex items-center gap-3">
+            <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.3)' }}>Parte del ecosistema</span>
+            <div className="flex items-center gap-1.5">
+              <div className="w-5 h-5 rounded-md flex items-center justify-center"
+                style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
+                <Zap className="w-3 h-3 text-white" />
+              </div>
+              <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255,255,255,0.7)' }}>
+                IP-NEXUS
+              </span>
             </div>
-            <span className="font-semibold">IP-NEXUS</span>
           </div>
-          <p className="text-sm text-primary-foreground/50 mt-4 md:mt-0">
+          <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.25)', marginTop: '12px' }}
+            className="md:mt-0">
             © 2026 IP-NEXUS. Todos los derechos reservados.
           </p>
         </div>

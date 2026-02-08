@@ -1,69 +1,75 @@
+import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowRight, FileText, MessageSquare, ShieldCheck } from 'lucide-react';
 
 const STEPS = [
   {
-    step: 1,
-    title: 'Describe tu necesidad',
-    description: 'Cuéntanos qué servicio necesitas, en qué jurisdicciones y tu presupuesto',
-    icon: '📝',
+    step: '1',
+    title: 'Describe lo que necesitas',
+    desc: 'Cuéntanos qué quieres proteger, en qué país y en qué sector. Sin jerga técnica.',
+    icon: FileText,
   },
   {
-    step: 2,
+    step: '2',
     title: 'Recibe presupuestos',
-    description: 'Agentes verificados te enviarán propuestas personalizadas',
-    icon: '📬',
+    desc: 'Profesionales verificados te envían presupuestos detallados. Compara precio, experiencia y plazo.',
+    icon: MessageSquare,
   },
   {
-    step: 3,
-    title: 'Compara y elige',
-    description: 'Revisa perfiles, ratings y elige al mejor profesional',
-    icon: '⚖️',
-  },
-  {
-    step: 4,
-    title: 'Trabaja con garantía',
-    description: 'Pago protegido con escrow y soporte de IP-NEXUS',
-    icon: '🛡️',
+    step: '3',
+    title: 'Contrata con Pago Protegido',
+    desc: 'Tu dinero queda retenido hasta que confirmes cada entrega. Solo pagas por resultados.',
+    icon: ShieldCheck,
   },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="py-16 md:py-24 bg-muted/50">
+    <section style={{ background: '#F5F3FF', fontFamily: "'Inter', sans-serif" }} className="py-20">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-secondary">¿Cómo funciona?</h2>
-          <p className="text-muted-foreground mt-2">Encuentra al profesional perfecto en 4 simples pasos</p>
+        <div className="text-center mb-14">
+          <h2 style={{ fontSize: '32px', fontWeight: 700, color: '#1E1B4B', letterSpacing: '-0.02em' }}>
+            Así de fácil funciona
+          </h2>
+          <p style={{ fontSize: '16px', color: '#475569', marginTop: '8px' }}>
+            En 3 pasos, conectamos tu necesidad con el mejor profesional
+          </p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          {STEPS.map((item, index) => (
-            <div key={item.step} className="relative">
-              {index < 3 && (
-                <div className="hidden md:block absolute top-10 left-1/2 w-full h-0.5 bg-border" />
-              )}
-              <div className="relative bg-card rounded-2xl p-6 text-center shadow-sm">
-                <div className="w-16 h-16 bg-market/10 rounded-2xl flex items-center justify-center mx-auto text-3xl">
-                  {item.icon}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          {STEPS.map((item) => (
+            <div key={item.step} className="relative rounded-2xl p-6"
+              style={{ 
+                background: '#fff', 
+                boxShadow: '0 1px 3px rgba(0,0,0,0.04), 0 4px 16px rgba(124,58,237,0.03)',
+                borderRadius: '16px',
+              }}>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: '#EDE9FE' }}>
+                  <item.icon className="w-5 h-5" style={{ color: '#6C2BD9' }} />
                 </div>
-                <div className="absolute -top-3 -right-3 w-8 h-8 bg-market text-primary-foreground rounded-full flex items-center justify-center font-bold">
+                <span className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold text-white"
+                  style={{ background: 'linear-gradient(135deg, #7C3AED, #6D28D9)' }}>
                   {item.step}
-                </div>
-                <h3 className="font-semibold text-secondary mt-4">{item.title}</h3>
-                <p className="text-sm text-muted-foreground mt-2">{item.description}</p>
+                </span>
               </div>
+              <h3 style={{ fontSize: '16px', fontWeight: 600, color: '#1E1B4B', marginBottom: '6px' }}>
+                {item.title}
+              </h3>
+              <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.6 }}>
+                {item.desc}
+              </p>
             </div>
           ))}
         </div>
         
-        <div className="text-center mt-12">
-          <Button size="lg" className="bg-market hover:bg-market/90" asChild>
-            <Link to="/app/market/rfq/new">
-              Solicitar presupuesto gratis <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
+        <div className="text-center mt-10">
+          <Link to="/app/market/rfq/new"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white no-underline transition-all hover:scale-[1.02]"
+            style={{ background: 'linear-gradient(135deg, #7C3AED, #6D28D9)', boxShadow: '0 4px 14px rgba(124,58,237,0.25)' }}>
+            Solicitar presupuesto gratis <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>
