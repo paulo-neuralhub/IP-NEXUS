@@ -64,6 +64,7 @@ import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 // Iconos de sistemas origen
 const SOURCE_SYSTEMS: Record<string, { name: string; color: string }> = {
@@ -142,9 +143,17 @@ export default function MigratorPage() {
   };
 
   const handleDeleteAgent = async (agentId: string) => {
-    // TODO: Implement agent deletion
-    toast.success('Agente eliminado');
-    refetchAgents();
+    try {
+      const { error } = await supabase
+        .from('migration_agents')
+        .delete()
+        .eq('id', agentId);
+      if (error) throw error;
+      toast.success('Agente eliminado');
+      refetchAgents();
+    } catch (error) {
+      toast.error('Error al eliminar el agente');
+    }
   };
 
   const handleSaveSync = async (config: SyncConfiguration) => {

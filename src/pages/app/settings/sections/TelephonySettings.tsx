@@ -8,6 +8,7 @@ import { TelephonyPackCard } from '@/components/telephony/TelephonyPackCard';
 import { TelephonyUsageTable } from '@/components/telephony/TelephonyUsageTable';
 import { useTenantTelephonyBalance, useTelephonyUsageLogs, useTenantTelephonyPurchases } from '@/hooks/useTenantTelephony';
 import { useTelephonyPacks, TelephonyPack } from '@/hooks/useTelephonyPacks';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 
 export default function TelephonySettings() {
@@ -21,10 +22,21 @@ export default function TelephonySettings() {
   const handlePurchase = async (pack: TelephonyPack) => {
     setIsPurchasing(true);
     try {
-      // TODO: Integrar con Stripe checkout
-      toast.info(`Próximamente: Compra de ${pack.name}`);
+      const { data, error } = await supabase.functions.invoke('voip-topup-checkout', {
+        body: {
+          minutes: pack.minutes_included,
+          successUrl: `${window.location.origin}/app/settings?tab=voip&topup=success`,
+          cancelUrl: `${window.location.origin}/app/settings?tab=voip`,
+        },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
     } catch (error) {
-      toast.error('Error al procesar la compra');
+      toast.error('Error al procesar la compra. Inténtalo de nuevo.');
     } finally {
       setIsPurchasing(false);
     }

@@ -72,7 +72,8 @@ export default function SubscriptionPage() {
   };
 
   const handleSwitchToAnnual = () => {
-    // TODO: Implement switch to annual billing
+    // Open Stripe customer portal where they can switch billing cycle
+    actions.openCustomerPortal.mutate();
   };
 
   const handleCancelAddon = (addonId: string, addonName: string) => {

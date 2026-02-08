@@ -4,6 +4,7 @@
 
 import { useState, useMemo } from 'react';
 import { useServiceCatalog, type ServiceCatalogItem } from '@/hooks/use-service-catalog';
+import { usePortalAuth } from '@/hooks/usePortalAuth';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/integrations/supabase/client';
 import { ServiceDetailModal } from '@/components/portal/ServiceDetailModal';
 import { ServiceCategoryCard } from '@/components/portal/ServiceCategoryCard';
 
@@ -48,6 +50,7 @@ type ViewMode = 'categories' | 'list';
 export default function PortalCatalog() {
   const catalogQuery = useServiceCatalog();
   const services = catalogQuery.data ?? [];
+  const { user: portalUser } = usePortalAuth();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -111,10 +114,38 @@ export default function PortalCatalog() {
     setModalOpen(true);
   };
 
-  const handleRequest = (service: ServiceCatalogItem) => {
-    // TODO: Crear deal/tarea para el despacho
-    toast.success(`Solicitud de "${service.name}" registrada. El despacho se pondrá en contacto.`);
-    setModalOpen(false);
+  const handleRequest = async (service: ServiceCatalogItem) => {
+    try {
+      const orgId = portalUser?.portal?.organization_id;
+      if (!orgId) {
+        toast.error('No se pudo identificar la organización.');
+        return;
+      }
+
+      // Create an activity log entry for the law firm to see
+      const { error } = await supabase.from('activity_log').insert({
+        organization_id: orgId,
+        entity_type: 'service_request',
+        entity_id: service.id,
+        action: 'service_requested',
+        title: `Solicitud de servicio: ${service.name}`,
+        description: `El cliente ha solicitado el servicio "${service.name}" desde el portal.`,
+        metadata: {
+          service_id: service.id,
+          service_name: service.name,
+          service_category: typeof service.category === 'object' ? service.category?.name_es : service.category,
+          base_price: service.base_price,
+          currency: service.currency,
+          source: 'portal_catalog',
+        },
+      });
+
+      if (error) throw error;
+      toast.success(`Solicitud de "${service.name}" registrada. El despacho se pondrá en contacto.`);
+      setModalOpen(false);
+    } catch (error) {
+      toast.error('Error al registrar la solicitud. Inténtalo de nuevo.');
+    }
   };
 
   const handleViewAll = (category: string) => {
