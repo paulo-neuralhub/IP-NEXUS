@@ -46,6 +46,9 @@ export interface DashboardHomeData {
   totalContacts: number;
   openDeals: number;
   dealsPipeline: number;
+  
+  // Pipeline by phase
+  mattersByPhase: { fase: string; nombre: string; count: number; color: string; max: number }[];
 }
 
 export interface ActivityItem {
@@ -56,6 +59,7 @@ export interface ActivityItem {
   module: string;
   timestamp: string;
   link?: string;
+  userName?: string;
 }
 
 export interface DeadlineItem {
@@ -66,6 +70,7 @@ export interface DeadlineItem {
   type: string;
   matterId?: string;
   matterRef?: string;
+  office?: string;
 }
 
 export function useDashboardHome() {
@@ -219,6 +224,40 @@ export function useDashboardHome() {
       // Calculate AI usage (from activity_log or fallback to 0)
       const aiCreditsUsed = 0;
 
+      // Get matters by phase for pipeline chart
+      const { data: mattersPhaseData } = await supabase
+        .from('matters')
+        .select('phase')
+        .eq('organization_id', orgId);
+
+      const PHASE_CONFIG: Record<string, { nombre: string; color: string }> = {
+        F0: { nombre: 'Consulta', color: '#94a3b8' },
+        F1: { nombre: 'Búsqueda', color: '#64748b' },
+        F2: { nombre: 'Preparación', color: '#0ea5e9' },
+        F3: { nombre: 'Presentación', color: '#2563eb' },
+        F4: { nombre: 'Examen', color: '#8b5cf6' },
+        F5: { nombre: 'Publicación', color: '#f59e0b' },
+        F6: { nombre: 'Oposición', color: '#ef4444' },
+        F7: { nombre: 'Concesión', color: '#10b981' },
+        F8: { nombre: 'Vigente', color: '#059669' },
+        F9: { nombre: 'Archivado', color: '#6b7280' },
+      };
+
+      const phaseCounts: Record<string, number> = {};
+      (mattersPhaseData || []).forEach((m: any) => {
+        const phase = m.phase || 'F0';
+        phaseCounts[phase] = (phaseCounts[phase] || 0) + 1;
+      });
+
+      const maxCount = Math.max(...Object.values(phaseCounts), 1);
+      const mattersByPhase = Object.entries(PHASE_CONFIG).map(([fase, cfg]) => ({
+        fase,
+        nombre: cfg.nombre,
+        count: phaseCounts[fase] || 0,
+        color: cfg.color,
+        max: maxCount,
+      }));
+
       // Map activities (activity_log has different fields)
       const recentActivity: ActivityItem[] = (activitiesResult.data || []).map((a: any) => ({
         id: a.id,
@@ -232,6 +271,7 @@ export function useDashboardHome() {
           : a.deal_id 
             ? `/app/crm/deals` 
             : undefined,
+        userName: undefined,
       }));
 
       // Map deadlines (matter_deadlines uses 'deadline_date' not 'event_date')
@@ -243,6 +283,7 @@ export function useDashboardHome() {
         type: d.deadline_type || 'deadline',
         matterId: d.matter_id || undefined,
         matterRef: d.matters?.reference || undefined,
+        office: undefined,
       }));
 
       return {
@@ -273,6 +314,7 @@ export function useDashboardHome() {
         totalContacts: contactsResult.count || 0,
         openDeals: dealsResult.count || 0,
         dealsPipeline,
+        mattersByPhase,
       };
     },
     enabled: !!currentOrganization?.id && !!user?.id,

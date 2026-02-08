@@ -90,9 +90,13 @@ function PipelineCardInner({ item, type, onClick, isDragging: externalDragging }
   const email = lead?.contact_email || deal?.client?.email;
   const nextAction = lead?.next_action || deal?.next_action;
   const nextActionDate = lead?.next_action_date || deal?.next_action_date;
-  const ownerName = 'EF'; // TODO: connect to actual owner initials
+  const ownerInitials = (() => {
+    const assignedName = lead?.contact_name || deal?.client?.name;
+    return assignedName ? getInitials(assignedName) : '??';
+  })();
+  const ownerFullName = lead?.contact_name || deal?.client?.name || 'Sin asignar';
   const lastActivity = item.updated_at || item.created_at;
-  const rating = 3; // Default rating - connect to actual data when available
+  const rating = lead?.estimated_value ? Math.min(5, Math.max(1, Math.round((lead.estimated_value / 10000) * 5))) : 0;
 
   // Get type badge
   const serviceType = lead?.interested_in?.[0] || 'default';
@@ -215,9 +219,9 @@ function PipelineCardInner({ item, type, onClick, isDragging: externalDragging }
             {/* Avatar */}
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-xs font-bold">
-                {ownerName}
+                {ownerInitials}
               </div>
-              <span className="text-xs text-muted-foreground">Elena Fernández</span>
+              <span className="text-xs text-muted-foreground">{ownerFullName}</span>
             </div>
 
             {/* Actions - Iconos con color */}

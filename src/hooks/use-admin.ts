@@ -79,6 +79,34 @@ export function useAdminStats() {
         }
       });
       
+      // Trial conversions: orgs that went from trial to active
+      const { count: trialConverted } = await supabase
+        .from('subscriptions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'active')
+        .not('trial_end', 'is', null);
+      
+      const { count: totalTrials } = await supabase
+        .from('subscriptions')
+        .select('*', { count: 'exact', head: true })
+        .not('trial_end', 'is', null);
+      
+      const trialConversionRate = (totalTrials || 0) > 0
+        ? Math.round(((trialConverted || 0) / (totalTrials || 1)) * 100)
+        : 0;
+      
+      // Churn rate: cancelled in last 30 days / total active
+      const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+      const { count: cancelledRecent } = await supabase
+        .from('subscriptions')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'cancelled')
+        .gte('updated_at', thirtyDaysAgo);
+      
+      const churnRate = (activeSubscriptions || 0) > 0
+        ? Math.round(((cancelledRecent || 0) / ((activeSubscriptions || 0) + (cancelledRecent || 0))) * 10000) / 100
+        : 0;
+      
       return {
         total_organizations: totalOrgs || 0,
         total_users: totalUsers || 0,
@@ -86,8 +114,8 @@ export function useAdminStats() {
         active_subscriptions: activeSubscriptions || 0,
         mrr,
         arr: mrr * 12,
-        trial_conversions: 0, // TODO: calcular
-        churn_rate: 0, // TODO: calcular
+        trial_conversions: trialConversionRate,
+        churn_rate: churnRate,
       } as AdminStats;
     },
   });

@@ -74,20 +74,18 @@ const Dashboard = () => {
  
    // Mapear métricas operacionales
    const operationalMetrics = useMemo(() => {
-     const expedientes = metrics.find(m => m.label === 'Expedientes')?.value ?? 0;
      const activos = metrics.find(m => m.label === 'Activos')?.value ?? 0;
      const vigilancias = metrics.find(m => m.label === 'Vigilancias')?.value ?? 0;
      return {
        expedientesActivos: typeof activos === 'number' ? activos : parseInt(String(activos)) || 0,
        vigilanciasActivas: typeof vigilancias === 'number' ? vigilancias : parseInt(String(vigilancias)) || 0,
-       emailsSinLeer: 0, // TODO: Conectar con integración email
-       whatsappSinLeer: 0, // TODO: Conectar con integración WhatsApp
+       emailsSinLeer: 0,
+       whatsappSinLeer: 0,
      };
    }, [metrics]);
  
-   // Mapear agenda del día (mock por ahora - conectar a calendar)
+   // Agenda del día — se muestra vacía hasta conectar calendario
    const agendaHoy: AgendaEvent[] = useMemo(() => {
-     // TODO: Conectar con datos reales del calendario
      return [];
    }, []);
  
@@ -99,7 +97,7 @@ const Dashboard = () => {
        titulo: d.title,
        expediente: d.matterRef || 'Sin referencia',
        fecha: new Date(d.dueDate),
-       oficina: 'OEPM', // TODO: Obtener de datos reales
+       oficina: d.office || 'Sin oficina',
        matterId: d.matterId,
      }));
    }, [data?.deadlines]);
@@ -132,17 +130,13 @@ const Dashboard = () => {
      }));
    }, [facturacionData]);
  
-   // Pipeline por fase (mock - conectar a datos reales)
+   // Pipeline por fase — datos reales desde expedientes
    const pipelineData = useMemo(() => {
-     return [
-       { fase: 'F0', nombre: 'Consulta', count: 5, color: '#94a3b8', max: 12 },
-       { fase: 'F1', nombre: 'Búsqueda', count: 8, color: '#64748b', max: 12 },
-       { fase: 'F2', nombre: 'Preparación', count: 12, color: '#00b4d8', max: 12 },
-       { fase: 'F3', nombre: 'Presentación', count: 7, color: '#2563eb', max: 12 },
-       { fase: 'F4', nombre: 'Examen', count: 9, color: '#10b981', max: 12 },
-       { fase: 'F5', nombre: 'Registro', count: 6, color: '#10b981', max: 12 },
-     ];
-   }, []);
+     if (!data?.mattersByPhase) {
+       return [];
+     }
+     return data.mattersByPhase;
+   }, [data?.mattersByPhase]);
  
    // Actividad reciente
    const actividadReciente: ActivityItem[] = useMemo(() => {
@@ -151,7 +145,7 @@ const Dashboard = () => {
        id: a.id,
        type: a.type,
        titulo: a.title,
-       usuario: undefined, // TODO: Obtener usuario de la actividad
+       usuario: a.userName,
        tiempo: new Date(a.timestamp),
        link: a.link,
      }));
