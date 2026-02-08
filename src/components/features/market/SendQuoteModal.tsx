@@ -13,6 +13,7 @@ import { useCreateRfqQuote, useSubmitRfqQuote } from '@/hooks/market/useRfqReque
 import { useCommissionRates, calculateFeesWithConfig } from '@/hooks/market/usePlatformConfig';
 import { useCalculateFees } from '@/hooks/useIpOffices';
 import { getDefaultPhases, getDefaultEstimatedDays, getDefaultIncludes, type ServicePhase } from '@/lib/market-service-phases';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { toast } from 'sonner';
 
 interface SendQuoteModalProps {
@@ -285,7 +286,52 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
             {/* ═══ SECTION D: Service phases ═══ */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <FieldLabel>Fases del servicio</FieldLabel>
+                <div className="flex items-center gap-2">
+                  <FieldLabel>Fases del servicio</FieldLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        className="w-5 h-5 rounded-full flex items-center justify-center transition-colors hover:bg-slate-100"
+                        style={{ color: '#94a3b8' }}
+                        aria-label="¿Qué son las fases del servicio?"
+                      >
+                        <Info className="w-3.5 h-3.5" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent side="bottom" align="start" className="w-80 p-4 rounded-xl border-0"
+                      style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.08)', boxShadow: '0 8px 30px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04)' }}>
+                      <h5 style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540', marginBottom: '8px' }}>
+                        ¿Qué son las fases del servicio?
+                      </h5>
+                      <p style={{ fontSize: '12px', color: '#334155', lineHeight: 1.6, marginBottom: '10px' }}>
+                        Las fases dividen el trabajo en etapas con entregas parciales.
+                        Cada fase tiene un porcentaje del pago total que se libera del escrow
+                        cuando el solicitante confirma la entrega de esa fase.
+                      </p>
+                      <div className="space-y-1.5 mb-3">
+                        {[
+                          { title: 'Protección para ambas partes:', text: 'el solicitante paga por resultados reales, el agente cobra a medida que entrega.' },
+                          { title: 'Transparencia total:', text: 'el solicitante ve el avance del trabajo en cada fase.' },
+                          { title: 'Pagos progresivos:', text: 'al completar cada fase, el porcentaje asignado se libera automáticamente del escrow.' },
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-start gap-2">
+                            <span style={{ fontSize: '11px', color: '#10b981', fontWeight: 700, flexShrink: 0 }}>✓</span>
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>
+                              <strong style={{ color: '#334155' }}>{item.title}</strong> {item.text}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="p-2.5 rounded-lg" style={{ background: '#f8f9fb' }}>
+                        <p style={{ fontSize: '10px', color: '#94a3b8', lineHeight: 1.5 }}>
+                          <strong style={{ color: '#64748b' }}>Ejemplo:</strong> Si tus honorarios son €1.000 y la Fase 1 es el 25%,
+                          al completar y confirmar la Fase 1 se liberan €250 del escrow a tu cuenta.
+                        </p>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
                 <span className="flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-semibold"
                   style={{ background: 'rgba(16,185,129,0.06)', color: '#10b981' }}>
                   <Sparkles className="w-3 h-3" /> Auto-generado · Editable
