@@ -6,6 +6,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import { insertSystemMessage, insertPaymentEvent } from './useProductionChat';
 
 // ── Types ──
 
@@ -320,11 +321,28 @@ export function useSimulateEscrowPayment() {
           .eq('id', (milestones[0] as any).id);
       }
 
+      // Insert system message & payment event
+      const totalAmount = (tx as any).total_amount;
+      await insertSystemMessage(transactionId, 'escrow_deposited', {
+        currency: 'EUR',
+        amount: String(totalAmount),
+      });
+      await insertPaymentEvent({
+        transaction_id: transactionId,
+        type: 'escrow_deposit',
+        amount: totalAmount,
+        currency: 'EUR',
+        direction: 'in',
+        description: 'Depósito en escrow',
+      });
+
       return { success: true };
     },
     onSuccess: (_, transactionId) => {
       queryClient.invalidateQueries({ queryKey: ['service-transactions'] });
       queryClient.invalidateQueries({ queryKey: ['service-transaction', transactionId] });
+      queryClient.invalidateQueries({ queryKey: ['production-messages', transactionId] });
+      queryClient.invalidateQueries({ queryKey: ['payment-events', transactionId] });
       toast.success('Pago simulado — fondos en escrow');
     },
     onError: () => {
@@ -356,10 +374,28 @@ export function useDeliverMilestone() {
         .eq('id', milestoneId);
 
       if (error) throw error;
-      return { success: true };
+
+      // Get milestone details for system message
+      const { data: msData } = await supabase
+        .from('market_milestones')
+        .select('name, sequence_order, transaction_id')
+        .eq('id', milestoneId)
+        .single();
+
+      if (msData) {
+        await insertSystemMessage((msData as any).transaction_id, 'phase_delivered', {
+          phase_number: String((msData as any).sequence_order),
+          phase_name: (msData as any).name,
+        });
+      }
+
+      return { success: true, transactionId: (msData as any)?.transaction_id };
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['service-transactions'] });
+      if (data?.transactionId) {
+        queryClient.invalidateQueries({ queryKey: ['production-messages', data.transactionId] });
+      }
       toast.success('Fase marcada como entregada');
     },
     onError: () => {
@@ -453,10 +489,42 @@ export function useApproveMilestone() {
           .eq('id', transactionId);
       }
 
-      return { success: true, amountReleased: (milestone as any).amount };
+      // System message & payment event
+      const msAmount = (milestone as any).amount || 0;
+      await insertSystemMessage(transactionId, 'phase_confirmed', {
+        phase_number: '',
+        phase_name: '',
+        currency: 'EUR',
+        amount: String(msAmount),
+      });
+      await insertPaymentEvent({
+        transaction_id: transactionId,
+        type: 'phase_release',
+        amount: msAmount,
+        currency: 'EUR',
+        direction: 'out',
+        description: 'Liberación de fase',
+        milestone_id: milestoneId,
+      });
+
+      // Check if completed
+      const { data: remainCheck } = await supabase
+        .from('market_milestones')
+        .select('id')
+        .eq('transaction_id', transactionId)
+        .in('status', ['pending', 'in_progress', 'delivered']);
+
+      if (!remainCheck?.length) {
+        await insertSystemMessage(transactionId, 'work_completed');
+      }
+
+      return { success: true, amountReleased: msAmount, transactionId };
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['service-transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['service-transaction', data.transactionId] });
+      queryClient.invalidateQueries({ queryKey: ['production-messages', data.transactionId] });
+      queryClient.invalidateQueries({ queryKey: ['payment-events', data.transactionId] });
       toast.success(`€${(data.amountReleased || 0).toFixed(2)} liberados al agente`);
     },
     onError: () => {

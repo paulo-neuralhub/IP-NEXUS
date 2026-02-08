@@ -26666,6 +26666,69 @@ export type Database = {
           },
         ]
       }
+      market_payment_events: {
+        Row: {
+          amount: number
+          created_at: string | null
+          currency: string
+          description: string | null
+          direction: string
+          id: string
+          metadata: Json | null
+          milestone_id: string | null
+          recipient: string | null
+          stripe_payment_intent_id: string | null
+          stripe_transfer_id: string | null
+          transaction_id: string
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          direction: string
+          id?: string
+          metadata?: Json | null
+          milestone_id?: string | null
+          recipient?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          transaction_id: string
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string | null
+          currency?: string
+          description?: string | null
+          direction?: string
+          id?: string
+          metadata?: Json | null
+          milestone_id?: string | null
+          recipient?: string | null
+          stripe_payment_intent_id?: string | null
+          stripe_transfer_id?: string | null
+          transaction_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_payment_events_milestone_id_fkey"
+            columns: ["milestone_id"]
+            isOneToOne: false
+            referencedRelation: "market_milestones"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_payment_events_transaction_id_fkey"
+            columns: ["transaction_id"]
+            isOneToOne: false
+            referencedRelation: "market_service_transactions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       market_platform_config: {
         Row: {
           config_key: string
@@ -27014,7 +27077,9 @@ export type Database = {
           id: string
           is_read: boolean | null
           message_type: string | null
+          metadata: Json | null
           read_at: string | null
+          sender_display_name: string | null
           sender_user_id: string | null
           transaction_id: string
         }
@@ -27026,7 +27091,9 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           message_type?: string | null
+          metadata?: Json | null
           read_at?: string | null
+          sender_display_name?: string | null
           sender_user_id?: string | null
           transaction_id: string
         }
@@ -27038,7 +27105,9 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           message_type?: string | null
+          metadata?: Json | null
           read_at?: string | null
+          sender_display_name?: string | null
           sender_user_id?: string | null
           transaction_id?: string
         }
