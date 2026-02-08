@@ -290,40 +290,7 @@
   isolation: isolate;
 }
 
-/* Tongue curves as real divs (no pseudo-elements) */
-.silk-curve-top {
-  position: absolute !important;
-  right: 0 !important;
-  top: -16px !important;
-  width: 16px !important;
-  height: 16px !important;
-  background: radial-gradient(circle at 0% 100%, transparent 14px, #f1f4f9 14.5px) !important;
-  pointer-events: none !important;
-  z-index: 10 !important;
-}
-
-.silk-curve-bottom {
-  position: absolute !important;
-  right: 0 !important;
-  bottom: -16px !important;
-  width: 16px !important;
-  height: 16px !important;
-  background: radial-gradient(circle at 0% 0%, transparent 14px, #f1f4f9 14.5px) !important;
-  pointer-events: none !important;
-  z-index: 10 !important;
-}
-
-/* Force Collapsible wrappers in sidebar to not clip tongue divs */
-.silk-sidebar-collapsible,
-.silk-sidebar-collapsible > [data-state],
-.silk-sidebar-collapsible [data-state="open"],
-.silk-sidebar-collapsible [data-state="closed"] {
-  overflow: visible !important;
-}
-
-nav [data-state] {
-  overflow: visible !important;
-}
+/* Tongue curves removed — clean active state without legs */
 
 /* SILK Accent bar for active item */
 .silk-accent-bar {

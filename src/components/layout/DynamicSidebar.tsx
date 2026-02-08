@@ -37,13 +37,9 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 
-/** Tongue connector decorative divs — replaces pseudo-elements for debuggability */
-const TongueCurves = ({ hideBottom = false }: { hideBottom?: boolean }) => (
-  <>
-    <div className="silk-curve-top" />
-    {!hideBottom && <div className="silk-curve-bottom" />}
-    <span className="silk-accent-bar" />
-  </>
+/** Active indicator — accent bar only, no curves */
+const TongueCurves = ({ hideBottom: _hideBottom = false }: { hideBottom?: boolean }) => (
+  <span className="silk-accent-bar" />
 );
 
 interface DynamicSidebarProps {
