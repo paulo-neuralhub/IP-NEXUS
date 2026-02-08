@@ -2,9 +2,10 @@ import * as React from 'react';
 import { useState } from 'react';
 import {
   Star, CheckCircle, Clock, Shield, Globe, Briefcase,
-  Edit3, Save, X, User, Building2, ExternalLink,
+  Edit3, Save, X, User, Building2, ExternalLink, Check,
   Award, MessageSquare, CreditCard, XCircle, Loader2,
 } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 import { useCurrentMarketUser, useUpdateMarketUser } from '@/hooks/market/useMarketUsers';
 import { useMarketUserReviews, useReviewsSummary } from '@/hooks/market/useMarketUserReviews';
 import { useMarketProfile, useUpdateMarketProfile } from '@/hooks/use-market';
@@ -47,6 +48,7 @@ export default function ProfilePage() {
   const { data: reviewsSummary } = useReviewsSummary(marketUser?.id);
 
   const [editing, setEditing] = useState(false);
+  const [editingBusiness, setEditingBusiness] = useState(false);
 
   if (loadingUser || loadingProfile) return <LoadingSkeleton />;
 
@@ -183,7 +185,102 @@ export default function ProfilePage() {
         />
       )}
 
-      {/* ═══ KYC Status Card ═══ */}
+      {/* ═══ Business Data Card ═══ */}
+      <div className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: '#f1f4f9', boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff' }}>
+              <Building2 className="w-5 h-5" style={{ color: '#0a2540' }} />
+            </div>
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Datos del Despacho</h3>
+          </div>
+          <button onClick={() => setEditingBusiness(!editingBusiness)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold"
+            style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}>
+            <Edit3 className="w-3 h-3" /> {editingBusiness ? 'Cancelar' : 'Editar'}
+          </button>
+        </div>
+        {editingBusiness ? (
+          <BusinessDataForm marketUser={marketUser} onClose={() => setEditingBusiness(false)} />
+        ) : (
+          <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+            {[
+              { label: 'Razón social', value: (marketUser as any)?.legal_name },
+              { label: 'CIF / Tax ID', value: (marketUser as any)?.tax_id },
+              { label: 'País', value: (marketUser as any)?.country },
+              { label: 'Dirección', value: (marketUser as any)?.address },
+              { label: 'Ciudad', value: (marketUser as any)?.city },
+              { label: 'Código postal', value: (marketUser as any)?.postal_code },
+              { label: 'Teléfono', value: (marketUser as any)?.phone },
+              { label: 'Email profesional', value: (marketUser as any)?.professional_email },
+              { label: 'Sitio web', value: (marketUser as any)?.website },
+              { label: 'Nº registro profesional', value: (marketUser as any)?.professional_registration },
+            ].map(item => (
+              <div key={item.label}>
+                <span style={{ fontSize: '10px', fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase' }}>{item.label}</span>
+                <span style={{ fontSize: '13px', color: item.value ? '#0a2540' : '#cbd5e1', display: 'block', fontWeight: item.value ? 500 : 400 }}>
+                  {item.value || 'No completado'}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* ═══ Verificación de Agente Card ═══ */}
+      <div className="rounded-2xl p-6" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+            style={{ background: '#f1f4f9', boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff' }}>
+            <Shield className="w-5 h-5" style={{ color: '#00b4d8' }} />
+          </div>
+          <div className="flex-1">
+            <h3 style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>Verificación de Agente</h3>
+            <p style={{ fontSize: '11px', color: '#64748b' }}>
+              Los agentes verificados reciben un badge de confianza y aparecen destacados
+            </p>
+          </div>
+          {isVerified ? (
+            <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+              style={{ background: 'rgba(16,185,129,0.08)', color: '#10b981' }}>
+              <CheckCircle className="w-3 h-3" /> VERIFICADO
+            </span>
+          ) : (
+            <span className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-bold"
+              style={{ background: 'rgba(245,158,11,0.08)', color: '#f59e0b' }}>
+              PENDIENTE
+            </span>
+          )}
+        </div>
+        <div className="space-y-2">
+          {[
+            { label: 'Datos empresariales completos', desc: 'Razón social, CIF, dirección', done: !!(marketUser as any)?.legal_name && !!(marketUser as any)?.tax_id },
+            { label: 'Datos de contacto verificados', desc: 'Teléfono y email profesional', done: !!(marketUser as any)?.phone && !!(marketUser as any)?.professional_email },
+            { label: 'Al menos una jurisdicción', desc: 'Oficina IP donde puedes operar', done: jurisdictions.length > 0 },
+            { label: 'Al menos un servicio', desc: 'Tipo de servicio que ofreces', done: specializations.length > 0 },
+            { label: 'Cuenta de pagos configurada', desc: 'Stripe Connect para recibir pagos', done: false },
+          ].map(item => (
+            <div key={item.label} className="flex items-center gap-3 p-3 rounded-xl"
+              style={{ background: item.done ? 'rgba(16,185,129,0.04)' : '#f8f9fa', border: `1px solid ${item.done ? 'rgba(16,185,129,0.1)' : 'rgba(0,0,0,0.04)'}` }}>
+              <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: item.done ? 'rgba(16,185,129,0.1)' : '#f1f4f9' }}>
+                {item.done ? (
+                  <Check className="w-3.5 h-3.5" style={{ color: '#10b981' }} />
+                ) : (
+                  <Clock className="w-3.5 h-3.5" style={{ color: '#94a3b8' }} />
+                )}
+              </div>
+              <div>
+                <span style={{ fontSize: '12px', fontWeight: 600, color: item.done ? '#10b981' : '#334155' }}>{item.label}</span>
+                <span style={{ fontSize: '10px', color: '#94a3b8', display: 'block' }}>{item.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ═══ KYC Level Card (legacy) ═══ */}
       <div className="rounded-2xl p-5" style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="flex items-center gap-3 mb-4">
           <div
@@ -462,6 +559,79 @@ function FormField({
         {label}
       </label>
       {multiline ? <textarea {...shared} rows={3} /> : <input {...shared} />}
+    </div>
+  );
+}
+
+// ── Business Data Form ──
+
+function BusinessDataForm({ marketUser, onClose }: { marketUser: any; onClose: () => void }) {
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    legal_name: (marketUser as any)?.legal_name || '',
+    tax_id: (marketUser as any)?.tax_id || '',
+    country: (marketUser as any)?.country || '',
+    address: (marketUser as any)?.address || '',
+    city: (marketUser as any)?.city || '',
+    postal_code: (marketUser as any)?.postal_code || '',
+    phone: (marketUser as any)?.phone || '',
+    professional_email: (marketUser as any)?.professional_email || '',
+    website: (marketUser as any)?.website || '',
+    professional_registration: (marketUser as any)?.professional_registration || '',
+  });
+
+  const handleSave = async () => {
+    if (!marketUser?.id) return;
+    setSaving(true);
+    try {
+      const { error } = await (supabase as any)
+        .from('market_users')
+        .update(form)
+        .eq('id', marketUser.id);
+      if (error) throw error;
+      toast.success('Datos empresariales guardados');
+      onClose();
+    } catch {
+      toast.error('Error al guardar');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const fields = [
+    { key: 'legal_name', label: 'Razón social', placeholder: 'Ej: García & Asociados S.L.' },
+    { key: 'tax_id', label: 'CIF / NIF / Tax ID', placeholder: 'Ej: B12345678' },
+    { key: 'country', label: 'País', placeholder: 'España' },
+    { key: 'address', label: 'Dirección profesional', placeholder: 'Calle, número, piso...' },
+    { key: 'city', label: 'Ciudad', placeholder: 'Madrid' },
+    { key: 'postal_code', label: 'Código postal', placeholder: '28001' },
+    { key: 'phone', label: 'Teléfono profesional', placeholder: '+34 91 000 0000' },
+    { key: 'professional_email', label: 'Email profesional', placeholder: 'info@despacho.com' },
+    { key: 'website', label: 'Sitio web (opcional)', placeholder: 'https://' },
+    { key: 'professional_registration', label: 'Nº colegiado / registro (opcional)', placeholder: '' },
+  ];
+
+  return (
+    <div className="space-y-3">
+      <div className="grid grid-cols-2 gap-3">
+        {fields.map(f => (
+          <FormField key={f.key} label={f.label} placeholder={f.placeholder}
+            value={(form as any)[f.key]}
+            onChange={v => setForm(prev => ({ ...prev, [f.key]: v }))} />
+        ))}
+      </div>
+      <div className="flex gap-2 justify-end pt-2">
+        <button onClick={onClose}
+          className="px-4 py-2 rounded-xl text-xs font-semibold"
+          style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}>
+          Cancelar
+        </button>
+        <button onClick={handleSave} disabled={saving}
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white disabled:opacity-50"
+          style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
+          <Save className="w-3 h-3" /> {saving ? 'Guardando...' : 'Guardar'}
+        </button>
+      </div>
     </div>
   );
 }
