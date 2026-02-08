@@ -294,16 +294,6 @@ export function TypeJurisdictionStep({
               )}
             </Button>
           )}
-
-          {/* TRADEMARK TYPE SELECTOR - Only shows when trademark is selected */}
-          <AnimatePresence>
-            {isTrademarkType && onSelectTrademarkType && (
-              <TrademarkTypeSelector
-                value={trademarkType}
-                onChange={onSelectTrademarkType}
-              />
-            )}
-          </AnimatePresence>
         </div>
 
         {/* RIGHT COLUMN: JURISDICTION SELECTION */}
@@ -427,7 +417,16 @@ export function TypeJurisdictionStep({
         </div>
       </div>
 
-      {/* Jurisdictions Modal */}
+      {/* TRADEMARK TYPE SELECTOR - Full width below both columns */}
+      <AnimatePresence>
+        {isTrademarkType && onSelectTrademarkType && (
+          <TrademarkTypeSelector
+            value={trademarkType}
+            onChange={onSelectTrademarkType}
+          />
+        )}
+      </AnimatePresence>
+
       <Dialog open={showJurisModal} onOpenChange={setShowJurisModal}>
         <DialogContent className="max-w-lg max-h-[80vh] flex flex-col">
           <DialogHeader>
