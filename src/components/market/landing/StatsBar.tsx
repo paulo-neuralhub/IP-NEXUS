@@ -1,35 +1,33 @@
 import * as React from 'react';
-import { Star, Users, CheckCircle, Globe } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-interface StatsBarProps {
-  totalAgents: number;
-  avgSuccess: number;
-  totalTransactions: number;
-  avgRating: string;
-}
-
-export function StatsBar({ totalAgents, avgSuccess, totalTransactions, avgRating }: StatsBarProps) {
-  const stats = [
-    { value: `${totalAgents}+`, label: 'Agentes verificados', icon: Users },
-    { value: `${avgSuccess}%`, label: 'Tasa de éxito', icon: CheckCircle },
-    { value: `${totalTransactions}+`, label: 'Transacciones', icon: Globe },
-    { value: avgRating, label: 'Rating promedio', icon: Star },
-  ];
+export function StatsBar() {
+  const offices = ['EUIPO', 'OEPM', 'USPTO', 'WIPO', 'UKIPO', 'DPMA', 'INPI', 'JPO'];
 
   return (
-    <section style={{ background: '#1E1B4B', fontFamily: "'Inter', sans-serif" }}>
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map(s => (
-            <div key={s.label} className="text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <s.icon className="w-5 h-5" style={{ color: '#A78BFA' }} />
-                <span style={{ fontSize: '28px', fontWeight: 700, color: '#fff' }}>{s.value}</span>
-              </div>
-              <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.5)' }}>{s.label}</span>
-            </div>
+    <section style={{ background: '#F5F3FF' }} className="py-12 border-b border-purple-100/50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="text-center mb-8"
+          style={{ fontSize: '12px', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+          Conectado con las principales oficinas de propiedad intelectual
+        </motion.p>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.1 }}
+          className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
+          {offices.map((office) => (
+            <span key={office}
+              style={{ fontSize: '15px', fontWeight: 700, color: '#CBD5E1', letterSpacing: '0.05em' }}>
+              {office}
+            </span>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
