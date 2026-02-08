@@ -4,7 +4,7 @@ import { Zap } from 'lucide-react';
 
 export function LandingFooter() {
   return (
-    <footer style={{ background: '#0F0A2A', fontFamily: "'Inter', sans-serif" }} className="py-12">
+    <footer style={{ background: '#0D1B2A', fontFamily: "'Inter', sans-serif" }} className="py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
@@ -53,8 +53,8 @@ export function LandingFooter() {
             <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.25)' }}>Parte del ecosistema</span>
             <div className="flex items-center gap-1.5">
               <div className="w-5 h-5 rounded-md flex items-center justify-center"
-                style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
-                <Zap className="w-3 h-3 text-white" />
+                style={{ background: 'linear-gradient(135deg, #FCA311, #E8930A)' }}>
+                <Zap className="w-3 h-3" style={{ color: '#14213D' }} />
               </div>
               <span style={{ fontSize: '12px', fontWeight: 700, color: 'rgba(255,255,255,0.6)' }}>
                 IP-NEXUS
