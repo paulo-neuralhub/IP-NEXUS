@@ -21,11 +21,15 @@ export function LandingHeader() {
         </Link>
         
         <nav className="hidden md:flex items-center gap-6">
-          {['Explorar Agentes', 'Rankings', 'Solicitudes'].map(item => (
-            <Link key={item} to={`/market/${item.toLowerCase().replace(' ', '-')}`} 
+          {[
+            { label: 'Explorar Agentes', path: '/app/market/agents' },
+            { label: 'Rankings', path: '/app/market/rankings' },
+            { label: 'Solicitudes', path: '/app/market/rfq' },
+          ].map(item => (
+            <Link key={item.label} to={item.path} 
               className="no-underline transition-colors"
               style={{ fontSize: '14px', fontWeight: 500, color: 'rgba(255,255,255,0.6)', fontFamily: "'Inter', sans-serif" }}>
-              {item}
+              {item.label}
             </Link>
           ))}
         </nav>
