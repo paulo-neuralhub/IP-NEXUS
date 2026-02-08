@@ -1,21 +1,19 @@
 import * as React from 'react';
-// LandingHeader is now integrated into HeroSection for the main landing.
-// This component is kept for use in sub-pages (wizard, etc.)
 import { Link } from 'react-router-dom';
 import { Store } from 'lucide-react';
 
 export function LandingHeader() {
   return (
     <header className="sticky top-0 z-50" style={{
-      background: 'rgba(30,27,75,0.95)',
+      background: 'rgba(20,33,61,0.95)',
       backdropFilter: 'blur(12px)',
       borderBottom: '1px solid rgba(255,255,255,0.06)',
     }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
         <Link to="/market" className="flex items-center gap-2.5 no-underline">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center"
-            style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.08)' }}>
-            <Store className="h-4 w-4 text-white" />
+            style={{ background: 'rgba(252,163,17,0.15)', border: '1px solid rgba(252,163,17,0.2)' }}>
+            <Store className="h-4 w-4" style={{ color: '#FCA311' }} />
           </div>
           <span style={{ fontWeight: 700, fontSize: '18px', color: '#fff', letterSpacing: '-0.02em' }}>
             IP-Market
@@ -41,8 +39,8 @@ export function LandingHeader() {
             style={{ color: 'rgba(255,255,255,0.7)' }}>
             Iniciar sesión
           </Link>
-          <Link to="/register" className="no-underline px-4 py-2 rounded-xl text-sm font-semibold text-white"
-            style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.15)' }}>
+          <Link to="/register" className="no-underline px-4 py-2 rounded-xl text-sm font-semibold"
+            style={{ background: 'rgba(252,163,17,0.15)', border: '1px solid rgba(252,163,17,0.25)', color: '#FCA311' }}>
             Registrarse
           </Link>
         </div>

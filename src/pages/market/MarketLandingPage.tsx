@@ -18,7 +18,7 @@ export default function MarketLandingPage() {
 
   if (showWizard) {
     return (
-      <div className="min-h-screen" style={{ background: '#F5F3FF', fontFamily: "'Inter', sans-serif" }}>
+      <div className="min-h-screen" style={{ background: '#F8F9FC', fontFamily: "'Inter', sans-serif" }}>
         <LandingHeader />
         <ParticularWizard onBack={() => setShowWizard(false)} />
         <LandingFooter />

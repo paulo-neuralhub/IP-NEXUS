@@ -5,7 +5,7 @@ export function StatsBar() {
   const offices = ['EUIPO', 'OEPM', 'USPTO', 'WIPO', 'UKIPO', 'DPMA', 'INPI', 'JPO'];
 
   return (
-    <section style={{ background: '#F5F3FF' }} className="py-12 border-b border-purple-100/50">
+    <section className="py-12" style={{ background: '#F8F9FC', borderBottom: '1px solid rgba(20,33,61,0.06)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.p
           initial={{ opacity: 0 }}
@@ -23,7 +23,7 @@ export function StatsBar() {
           className="flex items-center justify-center gap-8 md:gap-12 flex-wrap">
           {offices.map((office) => (
             <span key={office}
-              style={{ fontSize: '15px', fontWeight: 700, color: '#CBD5E1', letterSpacing: '0.05em' }}>
+              style={{ fontSize: '15px', fontWeight: 700, color: '#C1CAD6', letterSpacing: '0.05em' }}>
               {office}
             </span>
           ))}
