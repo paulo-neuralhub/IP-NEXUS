@@ -597,6 +597,7 @@ export default function RfqRequestDetailPage() {
         requestId={request.id}
         requestTitle={request.title}
         currency={request.budget_currency || 'EUR'}
+        request={request}
       />
     </div>
   );

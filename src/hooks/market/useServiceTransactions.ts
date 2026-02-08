@@ -360,10 +360,10 @@ export function useDeliverMilestone() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['service-transactions'] });
-      toast.success('Milestone marcado como entregado');
+      toast.success('Fase marcada como entregada');
     },
     onError: () => {
-      toast.error('Error al entregar milestone');
+      toast.error('Error al entregar fase');
     },
   });
 }
@@ -390,7 +390,7 @@ export function useApproveMilestone() {
         .eq('id', milestoneId)
         .single();
 
-      if (!milestone) throw new Error('Milestone not found');
+      if (!milestone) throw new Error('Fase no encontrada');
 
       // Approve milestone
       await supabase
@@ -460,7 +460,7 @@ export function useApproveMilestone() {
       toast.success(`€${(data.amountReleased || 0).toFixed(2)} liberados al agente`);
     },
     onError: () => {
-      toast.error('Error al aprobar milestone');
+      toast.error('Error al aprobar fase');
     },
   });
 }

@@ -13,3 +13,4 @@ export * from './useMarketBids';
 export * from './useWorkflow';
 export * from './useRfqWorkflow';
 export * from './useServiceTransactions';
+export * from './usePlatformConfig';

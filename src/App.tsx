@@ -262,6 +262,7 @@ import ComplianceDashboardPage from "./pages/backoffice/compliance";
 import LegalDocumentsPage from "./pages/backoffice/legal/LegalDocumentsPage";
 import AIBrainPage from "./pages/backoffice/ai-brain";
 import KillSwitchPage from "./pages/backoffice/kill-switch";
+import MarketConfigPage from "./pages/backoffice/market-config";
 import BackofficeCalendarPage from "./pages/backoffice/calendar";
 import BackofficeProductAnalyticsPage from "./pages/backoffice/product-analytics";
 import KnowledgeBasesPage from "./pages/backoffice/knowledge-bases";
@@ -671,6 +672,7 @@ const App = () => (
                 <Route path="alerts" element={<BackofficeAlertsPage />} />
                 <Route path="products" element={<BackofficeProductsPage />} />
                 <Route path="kill-switch" element={<KillSwitchPage />} />
+                <Route path="market-config" element={<MarketConfigPage />} />
                 {/* Stripe */}
                 <Route path="stripe" element={<StripeDashboard />} />
                 <Route path="stripe/config" element={<StripeConfigPage />} />

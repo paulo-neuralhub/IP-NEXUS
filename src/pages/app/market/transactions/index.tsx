@@ -154,7 +154,7 @@ function TransactionCard({ transaction: tx }: { transaction: ServiceTransaction 
         </div>
       </div>
 
-      {/* ═══ MILESTONES STEPPER ═══ */}
+      {/* ═══ FASES DEL SERVICIO ═══ */}
       {milestones.length > 0 && (
         <div className="px-5 py-5" style={{ background: 'rgba(0,0,0,0.01)' }}>
           <div className="flex items-center justify-between">
@@ -240,7 +240,7 @@ function TransactionCard({ transaction: tx }: { transaction: ServiceTransaction 
               ) : (
                 <button onClick={() => setShowDeliverModal(currentMilestone.id)}
                   className="px-4 py-2 rounded-xl text-xs font-semibold text-white" style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
-                  📦 Entregar Milestone
+                  📦 Entregar Fase
                 </button>
               )}
             </>
@@ -351,7 +351,7 @@ function EmptyState() {
       </div>
       <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#0a2540', marginBottom: '6px' }}>Sin transacciones</h3>
       <p style={{ fontSize: '13px', color: '#64748b', maxWidth: '360px', margin: '0 auto' }}>
-        Tus transacciones con escrow y milestones aparecerán aquí cuando aceptes una oferta.
+        Tus transacciones con fases del servicio y escrow aparecerán aquí cuando aceptes una propuesta.
       </p>
     </div>
   );
