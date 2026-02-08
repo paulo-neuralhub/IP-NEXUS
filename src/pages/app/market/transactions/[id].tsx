@@ -47,7 +47,7 @@ function getStatusLabel(status: string): string {
 function getStatusColor(status: string): string {
   const colors: Record<string, string> = {
     pending_payment: '#f59e0b',
-    in_progress: '#00b4d8',
+    in_progress: '#7c3aed',
     completed: '#10b981',
     cancelled: '#94a3b8',
     disputed: '#ef4444',
@@ -65,7 +65,7 @@ function getProgressPercentage(status: string, milestones: any[]): number {
 
 function getPaymentEventIcon(type: string) {
   switch (type) {
-    case 'escrow_deposit': return <Lock className="w-4 h-4" style={{ color: '#00b4d8' }} />;
+    case 'escrow_deposit': return <Lock className="w-4 h-4" style={{ color: '#7c3aed' }} />;
     case 'official_fees_advance': return <ArrowUpRight className="w-4 h-4" style={{ color: '#8b5cf6' }} />;
     case 'phase_release': return <ArrowRight className="w-4 h-4" style={{ color: '#10b981' }} />;
     case 'platform_fee': return <CreditCard className="w-4 h-4" style={{ color: '#f59e0b' }} />;
@@ -76,7 +76,7 @@ function getPaymentEventIcon(type: string) {
 
 function getPaymentEventColor(type: string): string {
   switch (type) {
-    case 'escrow_deposit': return '#00b4d8';
+    case 'escrow_deposit': return '#7c3aed';
     case 'official_fees_advance': return '#8b5cf6';
     case 'phase_release': case 'final_release': return '#10b981';
     case 'platform_fee': return '#f59e0b';
@@ -124,7 +124,7 @@ export default function TransactionDetailPage() {
         <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '16px' }}>La transacción no existe o no tienes acceso.</p>
         <button onClick={() => navigate('/app/market/transactions')}
           className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white"
-          style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
+          style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}>
           Volver a En Curso
         </button>
       </div>
@@ -158,13 +158,13 @@ export default function TransactionDetailPage() {
             {/* Progress bar */}
             <div className="h-1.5 rounded-full mb-5 overflow-hidden" style={{ background: '#f1f4f9' }}>
               <div className="h-full rounded-full transition-all duration-500"
-                style={{ width: `${getProgressPercentage(tx.status, milestones)}%`, background: 'linear-gradient(90deg, #00b4d8, #00d4aa)' }} />
+                style={{ width: `${getProgressPercentage(tx.status, milestones)}%`, background: 'linear-gradient(90deg, #7c3aed, #a78bfa)' }} />
             </div>
 
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(0,180,216,0.08)' }}>
-                  <ArrowLeftRight className="w-6 h-6" style={{ color: '#00b4d8' }} />
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: 'rgba(124,58,237,0.08)' }}>
+                  <ArrowLeftRight className="w-6 h-6" style={{ color: '#7c3aed' }} />
                 </div>
                 <div>
                   <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#0a2540' }}>{tx.transaction_number}</h1>
@@ -193,7 +193,7 @@ export default function TransactionDetailPage() {
               : tx.status === 'pending_payment' ? 'rgba(245,158,11,0.12)' : 'rgba(0,0,0,0.06)'}`,
           }}>
             <div className="flex items-center gap-2 mb-3">
-              <Shield className="w-4 h-4" style={{ color: '#00b4d8' }} />
+              <Shield className="w-4 h-4" style={{ color: '#7c3aed' }} />
               <h3 style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540' }}>Estado de los fondos</h3>
             </div>
 
@@ -214,13 +214,13 @@ export default function TransactionDetailPage() {
                   <button onClick={() => simulatePayment.mutate(tx.id)}
                     disabled={simulatePayment.isPending}
                     className="relative w-full py-3.5 rounded-xl text-sm font-semibold text-white transition-all hover:scale-[1.01]"
-                    style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 4px 16px rgba(0,180,216,0.2)' }}>
+                    style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', boxShadow: '0 4px 16px rgba(124,58,237,0.2)' }}>
                     {simulatePayment.isPending ? <Loader2 className="w-4 h-4 inline mr-2 animate-spin" /> : <Lock className="w-4 h-4 inline mr-2" />}
                     Depositar {formatCurrency(tx.total_amount, tx.currency)} en Escrow
                   </button>
                 )}
-                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg" style={{ background: 'rgba(0,180,216,0.04)' }}>
-                  <Shield className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#00b4d8' }} />
+                <div className="flex items-start gap-2 mt-3 p-3 rounded-lg" style={{ background: 'rgba(124,58,237,0.04)' }}>
+                  <Shield className="w-4 h-4 mt-0.5 shrink-0" style={{ color: '#7c3aed' }} />
                   <p style={{ fontSize: '11px', color: '#64748b', lineHeight: 1.5 }}>
                     <strong style={{ color: '#334155' }}>Pago seguro con escrow:</strong> Tu dinero queda retenido de forma segura hasta que confirmes la entrega de cada fase.
                   </p>
@@ -289,20 +289,20 @@ export default function TransactionDetailPage() {
                   return (
                     <div key={ms.id}>
                       {idx > 0 && (
-                        <div className="ml-5 h-6 w-0.5" style={{ background: isCompleted || isActive ? '#00b4d8' : '#e2e8f0' }} />
+                        <div className="ml-5 h-6 w-0.5" style={{ background: isCompleted || isActive ? '#7c3aed' : '#e2e8f0' }} />
                       )}
 
                       <div className={`flex items-start gap-4 p-4 rounded-xl transition-colors ${isActive ? 'ring-1' : ''}`}
                         style={{
-                          background: isActive ? 'rgba(0,180,216,0.03)' : 'transparent',
-                          boxShadow: isActive ? 'inset 0 0 0 1px rgba(0,180,216,0.15)' : 'none',
+                          background: isActive ? 'rgba(124,58,237,0.03)' : 'transparent',
+                          boxShadow: isActive ? 'inset 0 0 0 1px rgba(124,58,237,0.15)' : 'none',
                         }}>
                         {/* Phase indicator */}
                         <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${isCompleted || isDelivered || isActive ? 'text-white' : ''}`}
                           style={{
                             background: isCompleted ? '#10b981'
                               : isDelivered ? '#f59e0b'
-                              : isActive ? 'linear-gradient(135deg, #00b4d8, #00d4aa)'
+                              : isActive ? 'linear-gradient(135deg, #7c3aed, #6d28d9)'
                               : '#f1f4f9',
                           }}>
                           {isCompleted ? <Check className="w-5 h-5" />
@@ -333,7 +333,7 @@ export default function TransactionDetailPage() {
                               </span>
                             )}
                             {isActive && !isDelivered && (
-                              <span className="text-[11px] font-semibold" style={{ color: '#00b4d8' }}>🔵 En ejecución</span>
+                              <span className="text-[11px] font-semibold" style={{ color: '#7c3aed' }}>🔵 En ejecución</span>
                             )}
                             {isPending && <span className="text-[11px]" style={{ color: '#94a3b8' }}>Pendiente</span>}
                           </div>
@@ -348,7 +348,7 @@ export default function TransactionDetailPage() {
                                   <button onClick={() => { deliverMilestone.mutate({ milestoneId: ms.id, note: deliverNote }); setShowDeliverModal(null); setDeliverNote(''); }}
                                     disabled={deliverMilestone.isPending}
                                     className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white"
-                                    style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
+                                    style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}>
                                     <Upload className="w-3.5 h-3.5" /> Confirmar Entrega
                                   </button>
                                   <button onClick={() => setShowDeliverModal(null)} className="px-2 py-1 rounded-lg text-xs" style={{ color: '#94a3b8' }}>✕</button>
@@ -356,7 +356,7 @@ export default function TransactionDetailPage() {
                               ) : (
                                 <button onClick={() => setShowDeliverModal(ms.id)}
                                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white"
-                                  style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
+                                  style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}>
                                   <Upload className="w-3.5 h-3.5" /> Marcar Fase como Entregada
                                 </button>
                               )

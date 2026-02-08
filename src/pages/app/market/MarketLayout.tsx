@@ -3,7 +3,7 @@ import { Outlet, NavLink, useLocation, Link } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { 
   Globe, Send, MessageSquare, ArrowLeftRight, User, 
-  Plus
+  Plus, Store
 } from 'lucide-react';
 import { ModuleGate } from '@/components/common/ModuleGate';
 import { MarketNotificationBell } from '@/components/features/market/MarketNotificationPanel';
@@ -32,42 +32,42 @@ export default function MarketLayout() {
   return (
     <ModuleGate module="market">
       <div className="space-y-0">
-        {/* ═══ SILK Header ═══ */}
+        {/* ═══ IP-Market Header with violet branding ═══ */}
         <div className="flex items-center justify-between mb-6">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <h1 style={{ 
-                fontSize: '22px', fontWeight: 800, color: '#0a2540', 
-                letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" 
-              }}>
-                IP Market
-              </h1>
-              {/* LIVE badge */}
-              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full"
-                style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.15)' }}>
-                <div className="relative">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <div className="absolute inset-0 w-2 h-2 rounded-full bg-emerald-500 animate-ping opacity-40" />
-                </div>
-                <span style={{ fontSize: '10px', fontWeight: 700, color: '#10b981', letterSpacing: '0.5px' }}>
-                  LIVE
+          <div className="flex items-center gap-3">
+            {/* Logo IP-Market */}
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', boxShadow: '0 3px 10px rgba(124,58,237,0.2)' }}>
+              <Store className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <h1 style={{ 
+                  fontSize: '20px', fontWeight: 800, color: '#0a2540', 
+                  letterSpacing: '-0.02em', fontFamily: "'DM Sans', sans-serif" 
+                }}>
+                  IP-Market
+                </h1>
+                <span className="px-2 py-0.5 rounded-md text-[8px] font-bold uppercase tracking-wider"
+                  style={{ background: 'rgba(124,58,237,0.08)', color: '#7c3aed' }}>
+                  Marketplace
                 </span>
               </div>
+              <p style={{ fontSize: '11px', color: '#94a3b8' }}>
+                El primer marketplace profesional de Propiedad Intelectual
+              </p>
             </div>
-            <p style={{ fontSize: '13px', color: '#64748b' }}>
-              Marketplace profesional de servicios de Propiedad Intelectual
-            </p>
           </div>
           
           <div className="flex items-center gap-3">
             {/* Notification bell with dropdown */}
             <MarketNotificationBell />
             
-            {/* CTA */}
+            {/* CTA — violet gradient */}
             <Link
               to="/app/market/rfq/new"
-              className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white no-underline"
-              style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 3px 12px rgba(0,180,216,0.15)' }}>
+              className="relative flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white no-underline transition-all hover:scale-[1.02]"
+              style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', boxShadow: '0 3px 12px rgba(124,58,237,0.2)' }}>
               <Plus className="w-4 h-4" />
               Publicar Solicitud
               <span className="absolute bottom-0 left-[22%] right-[22%] h-[2px] rounded-full"
@@ -76,7 +76,7 @@ export default function MarketLayout() {
           </div>
         </div>
 
-        {/* ═══ SILK Neumorphic Tabs with badges — hidden on detail pages ═══ */}
+        {/* ═══ Tabs with violet active state ═══ */}
         {!isDetailPage && (
           <div className="flex items-center gap-1 p-1 rounded-xl mb-6 overflow-x-auto"
             style={{ 
@@ -97,20 +97,21 @@ export default function MarketLayout() {
                     <div
                       className="relative flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold transition-all cursor-pointer"
                       style={isActive ? {
-                        background: '#f1f4f9',
-                        boxShadow: '3px 3px 7px #cdd1dc, -3px -3px 7px #ffffff',
-                        color: '#0a2540',
+                        background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
+                        boxShadow: '0 2px 8px rgba(124,58,237,0.2)',
+                        color: '#fff',
                       } : { color: '#94a3b8' }}
                     >
                       <tab.icon className="w-3.5 h-3.5" />
                       {tab.label}
                       {badgeCount > 0 && (
                         <span
-                          className="min-w-[16px] h-4 rounded-full flex items-center justify-center text-white"
+                          className="min-w-[16px] h-4 rounded-full flex items-center justify-center"
                           style={{
                             fontSize: '9px',
                             fontWeight: 700,
-                            background: '#ef4444',
+                            background: isActive ? 'rgba(255,255,255,0.25)' : 'rgba(124,58,237,0.08)',
+                            color: isActive ? '#fff' : '#7c3aed',
                             padding: '0 4px',
                           }}
                         >

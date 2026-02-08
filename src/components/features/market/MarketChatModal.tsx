@@ -118,9 +118,9 @@ export default function MarketChatModal({
           {/* Security notice */}
           <div
             className="mx-auto max-w-xs p-2.5 rounded-xl text-center"
-            style={{ background: 'rgba(0,180,216,0.04)', border: '1px solid rgba(0,180,216,0.08)' }}
+            style={{ background: 'rgba(124,58,237,0.04)', border: '1px solid rgba(124,58,237,0.08)' }}
           >
-            <Shield className="w-4 h-4 mx-auto mb-1" style={{ color: '#00b4d8' }} />
+            <Shield className="w-4 h-4 mx-auto mb-1" style={{ color: '#7c3aed' }} />
             <p style={{ fontSize: '9px', color: '#64748b', lineHeight: 1.4 }}>
               Conversación protegida por IP-NEXUS. No compartas información de pago fuera de la plataforma.
             </p>
@@ -151,7 +151,7 @@ export default function MarketChatModal({
                   style={
                     isMine
                       ? {
-                          background: 'linear-gradient(135deg, #00b4d8, #00a5c4)',
+                          background: 'linear-gradient(135deg, #7c3aed, #6d28d9)',
                           color: '#fff',
                           borderBottomRightRadius: '4px',
                         }
@@ -242,7 +242,7 @@ export default function MarketChatModal({
             onClick={handleSend}
             disabled={!input.trim() || sendMessage.isPending}
             className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 text-white disabled:opacity-40"
-            style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}
+            style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
           >
             <Send className="w-4 h-4" />
           </button>

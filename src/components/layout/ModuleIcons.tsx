@@ -139,8 +139,8 @@ export const MODULE_DEFINITIONS: Record<string, {
     shortName: 'MKT',
     description: 'Marketplace de PI',
     icon: Globe,
-    gradient: 'from-teal-400 via-teal-500 to-cyan-600',
-    shadowColor: 'shadow-teal-500/30',
+    gradient: 'from-violet-500 via-violet-600 to-purple-700',
+    shadowColor: 'shadow-violet-500/30',
     bgPattern: 'radial-gradient(circle at 60% 20%, rgba(255,255,255,0.2) 0%, transparent 50%)'
   },
   finance: {

@@ -194,7 +194,7 @@ function NotificationDropdown({ onClose }: { onClose: () => void }) {
                       {n.title}
                     </p>
                     {!n.is_read && (
-                      <div className="w-2 h-2 rounded-full shrink-0 mt-1" style={{ background: '#00b4d8' }} />
+                      <div className="w-2 h-2 rounded-full shrink-0 mt-1" style={{ background: '#7c3aed' }} />
                     )}
                   </div>
                   <p

@@ -173,8 +173,8 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
               <div className="p-4 rounded-xl" style={{ background: '#f8f9fb', border: '1px solid rgba(0,0,0,0.04)' }}>
                 <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 rounded-lg flex items-center justify-center"
-                    style={{ background: 'rgba(0,180,216,0.08)' }}>
-                    <FileText className="w-5 h-5" style={{ color: '#00b4d8' }} />
+                    style={{ background: 'rgba(124,58,237,0.08)' }}>
+                    <FileText className="w-5 h-5" style={{ color: '#7c3aed' }} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="truncate" style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>{request.title}</h3>
@@ -347,7 +347,7 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
                   <div key={idx} className="flex items-center gap-2 p-2.5 rounded-xl"
                     style={{ background: '#f8f9fb', border: '1px solid rgba(0,0,0,0.04)' }}>
                     <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                      style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>
+                      style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}>
                       <span style={{ fontSize: '11px', fontWeight: 700, color: '#fff' }}>{idx + 1}</span>
                     </div>
                     <input type="text" value={phase.name} onChange={e => updatePhase(idx, 'name', e.target.value)}
@@ -404,9 +404,9 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
               <div className="flex flex-wrap gap-1.5">
                 {includes.map((item, i) => (
                   <label key={i} className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg cursor-pointer"
-                    style={{ background: 'rgba(0,180,216,0.06)', border: '1px solid rgba(0,180,216,0.15)' }}>
-                    <Check className="w-3 h-3" style={{ color: '#00b4d8' }} />
-                    <span style={{ fontSize: '11px', fontWeight: 500, color: '#00b4d8' }}>{item}</span>
+                    style={{ background: 'rgba(124,58,237,0.06)', border: '1px solid rgba(124,58,237,0.15)' }}>
+                    <Check className="w-3 h-3" style={{ color: '#7c3aed' }} />
+                    <span style={{ fontSize: '11px', fontWeight: 500, color: '#7c3aed' }}>{item}</span>
                     <button onClick={() => toggleInclude(item)} className="ml-1">
                       <X className="w-2.5 h-2.5" style={{ color: '#94a3b8' }} />
                     </button>
@@ -448,7 +448,7 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
                 <SummaryRow label="Tus honorarios" value={fmt(professionalFees)} />
                 <SummaryRow label="Tasas oficiales" value={fmt(officialFees)} muted />
                 <div className="h-px my-2" style={{ background: 'rgba(0,0,0,0.06)' }} />
-                <SummaryRow label={`Comisión IP-NEXUS (${buyerPct}% al solicitante)`} value={`+ ${fmt(fees.platformFeeBuyer)}`} color="#00b4d8" />
+                <SummaryRow label={`Comisión IP-NEXUS (${buyerPct}% al solicitante)`} value={`+ ${fmt(fees.platformFeeBuyer)}`} color="#7c3aed" />
                 <SummaryRow label="Total solicitante paga" value={fmt(fees.totalBuyerPays)} bold color="#0a2540" />
                 <div className="h-px my-2" style={{ background: 'rgba(0,0,0,0.06)' }} />
                 <SummaryRow label={`Tu comisión (−${sellerPct}%)`} value={`−${fmt(fees.platformFeeSeller)}`} color="#ef4444" />
@@ -504,7 +504,7 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
                   {phases.map((phase, idx) => (
                     <div key={idx} className="flex items-center gap-3 p-2.5 rounded-lg" style={{ background: '#f8f9fb' }}>
                       <span className="w-6 h-6 rounded-md flex items-center justify-center text-[10px] font-bold text-white"
-                        style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}>{idx + 1}</span>
+                        style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}>{idx + 1}</span>
                       <span style={{ fontSize: '13px', color: '#334155', flex: 1 }}>{phase.name}</span>
                       <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748b' }}>{phase.percentage}%</span>
                     </div>
@@ -526,7 +526,7 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
 
               {/* Message */}
               {proposalSummary && (
-                <div className="p-3 rounded-lg" style={{ background: 'rgba(0,180,216,0.04)', border: '1px solid rgba(0,180,216,0.08)' }}>
+                <div className="p-3 rounded-lg" style={{ background: 'rgba(124,58,237,0.04)', border: '1px solid rgba(124,58,237,0.08)' }}>
                   <p style={{ fontSize: '13px', color: '#334155', lineHeight: 1.6, fontStyle: 'italic' }}>
                     &ldquo;{proposalSummary}&rdquo;
                   </p>
@@ -548,7 +548,7 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
               </button>
               <button onClick={() => setStep(2)} disabled={!isFormValid}
                 className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold transition-all disabled:opacity-40"
-                style={{ background: '#fff', border: '1px solid rgba(0,180,216,0.2)', color: '#00b4d8' }}>
+                style={{ background: '#fff', border: '1px solid rgba(124,58,237,0.2)', color: '#7c3aed' }}>
                 <Eye className="w-4 h-4" /> Vista Previa
               </button>
             </>
@@ -561,7 +561,7 @@ export default function SendQuoteModal({ open, onClose, requestId, requestTitle,
               </button>
               <button onClick={handleSubmit} disabled={isSending}
                 className="relative flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white transition-all hover:scale-[1.02] disabled:opacity-50"
-                style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 4px 14px rgba(0,180,216,0.25)' }}>
+                style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', boxShadow: '0 4px 14px rgba(124,58,237,0.25)' }}>
                 {isSending ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
