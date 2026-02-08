@@ -275,14 +275,19 @@ export function useCreateAgent() {
       const agentKey = `agent_${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}`;
       const agentSecret = crypto.randomUUID().replace(/-/g, '');
       
-      // In production, we'd hash the secret. For now, store it directly
+      // Hash the secret using SHA-256 before storing
+      const encoder = new TextEncoder();
+      const hashBuffer = await crypto.subtle.digest('SHA-256', encoder.encode(agentSecret));
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      const secretHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+      
       const { data: agent, error } = await supabase
         .from('migration_agents')
         .insert({
           organization_id: currentOrganization.id,
           name: data.name,
           agent_key: agentKey,
-          agent_secret_hash: agentSecret // TODO: Hash this
+          agent_secret_hash: secretHash
         })
         .select()
         .single();
