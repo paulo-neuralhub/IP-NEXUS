@@ -1,18 +1,19 @@
 // ============================================================
-// IP-NEXUS APP - HELP CENTER HOME (Enterprise redesign)
+// IP-NEXUS APP - HELP CENTER HOME (Enterprise redesign v2)
+// Dark hero, getting started banner, improved cards, popular
+// guides, support CTA
 // ============================================================
 
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Search, ArrowRight, MessageCircle, ChevronRight,
+  Search, ArrowRight, ChevronRight,
   BookOpen, Zap, Settings, CreditCard, Shield, Users,
   Database, Target, Brain, TrendingUp, Mail, HelpCircle,
-  Keyboard, BookMarked, Sparkles, FileText,
+  Keyboard, BookMarked, FileText, Headphones, Rocket,
+  Clock, Briefcase, Plug, Wrench, Receipt,
   type LucideIcon,
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import {
   HELP_CATEGORIES, HELP_ARTICLES,
@@ -20,12 +21,14 @@ import {
   type StaticHelpArticle,
 } from '@/lib/helpStaticContent';
 
-// ── Icon map ──
+// ── Icon map (extended for all categories) ──
 const iconMap: Record<string, LucideIcon> = {
   'book-open': BookOpen, 'zap': Zap, 'settings': Settings,
   'credit-card': CreditCard, 'shield': Shield, 'users': Users,
   'database': Database, 'target': Target, 'brain': Brain,
   'trending-up': TrendingUp, 'mail': Mail, 'help-circle': HelpCircle,
+  'rocket': Rocket, 'briefcase': Briefcase, 'clock': Clock,
+  'file-text': FileText, 'receipt': Receipt, 'plug': Plug, 'wrench': Wrench,
 };
 
 // ── Article type badges ──
@@ -34,9 +37,19 @@ const typeBadge: Record<string, string> = {
   troubleshooting: 'Solución', reference: 'Referencia',
 };
 
-// ── Quick topics for search suggestions ──
-const QUICK_TOPICS = [
-  'expedientes', 'plazos', 'marcas', 'Genius AI', 'CRM', 'importar', 'soporte',
+// ── Quick tags for search ──
+const QUICK_TAGS = [
+  'Crear expediente', 'Importar datos', 'Plazos', 'Alertas', 'Facturación',
+];
+
+// ── Popular guides config ──
+const POPULAR_GUIDES = [
+  { slug: 'gestion-expedientes', icon: BookOpen, color: '#0EA5E9' },
+  { slug: 'plazos-recordatorios', icon: Clock, color: '#F59E0B' },
+  { slug: 'genius-ai-asistentes', icon: Brain, color: '#F59E0B' },
+  { slug: 'crm-gestion-contactos', icon: Users, color: '#10B981' },
+  { slug: 'importar-portfolio', icon: Database, color: '#3B82F6' },
+  { slug: 'problemas-comunes', icon: Wrench, color: '#EF4444' },
 ];
 
 export default function HelpCenterIndex() {
@@ -50,48 +63,65 @@ export default function HelpCenterIndex() {
 
   const featured = useMemo(() => getFeaturedStaticArticles(), []);
 
-  return (
-    <div className="space-y-10 -mt-2">
-      {/* ── HERO SECTION ── */}
-      <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-primary/10">
-        {/* Decorative blobs */}
-        <div className="absolute -top-20 -right-20 w-64 h-64 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-16 -left-16 w-48 h-48 bg-primary/5 rounded-full blur-3xl" />
+  // Resolve popular guides from static content
+  const popularGuides = useMemo(() =>
+    POPULAR_GUIDES.map(pg => {
+      const article = HELP_ARTICLES.find(a => a.slug === pg.slug);
+      return article ? { ...article, iconComponent: pg.icon, accentColor: pg.color } : null;
+    }).filter(Boolean) as (StaticHelpArticle & { iconComponent: LucideIcon; accentColor: string })[],
+  []);
 
-        <div className="relative px-8 py-12 text-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-semibold mb-4">
-            <Sparkles className="w-3.5 h-3.5" />
-            Centro de Ayuda IP-NEXUS
-          </div>
-          <h2 className="text-3xl font-bold text-foreground mb-3" style={{ letterSpacing: '-0.02em' }}>
-            ¿En qué podemos ayudarte?
-          </h2>
-          <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-            Busca en nuestra base de conocimiento o explora las guías y tutoriales
+  return (
+    <div className="space-y-8 -mt-2">
+      {/* ═══ HERO — Dark gradient ═══ */}
+      <section
+        className="relative overflow-hidden rounded-2xl px-8 py-12"
+        style={{ background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #334155 100%)' }}
+      >
+        {/* Decorative radial accents */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: `radial-gradient(circle at 25% 50%, rgba(14,165,233,0.08) 0%, transparent 50%),
+                            radial-gradient(circle at 75% 50%, rgba(139,92,246,0.05) 0%, transparent 50%)`,
+        }} />
+        {/* Grid overlay */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)',
+          backgroundSize: '50px 50px',
+        }} />
+
+        <div className="relative z-10 max-w-2xl mx-auto text-center">
+          <h1 className="text-3xl font-bold text-white mb-2" style={{ letterSpacing: '-0.03em' }}>
+            ¿En qué podemos <span className="text-[#22d3ee]">ayudarte</span>?
+          </h1>
+          <p className="text-sm text-white/50 mb-6">
+            Busca en nuestra base de conocimiento o explora las categorías
           </p>
 
-          {/* Search */}
-          <div className="max-w-xl mx-auto relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-            <Input
-              placeholder="Buscar artículos, guías, tutoriales..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 h-13 text-base rounded-xl border-primary/20 shadow-sm focus:shadow-md transition-shadow bg-background"
-            />
+          {/* Search bar */}
+          <div className="relative max-w-lg mx-auto">
+            <div className="flex items-center bg-white/10 backdrop-blur-sm border border-white/10 rounded-xl px-5 py-3.5 focus-within:bg-white/15 focus-within:border-white/20 transition-all">
+              <Search className="w-5 h-5 text-white/40 mr-3 flex-shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Buscar artículos, guías, preguntas frecuentes..."
+                className="flex-1 bg-transparent text-white text-base placeholder:text-white/30 outline-none"
+              />
+              <kbd className="hidden sm:flex px-2 py-0.5 rounded text-[10px] font-mono bg-white/10 text-white/30">⌘K</kbd>
+            </div>
           </div>
 
-          {/* Quick topics */}
+          {/* Quick tags */}
           {!isSearching && (
-            <div className="flex items-center justify-center gap-2 mt-4 flex-wrap">
-              <span className="text-xs text-muted-foreground">Popular:</span>
-              {QUICK_TOPICS.map((topic) => (
+            <div className="flex flex-wrap justify-center gap-2 mt-4">
+              {QUICK_TAGS.map(tag => (
                 <button
-                  key={topic}
-                  onClick={() => setSearchQuery(topic)}
-                  className="text-xs px-3 py-1 rounded-full bg-background border border-border text-muted-foreground hover:text-primary hover:border-primary/30 transition-colors"
+                  key={tag}
+                  onClick={() => setSearchQuery(tag)}
+                  className="px-3 py-1 rounded-lg text-xs text-white/40 hover:text-white/70 hover:bg-white/5 transition-colors"
                 >
-                  {topic}
+                  {tag}
                 </button>
               ))}
             </div>
@@ -99,17 +129,20 @@ export default function HelpCenterIndex() {
         </div>
       </section>
 
-      {/* ── SEARCH RESULTS ── */}
+      {/* ═══ SEARCH RESULTS ═══ */}
       {isSearching && (
         <section className="space-y-4">
           <h3 className="text-lg font-semibold text-foreground">
-            Resultados para "{searchQuery}"
+            Resultados para &ldquo;{searchQuery}&rdquo;
           </h3>
           {searchResults.length === 0 ? (
             <div className="text-center py-10 bg-muted/30 rounded-xl border border-border">
               <HelpCircle className="w-10 h-10 text-muted-foreground mx-auto mb-3" />
               <p className="text-muted-foreground">No encontramos artículos para tu búsqueda.</p>
-              <p className="text-sm text-muted-foreground mt-1">Intenta con otros términos o <Link to="/app/help/tickets/new" className="text-primary hover:underline">contacta con soporte</Link>.</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Intenta con otros términos o{' '}
+                <Link to="/app/help/tickets/new" className="text-primary hover:underline">contacta con soporte</Link>.
+              </p>
             </div>
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
@@ -121,18 +154,28 @@ export default function HelpCenterIndex() {
         </section>
       )}
 
-      {/* ── MAIN CONTENT (when not searching) ── */}
+      {/* ═══ MAIN CONTENT ═══ */}
       {!isSearching && (
         <>
-          {/* Getting Started */}
+          {/* ── Getting Started Banner ── */}
+          <Link
+            to="/app/help/category/getting-started"
+            className="group flex items-center gap-5 p-5 rounded-2xl bg-card border border-border hover:shadow-lg transition-all"
+          >
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#06b6d4] to-[#2563eb] flex items-center justify-center shadow-lg flex-shrink-0">
+              <Rocket className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-base font-semibold text-foreground">¿Nuevo en IP-NEXUS?</h3>
+              <p className="text-sm text-muted-foreground">Guía de inicio rápido en 5 minutos. Te enseñamos lo esencial.</p>
+            </div>
+            <ArrowRight className="w-5 h-5 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all flex-shrink-0" />
+          </Link>
+
+          {/* ── Getting Started Cards ── */}
           <section>
             <div className="flex items-center justify-between mb-5">
-              <div className="flex items-center gap-2">
-                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Zap className="w-4 h-4 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground">Primeros pasos</h3>
-              </div>
+              <h3 className="text-lg font-semibold text-foreground">Primeros pasos</h3>
               <Link to="/app/help/category/getting-started" className="text-sm text-primary hover:underline flex items-center gap-1">
                 Ver todo <ArrowRight className="w-3.5 h-3.5" />
               </Link>
@@ -144,10 +187,10 @@ export default function HelpCenterIndex() {
             </div>
           </section>
 
-          {/* Categories */}
+          {/* ── Category Grid ── */}
           <section>
             <h3 className="text-lg font-semibold text-foreground mb-5">Explorar por categoría</h3>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {HELP_CATEGORIES.map((cat) => {
                 const count = getStaticArticlesByCategory(cat.slug).length;
                 const Icon = iconMap[cat.icon] || HelpCircle;
@@ -157,27 +200,19 @@ export default function HelpCenterIndex() {
                     to={`/app/help/category/${cat.slug}`}
                     className="group block"
                   >
-                    <div className="p-5 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all duration-200">
-                      <div className="flex items-start gap-4">
-                        <div
-                          className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
-                          style={{ backgroundColor: `${cat.color}15` }}
-                        >
-                          <Icon className="h-5 w-5" style={{ color: cat.color }} />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors mb-1">
-                            {cat.name}
-                          </h4>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                            {cat.description}
-                          </p>
-                          <span className="text-xs text-muted-foreground">
-                            {count} {count === 1 ? 'artículo' : 'artículos'}
-                          </span>
-                        </div>
-                        <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0 mt-1" />
+                    <div className="p-5 rounded-2xl bg-card border border-border hover:border-transparent hover:shadow-lg transition-all duration-300 hover:-translate-y-0.5">
+                      <div
+                        className="w-11 h-11 rounded-xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110"
+                        style={{ backgroundColor: `${cat.color}12` }}
+                      >
+                        <Icon className="w-5 h-5" style={{ color: cat.color }} />
                       </div>
+                      <h4 className="text-sm font-semibold text-foreground mb-1">{cat.name}</h4>
+                      <p className="text-xs text-muted-foreground leading-relaxed mb-2 line-clamp-2">{cat.description}</p>
+                      <span className="text-[11px] font-medium flex items-center gap-1" style={{ color: cat.color }}>
+                        {count} {count === 1 ? 'artículo' : 'artículos'}
+                        <ArrowRight className="w-3 h-3 transition-transform group-hover:translate-x-1" />
+                      </span>
                     </div>
                   </Link>
                 );
@@ -185,22 +220,31 @@ export default function HelpCenterIndex() {
             </div>
           </section>
 
-          {/* Featured Articles */}
+          {/* ── Popular Guides ── */}
           <section>
-            <div className="flex items-center justify-between mb-5">
-              <h3 className="text-lg font-semibold text-foreground">Artículos destacados</h3>
-              <Link to="/app/help/articles" className="text-sm text-primary hover:underline flex items-center gap-1">
-                Ver todos <ArrowRight className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {featured.map((a) => (
-                <ArticleCard key={a.slug} article={a} />
-              ))}
+            <h3 className="text-lg font-semibold text-foreground mb-4">Guías más populares</h3>
+            <div className="grid gap-3 md:grid-cols-2">
+              {popularGuides.map((guide) => {
+                const GIcon = guide.iconComponent;
+                return (
+                  <Link
+                    key={guide.slug}
+                    to={`/app/help/article/${guide.slug}`}
+                    className="group flex items-center gap-3 p-4 rounded-xl bg-card border border-border hover:shadow-md transition-all"
+                  >
+                    <GIcon className="w-5 h-5 flex-shrink-0" style={{ color: guide.accentColor }} />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-medium text-foreground truncate">{guide.title}</h4>
+                      <span className="text-[10px] text-muted-foreground">{guide.readTime} de lectura</span>
+                    </div>
+                    <ChevronRight className="w-4 h-4 text-muted-foreground group-hover:text-foreground flex-shrink-0" />
+                  </Link>
+                );
+              })}
             </div>
           </section>
 
-          {/* Quick Links Row */}
+          {/* ── Quick Links Row ── */}
           <section className="grid gap-4 md:grid-cols-3">
             <Link to="/app/help/glossary" className="group">
               <div className="p-5 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all flex items-center gap-4">
@@ -224,17 +268,39 @@ export default function HelpCenterIndex() {
                 </div>
               </div>
             </Link>
-            <Link to="/app/help/tickets/new" className="group">
-              <div className="p-5 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 hover:shadow-md transition-all flex items-center gap-4">
+            <Link to="/app/help/tickets" className="group">
+              <div className="p-5 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all flex items-center gap-4">
                 <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
-                  <MessageCircle className="w-5 h-5 text-primary" />
+                  <FileText className="w-5 h-5 text-primary" />
                 </div>
                 <div>
-                  <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">¿Necesitas ayuda?</h4>
-                  <p className="text-sm text-muted-foreground">Crea un ticket de soporte</p>
+                  <h4 className="font-semibold text-foreground group-hover:text-primary transition-colors">Mis Tickets</h4>
+                  <p className="text-sm text-muted-foreground">Consulta tus solicitudes</p>
                 </div>
               </div>
             </Link>
+          </section>
+
+          {/* ═══ SUPPORT CTA ═══ */}
+          <section>
+            <div
+              className="rounded-2xl p-8 text-center"
+              style={{ background: 'linear-gradient(135deg, #0F172A, #1E293B)' }}
+            >
+              <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mx-auto mb-3">
+                <Headphones className="w-6 h-6 text-[#22d3ee]" />
+              </div>
+              <h3 className="text-lg font-bold text-white mb-1">¿No encuentras lo que buscas?</h3>
+              <p className="text-sm text-white/40 mb-5 max-w-sm mx-auto">
+                Nuestro equipo está disponible para ayudarte.
+              </p>
+              <Link
+                to="/app/help/tickets/new"
+                className="inline-flex px-6 py-2.5 rounded-xl text-sm font-semibold bg-white text-slate-800 hover:bg-slate-50 transition-colors"
+              >
+                Contactar soporte
+              </Link>
+            </div>
           </section>
         </>
       )}
