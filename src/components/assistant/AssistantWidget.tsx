@@ -10,7 +10,7 @@ import { useCreateCheckout } from '@/hooks/use-stripe-billing';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
-const GENIUS_PRICE_ID = ''; // TODO: set to the exact Stripe price_id for IP-GENIUS (€149/mes)
+const GENIUS_PRICE_ID = 'price_genius_monthly_149'; // Stripe price_id for IP-GENIUS (€149/mes) — update with real Stripe ID when available
 
 function monthStartISO(d: Date) {
   const ms = new Date(d.getFullYear(), d.getMonth(), 1);

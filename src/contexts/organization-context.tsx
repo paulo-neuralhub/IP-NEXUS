@@ -179,10 +179,6 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
   const hasAddon = (addon: string): boolean => {
     if (!currentOrganization) return false;
     
-    // Durante desarrollo, todos los addons están disponibles
-    // TODO: Remover en producción
-    if (import.meta.env.DEV) return true;
-    
     // Professional plan includes basic Genius
     if (currentOrganization.plan === "professional") {
       if (addon === "genius") return true;

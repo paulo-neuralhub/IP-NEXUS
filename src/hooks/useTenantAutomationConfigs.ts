@@ -114,8 +114,8 @@ export function useAutomationCatalog() {
           .map(a => [a.master_template_id, a])
       );
 
-      // TODO: Get tenant's plan for access control
-      const tenantPlan = 'professional'; // Placeholder
+      // Get tenant's plan from organization
+      const tenantPlan = currentOrganization.plan || 'starter';
 
       // Combine templates with tenant automations
       const catalog: TenantAutomationCatalogItem[] = ((templates || []) as unknown as MasterAutomationTemplate[]).map(template => {
