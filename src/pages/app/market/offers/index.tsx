@@ -9,6 +9,7 @@ import { useMyRfqQuotes } from '@/hooks/market/useRfqRequests';
 import { QUOTE_STATUS_LABELS, SERVICE_TYPE_LABELS, type RfqQuote } from '@/types/quote-request';
 import { formatDistanceToNow } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { PreAcceptanceChat } from '@/components/market/chat/PreAcceptanceChat';
 
 const STATUS_CONFIG: Record<string, { icon: React.ComponentType<any>; color: string; bg: string }> = {
   draft: { icon: FileText, color: '#94a3b8', bg: 'rgba(148,163,184,0.08)' },
@@ -22,9 +23,17 @@ const STATUS_CONFIG: Record<string, { icon: React.ComponentType<any>; color: str
 
 type FilterTab = 'all' | 'active' | 'awarded' | 'closed';
 
+interface ChatTarget {
+  requestId: string;
+  otherUserId: string;
+  otherUserName: string;
+}
+
 export default function MyOffersPage() {
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const { data: quotes, isLoading } = useMyRfqQuotes();
+  const [chatOpen, setChatOpen] = useState(false);
+  const [chatTarget, setChatTarget] = useState<ChatTarget | null>(null);
 
   const filterTabs: { id: FilterTab; label: string }[] = [
     { id: 'all', label: 'Todas' },
@@ -40,6 +49,17 @@ export default function MyOffersPage() {
     if (activeFilter === 'closed') return ['rejected', 'withdrawn'].includes(q.status);
     return true;
   });
+
+  const handleOpenChat = (quote: RfqQuote) => {
+    const request = quote.request as any;
+    if (!request?.requester_user_id) return;
+    setChatTarget({
+      requestId: quote.request_id,
+      otherUserId: request.requester_user_id,
+      otherUserName: request.requester_name || 'Solicitante',
+    });
+    setChatOpen(true);
+  };
 
   return (
     <div>
@@ -96,62 +116,85 @@ export default function MyOffersPage() {
       ) : (
         <div className="space-y-3">
           {filteredQuotes.map(quote => (
-            <QuoteCard key={quote.id} quote={quote} />
+            <QuoteCard key={quote.id} quote={quote} onOpenChat={handleOpenChat} />
           ))}
         </div>
+      )}
+
+      {/* Pre-acceptance chat panel */}
+      {chatTarget && (
+        <PreAcceptanceChat
+          isOpen={chatOpen}
+          onClose={() => setChatOpen(false)}
+          requestId={chatTarget.requestId}
+          otherUserId={chatTarget.otherUserId}
+          otherUserName={chatTarget.otherUserName}
+        />
       )}
     </div>
   );
 }
 
-function QuoteCard({ quote }: { quote: RfqQuote }) {
+function QuoteCard({ quote, onOpenChat }: { quote: RfqQuote; onOpenChat: (q: RfqQuote) => void }) {
   const statusConfig = STATUS_CONFIG[quote.status] || STATUS_CONFIG.draft;
   const StatusIcon = statusConfig.icon;
   const statusLabel = QUOTE_STATUS_LABELS[quote.status]?.es || quote.status;
   const requestTitle = (quote.request as any)?.title || 'Solicitud';
   const requestRef = (quote.request as any)?.reference_number || '';
+  const hasRequester = !!(quote.request as any)?.requester_user_id;
+  const canChat = hasRequester && !['rejected', 'withdrawn'].includes(quote.status);
 
   return (
-    <Link 
-      to={`/app/market/rfq/${quote.request_id}?from=mis-propuestas`}
-      className="block no-underline"
-    >
-      <div className="rounded-2xl p-5 transition-all hover:translate-y-[-1px]"
-        style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: statusConfig.bg }}>
-              <StatusIcon className="w-4.5 h-4.5" style={{ color: statusConfig.color }} />
-            </div>
-            <div className="min-w-0">
-              <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540' }} className="truncate">
-                {requestTitle}
-              </h4>
-              <div className="flex items-center gap-2 mt-0.5">
-                <span style={{ fontSize: '10px', color: '#94a3b8', fontFamily: 'monospace' }}>
-                  {requestRef}
+    <div className="rounded-2xl p-5 transition-all hover:translate-y-[-1px]"
+      style={{ background: '#fff', border: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="flex items-center justify-between">
+        <Link
+          to={`/app/market/rfq/${quote.request_id}?from=mis-propuestas`}
+          className="flex items-center gap-3 flex-1 min-w-0 no-underline"
+        >
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: statusConfig.bg }}>
+            <StatusIcon className="w-4.5 h-4.5" style={{ color: statusConfig.color }} />
+          </div>
+          <div className="min-w-0">
+            <h4 style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540' }} className="truncate">
+              {requestTitle}
+            </h4>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span style={{ fontSize: '10px', color: '#94a3b8', fontFamily: 'monospace' }}>
+                {requestRef}
+              </span>
+              {quote.submitted_at && (
+                <span style={{ fontSize: '10px', color: '#94a3b8' }}>
+                  · Enviada {formatDistanceToNow(new Date(quote.submitted_at), { addSuffix: true, locale: es })}
                 </span>
-                {quote.submitted_at && (
-                  <span style={{ fontSize: '10px', color: '#94a3b8' }}>
-                    · Enviada {formatDistanceToNow(new Date(quote.submitted_at), { addSuffix: true, locale: es })}
-                  </span>
-                )}
-              </div>
+              )}
             </div>
           </div>
+        </Link>
 
-          <div className="flex items-center gap-4 shrink-0 ml-4">
-            <span style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>
-              {quote.total_price ? `€${quote.total_price.toLocaleString()}` : '—'}
-            </span>
-            <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold"
-              style={{ background: statusConfig.bg, color: statusConfig.color }}>
-              {statusLabel}
-            </span>
-          </div>
+        <div className="flex items-center gap-3 shrink-0 ml-4">
+          {/* Chat button */}
+          {canChat && (
+            <button
+              onClick={(e) => { e.preventDefault(); onOpenChat(quote); }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all hover:scale-[1.02]"
+              style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)', color: '#334155' }}
+              title="Chat con solicitante"
+            >
+              <MessageSquare className="w-3.5 h-3.5" style={{ color: '#00b4d8' }} />
+              Chat
+            </button>
+          )}
+          <span style={{ fontSize: '14px', fontWeight: 700, color: '#0a2540' }}>
+            {quote.total_price ? `€${quote.total_price.toLocaleString()}` : '—'}
+          </span>
+          <span className="px-2.5 py-1 rounded-lg text-[10px] font-semibold"
+            style={{ background: statusConfig.bg, color: statusConfig.color }}>
+            {statusLabel}
+          </span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

@@ -286,7 +286,7 @@ export function useMyRfqQuotes() {
         .from('rfq_quotes')
         .select(`
           *,
-          request:request_id(id, reference_number, title, service_type, jurisdictions, status)
+          request:request_id(id, reference_number, title, service_type, jurisdictions, status, requester_user_id, requester_name)
         `)
         .eq('agent_id', marketUser.id)
         .order('created_at', { ascending: false });
