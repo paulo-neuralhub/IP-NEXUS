@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useOrganization } from '@/contexts/organization-context';
@@ -28,6 +28,8 @@ import { Separator } from '@/components/ui/separator';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
+import SendQuoteModal from '@/components/features/market/SendQuoteModal';
+import { useAcceptQuoteAndCreateTransaction } from '@/hooks/market/useServiceTransactions';
 import { Label } from '@/components/ui/label';
 import { 
   SERVICE_CATEGORY_LABELS, 
@@ -42,8 +44,10 @@ import {
 export default function RfqRequestDetailPage() {
   const { id } = useParams<{ id: string }>();
   const { currentOrganization } = useOrganization();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('details');
-
+  const [quoteModalOpen, setQuoteModalOpen] = useState(false);
+  const acceptQuote = useAcceptQuoteAndCreateTransaction();
   // Fetch request details
   const { data: request, isLoading } = useQuery({
     queryKey: ['rfq-request', id],
@@ -147,7 +151,7 @@ export default function RfqRequestDetailPage() {
 
         <div className="flex gap-2">
           {isAgent && request.status === 'open' && (
-            <Button>
+            <Button onClick={() => setQuoteModalOpen(true)}>
               <Send className="h-4 w-4 mr-2" />
               Enviar Presupuesto
             </Button>
@@ -487,16 +491,18 @@ export default function RfqRequestDetailPage() {
 
                       {isRequester && quote.status === 'submitted' && (
                         <div className="flex gap-2 mt-4">
-                          <Button size="sm">
+                          <Button size="sm" 
+                            disabled={acceptQuote.isPending}
+                            onClick={async () => {
+                              await acceptQuote.mutateAsync({ quoteId: quote.id, requestId: request.id });
+                              navigate('/app/market/transactions');
+                            }}>
                             <CheckCircle className="h-4 w-4 mr-2" />
-                            Adjudicar
+                            {acceptQuote.isPending ? 'Procesando...' : 'Adjudicar'}
                           </Button>
                           <Button size="sm" variant="outline">
                             <MessageSquare className="h-4 w-4 mr-2" />
                             Preguntar
-                          </Button>
-                          <Button size="sm" variant="ghost">
-                            Preseleccionar
                           </Button>
                         </div>
                       )}
@@ -517,7 +523,7 @@ export default function RfqRequestDetailPage() {
                   }
                 </p>
                 {isAgent && request.status === 'open' && (
-                  <Button className="mt-4">
+                  <Button className="mt-4" onClick={() => setQuoteModalOpen(true)}>
                     <Send className="h-4 w-4 mr-2" />
                     Enviar Presupuesto
                   </Button>
@@ -545,6 +551,15 @@ export default function RfqRequestDetailPage() {
           </TabsContent>
         )}
       </Tabs>
+
+      {/* Send Quote Modal */}
+      <SendQuoteModal
+        open={quoteModalOpen}
+        onClose={() => setQuoteModalOpen(false)}
+        requestId={request.id}
+        requestTitle={request.title}
+        currency={request.budget_currency || 'EUR'}
+      />
     </div>
   );
 }

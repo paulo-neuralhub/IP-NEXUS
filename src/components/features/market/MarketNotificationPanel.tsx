@@ -15,7 +15,6 @@ import {
   useMarketUnreadCount,
   useMarkMarketNotificationRead,
   useMarkAllMarketRead,
-  useArchiveMarketNotification,
   type MarketNotification,
 } from '@/hooks/market/useMarketNotifications';
 import {
@@ -87,15 +86,17 @@ function NotificationDropdown({ onClose }: { onClose: () => void }) {
   const { data: notifications = [], isLoading } = useMarketNotifications(20);
   const markRead = useMarkMarketNotificationRead();
   const markAllRead = useMarkAllMarketRead();
-  const archive = useArchiveMarketNotification();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
   const filtered = filter === 'unread' ? notifications.filter(n => !n.is_read) : notifications;
 
   const handleClick = (n: MarketNotification) => {
     if (!n.is_read) markRead.mutate(n.id);
-    if (n.action_url) {
-      navigate(n.action_url);
+    if (n.transaction_id) {
+      navigate('/app/market/transactions');
+      onClose();
+    } else if (n.request_id) {
+      navigate(`/app/market/rfq/${n.request_id}`);
       onClose();
     }
   };
@@ -200,7 +201,7 @@ function NotificationDropdown({ onClose }: { onClose: () => void }) {
                     className="line-clamp-2"
                     style={{ fontSize: '11px', color: '#64748b', lineHeight: 1.4, marginTop: '2px' }}
                   >
-                    {n.body}
+                    {n.message}
                   </p>
                   <div className="flex items-center gap-2 mt-1">
                     <span style={{ fontSize: '9px', color: '#94a3b8' }}>
@@ -215,17 +216,19 @@ function NotificationDropdown({ onClose }: { onClose: () => void }) {
                   </div>
                 </div>
 
-                {/* Archive */}
+                {/* Mark read */}
+                {!n.is_read && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    archive.mutate(n.id);
+                    markRead.mutate(n.id);
                   }}
                   className="w-6 h-6 rounded-md flex items-center justify-center shrink-0 opacity-0 group-hover:opacity-100 hover:bg-slate-100"
-                  title="Archivar"
+                  title="Marcar como leída"
                 >
-                  <Archive className="w-3 h-3" style={{ color: '#94a3b8' }} />
+                  <Check className="w-3 h-3" style={{ color: '#94a3b8' }} />
                 </button>
+                )}
               </div>
             );
           })

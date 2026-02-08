@@ -26988,7 +26988,7 @@ export type Database = {
           is_read: boolean | null
           message_type: string | null
           read_at: string | null
-          sender_user_id: string
+          sender_user_id: string | null
           transaction_id: string
         }
         Insert: {
@@ -27000,7 +27000,7 @@ export type Database = {
           is_read?: boolean | null
           message_type?: string | null
           read_at?: string | null
-          sender_user_id: string
+          sender_user_id?: string | null
           transaction_id: string
         }
         Update: {
@@ -27012,7 +27012,7 @@ export type Database = {
           is_read?: boolean | null
           message_type?: string | null
           read_at?: string | null
-          sender_user_id?: string
+          sender_user_id?: string | null
           transaction_id?: string
         }
         Relationships: [
