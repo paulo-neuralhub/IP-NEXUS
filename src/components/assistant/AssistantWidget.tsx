@@ -7,10 +7,41 @@ import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { useCreateCheckout } from '@/hooks/use-stripe-billing';
+import { useQuery } from '@tanstack/react-query';
 
 type ChatMessage = { role: 'user' | 'assistant'; content: string };
 
-const GENIUS_PRICE_ID = 'price_genius_monthly_149'; // Stripe price_id for IP-GENIUS (€149/mes) — update with real Stripe ID when available
+function useGeniusPriceId() {
+  return useQuery({
+    queryKey: ['genius-price-id'],
+    queryFn: async () => {
+      // Look for a product tagged as genius in stripe_products
+      const { data: products } = await supabase
+        .from('stripe_products')
+        .select('stripe_product_id, name, metadata')
+        .eq('active', true);
+
+      const geniusProduct = (products ?? []).find(
+        (p: any) =>
+          p.name?.toLowerCase().includes('genius') ||
+          (p.metadata as any)?.module === 'genius'
+      );
+
+      if (!geniusProduct) return null;
+
+      const { data: prices } = await supabase
+        .from('stripe_prices')
+        .select('stripe_price_id, recurring_interval')
+        .eq('stripe_product_id', geniusProduct.stripe_product_id)
+        .eq('active', true)
+        .eq('recurring_interval', 'month')
+        .limit(1);
+
+      return prices?.[0]?.stripe_price_id ?? null;
+    },
+    staleTime: 1000 * 60 * 30,
+  });
+}
 
 function monthStartISO(d: Date) {
   const ms = new Date(d.getFullYear(), d.getMonth(), 1);
@@ -20,6 +51,7 @@ function monthStartISO(d: Date) {
 export function AssistantWidget() {
   const location = useLocation();
   const createCheckout = useCreateCheckout();
+  const { data: geniusPriceId } = useGeniusPriceId();
 
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
@@ -87,9 +119,9 @@ export function AssistantWidget() {
   }, []);
 
   const handleUpgrade = () => {
-    if (!GENIUS_PRICE_ID) return;
+    if (!geniusPriceId) return;
     createCheckout.mutate({
-      priceId: GENIUS_PRICE_ID,
+      priceId: geniusPriceId,
       successUrl: `${window.location.origin}/app/genius?upgraded=true`,
       cancelUrl: `${window.location.origin}${currentPath}`,
     });
@@ -198,8 +230,8 @@ export function AssistantWidget() {
                 <p className="text-sm text-foreground">
                   Has alcanzado el límite mensual del Asistente. Para análisis y uso ilimitado, actualiza a IP‑GENIUS.
                 </p>
-                <Button onClick={handleUpgrade} disabled={!GENIUS_PRICE_ID || createCheckout.isPending} className="w-full">
-                  {GENIUS_PRICE_ID ? 'Actualizar a IP‑GENIUS' : 'Configurar precio de Genius'}
+                <Button onClick={handleUpgrade} disabled={!geniusPriceId || createCheckout.isPending} className="w-full">
+                  {geniusPriceId ? 'Actualizar a IP‑GENIUS' : 'Precio no configurado aún'}
                 </Button>
               </div>
             ) : (

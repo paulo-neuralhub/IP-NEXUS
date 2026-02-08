@@ -1,5 +1,5 @@
-import { useMemo } from 'react';
-import { PhoneCall, Package, Clock, Settings2, Save } from 'lucide-react';
+import { useMemo, useState } from 'react';
+import { PhoneCall, Package, Clock, Settings2, Save, ShoppingCart } from 'lucide-react';
 import { ProfessionalCard, CardHeader } from '@/components/ui/professional-card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
@@ -9,10 +9,18 @@ import { useVoipSubscription } from '@/hooks/useVoipSubscription';
 import { useVoipPlans } from '@/hooks/useVoipPlans';
 import { useVoipUsage } from '@/hooks/useVoipUsage';
 import { useUpdateVoipSettings, useVoipSettings } from '@/hooks/useVoipSettings';
+import { useCreateCheckout } from '@/hooks/use-stripe-billing';
+import { toast } from 'sonner';
 
 function formatEur(cents: number) {
   return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format((cents ?? 0) / 100);
 }
+
+const MINUTE_PACKS = [
+  { minutes: 100, label: '100 min', cents: 990 },
+  { minutes: 500, label: '500 min', cents: 3990 },
+  { minutes: 1000, label: '1.000 min', cents: 6990 },
+];
 
 export default function VoipSettings() {
   const { data: subscription, isLoading: subLoading } = useVoipSubscription();
@@ -20,6 +28,8 @@ export default function VoipSettings() {
   const { data: usage, isLoading: usageLoading } = useVoipUsage();
   const { data: settings, isLoading: settingsLoading } = useVoipSettings();
   const update = useUpdateVoipSettings();
+  const createCheckout = useCreateCheckout();
+  const [loadingPack, setLoadingPack] = useState<number | null>(null);
 
   const currentPlan = useMemo(() => {
     return (plans ?? []).find((p) => p.id === subscription?.plan_id) ?? null;
@@ -75,6 +85,48 @@ export default function VoipSettings() {
                   <div className="h-full bg-primary" style={{ width: `${usagePct}%` }} />
                 </div>
               ) : null}
+            </div>
+          </div>
+        )}
+
+        {/* Recargar minutos */}
+        {subscription && (
+          <div className="mt-4">
+            <h4 className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+              <ShoppingCart className="h-4 w-4" /> Recargar minutos extra
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {MINUTE_PACKS.map((pack) => (
+                <button
+                  key={pack.minutes}
+                  disabled={loadingPack !== null}
+                  className="flex flex-col items-center gap-1 rounded-xl border p-4 hover:bg-muted/50 transition-colors disabled:opacity-50"
+                  onClick={async () => {
+                    setLoadingPack(pack.minutes);
+                    try {
+                      const { data, error } = await (await import('@/integrations/supabase/client')).supabase
+                        .functions.invoke('voip-topup-checkout', {
+                          body: {
+                            minutes: pack.minutes,
+                            successUrl: `${window.location.origin}/app/settings?tab=voip&topup=success`,
+                            cancelUrl: `${window.location.origin}/app/settings?tab=voip`,
+                          },
+                        });
+                      if (error) throw error;
+                      if (data?.url) window.location.href = data.url;
+                      else toast.error('No se pudo crear la sesión de pago');
+                    } catch (err: any) {
+                      toast.error(err?.message || 'Error al crear recarga');
+                    } finally {
+                      setLoadingPack(null);
+                    }
+                  }}
+                >
+                  <span className="text-lg font-bold text-foreground">{pack.label}</span>
+                  <span className="text-sm text-muted-foreground">{formatEur(pack.cents)}</span>
+                  {loadingPack === pack.minutes && <span className="text-xs text-primary">Redirigiendo…</span>}
+                </button>
+              ))}
             </div>
           </div>
         )}
