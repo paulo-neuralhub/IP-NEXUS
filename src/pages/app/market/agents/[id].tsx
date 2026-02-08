@@ -532,7 +532,7 @@ export default function AgentProfilePage() {
               )}
               {agent.kyc_status && (
                 <div className="flex items-center justify-between py-2 border-b">
-                  <span className="text-muted-foreground">Estado KYC</span>
+                  <span className="text-muted-foreground">Verificación</span>
                   <Badge variant={agent.kyc_status === 'verified' ? 'default' : 'secondary'}>
                     {agent.kyc_status === 'verified' ? 'Verificado' : agent.kyc_status}
                   </Badge>

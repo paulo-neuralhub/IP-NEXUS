@@ -20,7 +20,7 @@ export default function MarketKycPage() {
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Shield className="h-6 w-6 text-primary" />
-            Verificación KYC
+            Verificación de Agente
           </h1>
           <p className="text-muted-foreground mt-1">
             Completa la verificación para desbloquear todas las funcionalidades
