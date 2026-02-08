@@ -39,9 +39,9 @@ const STATIC_SIDEBAR_DATA: SidebarSection[] = [
         moduleCategory: "core",
         moduleExpanded: false,
         moduleMenuItems: [
-          { label: "Todos", path: "/app/docket", icon: "List" },
-          { label: "Plazos", path: "/app/docket/deadlines", icon: "Calendar" },
-          { label: "Crear nuevo", path: "/app/docket/new", icon: "Plus" },
+          { label: "Todos", path: "/app/expedientes", icon: "List" },
+          { label: "Plazos", path: "/app/expedientes/plazos", icon: "Calendar" },
+          { label: "Crear nuevo", path: "/app/expedientes/nuevo", icon: "Plus" },
         ],
         moduleRequires: [],
         modulePopular: true,
