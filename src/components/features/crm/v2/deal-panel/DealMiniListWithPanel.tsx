@@ -79,6 +79,7 @@ export function DealMiniListWithPanel({ deals, emptyLabel = "Sin deals" }: Props
       <DealFormModal
         open={editDealId !== null}
         onClose={() => setEditDealId(null)}
+        dealId={editDealId}
         defaultAccountId={selectedDeal?.account?.id}
         defaultPipelineId={selectedDeal?.pipeline_id ?? undefined}
         defaultStageId={selectedDeal?.stage_id ?? undefined}

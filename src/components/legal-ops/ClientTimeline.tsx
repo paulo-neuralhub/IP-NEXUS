@@ -16,6 +16,10 @@ import { format, isToday, isYesterday, isSameDay } from 'date-fns';
 import { es } from 'date-fns/locale';
 import { useState, useMemo } from 'react';
 import { cn } from '@/lib/utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useOrganization } from '@/contexts/organization-context';
+import { toast } from 'sonner';
 
 interface ClientTimelineProps {
   clientId: string;
@@ -32,9 +36,37 @@ const FILTERS: { id: FilterType; label: string; icon: React.ElementType }[] = [
 ];
 
 export function ClientTimeline({ clientId }: ClientTimelineProps) {
+  const { currentOrganization } = useOrganization();
+  const queryClient = useQueryClient();
   const [activeFilter, setActiveFilter] = useState<FilterType>('all');
   const [quickComment, setQuickComment] = useState('');
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+
+  // Quick comment mutation
+  const addNote = useMutation({
+    mutationFn: async (content: string) => {
+      if (!currentOrganization?.id) throw new Error('No organization');
+      const { data: { user } } = await supabase.auth.getUser();
+      const { error } = await supabase.from('activity_log').insert({
+        organization_id: currentOrganization.id,
+        client_id: clientId,
+        entity_type: 'client',
+        entity_id: clientId,
+        action: 'note_added',
+        title: 'Nota rápida',
+        description: content,
+        is_internal: true,
+        created_by: user?.id,
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['client-timeline', clientId] });
+      setQuickComment('');
+      toast.success('Nota añadida');
+    },
+    onError: () => toast.error('Error al guardar nota'),
+  });
   
   const channelFilters = activeFilter !== 'all' && activeFilter !== 'document' 
     ? [activeFilter as 'email' | 'whatsapp' | 'phone'] 
@@ -100,8 +132,7 @@ export function ClientTimeline({ clientId }: ClientTimelineProps) {
 
   const handleQuickComment = () => {
     if (!quickComment.trim()) return;
-    // TODO: Implement quick comment submission
-    setQuickComment('');
+    addNote.mutate(quickComment.trim());
   };
 
   return (
@@ -120,7 +151,7 @@ export function ClientTimeline({ clientId }: ClientTimelineProps) {
             size="sm" 
             className="h-8 px-3 shrink-0"
             onClick={handleQuickComment}
-            disabled={!quickComment.trim()}
+            disabled={!quickComment.trim() || addNote.isPending}
           >
             <Send className="w-3 h-3" />
           </Button>
@@ -221,7 +252,8 @@ interface TimelineEventItemProps {
 function TimelineEventItem({ event, expanded, onToggle }: TimelineEventItemProps) {
   const isExpandable =
     (event.type === 'communication' && (event.metadata.channel === 'email' || event.description)) ||
-    (event.type === 'note' && !!event.description);
+    (event.type === 'note' && !!event.description) ||
+    (event.type === 'document');
 
   const getIcon = () => {
     switch (event.type) {
@@ -350,14 +382,44 @@ function TimelineEventItem({ event, expanded, onToggle }: TimelineEventItemProps
             
             {/* Acciones inline */}
             <div className="flex items-center gap-2 mt-3 pt-3 border-t">
-              <Button size="sm" variant="outline" className="h-7 text-xs">
-                <ExternalLink className="w-3 h-3 mr-1" />
-                Abrir
-              </Button>
-              <Button size="sm" variant="ghost" className="h-7 text-xs">
-                <CalendarPlus className="w-3 h-3 mr-1" />
-                Planificar
-              </Button>
+              {event.type === 'communication' && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    // Extract real ID from prefixed event id (e.g. "comm-uuid")
+                    const realId = event.id.replace(/^comm-/, '');
+                    window.open(`/app/communications?id=${realId}`, '_blank');
+                  }}
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  Abrir
+                </Button>
+              )}
+              {event.type === 'document' && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const realId = event.id.replace(/^doc-/, '');
+                    // Open document download via Supabase storage
+                    toast.info('Abriendo documento...');
+                    supabase.from('client_documents').select('file_path').eq('id', realId).single().then(({ data }) => {
+                      if (data?.file_path) {
+                        const { data: urlData } = supabase.storage.from('client-documents').getPublicUrl(data.file_path);
+                        window.open(urlData.publicUrl, '_blank');
+                      }
+                    });
+                  }}
+                >
+                  <ExternalLink className="w-3 h-3 mr-1" />
+                  Descargar
+                </Button>
+              )}
               <Button size="sm" variant="ghost" className="h-7 text-xs">
                 <PenLine className="w-3 h-3 mr-1" />
                 Nota

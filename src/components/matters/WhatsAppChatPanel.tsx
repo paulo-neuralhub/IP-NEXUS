@@ -114,8 +114,23 @@ export function WhatsAppChatPanel({
       // Prefix with matter reference
       const fullMessage = `[${matterReference}] ${content}`;
 
-      // Create communication record (without status column)
-      const { error } = await supabase
+      // Call actual WhatsApp API via edge function
+      const { data, error } = await supabase.functions.invoke('send-whatsapp', {
+        body: {
+          organization_id: currentOrganization.id,
+          to_phone: clientPhone,
+          message_type: 'text',
+          text_content: fullMessage,
+          contact_id: clientId,
+          matter_id: matterId,
+        },
+      });
+
+      if (error) throw error;
+      if ((data as any)?.error) throw new Error((data as any)?.message || 'Error sending message');
+
+      // Also record in communications table for timeline
+      await supabase
         .from('communications')
         .insert({
           organization_id: currentOrganization.id,
@@ -128,11 +143,6 @@ export function WhatsAppChatPanel({
           whatsapp_to: clientPhone,
           received_at: new Date().toISOString(),
         });
-
-      if (error) throw error;
-
-      // TODO: Call actual WhatsApp API via edge function
-      // await supabase.functions.invoke('send-whatsapp', { ... });
 
       return { success: true };
     },

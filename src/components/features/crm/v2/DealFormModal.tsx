@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useCreateCRMDeal } from "@/hooks/crm/v2/deals";
+import { useCreateCRMDeal, useUpdateCRMDeal, useCRMDeals } from "@/hooks/crm/v2/deals";
 import { useCRMAccounts } from "@/hooks/crm/v2/accounts";
 import { useCRMContacts } from "@/hooks/crm/v2/contacts";
 import { useCRMPipelines, type CRMPipelineStage } from "@/hooks/crm/v2/pipelines";
@@ -45,6 +45,7 @@ type DealFormValues = z.infer<typeof dealSchema>;
 interface Props {
   open: boolean;
   onClose: () => void;
+  dealId?: string | null; // If provided, edit mode
   defaultAccountId?: string;
   defaultPipelineId?: string;
   defaultStageId?: string;
@@ -56,11 +57,16 @@ type ContactLite = { id: string; account_id?: string | null; full_name?: string 
 export function DealFormModal({
   open,
   onClose,
+  dealId,
   defaultAccountId,
   defaultPipelineId,
   defaultStageId,
 }: Props) {
   const createDeal = useCreateCRMDeal();
+  const updateDeal = useUpdateCRMDeal();
+  const { data: allDeals = [] } = useCRMDeals();
+  const existingDeal = dealId ? allDeals.find((d: any) => d.id === dealId) : null;
+  const isEdit = !!existingDeal;
   const { data: accounts = [] } = useCRMAccounts();
   const { data: contacts = [] } = useCRMContacts();
   const { data: pipelines = [] } = useCRMPipelines();
@@ -88,12 +94,24 @@ export function DealFormModal({
 
   useEffect(() => {
     if (!open) return;
-    if (defaultAccountId) form.setValue("account_id", defaultAccountId);
-
-    // Si se abre desde Kanban: prioriza stage/pipeline por props
-    if (defaultPipeline?.id) form.setValue("pipeline_id", defaultPipeline.id);
-    if (defaultStage?.id) form.setValue("stage_id", defaultStage.id);
-  }, [open, defaultAccountId, defaultPipeline?.id, defaultStage?.id, form]);
+    if (isEdit && existingDeal) {
+      form.reset({
+        name: (existingDeal as any).name ?? "",
+        account_id: (existingDeal as any).account_id ?? "",
+        contact_id: (existingDeal as any).contact_id ?? "",
+        pipeline_id: (existingDeal as any).pipeline_id ?? "",
+        stage_id: (existingDeal as any).stage_id ?? "",
+        amount: (existingDeal as any).amount?.toString() ?? "",
+        expected_close_date: (existingDeal as any).expected_close_date ?? "",
+        notes: ((existingDeal as any).metadata as any)?.notes ?? "",
+        assigned_to: (existingDeal as any).assigned_to ?? "",
+      });
+    } else {
+      if (defaultAccountId) form.setValue("account_id", defaultAccountId);
+      if (defaultPipeline?.id) form.setValue("pipeline_id", defaultPipeline.id);
+      if (defaultStage?.id) form.setValue("stage_id", defaultStage.id);
+    }
+  }, [open, isEdit, existingDeal, defaultAccountId, defaultPipeline?.id, defaultStage?.id, form]);
 
   const onSubmit = async (values: DealFormValues) => {
     const pipeline = pipelines.find((p) => p.id === values.pipeline_id);
@@ -120,7 +138,11 @@ export function DealFormModal({
     if (values.notes) payload.metadata = { notes: values.notes };
     if (values.assigned_to) payload.assigned_to = values.assigned_to;
 
-    await createDeal.mutateAsync(payload);
+    if (isEdit && dealId) {
+      await updateDeal.mutateAsync({ id: dealId, data: payload });
+    } else {
+      await createDeal.mutateAsync(payload);
+    }
     form.reset();
     onClose();
   };
@@ -147,8 +169,8 @@ export function DealFormModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[600px]">
         <DialogHeader>
-          <DialogTitle>Nuevo Deal</DialogTitle>
-          <DialogDescription>Crea una nueva oportunidad en el CRM</DialogDescription>
+          <DialogTitle>{isEdit ? "Editar Deal" : "Nuevo Deal"}</DialogTitle>
+          <DialogDescription>{isEdit ? "Modifica los datos de la oportunidad" : "Crea una nueva oportunidad en el CRM"}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -285,8 +307,8 @@ export function DealFormModal({
             <Button type="button" variant="ghost" onClick={onClose}>
               Cancelar
             </Button>
-            <Button type="submit" disabled={createDeal.isPending}>
-              {createDeal.isPending ? "Creando..." : "Crear Deal"}
+            <Button type="submit" disabled={createDeal.isPending || updateDeal.isPending}>
+              {(createDeal.isPending || updateDeal.isPending) ? (isEdit ? "Guardando..." : "Creando...") : (isEdit ? "Guardar cambios" : "Crear Deal")}
             </Button>
           </DialogFooter>
         </form>
