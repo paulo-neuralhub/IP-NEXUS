@@ -57,12 +57,12 @@ export default function RfqRequestDetailPage() {
         .select(`
           *,
           requester:market_users!rfq_requests_requester_id_fkey(
-            id, display_name, avatar_url, user_type, is_verified
+            id, display_name, avatar_url, user_type, is_verified_agent
           ),
           quotes:rfq_quotes(
             *,
             agent:market_users!rfq_quotes_agent_id_fkey(
-              id, display_name, avatar_url, rating_avg, review_count
+              id, display_name, avatar_url, rating_avg, ratings_count
             )
           )
         `)
@@ -86,8 +86,7 @@ export default function RfqRequestDetailPage() {
       const result = await client
         .from('market_users')
         .select('id, user_type')
-        .eq('user_id', user.id)
-        .eq('organization_id', currentOrganization.id)
+        .eq('auth_user_id', user.id)
         .maybeSingle();
       return result.data;
     },
@@ -381,7 +380,7 @@ export default function RfqRequestDetailPage() {
                       <div>
                         <p className="font-medium">{(request.requester as any)?.display_name}</p>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                          {(request.requester as any)?.is_verified && (
+                          {(request.requester as any)?.is_verified_agent && (
                             <CheckCircle className="h-3 w-3 text-success" />
                           )}
                           <span>
@@ -450,8 +449,8 @@ export default function RfqRequestDetailPage() {
                                   {quote.agent.rating_avg.toFixed(1)}
                                 </span>
                               )}
-                              {quote.agent?.review_count && (
-                                <span>({quote.agent.review_count} reseñas)</span>
+                              {quote.agent?.ratings_count && (
+                                <span>({quote.agent.ratings_count} reseñas)</span>
                               )}
                             </div>
                           </div>

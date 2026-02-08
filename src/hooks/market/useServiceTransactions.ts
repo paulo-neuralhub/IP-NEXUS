@@ -123,7 +123,7 @@ export function useServiceTransaction(id: string | undefined) {
           milestones:market_milestones(*)
         `)
         .eq('id', id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
 
