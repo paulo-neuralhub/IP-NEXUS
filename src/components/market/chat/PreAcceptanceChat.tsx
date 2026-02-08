@@ -111,7 +111,7 @@ export function PreAcceptanceChat({ isOpen, onClose, requestId, otherUserId, oth
         <div className="p-4 flex items-center justify-between shrink-0"
           style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-2">
-            <MessageCircle className="w-4 h-4" style={{ color: '#00b4d8' }} />
+            <MessageCircle className="w-4 h-4" style={{ color: '#7c3aed' }} />
             <div>
               <span style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540', display: 'block' }}>
                 Chat con {otherUserName}
@@ -150,7 +150,7 @@ export function PreAcceptanceChat({ isOpen, onClose, requestId, otherUserId, oth
               <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[75%] p-3 rounded-2xl ${isOwn ? 'rounded-br-md' : 'rounded-bl-md'}`}
                   style={{
-                    background: isOwn ? 'linear-gradient(135deg, #00b4d8, #00d4aa)' : '#f1f4f9',
+                    background: isOwn ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : '#f1f4f9',
                     color: isOwn ? '#fff' : '#334155',
                   }}>
                   <p style={{ fontSize: '13px', lineHeight: 1.5 }}>{msg.message}</p>
@@ -183,7 +183,7 @@ export function PreAcceptanceChat({ isOpen, onClose, requestId, otherUserId, oth
               disabled={!newMessage.trim() || sendMutation.isPending}
               className="w-9 h-9 rounded-lg flex items-center justify-center text-white shrink-0"
               style={{
-                background: newMessage.trim() ? 'linear-gradient(135deg, #00b4d8, #00d4aa)' : '#e2e8f0',
+                background: newMessage.trim() ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : '#e2e8f0',
               }}>
               <Send className="w-4 h-4" />
             </button>

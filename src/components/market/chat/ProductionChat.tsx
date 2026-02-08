@@ -37,7 +37,7 @@ export function ProductionChat({ transactionId, currentUserId, isReadOnly }: Pro
       {/* Header */}
       <div className="p-4 flex items-center justify-between shrink-0" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="flex items-center gap-2">
-          <MessageCircle className="w-4 h-4" style={{ color: '#00b4d8' }} />
+          <MessageCircle className="w-4 h-4" style={{ color: '#7c3aed' }} />
           <span style={{ fontSize: '13px', fontWeight: 700, color: '#0a2540' }}>Chat de Producción</span>
         </div>
         <span style={{ fontSize: '10px', color: '#94a3b8' }}>Mensajes cifrados · Solo participantes</span>
@@ -91,7 +91,7 @@ export function ProductionChat({ transactionId, currentUserId, isReadOnly }: Pro
               disabled={!newMessage.trim() || sendMessage.isPending}
               className="w-9 h-9 rounded-lg flex items-center justify-center text-white shrink-0 transition-all"
               style={{
-                background: newMessage.trim() ? 'linear-gradient(135deg, #00b4d8, #00d4aa)' : '#e2e8f0',
+                background: newMessage.trim() ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : '#e2e8f0',
                 cursor: newMessage.trim() ? 'pointer' : 'default',
               }}
             >
@@ -111,7 +111,7 @@ function ChatMessage({ msg, currentUserId }: { msg: ProductionMessage; currentUs
   const meta = msg.metadata as { icon?: string; title?: string; color?: string } | null;
 
   if (isSystem) {
-    const color = meta?.color || '#00b4d8';
+    const color = meta?.color || '#7c3aed';
     return (
       <div className="flex items-start gap-2 p-3 rounded-xl mx-2" style={{ background: `${color}08`, border: `1px solid ${color}15` }}>
         <span className="text-base shrink-0">{meta?.icon || 'ℹ️'}</span>
@@ -132,7 +132,7 @@ function ChatMessage({ msg, currentUserId }: { msg: ProductionMessage; currentUs
         <a href={msg.file_url} target="_blank" rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl max-w-[60%]"
           style={{ background: '#f1f4f9', border: '1px solid rgba(0,0,0,0.06)' }}>
-          <FileText className="w-5 h-5 shrink-0" style={{ color: '#00b4d8' }} />
+          <FileText className="w-5 h-5 shrink-0" style={{ color: '#7c3aed' }} />
           <div className="min-w-0">
             <span className="truncate" style={{ fontSize: '12px', fontWeight: 600, color: '#0a2540', display: 'block' }}>{msg.file_name || 'Archivo'}</span>
             <span style={{ fontSize: '10px', color: '#94a3b8' }}>
@@ -149,7 +149,7 @@ function ChatMessage({ msg, currentUserId }: { msg: ProductionMessage; currentUs
     <div className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
       <div className={`max-w-[75%] p-3 rounded-2xl ${isOwn ? 'rounded-br-md' : 'rounded-bl-md'}`}
         style={{
-          background: isOwn ? 'linear-gradient(135deg, #00b4d8, #00d4aa)' : '#f1f4f9',
+          background: isOwn ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : '#f1f4f9',
           color: isOwn ? '#fff' : '#334155',
         }}>
         <p style={{ fontSize: '13px', lineHeight: 1.5 }}>{msg.content}</p>

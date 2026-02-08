@@ -31,7 +31,7 @@ const SERVICE_ICONS: Record<string, React.ComponentType<any>> = {
 };
 
 const SERVICE_COLORS: Record<string, string> = {
-  trademark: '#00b4d8',
+  trademark: '#7c3aed',
   patent: '#6366f1',
   design: '#ec4899',
   copyright: '#f59e0b',
@@ -59,7 +59,7 @@ export default function MarketExplorePage() {
 
   // KPI data from real queries
   const kpis = [
-    { label: 'Solicitudes abiertas', value: String(requests.length || 0), icon: Globe, color: '#00b4d8' },
+    { label: 'Solicitudes abiertas', value: String(requests.length || 0), icon: Globe, color: '#7c3aed' },
     { label: 'Mis solicitudes', value: String(myRequests?.length || 0), icon: Send, color: '#10b981' },
     { label: 'Ofertas enviadas', value: String(myQuotes?.length || 0), icon: MessageSquare, color: '#6366f1' },
     { label: 'En ejecución', value: String(transactions?.filter(t => !['completed', 'cancelled'].includes(t.status)).length || 0), icon: Loader, color: '#f59e0b' },
@@ -335,7 +335,7 @@ function RequestCard({ request }: { request: RfqRequest }) {
 
           {/* CTA */}
           <span className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-white"
-            style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 2px 8px rgba(0,180,216,0.15)' }}>
+            style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', boxShadow: '0 2px 8px rgba(124,58,237,0.15)' }}>
             <Send className="w-3.5 h-3.5" />
             Ver Solicitud
           </span>
@@ -361,8 +361,8 @@ function EmptyExplore() {
       </p>
       <Link
         to="/app/market/rfq/new"
-        className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white no-underline"
-        style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)', boxShadow: '0 4px 15px rgba(0,180,216,0.2)' }}>
+        className="relative inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-semibold text-white no-underline transition-all hover:scale-[1.02]"
+        style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', boxShadow: '0 4px 15px rgba(124,58,237,0.2)' }}>
         <Plus className="w-4 h-4" />
         Publicar Solicitud
         <span className="absolute bottom-0 left-[22%] right-[22%] h-[2px] rounded-full"

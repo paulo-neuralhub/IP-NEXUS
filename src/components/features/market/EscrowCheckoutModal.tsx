@@ -70,8 +70,8 @@ export default function EscrowCheckoutModal({
         <div className="px-6 py-4 flex items-center justify-between" style={{ borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl flex items-center justify-center"
-              style={{ background: 'rgba(0,180,216,0.08)' }}>
-              <CreditCard className="w-5 h-5" style={{ color: '#00b4d8' }} />
+              style={{ background: 'rgba(124,58,237,0.08)' }}>
+              <CreditCard className="w-5 h-5" style={{ color: '#7c3aed' }} />
             </div>
             <div>
               <h2 style={{ fontSize: '16px', fontWeight: 700, color: '#0a2540' }}>Pago Escrow</h2>
@@ -116,9 +116,9 @@ export default function EscrowCheckoutModal({
           {/* Disclaimer */}
           <div
             className="p-3 rounded-xl flex items-start gap-2"
-            style={{ background: 'rgba(0,180,216,0.04)', border: '1px solid rgba(0,180,216,0.1)' }}
+            style={{ background: 'rgba(124,58,237,0.04)', border: '1px solid rgba(124,58,237,0.1)' }}
           >
-            <Lock className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#00b4d8' }} />
+            <Lock className="w-4 h-4 shrink-0 mt-0.5" style={{ color: '#7c3aed' }} />
             <p style={{ fontSize: '10px', color: '#334155', lineHeight: 1.5 }}>
               <strong>Escrow protegido:</strong> Los fondos se retienen de forma segura hasta que confirmes la entrega satisfactoria del servicio. Si no estás satisfecho, puedes abrir una disputa.
             </p>
@@ -143,15 +143,15 @@ export default function EscrowCheckoutModal({
             <div
               className="w-4 h-4 rounded flex items-center justify-center shrink-0 mt-0.5"
               style={{
-                background: agreed ? '#00b4d8' : '#fff',
-                border: `1px solid ${agreed ? '#00b4d8' : 'rgba(0,0,0,0.15)'}`,
+                background: agreed ? '#7c3aed' : '#fff',
+                border: `1px solid ${agreed ? '#7c3aed' : 'rgba(0,0,0,0.15)'}`,
               }}
               onClick={() => setAgreed(!agreed)}
             >
               {agreed && <Check className="w-3 h-3 text-white" />}
             </div>
             <span style={{ fontSize: '10px', color: '#64748b', lineHeight: 1.5 }}>
-              Acepto los <strong style={{ color: '#00b4d8' }}>términos de servicio</strong> y la <strong style={{ color: '#00b4d8' }}>política de escrow</strong> de IP-NEXUS.
+              Acepto los <strong style={{ color: '#7c3aed' }}>términos de servicio</strong> y la <strong style={{ color: '#7c3aed' }}>política de escrow</strong> de IP-NEXUS.
             </span>
           </label>
         </div>
@@ -169,7 +169,7 @@ export default function EscrowCheckoutModal({
             onClick={handlePay}
             disabled={isProcessing || !agreed}
             className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold text-white disabled:opacity-50"
-            style={{ background: 'linear-gradient(135deg, #00b4d8, #00d4aa)' }}
+            style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)' }}
           >
             {isProcessing ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
