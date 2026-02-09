@@ -117,7 +117,7 @@ export function LandingCta({ title, subtitle, type = 'form', moduleCode }: Landi
               size="lg"
               className="bg-white text-foreground hover:bg-white/90"
             >
-              <Link to="/auth/register">
+              <Link to="/register">
                 Empezar ahora
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>

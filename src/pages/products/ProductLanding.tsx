@@ -45,10 +45,10 @@ function LandingHeader() {
         </nav>
         <div className="flex items-center gap-3">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/auth/login">Iniciar sesión</Link>
+            <Link to="/login">Iniciar sesión</Link>
           </Button>
           <Button asChild size="sm">
-            <Link to="/auth/register">Registrarse</Link>
+            <Link to="/register">Registrarse</Link>
           </Button>
         </div>
       </div>
