@@ -5,10 +5,10 @@
 
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, ThumbsUp, ThumbsDown, Clock, Calendar, Tag, FileQuestion, ChevronRight } from 'lucide-react';
+import { ArrowLeft, FileQuestion, ChevronRight, Clock } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { StaticArticlePremium } from '@/components/help/StaticArticlePremium';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useHelpArticle } from '@/hooks/help';
 import { EmptyState } from '@/components/ui/empty-state';
@@ -59,84 +59,18 @@ export default function HelpArticleDetailPage() {
     );
   }
 
-  // ── Render: Static markdown article ──
+  // ── Render: Static markdown article (PREMIUM layout) ──
   if (staticArticle) {
     const staticCategory = getStaticCategory(staticArticle.categorySlug);
-    const categoryPath = `/app/help/category/${staticArticle.categorySlug}`;
     const relatedStatic = getStaticArticlesByCategory(staticArticle.categorySlug)
-      .filter(a => a.slug !== slug).slice(0, 3);
+      .filter(a => a.slug !== slug).slice(0, 4);
 
     return (
-      <div className="max-w-3xl mx-auto space-y-6">
-        <nav className="flex items-center gap-2 text-xs text-muted-foreground">
-          <Link to="/app/help" className="hover:text-foreground transition-colors">Centro de Ayuda</Link>
-          <ChevronRight className="w-3 h-3" />
-          {staticCategory && (
-            <>
-              <Link to={categoryPath} className="hover:text-foreground transition-colors">{staticCategory.name}</Link>
-              <ChevronRight className="w-3 h-3" />
-            </>
-          )}
-          <span className="text-foreground truncate max-w-[200px]">{staticArticle.title}</span>
-        </nav>
-        <div>
-          <div className="flex items-center gap-3 mb-3">
-            <Badge variant="outline" className="text-xs">{staticArticle.articleType === 'guide' ? 'Guía' : staticArticle.articleType === 'tutorial' ? 'Tutorial' : staticArticle.articleType}</Badge>
-            {staticCategory && <span className="text-xs text-muted-foreground">{staticCategory.name}</span>}
-          </div>
-          <h1 className="text-[26px] font-bold text-foreground leading-tight mb-3" style={{ letterSpacing: '-0.02em' }}>{staticArticle.title}</h1>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{staticArticle.readTime}</span>
-            <span className="flex items-center gap-1"><Calendar className="w-3 h-3" />Febrero 2026</span>
-          </div>
-          {staticArticle.tags.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 mt-3">
-              <Tag className="h-3 w-3 text-muted-foreground" />
-              {staticArticle.tags.map(t => <Badge key={t} variant="secondary" className="text-[10px]">{t}</Badge>)}
-            </div>
-          )}
-        </div>
-        <div className="article-content prose prose-slate dark:prose-invert max-w-none prose-headings:font-semibold prose-h2:text-xl prose-h3:text-lg prose-p:leading-relaxed prose-table:text-sm">
-          <ReactMarkdown>{staticArticle.content}</ReactMarkdown>
-        </div>
-        <div className="p-6 rounded-2xl bg-muted/50 border border-border">
-          {feedbackGiven ? (
-            <p className="text-sm font-medium text-foreground text-center">
-              {feedbackGiven === 'up' ? '¡Gracias por tu feedback! 🎉' : 'Gracias. Trabajaremos en mejorar este artículo.'}
-            </p>
-          ) : (
-            <>
-              <p className="text-sm font-medium text-foreground text-center mb-3">¿Te ha resultado útil este artículo?</p>
-              <div className="flex items-center justify-center gap-3">
-                <button onClick={() => setFeedbackGiven('up')} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-background border border-border hover:border-emerald-300 hover:bg-emerald-50 transition-all">
-                  <ThumbsUp className="w-4 h-4 text-emerald-500" /> Sí, me ayudó
-                </button>
-                <button onClick={() => setFeedbackGiven('down')} className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium bg-background border border-border hover:border-red-300 hover:bg-red-50 transition-all">
-                  <ThumbsDown className="w-4 h-4 text-red-400" /> No del todo
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-        {relatedStatic.length > 0 && (
-          <div>
-            <h3 className="text-sm font-semibold text-muted-foreground mb-3">Artículos relacionados</h3>
-            <div className="space-y-1">
-              {relatedStatic.map((r) => (
-                <Link key={r.slug} to={`/app/help/article/${r.slug}`} className="flex items-center gap-2 p-3 rounded-xl text-sm text-foreground/80 hover:bg-background hover:shadow-sm transition-all">
-                  <ChevronRight className="w-3.5 h-3.5 text-muted-foreground" />
-                  {r.title}
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-        <div className="pt-6 border-t border-border">
-          <Link to={categoryPath} className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80">
-            <ArrowLeft className="w-4 h-4" /> Volver a {staticCategory?.name || 'categoría'}
-          </Link>
-        </div>
-      </div>
+      <StaticArticlePremium
+        article={staticArticle}
+        category={staticCategory || undefined}
+        relatedArticles={relatedStatic.map(r => ({ slug: r.slug, title: r.title, readTime: r.readTime }))}
+      />
     );
   }
 
