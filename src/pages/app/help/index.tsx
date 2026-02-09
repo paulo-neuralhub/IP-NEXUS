@@ -16,10 +16,13 @@ import {
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
-  HELP_CATEGORIES, HELP_ARTICLES,
-  searchStaticArticles, getStaticArticlesByCategory, getFeaturedStaticArticles,
-  type StaticHelpArticle,
-} from '@/lib/helpStaticContent';
+  HELP_CATEGORIES,
+  getUnifiedArticlesByCategory,
+  searchUnifiedArticles,
+  getFeaturedUnifiedArticles,
+  type UnifiedArticle,
+} from '@/lib/helpUnifiedArticles';
+import { HELP_ARTICLES, type StaticHelpArticle } from '@/lib/helpStaticContent';
 
 // ── Icon map (extended for all categories) ──
 const iconMap: Record<string, LucideIcon> = {
@@ -44,12 +47,12 @@ const QUICK_TAGS = [
 
 // ── Popular guides config ──
 const POPULAR_GUIDES = [
-  { slug: 'gestion-expedientes', icon: BookOpen, color: '#0EA5E9' },
-  { slug: 'plazos-recordatorios', icon: Clock, color: '#F59E0B' },
-  { slug: 'genius-ai-asistentes', icon: Brain, color: '#F59E0B' },
-  { slug: 'crm-gestion-contactos', icon: Users, color: '#10B981' },
-  { slug: 'importar-portfolio', icon: Database, color: '#3B82F6' },
-  { slug: 'problemas-comunes', icon: Wrench, color: '#EF4444' },
+  { slug: 'crear-expediente', icon: BookOpen, color: '#0EA5E9' },
+  { slug: 'plazos-vencimientos', icon: Clock, color: '#F59E0B' },
+  { slug: 'que-es-genius', icon: Brain, color: '#F59E0B' },
+  { slug: 'introduccion-crm', icon: Users, color: '#10B981' },
+  { slug: 'importar-expedientes', icon: Database, color: '#3B82F6' },
+  { slug: 'no-acceso', icon: Wrench, color: '#EF4444' },
 ];
 
 export default function HelpCenterIndex() {
@@ -57,20 +60,24 @@ export default function HelpCenterIndex() {
   const isSearching = searchQuery.trim().length >= 2;
 
   const searchResults = useMemo(
-    () => (isSearching ? searchStaticArticles(searchQuery) : []),
+    () => (isSearching ? searchUnifiedArticles(searchQuery) : []),
     [searchQuery, isSearching],
   );
 
-  const featured = useMemo(() => getFeaturedStaticArticles(), []);
+  const featured = useMemo(() => getFeaturedUnifiedArticles(), []);
 
-  // Resolve popular guides from static content
+  // Resolve popular guides from unified source
+  const allUnified = useMemo(() => {
+    const { getAllUnifiedArticles } = require('@/lib/helpUnifiedArticles') as { getAllUnifiedArticles: () => UnifiedArticle[] };
+    return getAllUnifiedArticles();
+  }, []);
+
   const popularGuides = useMemo(() =>
     POPULAR_GUIDES.map(pg => {
-      const article = HELP_ARTICLES.find(a => a.slug === pg.slug);
+      const article = allUnified.find(a => a.slug === pg.slug);
       return article ? { ...article, iconComponent: pg.icon, accentColor: pg.color } : null;
-    }).filter(Boolean) as (StaticHelpArticle & { iconComponent: LucideIcon; accentColor: string })[],
-  []);
-
+    }).filter(Boolean) as (UnifiedArticle & { iconComponent: LucideIcon; accentColor: string })[],
+  [allUnified]);
   return (
     <div className="space-y-8 -mt-2">
       {/* ═══ HERO — Dark gradient ═══ */}
@@ -147,7 +154,7 @@ export default function HelpCenterIndex() {
           ) : (
             <div className="grid gap-3 md:grid-cols-2">
               {searchResults.map((a) => (
-                <ArticleCard key={a.slug} article={a} />
+                <UnifiedArticleCard key={a.slug} article={a} />
               ))}
             </div>
           )}
@@ -181,7 +188,7 @@ export default function HelpCenterIndex() {
               </Link>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {getStaticArticlesByCategory('getting-started').map((a, i) => (
+              {getUnifiedArticlesByCategory('getting-started').slice(0, 6).map((a, i) => (
                 <GettingStartedCard key={a.slug} article={a} step={i + 1} />
               ))}
             </div>
@@ -192,7 +199,7 @@ export default function HelpCenterIndex() {
             <h3 className="text-lg font-semibold text-foreground mb-5">Explorar por categoría</h3>
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
               {HELP_CATEGORIES.map((cat) => {
-                const count = getStaticArticlesByCategory(cat.slug).length;
+                const count = getUnifiedArticlesByCategory(cat.slug).length;
                 const Icon = iconMap[cat.icon] || HelpCircle;
                 return (
                   <Link
@@ -310,7 +317,7 @@ export default function HelpCenterIndex() {
 
 // ── Sub-components ──
 
-function GettingStartedCard({ article, step }: { article: StaticHelpArticle; step: number }) {
+function GettingStartedCard({ article, step }: { article: UnifiedArticle; step: number }) {
   return (
     <Link to={`/app/help/article/${article.slug}`} className="group block">
       <div className="relative p-5 rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-md transition-all h-full">
@@ -325,7 +332,7 @@ function GettingStartedCard({ article, step }: { article: StaticHelpArticle; ste
         </h4>
         <p className="text-sm text-muted-foreground line-clamp-2">{article.summary}</p>
         <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-          <Badge variant="outline" className="text-[10px]">{typeBadge[article.articleType] || 'Guía'}</Badge>
+          {article.articleType && <Badge variant="outline" className="text-[10px]">{typeBadge[article.articleType] || 'Guía'}</Badge>}
           <span>{article.readTime}</span>
         </div>
       </div>
@@ -333,16 +340,18 @@ function GettingStartedCard({ article, step }: { article: StaticHelpArticle; ste
   );
 }
 
-function ArticleCard({ article }: { article: StaticHelpArticle }) {
+function UnifiedArticleCard({ article }: { article: UnifiedArticle }) {
   const cat = HELP_CATEGORIES.find(c => c.slug === article.categorySlug);
 
   return (
     <Link to={`/app/help/article/${article.slug}`} className="group block">
       <div className="p-5 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all h-full">
         <div className="flex items-center gap-2 mb-3">
-          <Badge variant="outline" className="text-[10px]">
-            {typeBadge[article.articleType] || 'Guía'}
-          </Badge>
+          {article.articleType && (
+            <Badge variant="outline" className="text-[10px]">
+              {typeBadge[article.articleType] || 'Guía'}
+            </Badge>
+          )}
           {cat && (
             <span className="text-[10px] text-muted-foreground">{cat.name}</span>
           )}

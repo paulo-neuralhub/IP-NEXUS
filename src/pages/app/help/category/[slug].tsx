@@ -1,12 +1,17 @@
 // ============================================================
-// IP-NEXUS APP - HELP CATEGORY PAGE (Static content fallback)
+// IP-NEXUS APP - HELP CATEGORY PAGE (Unified: component + static)
 // ============================================================
 
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, FileText, ChevronRight } from 'lucide-react';
+import { ArrowLeft, FileText, ChevronRight, Brain, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { getStaticCategory, getStaticArticlesByCategory, HELP_CATEGORIES } from '@/lib/helpStaticContent';
+import {
+  getUnifiedArticlesByCategory,
+  HELP_CATEGORIES,
+  type UnifiedArticle,
+} from '@/lib/helpUnifiedArticles';
+import { getStaticCategory } from '@/lib/helpStaticContent';
 
 const typeBadge: Record<string, string> = {
   guide: 'Guía', tutorial: 'Tutorial', faq: 'FAQ',
@@ -16,7 +21,7 @@ const typeBadge: Record<string, string> = {
 export default function HelpCategoryPage() {
   const { slug } = useParams<{ slug: string }>();
   const category = getStaticCategory(slug || '');
-  const articles = getStaticArticlesByCategory(slug || '');
+  const articles = getUnifiedArticlesByCategory(slug || '');
 
   if (!category) {
     return (
@@ -58,14 +63,23 @@ export default function HelpCategoryPage() {
             <Link key={a.slug} to={`/app/help/article/${a.slug}`} className="group block">
               <div className="p-5 rounded-xl border border-border bg-card hover:border-primary/30 hover:shadow-md transition-all">
                 <div className="flex items-start gap-4">
-                  <div className="p-2 rounded-lg bg-primary/10 flex-shrink-0">
-                    <FileText className="w-4 h-4 text-primary" />
+                  <div className="p-2 rounded-lg flex-shrink-0" style={{ backgroundColor: `${category.color}10` }}>
+                    {a.source === 'component' ? (
+                      <Star className="w-4 h-4" style={{ color: category.color }} />
+                    ) : (
+                      <FileText className="w-4 h-4" style={{ color: category.color }} />
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors mb-1">{a.title}</h3>
                     <p className="text-sm text-muted-foreground line-clamp-2 mb-2">{a.summary}</p>
                     <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                      <Badge variant="outline" className="text-[10px]">{typeBadge[a.articleType] || 'Guía'}</Badge>
+                      {a.articleType && (
+                        <Badge variant="outline" className="text-[10px]">{typeBadge[a.articleType] || 'Guía'}</Badge>
+                      )}
+                      {a.source === 'component' && (
+                        <Badge variant="outline" className="text-[10px] border-primary/30 text-primary">Premium</Badge>
+                      )}
                       <span>{a.readTime}</span>
                     </div>
                   </div>
