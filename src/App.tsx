@@ -1,4 +1,5 @@
 import { Toaster } from "@/components/ui/toaster";
+import { MobileMenuPage } from "@/components/mobile/MobileMenuPage";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -593,6 +594,7 @@ const App = () => (
                 <Route path="collab" element={<CollabIndexPage />} />
                 <Route path="collab/:id" element={<CollabDetailPage />} />
                 <Route path="search" element={<SearchPage />} />
+                <Route path="menu" element={<MobileMenuPage />} />
                 {/* Communications con Layout */}
                 <Route path="communications" element={<CommunicationsLayout />}>
                   <Route index element={<CommunicationsUnifiedPage />} />
