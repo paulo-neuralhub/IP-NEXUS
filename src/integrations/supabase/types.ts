@@ -51593,6 +51593,16 @@ export type Database = {
         Returns: boolean
       }
       assign_automatic_badges: { Args: never; Returns: undefined }
+      audit_get_table_stats: {
+        Args: never
+        Returns: {
+          column_count: number
+          rls_enabled: boolean
+          row_count: number
+          table_name: string
+          table_size: string
+        }[]
+      }
       backoffice_get_platform_metrics: { Args: never; Returns: Json }
       backoffice_get_tenant_detail: {
         Args: { p_tenant_id: string }

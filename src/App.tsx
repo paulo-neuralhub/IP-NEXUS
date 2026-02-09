@@ -212,6 +212,8 @@ import AdvancedAnalyticsPage from "./pages/app/analytics/dashboard";
 import CollabIndexPage from "./pages/app/collab";
 import CollabDetailPage from "./pages/app/collab/[id]";
 import SearchPage from "./pages/app/SearchPage";
+import DatabaseAuditPage from "./pages/app/admin/audit";
+import { RequireOwnerOrAdmin } from "./components/auth/RequirePermission";
 
 // Communications (Frontend + Backoffice)
 import CommunicationsLayout from "./pages/app/communications/Layout";
@@ -570,6 +572,8 @@ const App = () => (
                 <Route path="expedientes/importar" element={<ImportDataPage />} />
                 <Route path="expedientes/revision" element={<ReviewQueuePage />} />
                 <Route path="ip-chain" element={<IPChainPage />} />
+                {/* DB Audit — Temporary admin page */}
+                <Route path="admin/audit" element={<RequireOwnerOrAdmin><DatabaseAuditPage /></RequireOwnerOrAdmin>} />
                 <Route path="tools" element={<ToolsPage />} />
                 <Route path="tools/ocr" element={<Navigate to="/app/tools" replace />} />
                 <Route path="tools/comparador" element={<Navigate to="/app/tools" replace />} />
