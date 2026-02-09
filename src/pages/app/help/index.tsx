@@ -17,12 +17,12 @@ import {
 import { Badge } from '@/components/ui/badge';
 import {
   HELP_CATEGORIES,
+  getAllUnifiedArticles,
   getUnifiedArticlesByCategory,
   searchUnifiedArticles,
   getFeaturedUnifiedArticles,
   type UnifiedArticle,
 } from '@/lib/helpUnifiedArticles';
-import { HELP_ARTICLES, type StaticHelpArticle } from '@/lib/helpStaticContent';
 
 // ── Icon map (extended for all categories) ──
 const iconMap: Record<string, LucideIcon> = {
@@ -67,10 +67,7 @@ export default function HelpCenterIndex() {
   const featured = useMemo(() => getFeaturedUnifiedArticles(), []);
 
   // Resolve popular guides from unified source
-  const allUnified = useMemo(() => {
-    const { getAllUnifiedArticles } = require('@/lib/helpUnifiedArticles') as { getAllUnifiedArticles: () => UnifiedArticle[] };
-    return getAllUnifiedArticles();
-  }, []);
+  const allUnified = useMemo(() => getAllUnifiedArticles(), []);
 
   const popularGuides = useMemo(() =>
     POPULAR_GUIDES.map(pg => {
