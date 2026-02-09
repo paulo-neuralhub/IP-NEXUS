@@ -72,7 +72,8 @@ export function useHelpArticles(options?: {
   });
 }
 
-export function useHelpArticle(slug: string) {
+export function useHelpArticle(slug: string, options?: { enabled?: boolean }) {
+  const isEnabled = options?.enabled !== undefined ? (options.enabled && !!slug) : !!slug;
   return useQuery({
     queryKey: ['help-article', slug],
     queryFn: async () => {
@@ -91,7 +92,7 @@ export function useHelpArticle(slug: string) {
 
       return data as HelpArticle;
     },
-    enabled: !!slug,
+    enabled: isEnabled,
   });
 }
 
