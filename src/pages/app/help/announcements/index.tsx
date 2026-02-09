@@ -5,7 +5,10 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { Bell, ExternalLink, Sparkles, AlertTriangle, Info, Star, Wrench, Shield } from 'lucide-react';
+import {
+  Bell, ExternalLink, Sparkles, AlertTriangle, Info, Star, Wrench, Shield,
+  Rocket, Zap, Check,
+} from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,6 +18,7 @@ import { useHelpAnnouncements, useMarkAnnouncementRead, useSystemStatus, useActi
 import { EmptyState } from '@/components/ui/empty-state';
 import { cn } from '@/lib/utils';
 
+// ── DB announcement type config ──
 const typeConfig = {
   feature: { label: 'Nueva Función', color: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300', icon: Sparkles },
   improvement: { label: 'Mejora', color: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300', icon: Star },
@@ -32,9 +36,140 @@ const systemStatusConfig = {
   maintenance: { label: 'Mantenimiento', color: 'bg-blue-500' },
 };
 
+// ── Static releases (changelog) ──
+interface ReleaseChange {
+  type: 'new' | 'improvement' | 'fix';
+  text: string;
+}
+
+interface Release {
+  version: string;
+  date: string;
+  title: string;
+  changes: ReleaseChange[];
+}
+
+const STATIC_RELEASES: Release[] = [
+  {
+    version: '2.4.0',
+    date: '5 de febrero 2026',
+    title: 'IP-Market: Marketplace de Servicios IP',
+    changes: [
+      { type: 'new', text: 'IP-Market: Marketplace completo de servicios IP' },
+      { type: 'new', text: 'Pago Protegido: Sistema de escrow para transacciones' },
+      { type: 'new', text: 'Wizard guiado para particulares' },
+      { type: 'improvement', text: 'Dashboard rediseñado con KPIs en tiempo real' },
+      { type: 'fix', text: 'Corrección de permisos RLS en documentos compartidos' },
+    ],
+  },
+  {
+    version: '2.3.0',
+    date: '20 de enero 2026',
+    title: 'Data Hub y conexiones con oficinas IP',
+    changes: [
+      { type: 'new', text: 'Conexión directa con EUIPO para búsqueda de marcas' },
+      { type: 'new', text: 'Importación automática desde WIPO Madrid Monitor' },
+      { type: 'new', text: 'Directorio global de 190+ oficinas IP' },
+      { type: 'improvement', text: 'Rendimiento de búsqueda mejorado 3x' },
+    ],
+  },
+  {
+    version: '2.2.0',
+    date: '5 de enero 2026',
+    title: 'CRM y Pipeline de ventas',
+    changes: [
+      { type: 'new', text: 'CRM completo con pipeline visual drag-and-drop' },
+      { type: 'new', text: 'Portal de cliente para seguimiento de expedientes' },
+      { type: 'new', text: 'Firma digital de documentos integrada' },
+      { type: 'improvement', text: 'Nuevo diseño de tarjetas de contacto' },
+    ],
+  },
+  {
+    version: '2.1.0',
+    date: '15 de diciembre 2025',
+    title: 'IP-Genius: Asistente de IA',
+    changes: [
+      { type: 'new', text: 'IP-Genius: Asistente de IA para consultas IP' },
+      { type: 'new', text: 'Análisis automático de anterioridades con IA' },
+      { type: 'new', text: 'Generación de informes PDF automáticos' },
+      { type: 'improvement', text: 'Sistema de plantillas de documentos mejorado' },
+      { type: 'fix', text: 'Corrección en cálculo de plazos para patentes' },
+    ],
+  },
+  {
+    version: '2.0.0',
+    date: '1 de diciembre 2025',
+    title: 'IP-NEXUS 2.0 — Rediseño completo',
+    changes: [
+      { type: 'new', text: 'Nuevo sistema de diseño SILK' },
+      { type: 'new', text: 'Automatizaciones sin código' },
+      { type: 'new', text: 'Multi-idioma (ES, EN, FR, DE, PT)' },
+      { type: 'improvement', text: 'Rendimiento general mejorado 5x' },
+      { type: 'improvement', text: 'Nueva experiencia de onboarding' },
+      { type: 'fix', text: 'Múltiples correcciones de estabilidad' },
+    ],
+  },
+];
+
+const changeTypeConfig: Record<ReleaseChange['type'], { label: string; icon: typeof Sparkles; dotClass: string }> = {
+  new: { label: 'Nuevo', icon: Sparkles, dotClass: 'bg-emerald-500' },
+  improvement: { label: 'Mejora', icon: Zap, dotClass: 'bg-blue-500' },
+  fix: { label: 'Fix', icon: Wrench, dotClass: 'bg-amber-500' },
+};
+
+// ── Release card ──
+function ReleaseCard({ release, isLatest }: { release: Release; isLatest: boolean }) {
+  return (
+    <div className="relative pl-8">
+      {/* Timeline line */}
+      <div className="absolute left-[11px] top-8 bottom-0 w-px bg-border" />
+      {/* Timeline dot */}
+      <div className={cn(
+        "absolute left-0 top-1.5 w-[23px] h-[23px] rounded-full border-[3px] flex items-center justify-center",
+        isLatest
+          ? "border-primary bg-primary"
+          : "border-border bg-background"
+      )}>
+        {isLatest && <Rocket className="w-2.5 h-2.5 text-primary-foreground" />}
+      </div>
+
+      <div className="pb-10">
+        {/* Version + date */}
+        <div className="flex items-center gap-3 mb-1">
+          <Badge variant={isLatest ? "default" : "outline"} className="text-xs font-mono">
+            v{release.version}
+          </Badge>
+          <span className="text-xs text-muted-foreground">{release.date}</span>
+          {isLatest && (
+            <Badge variant="secondary" className="text-[10px] bg-emerald-50 text-emerald-700 dark:bg-emerald-950/30 dark:text-emerald-400">
+              Última versión
+            </Badge>
+          )}
+        </div>
+
+        {/* Title */}
+        <h3 className="text-base font-semibold text-foreground mt-2 mb-4">{release.title}</h3>
+
+        {/* Changes */}
+        <div className="space-y-2">
+          {release.changes.map((change, i) => {
+            const cfg = changeTypeConfig[change.type];
+            return (
+              <div key={i} className="flex items-start gap-3 text-sm">
+                <div className={cn("mt-1.5 w-2 h-2 rounded-full flex-shrink-0", cfg.dotClass)} />
+                <span className="text-foreground/80">{change.text}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function AnnouncementsPage() {
   const [activeTab, setActiveTab] = useState('changelog');
-  
+
   const { data: announcements = [], isLoading: loadingAnnouncements } = useHelpAnnouncements();
   const { data: systemStatuses = [], isLoading: loadingStatus } = useSystemStatus();
   const { data: incidents = [] } = useActiveIncidents();
@@ -43,6 +178,9 @@ export default function AnnouncementsPage() {
   const handleMarkAsRead = (id: string) => {
     markAsRead.mutate(id);
   };
+
+  // Merge DB announcements with static releases — static always shown
+  const hasDbAnnouncements = announcements.length > 0;
 
   return (
     <div className="space-y-6">
@@ -72,78 +210,87 @@ export default function AnnouncementsPage() {
         </TabsList>
 
         {/* Changelog Tab */}
-        <TabsContent value="changelog" className="space-y-4 mt-6">
-          {loadingAnnouncements ? (
-            <div className="space-y-4">
-              {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-32" />
-              ))}
-            </div>
-          ) : announcements.length === 0 ? (
-            <EmptyState
-              icon={<Bell className="h-12 w-12" />}
-              title="Sin novedades"
-              description="Aún no hay anuncios o actualizaciones publicadas."
-            />
-          ) : (
-            <div className="space-y-4">
-              {announcements.map((announcement) => {
-                const type = typeConfig[announcement.announcement_type as keyof typeof typeConfig] || typeConfig.feature;
-                const TypeIcon = type.icon;
-                const isRead = announcement.is_read;
-
-                return (
-                  <Card
-                    key={announcement.id}
-                    className={cn(
-                      'transition-all cursor-pointer',
-                      !isRead && 'border-primary/50 bg-primary/5',
-                      announcement.is_featured && 'ring-2 ring-primary/20'
-                    )}
-                    onClick={() => !isRead && handleMarkAsRead(announcement.id)}
-                  >
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <Badge className={cn('gap-1', type.color)} variant="secondary">
-                              <TypeIcon className="h-3 w-3" />
-                              {type.label}
-                            </Badge>
-                            {announcement.is_featured && (
-                              <Badge variant="outline" className="border-primary text-primary">
-                                Destacado
-                              </Badge>
-                            )}
-                            {!isRead && (
-                              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-                            )}
-                          </div>
-                          <CardTitle className="text-lg">{announcement.title}</CardTitle>
-                        </div>
-                        <span className="text-sm text-muted-foreground whitespace-nowrap">
-                          {format(new Date(announcement.publish_at), "d MMM yyyy", {
-                            locale: es,
-                          })}
-                        </span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-3">
-                      <p className="text-muted-foreground">{announcement.summary || announcement.content}</p>
-                      {announcement.learn_more_url && (
-                        <Button variant="link" className="p-0 h-auto" asChild>
-                          <a href={announcement.learn_more_url} target="_blank" rel="noopener noreferrer">
-                            Saber más
-                            <ExternalLink className="ml-1 h-3 w-3" />
-                          </a>
-                        </Button>
+        <TabsContent value="changelog" className="mt-6">
+          <div className="space-y-8">
+            {/* DB announcements (if any) */}
+            {loadingAnnouncements ? (
+              <div className="space-y-4">
+                {[1, 2].map((i) => (
+                  <Skeleton key={i} className="h-28" />
+                ))}
+              </div>
+            ) : hasDbAnnouncements && (
+              <div className="space-y-4 mb-8">
+                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">Anuncios</h2>
+                {announcements.map((announcement) => {
+                  const type = typeConfig[announcement.announcement_type as keyof typeof typeConfig] || typeConfig.feature;
+                  const TypeIcon = type.icon;
+                  const isRead = announcement.is_read;
+                  return (
+                    <Card
+                      key={announcement.id}
+                      className={cn(
+                        'transition-all cursor-pointer',
+                        !isRead && 'border-primary/50 bg-primary/5',
+                        announcement.is_featured && 'ring-2 ring-primary/20'
                       )}
-                    </CardContent>
-                  </Card>
-                );
-              })}
+                      onClick={() => !isRead && handleMarkAsRead(announcement.id)}
+                    >
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className="space-y-1">
+                            <div className="flex items-center gap-2">
+                              <Badge className={cn('gap-1', type.color)} variant="secondary">
+                                <TypeIcon className="h-3 w-3" />
+                                {type.label}
+                              </Badge>
+                              {announcement.is_featured && (
+                                <Badge variant="outline" className="border-primary text-primary">Destacado</Badge>
+                              )}
+                              {!isRead && <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />}
+                            </div>
+                            <CardTitle className="text-lg">{announcement.title}</CardTitle>
+                          </div>
+                          <span className="text-sm text-muted-foreground whitespace-nowrap">
+                            {format(new Date(announcement.publish_at), "d MMM yyyy", { locale: es })}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-muted-foreground">{announcement.summary || announcement.content}</p>
+                        {announcement.learn_more_url && (
+                          <Button variant="link" className="p-0 h-auto" asChild>
+                            <a href={announcement.learn_more_url} target="_blank" rel="noopener noreferrer">
+                              Saber más <ExternalLink className="ml-1 h-3 w-3" />
+                            </a>
+                          </Button>
+                        )}
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* Static releases timeline */}
+            <div>
+              <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-6">
+                Historial de versiones
+              </h2>
+              <div className="space-y-0">
+                {STATIC_RELEASES.map((release, idx) => (
+                  <ReleaseCard key={release.version} release={release} isLatest={idx === 0} />
+                ))}
+              </div>
             </div>
-          )}
+
+            {/* Legend */}
+            <div className="flex items-center gap-6 text-xs text-muted-foreground pt-4 border-t border-border">
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-emerald-500" />Nuevo</div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-blue-500" />Mejora</div>
+              <div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-amber-500" />Corrección</div>
+            </div>
+          </div>
         </TabsContent>
 
         {/* System Status Tab */}
@@ -164,7 +311,6 @@ export default function AnnouncementsPage() {
             <div className="space-y-3">
               {systemStatuses.map((service) => {
                 const statusInfo = systemStatusConfig[service.status as keyof typeof systemStatusConfig] || systemStatusConfig.operational;
-                
                 return (
                   <Card key={service.id}>
                     <CardContent className="py-4">
