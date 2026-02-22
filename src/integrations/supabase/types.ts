@@ -7747,6 +7747,72 @@ export type Database = {
           },
         ]
       }
+      bug_reports: {
+        Row: {
+          admin_notes: string | null
+          browser_info: Json | null
+          console_errors: Json | null
+          created_at: string
+          description: string | null
+          id: string
+          navigation_history: Json | null
+          page_route: string | null
+          page_title: string | null
+          page_url: string | null
+          reporter_email: string | null
+          reporter_id: string | null
+          reporter_name: string | null
+          reporter_role: string | null
+          resolved_at: string | null
+          severity: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          admin_notes?: string | null
+          browser_info?: Json | null
+          console_errors?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          navigation_history?: Json | null
+          page_route?: string | null
+          page_title?: string | null
+          page_url?: string | null
+          reporter_email?: string | null
+          reporter_id?: string | null
+          reporter_name?: string | null
+          reporter_role?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          admin_notes?: string | null
+          browser_info?: Json | null
+          console_errors?: Json | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          navigation_history?: Json | null
+          page_route?: string | null
+          page_title?: string | null
+          page_url?: string | null
+          reporter_email?: string | null
+          reporter_id?: string | null
+          reporter_name?: string | null
+          reporter_role?: string | null
+          resolved_at?: string | null
+          severity?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       calendar_connections: {
         Row: {
           access_token: string
