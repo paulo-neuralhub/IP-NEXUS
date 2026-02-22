@@ -42,7 +42,7 @@ export function usePushNotifications() {
         // Check existing subscription
         try {
           const registration = await navigator.serviceWorker.ready;
-          const existingSub = await registration.pushManager.getSubscription();
+          const existingSub = await (registration as any).pushManager.getSubscription();
           setSubscription(existingSub);
           setIsSubscribed(!!existingSub);
         } catch (error) {
@@ -76,7 +76,7 @@ export function usePushNotifications() {
 
       const registration = await navigator.serviceWorker.ready;
       
-      const sub = await registration.pushManager.subscribe({
+      const sub = await (registration as any).pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
       });

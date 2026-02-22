@@ -28,7 +28,7 @@ export function useAIModels(providerId?: string) {
       const { data, error } = await query;
 
       if (error) throw error;
-      return data as AIModel[];
+      return (data as unknown) as AIModel[];
     },
   });
 }
@@ -47,7 +47,7 @@ export function useActiveAIModels() {
         .order('name');
 
       if (error) throw error;
-      return data as AIModel[];
+      return (data as unknown) as AIModel[];
     },
   });
 }
@@ -68,7 +68,7 @@ export function useAIModel(id: string) {
         .single();
 
       if (error) throw error;
-      return data as AIModel;
+      return (data as unknown) as AIModel;
     },
     enabled: !!id,
   });
