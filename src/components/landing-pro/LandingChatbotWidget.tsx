@@ -3,7 +3,7 @@ import { MessageCircle, X, Send, Loader2, Check, Calendar, Sparkles } from 'luci
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fromTable } from '@/lib/supabase';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Message {
@@ -60,8 +60,7 @@ export function LandingChatbotWidget({ moduleCode, landingSlug }: LandingChatbot
   // Load config and greeting
   useEffect(() => {
     const loadConfig = async () => {
-      const { data } = await supabase
-        .from('chatbot_configs')
+      const { data } = await fromTable('chatbot_configs')
         .select('greeting_message, quick_replies')
         .eq('landing_slug', landingSlug)
         .eq('is_active', true)
@@ -100,8 +99,7 @@ export function LandingChatbotWidget({ moduleCode, landingSlug }: LandingChatbot
   }, [landingSlug]);
 
   const loadMessages = async (convId: string) => {
-    const { data } = await supabase
-      .from('chatbot_messages')
+    const { data } = await fromTable('chatbot_messages')
       .select('id, role, content, created_at')
       .eq('conversation_id', convId)
       .order('created_at', { ascending: true });

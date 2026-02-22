@@ -14,33 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      _backup_organization_offices: {
-        Row: {
-          created_at: string | null
-          credentials_configured: boolean | null
-          id: string | null
-          is_favorite: boolean | null
-          office_id: string | null
-          organization_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          credentials_configured?: boolean | null
-          id?: string | null
-          is_favorite?: boolean | null
-          office_id?: string | null
-          organization_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          credentials_configured?: boolean | null
-          id?: string | null
-          is_favorite?: boolean | null
-          office_id?: string | null
-          organization_id?: string | null
-        }
-        Relationships: []
-      }
       access_audit_log: {
         Row: {
           action: string
@@ -6951,63 +6924,6 @@ export type Database = {
           },
         ]
       }
-      b2c_cases: {
-        Row: {
-          assigned_to: string | null
-          case_number: string | null
-          case_type: string | null
-          client_id: string | null
-          created_at: string | null
-          id: string
-          jurisdiction: string | null
-          metadata: Json | null
-          nice_classes: number[] | null
-          notes: string | null
-          quote_sent_at: string | null
-          requires_manual_payment: boolean | null
-          requires_manual_pricing: boolean | null
-          status: string | null
-          trademark_name: string | null
-          updated_at: string | null
-        }
-        Insert: {
-          assigned_to?: string | null
-          case_number?: string | null
-          case_type?: string | null
-          client_id?: string | null
-          created_at?: string | null
-          id?: string
-          jurisdiction?: string | null
-          metadata?: Json | null
-          nice_classes?: number[] | null
-          notes?: string | null
-          quote_sent_at?: string | null
-          requires_manual_payment?: boolean | null
-          requires_manual_pricing?: boolean | null
-          status?: string | null
-          trademark_name?: string | null
-          updated_at?: string | null
-        }
-        Update: {
-          assigned_to?: string | null
-          case_number?: string | null
-          case_type?: string | null
-          client_id?: string | null
-          created_at?: string | null
-          id?: string
-          jurisdiction?: string | null
-          metadata?: Json | null
-          nice_classes?: number[] | null
-          notes?: string | null
-          quote_sent_at?: string | null
-          requires_manual_payment?: boolean | null
-          requires_manual_pricing?: boolean | null
-          status?: string | null
-          trademark_name?: string | null
-          updated_at?: string | null
-        }
-        Relationships: []
-      }
       backoffice_chatbot_actions: {
         Row: {
           action_params: Json | null
@@ -7764,6 +7680,7 @@ export type Database = {
           reporter_name: string | null
           reporter_role: string | null
           resolved_at: string | null
+          screenshot_url: string | null
           severity: string
           status: string
           title: string
@@ -7785,6 +7702,7 @@ export type Database = {
           reporter_name?: string | null
           reporter_role?: string | null
           resolved_at?: string | null
+          screenshot_url?: string | null
           severity?: string
           status?: string
           title: string
@@ -7806,6 +7724,7 @@ export type Database = {
           reporter_name?: string | null
           reporter_role?: string | null
           resolved_at?: string | null
+          screenshot_url?: string | null
           severity?: string
           status?: string
           title?: string
@@ -8403,273 +8322,6 @@ export type Database = {
             columns: ["audit_log_id"]
             isOneToOne: false
             referencedRelation: "audit_logs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chatbot_configs: {
-        Row: {
-          ask_company: boolean | null
-          ask_email_after: number | null
-          ask_phone: boolean | null
-          calendar_enabled: boolean | null
-          calendar_url: string | null
-          created_at: string | null
-          fallback_message: string | null
-          greeting_message: string | null
-          id: string
-          is_active: boolean | null
-          knowledge_base: Json | null
-          landing_id: string | null
-          landing_slug: string
-          max_messages_session: number | null
-          module_context: string | null
-          name: string
-          quick_replies: Json | null
-          system_prompt: string | null
-          updated_at: string | null
-          upsell_modules: string[] | null
-        }
-        Insert: {
-          ask_company?: boolean | null
-          ask_email_after?: number | null
-          ask_phone?: boolean | null
-          calendar_enabled?: boolean | null
-          calendar_url?: string | null
-          created_at?: string | null
-          fallback_message?: string | null
-          greeting_message?: string | null
-          id?: string
-          is_active?: boolean | null
-          knowledge_base?: Json | null
-          landing_id?: string | null
-          landing_slug: string
-          max_messages_session?: number | null
-          module_context?: string | null
-          name: string
-          quick_replies?: Json | null
-          system_prompt?: string | null
-          updated_at?: string | null
-          upsell_modules?: string[] | null
-        }
-        Update: {
-          ask_company?: boolean | null
-          ask_email_after?: number | null
-          ask_phone?: boolean | null
-          calendar_enabled?: boolean | null
-          calendar_url?: string | null
-          created_at?: string | null
-          fallback_message?: string | null
-          greeting_message?: string | null
-          id?: string
-          is_active?: boolean | null
-          knowledge_base?: Json | null
-          landing_id?: string | null
-          landing_slug?: string
-          max_messages_session?: number | null
-          module_context?: string | null
-          name?: string
-          quick_replies?: Json | null
-          system_prompt?: string | null
-          updated_at?: string | null
-          upsell_modules?: string[] | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chatbot_configs_landing_id_fkey"
-            columns: ["landing_id"]
-            isOneToOne: false
-            referencedRelation: "landing_pages"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chatbot_conversations: {
-        Row: {
-          config_id: string | null
-          converted_at: string | null
-          id: string
-          interested_modules: string[] | null
-          landing_slug: string | null
-          last_message_at: string | null
-          lead_company: string | null
-          lead_email: string | null
-          lead_name: string | null
-          lead_phone: string | null
-          lead_score: number | null
-          message_count: number | null
-          referrer: string | null
-          session_id: string
-          started_at: string | null
-          status: string | null
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-        }
-        Insert: {
-          config_id?: string | null
-          converted_at?: string | null
-          id?: string
-          interested_modules?: string[] | null
-          landing_slug?: string | null
-          last_message_at?: string | null
-          lead_company?: string | null
-          lead_email?: string | null
-          lead_name?: string | null
-          lead_phone?: string | null
-          lead_score?: number | null
-          message_count?: number | null
-          referrer?: string | null
-          session_id: string
-          started_at?: string | null
-          status?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Update: {
-          config_id?: string | null
-          converted_at?: string | null
-          id?: string
-          interested_modules?: string[] | null
-          landing_slug?: string | null
-          last_message_at?: string | null
-          lead_company?: string | null
-          lead_email?: string | null
-          lead_name?: string | null
-          lead_phone?: string | null
-          lead_score?: number | null
-          message_count?: number | null
-          referrer?: string | null
-          session_id?: string
-          started_at?: string | null
-          status?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chatbot_conversations_config_id_fkey"
-            columns: ["config_id"]
-            isOneToOne: false
-            referencedRelation: "chatbot_configs"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chatbot_leads: {
-        Row: {
-          assigned_to: string | null
-          company: string | null
-          conversation_id: string | null
-          created_at: string | null
-          demo_completed: boolean | null
-          demo_scheduled_at: string | null
-          email: string
-          id: string
-          interested_modules: string[] | null
-          lead_score: number | null
-          name: string | null
-          notes: string | null
-          phone: string | null
-          source_landing: string | null
-          status: string | null
-          updated_at: string | null
-          utm_campaign: string | null
-          utm_medium: string | null
-          utm_source: string | null
-        }
-        Insert: {
-          assigned_to?: string | null
-          company?: string | null
-          conversation_id?: string | null
-          created_at?: string | null
-          demo_completed?: boolean | null
-          demo_scheduled_at?: string | null
-          email: string
-          id?: string
-          interested_modules?: string[] | null
-          lead_score?: number | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          source_landing?: string | null
-          status?: string | null
-          updated_at?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Update: {
-          assigned_to?: string | null
-          company?: string | null
-          conversation_id?: string | null
-          created_at?: string | null
-          demo_completed?: boolean | null
-          demo_scheduled_at?: string | null
-          email?: string
-          id?: string
-          interested_modules?: string[] | null
-          lead_score?: number | null
-          name?: string | null
-          notes?: string | null
-          phone?: string | null
-          source_landing?: string | null
-          status?: string | null
-          updated_at?: string | null
-          utm_campaign?: string | null
-          utm_medium?: string | null
-          utm_source?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chatbot_leads_assigned_to_fkey"
-            columns: ["assigned_to"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "chatbot_leads_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "chatbot_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      chatbot_messages: {
-        Row: {
-          content: string
-          conversation_id: string
-          created_at: string | null
-          id: string
-          metadata: Json | null
-          role: string
-        }
-        Insert: {
-          content: string
-          conversation_id: string
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          role: string
-        }
-        Update: {
-          content?: string
-          conversation_id?: string
-          created_at?: string | null
-          id?: string
-          metadata?: Json | null
-          role?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "chatbot_messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "chatbot_conversations"
             referencedColumns: ["id"]
           },
         ]

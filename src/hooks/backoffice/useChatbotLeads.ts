@@ -4,7 +4,7 @@
 // ============================================
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { fromTable } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 export interface ChatbotLead {
@@ -50,8 +50,7 @@ export function useChatbotLeads(filters: LeadFilters = {}) {
   return useQuery({
     queryKey: ['backoffice-chatbot-leads', filters],
     queryFn: async (): Promise<ChatbotLead[]> => {
-      let query = supabase
-        .from('chatbot_leads')
+      let query = fromTable('chatbot_leads')
         .select(`
           *,
           conversation:chatbot_conversations(
@@ -109,8 +108,7 @@ export function useChatbotLead(id: string | undefined) {
       if (!id) return null;
 
       // Fetch lead
-      const { data: lead, error: leadError } = await supabase
-        .from('chatbot_leads')
+      const { data: lead, error: leadError } = await fromTable('chatbot_leads')
         .select(`
           *,
           conversation:chatbot_conversations(
@@ -139,8 +137,7 @@ export function useChatbotLead(id: string | undefined) {
       // Fetch conversation messages if we have a conversation
       let messages: Array<{ id: string; role: string; content: string; created_at: string }> = [];
       if (lead.conversation?.id) {
-        const { data: msgData } = await supabase
-          .from('chatbot_messages')
+        const { data: msgData } = await fromTable('chatbot_messages')
           .select('id, role, content, created_at')
           .eq('conversation_id', lead.conversation.id)
           .order('created_at', { ascending: true });
@@ -163,8 +160,7 @@ export function useUpdateLeadStatus() {
 
   return useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
-        .from('chatbot_leads')
+      const { error } = await fromTable('chatbot_leads')
         .update({ status, updated_at: new Date().toISOString() })
         .eq('id', id);
 
@@ -187,8 +183,7 @@ export function useAssignLead() {
 
   return useMutation({
     mutationFn: async ({ id, userId }: { id: string; userId: string | null }) => {
-      const { error } = await supabase
-        .from('chatbot_leads')
+      const { error } = await fromTable('chatbot_leads')
         .update({ assigned_to: userId, updated_at: new Date().toISOString() })
         .eq('id', id);
 
@@ -211,8 +206,7 @@ export function useUpdateLeadNotes() {
 
   return useMutation({
     mutationFn: async ({ id, notes }: { id: string; notes: string }) => {
-      const { error } = await supabase
-        .from('chatbot_leads')
+      const { error } = await fromTable('chatbot_leads')
         .update({ notes, updated_at: new Date().toISOString() })
         .eq('id', id);
 
@@ -234,8 +228,7 @@ export function useScheduleDemo() {
 
   return useMutation({
     mutationFn: async ({ id, scheduledAt }: { id: string; scheduledAt: string }) => {
-      const { error } = await supabase
-        .from('chatbot_leads')
+      const { error } = await fromTable('chatbot_leads')
         .update({ 
           demo_scheduled_at: scheduledAt, 
           status: 'demo',
@@ -262,8 +255,7 @@ export function useCompleteDemo() {
 
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
-        .from('chatbot_leads')
+      const { error } = await fromTable('chatbot_leads')
         .update({ 
           demo_completed: true,
           status: 'qualified',
@@ -290,8 +282,7 @@ export function useBulkUpdateLeads() {
 
   return useMutation({
     mutationFn: async ({ ids, updates }: { ids: string[]; updates: Record<string, unknown> }) => {
-      const { error } = await supabase
-        .from('chatbot_leads')
+      const { error } = await fromTable('chatbot_leads')
         .update({ ...updates, updated_at: new Date().toISOString() })
         .in('id', ids);
 

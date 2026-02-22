@@ -4,7 +4,7 @@
 // ============================================
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase, fromTable } from '@/lib/supabase';
 import { subDays, format, startOfDay, endOfDay } from 'date-fns';
 
 export interface LandingStats {
@@ -75,14 +75,12 @@ export function useLandingAnalytics(days: number = 30) {
         .lt('created_at', prevEndDate);
 
       // Get current period leads
-      const { data: currentLeads } = await supabase
-        .from('chatbot_leads')
+      const { data: currentLeads } = await fromTable('chatbot_leads')
         .select('id, status, demo_scheduled_at, created_at')
         .gte('created_at', startDate);
 
       // Get previous period leads for trend
-      const { data: prevLeads } = await supabase
-        .from('chatbot_leads')
+      const { data: prevLeads } = await fromTable('chatbot_leads')
         .select('id')
         .gte('created_at', prevStartDate)
         .lt('created_at', prevEndDate);
@@ -137,8 +135,7 @@ export function useVisitsByLanding(days: number = 30) {
         .gte('created_at', startDate);
 
       // Get leads grouped by landing (via conversation)
-      const { data: leads } = await supabase
-        .from('chatbot_leads')
+      const { data: leads } = await fromTable('chatbot_leads')
         .select('conversation:chatbot_conversations(landing_slug)')
         .gte('created_at', startDate);
 
@@ -185,8 +182,7 @@ export function useDailyVisits(days: number = 30) {
         .gte('created_at', startDate)
         .order('created_at', { ascending: true });
 
-      const { data: leads } = await supabase
-        .from('chatbot_leads')
+      const { data: leads } = await fromTable('chatbot_leads')
         .select('created_at')
         .gte('created_at', startDate);
 
@@ -261,20 +257,17 @@ export function useChatbotPerformance(days: number = 30) {
     queryKey: ['chatbot-performance', days],
     queryFn: async (): Promise<ChatbotStats> => {
       // Conversations
-      const { data: conversations } = await supabase
-        .from('chatbot_conversations')
+      const { data: conversations } = await fromTable('chatbot_conversations')
         .select('id')
         .gte('started_at', startDate);
 
       // Leads
-      const { data: leads } = await supabase
-        .from('chatbot_leads')
+      const { data: leads } = await fromTable('chatbot_leads')
         .select('id, demo_scheduled_at')
         .gte('created_at', startDate);
 
       // Messages (for avg)
-      const { data: messages } = await supabase
-        .from('chatbot_messages')
+      const { data: messages } = await fromTable('chatbot_messages')
         .select('conversation_id')
         .gte('created_at', startDate);
 
@@ -325,27 +318,23 @@ export function useConversionFunnel(days: number = 30) {
         .gte('created_at', startDate);
 
       // Conversations with messages
-      const { count: conversationsCount } = await supabase
-        .from('chatbot_conversations')
+      const { count: conversationsCount } = await fromTable('chatbot_conversations')
         .select('*', { count: 'exact', head: true })
         .gte('started_at', startDate);
 
       // Leads captured
-      const { count: leadsCount } = await supabase
-        .from('chatbot_leads')
+      const { count: leadsCount } = await fromTable('chatbot_leads')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', startDate);
 
       // Demos scheduled
-      const { count: demosCount } = await supabase
-        .from('chatbot_leads')
+      const { count: demosCount } = await fromTable('chatbot_leads')
         .select('*', { count: 'exact', head: true })
         .not('demo_scheduled_at', 'is', null)
         .gte('created_at', startDate);
 
       // Converted to client
-      const { count: clientsCount } = await supabase
-        .from('chatbot_leads')
+      const { count: clientsCount } = await fromTable('chatbot_leads')
         .select('*', { count: 'exact', head: true })
         .eq('status', 'converted')
         .gte('created_at', startDate);
@@ -369,8 +358,7 @@ export function useRecentLeads(limit: number = 5) {
   return useQuery({
     queryKey: ['recent-leads', limit],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('chatbot_leads')
+      const { data, error } = await fromTable('chatbot_leads')
         .select(`
           id,
           email,
