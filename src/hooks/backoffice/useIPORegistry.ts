@@ -3,6 +3,7 @@
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { fromTable } from '@/lib/supabase';
 import { 
   IPOffice, 
   IPOHealthOverview, 
@@ -25,8 +26,8 @@ export function useIPOStats() {
         syncResult,
       ] = await Promise.all([
         supabase.from('ipo_offices').select('tier, status, region'),
-        supabase.from('ipo_health_overview').select('*'),
-        supabase.from('ipo_expiring_credentials').select('*'),
+        fromTable('ipo_health_overview').select('*'),
+        fromTable('ipo_expiring_credentials').select('*'),
         supabase.from('ipo_sync_logs')
           .select('status')
           .gte('started_at', new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString()),
@@ -87,8 +88,7 @@ export function useIPOOffices(filters?: {
   return useQuery({
     queryKey: ['ipo-offices', filters],
     queryFn: async (): Promise<IPOHealthOverview[]> => {
-      let query = supabase
-        .from('ipo_health_overview')
+      let query = fromTable('ipo_health_overview')
         .select('*')
         .order('tier', { ascending: true })
         .order('code', { ascending: true });
