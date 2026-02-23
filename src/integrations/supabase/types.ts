@@ -1234,6 +1234,256 @@ export type Database = {
           },
         ]
       }
+      agent_service_fees: {
+        Row: {
+          additional_class_fee: number | null
+          additional_class_fee_currency: string | null
+          agent_id: string | null
+          classes_included: number | null
+          created_at: string | null
+          excludes_description: string | null
+          fee_amount: number
+          fee_amount_eur: number | null
+          fee_currency: string | null
+          id: string
+          includes_apostille: boolean | null
+          includes_official_fee: boolean | null
+          includes_pow_preparation: boolean | null
+          includes_translations: boolean | null
+          ipo_office_id: string | null
+          last_confirmed_date: string | null
+          notes: string | null
+          partner_id: string | null
+          service_type: string
+          source: string | null
+          updated_at: string | null
+          valid_from: string | null
+          valid_until: string | null
+        }
+        Insert: {
+          additional_class_fee?: number | null
+          additional_class_fee_currency?: string | null
+          agent_id?: string | null
+          classes_included?: number | null
+          created_at?: string | null
+          excludes_description?: string | null
+          fee_amount: number
+          fee_amount_eur?: number | null
+          fee_currency?: string | null
+          id?: string
+          includes_apostille?: boolean | null
+          includes_official_fee?: boolean | null
+          includes_pow_preparation?: boolean | null
+          includes_translations?: boolean | null
+          ipo_office_id?: string | null
+          last_confirmed_date?: string | null
+          notes?: string | null
+          partner_id?: string | null
+          service_type: string
+          source?: string | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Update: {
+          additional_class_fee?: number | null
+          additional_class_fee_currency?: string | null
+          agent_id?: string | null
+          classes_included?: number | null
+          created_at?: string | null
+          excludes_description?: string | null
+          fee_amount?: number
+          fee_amount_eur?: number | null
+          fee_currency?: string | null
+          id?: string
+          includes_apostille?: boolean | null
+          includes_official_fee?: boolean | null
+          includes_pow_preparation?: boolean | null
+          includes_translations?: boolean | null
+          ipo_office_id?: string | null
+          last_confirmed_date?: string | null
+          notes?: string | null
+          partner_id?: string | null
+          service_type?: string
+          source?: string | null
+          updated_at?: string | null
+          valid_from?: string | null
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_service_fees_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_service_fees_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "ip_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_service_fees_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_service_fees_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "v_office_directory"
+            referencedColumns: ["office_id"]
+          },
+          {
+            foreignKeyName: "agent_service_fees_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "v_pricing_by_office"
+            referencedColumns: ["office_id"]
+          },
+          {
+            foreignKeyName: "agent_service_fees_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "partners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agents: {
+        Row: {
+          address: string | null
+          avg_response_hours: number | null
+          city: string | null
+          contact_person: string | null
+          contract_expiry: string | null
+          contract_url: string | null
+          country_code: string
+          created_at: string | null
+          currency: string | null
+          email: string | null
+          firm_name: string | null
+          handles_apostille: boolean | null
+          handles_legalization: boolean | null
+          handles_pow: boolean | null
+          handles_translations: boolean | null
+          id: string
+          internal_rating_notes: string | null
+          is_active: boolean | null
+          is_vetted: boolean | null
+          jurisdictions: Json | null
+          languages: Json | null
+          linkedin_url: string | null
+          name: string
+          notes: string | null
+          payment_methods: Json | null
+          payment_terms: string | null
+          phone: string | null
+          rating: number | null
+          relationship_since: string | null
+          relationship_type: string | null
+          service_types: Json | null
+          specializations: Json | null
+          success_rate_pct: number | null
+          timezone: string | null
+          total_cases_handled: number | null
+          updated_at: string | null
+          vetted_by: string | null
+          vetted_date: string | null
+          website: string | null
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          avg_response_hours?: number | null
+          city?: string | null
+          contact_person?: string | null
+          contract_expiry?: string | null
+          contract_url?: string | null
+          country_code: string
+          created_at?: string | null
+          currency?: string | null
+          email?: string | null
+          firm_name?: string | null
+          handles_apostille?: boolean | null
+          handles_legalization?: boolean | null
+          handles_pow?: boolean | null
+          handles_translations?: boolean | null
+          id?: string
+          internal_rating_notes?: string | null
+          is_active?: boolean | null
+          is_vetted?: boolean | null
+          jurisdictions?: Json | null
+          languages?: Json | null
+          linkedin_url?: string | null
+          name: string
+          notes?: string | null
+          payment_methods?: Json | null
+          payment_terms?: string | null
+          phone?: string | null
+          rating?: number | null
+          relationship_since?: string | null
+          relationship_type?: string | null
+          service_types?: Json | null
+          specializations?: Json | null
+          success_rate_pct?: number | null
+          timezone?: string | null
+          total_cases_handled?: number | null
+          updated_at?: string | null
+          vetted_by?: string | null
+          vetted_date?: string | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          avg_response_hours?: number | null
+          city?: string | null
+          contact_person?: string | null
+          contract_expiry?: string | null
+          contract_url?: string | null
+          country_code?: string
+          created_at?: string | null
+          currency?: string | null
+          email?: string | null
+          firm_name?: string | null
+          handles_apostille?: boolean | null
+          handles_legalization?: boolean | null
+          handles_pow?: boolean | null
+          handles_translations?: boolean | null
+          id?: string
+          internal_rating_notes?: string | null
+          is_active?: boolean | null
+          is_vetted?: boolean | null
+          jurisdictions?: Json | null
+          languages?: Json | null
+          linkedin_url?: string | null
+          name?: string
+          notes?: string | null
+          payment_methods?: Json | null
+          payment_terms?: string | null
+          phone?: string | null
+          rating?: number | null
+          relationship_since?: string | null
+          relationship_type?: string | null
+          service_types?: Json | null
+          specializations?: Json | null
+          success_rate_pct?: number | null
+          timezone?: string | null
+          total_cases_handled?: number | null
+          updated_at?: string | null
+          vetted_by?: string | null
+          vetted_date?: string | null
+          website?: string | null
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       ai_agent_messages: {
         Row: {
           content: string
@@ -4847,6 +5097,7 @@ export type Database = {
           stop_reason: string | null
           success: boolean | null
           task_category: string | null
+          task_subcategory: string | null
           tokens_input: number | null
           tokens_output: number | null
           user_id: string | null
@@ -4885,6 +5136,7 @@ export type Database = {
           stop_reason?: string | null
           success?: boolean | null
           task_category?: string | null
+          task_subcategory?: string | null
           tokens_input?: number | null
           tokens_output?: number | null
           user_id?: string | null
@@ -4923,6 +5175,7 @@ export type Database = {
           stop_reason?: string | null
           success?: boolean | null
           task_category?: string | null
+          task_subcategory?: string | null
           tokens_input?: number | null
           tokens_output?: number | null
           user_id?: string | null
@@ -5207,6 +5460,7 @@ export type Database = {
           os: string | null
           page_path: string | null
           page_title: string | null
+          page_url: string | null
           properties: Json | null
           referrer: string | null
           region: string | null
@@ -5227,6 +5481,7 @@ export type Database = {
           os?: string | null
           page_path?: string | null
           page_title?: string | null
+          page_url?: string | null
           properties?: Json | null
           referrer?: string | null
           region?: string | null
@@ -5247,6 +5502,7 @@ export type Database = {
           os?: string | null
           page_path?: string | null
           page_title?: string | null
+          page_url?: string | null
           properties?: Json | null
           referrer?: string | null
           region?: string | null
@@ -6923,6 +7179,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      b2c_cases: {
+        Row: {
+          assigned_agent_id: string | null
+          brand_name: string | null
+          brand_type: string | null
+          case_number: string
+          classes: Json | null
+          created_at: string
+          currency: string | null
+          holder_data: Json | null
+          id: string
+          jurisdiction_code: string | null
+          jurisdiction_id: string | null
+          logo_url: string | null
+          nice_classes: Json | null
+          payment_date: string | null
+          pricing: Json | null
+          status: string
+          stripe_payment_intent_id: string | null
+          stripe_session_id: string | null
+          total_amount: number | null
+          trademark_name: string | null
+          trademark_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          assigned_agent_id?: string | null
+          brand_name?: string | null
+          brand_type?: string | null
+          case_number: string
+          classes?: Json | null
+          created_at?: string
+          currency?: string | null
+          holder_data?: Json | null
+          id?: string
+          jurisdiction_code?: string | null
+          jurisdiction_id?: string | null
+          logo_url?: string | null
+          nice_classes?: Json | null
+          payment_date?: string | null
+          pricing?: Json | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number | null
+          trademark_name?: string | null
+          trademark_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          assigned_agent_id?: string | null
+          brand_name?: string | null
+          brand_type?: string | null
+          case_number?: string
+          classes?: Json | null
+          created_at?: string
+          currency?: string | null
+          holder_data?: Json | null
+          id?: string
+          jurisdiction_code?: string | null
+          jurisdiction_id?: string | null
+          logo_url?: string | null
+          nice_classes?: Json | null
+          payment_date?: string | null
+          pricing?: Json | null
+          status?: string
+          stripe_payment_intent_id?: string | null
+          stripe_session_id?: string | null
+          total_amount?: number | null
+          trademark_name?: string | null
+          trademark_type?: string | null
+          updated_at?: string
+        }
+        Relationships: []
       }
       backoffice_chatbot_actions: {
         Row: {
@@ -10816,6 +11147,9 @@ export type Database = {
           pricing_page_last_hash: string | null
           pricing_page_url: string | null
           pricing_strategy: string | null
+          pricing_url: string | null
+          pricing_url_last_scan: string | null
+          pricing_url_scan_status: string | null
           region: string | null
           relevance_score: number | null
           scan_count: number | null
@@ -10829,6 +11163,8 @@ export type Database = {
           swot_weaknesses: Json | null
           target_market: string | null
           threat_level: string | null
+          threat_level_reason: string | null
+          threat_level_updated_at: string | null
           updated_at: string | null
           website: string | null
         }
@@ -10872,6 +11208,9 @@ export type Database = {
           pricing_page_last_hash?: string | null
           pricing_page_url?: string | null
           pricing_strategy?: string | null
+          pricing_url?: string | null
+          pricing_url_last_scan?: string | null
+          pricing_url_scan_status?: string | null
           region?: string | null
           relevance_score?: number | null
           scan_count?: number | null
@@ -10885,6 +11224,8 @@ export type Database = {
           swot_weaknesses?: Json | null
           target_market?: string | null
           threat_level?: string | null
+          threat_level_reason?: string | null
+          threat_level_updated_at?: string | null
           updated_at?: string | null
           website?: string | null
         }
@@ -10928,6 +11269,9 @@ export type Database = {
           pricing_page_last_hash?: string | null
           pricing_page_url?: string | null
           pricing_strategy?: string | null
+          pricing_url?: string | null
+          pricing_url_last_scan?: string | null
+          pricing_url_scan_status?: string | null
           region?: string | null
           relevance_score?: number | null
           scan_count?: number | null
@@ -10941,6 +11285,8 @@ export type Database = {
           swot_weaknesses?: Json | null
           target_market?: string | null
           threat_level?: string | null
+          threat_level_reason?: string | null
+          threat_level_updated_at?: string | null
           updated_at?: string | null
           website?: string | null
         }
@@ -12393,6 +12739,76 @@ export type Database = {
           times_seen?: number | null
         }
         Relationships: []
+      }
+      competitor_scan_config: {
+        Row: {
+          analysis_types: Json | null
+          auto_scan_enabled: boolean | null
+          auto_scan_frequency: string | null
+          competitors: Json | null
+          created_at: string | null
+          created_by: string | null
+          id: string
+          next_auto_scan_at: string | null
+          organization_id: string | null
+          scan_depth: string | null
+          services: Json | null
+          territories: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          analysis_types?: Json | null
+          auto_scan_enabled?: boolean | null
+          auto_scan_frequency?: string | null
+          competitors?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          next_auto_scan_at?: string | null
+          organization_id?: string | null
+          scan_depth?: string | null
+          services?: Json | null
+          territories?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          analysis_types?: Json | null
+          auto_scan_enabled?: boolean | null
+          auto_scan_frequency?: string | null
+          competitors?: Json | null
+          created_at?: string | null
+          created_by?: string | null
+          id?: string
+          next_auto_scan_at?: string | null
+          organization_id?: string | null
+          scan_depth?: string | null
+          services?: Json | null
+          territories?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitor_scan_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "backoffice_tenant_crm"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competitor_scan_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organization_usage_stats"
+            referencedColumns: ["organization_id"]
+          },
+          {
+            foreignKeyName: "competitor_scan_config_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       compliance_checks: {
         Row: {
@@ -25150,6 +25566,135 @@ export type Database = {
         }
         Relationships: []
       }
+      intelligence_config: {
+        Row: {
+          agent_costs_by_region: Json | null
+          analysis_types: Json | null
+          auto_analysis_enabled: boolean | null
+          auto_scan_enabled: boolean | null
+          auto_scan_frequency: string | null
+          comparable_price_types: Json | null
+          competitor_reaction_rule: string | null
+          competitors: Json | null
+          cost_overrides: Json | null
+          cost_templates: Json | null
+          created_at: string | null
+          guardrail_ceiling_enabled: boolean | null
+          guardrail_ceiling_multiplier: number | null
+          guardrail_ceiling_per_jurisdiction: Json | null
+          guardrail_ceiling_type: string | null
+          guardrail_floor_margin: number | null
+          guardrail_floor_pct: number | null
+          guardrail_floor_type: string | null
+          id: string
+          include_methodology: boolean | null
+          jurisdiction_exceptions: Json | null
+          market_priority_by: string | null
+          max_data_age_days: number | null
+          max_market_penetration: number | null
+          min_data_confidence: number | null
+          min_margin_by_service_type: Json | null
+          min_margin_global: number | null
+          min_market_growth: number | null
+          min_market_margin: number | null
+          min_wipo_filings: number | null
+          next_auto_scan_at: string | null
+          organization_id: string | null
+          outlier_threshold_pct: number | null
+          output_detail_level: string | null
+          output_language: string | null
+          overhead_percentage: number | null
+          pricing_strategy: string | null
+          pricing_strategy_offset: number | null
+          reaction_threshold_pct: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_costs_by_region?: Json | null
+          analysis_types?: Json | null
+          auto_analysis_enabled?: boolean | null
+          auto_scan_enabled?: boolean | null
+          auto_scan_frequency?: string | null
+          comparable_price_types?: Json | null
+          competitor_reaction_rule?: string | null
+          competitors?: Json | null
+          cost_overrides?: Json | null
+          cost_templates?: Json | null
+          created_at?: string | null
+          guardrail_ceiling_enabled?: boolean | null
+          guardrail_ceiling_multiplier?: number | null
+          guardrail_ceiling_per_jurisdiction?: Json | null
+          guardrail_ceiling_type?: string | null
+          guardrail_floor_margin?: number | null
+          guardrail_floor_pct?: number | null
+          guardrail_floor_type?: string | null
+          id?: string
+          include_methodology?: boolean | null
+          jurisdiction_exceptions?: Json | null
+          market_priority_by?: string | null
+          max_data_age_days?: number | null
+          max_market_penetration?: number | null
+          min_data_confidence?: number | null
+          min_margin_by_service_type?: Json | null
+          min_margin_global?: number | null
+          min_market_growth?: number | null
+          min_market_margin?: number | null
+          min_wipo_filings?: number | null
+          next_auto_scan_at?: string | null
+          organization_id?: string | null
+          outlier_threshold_pct?: number | null
+          output_detail_level?: string | null
+          output_language?: string | null
+          overhead_percentage?: number | null
+          pricing_strategy?: string | null
+          pricing_strategy_offset?: number | null
+          reaction_threshold_pct?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_costs_by_region?: Json | null
+          analysis_types?: Json | null
+          auto_analysis_enabled?: boolean | null
+          auto_scan_enabled?: boolean | null
+          auto_scan_frequency?: string | null
+          comparable_price_types?: Json | null
+          competitor_reaction_rule?: string | null
+          competitors?: Json | null
+          cost_overrides?: Json | null
+          cost_templates?: Json | null
+          created_at?: string | null
+          guardrail_ceiling_enabled?: boolean | null
+          guardrail_ceiling_multiplier?: number | null
+          guardrail_ceiling_per_jurisdiction?: Json | null
+          guardrail_ceiling_type?: string | null
+          guardrail_floor_margin?: number | null
+          guardrail_floor_pct?: number | null
+          guardrail_floor_type?: string | null
+          id?: string
+          include_methodology?: boolean | null
+          jurisdiction_exceptions?: Json | null
+          market_priority_by?: string | null
+          max_data_age_days?: number | null
+          max_market_penetration?: number | null
+          min_data_confidence?: number | null
+          min_margin_by_service_type?: Json | null
+          min_margin_global?: number | null
+          min_market_growth?: number | null
+          min_market_margin?: number | null
+          min_wipo_filings?: number | null
+          next_auto_scan_at?: string | null
+          organization_id?: string | null
+          outlier_threshold_pct?: number | null
+          output_detail_level?: string | null
+          output_language?: string | null
+          overhead_percentage?: number | null
+          pricing_strategy?: string | null
+          pricing_strategy_offset?: number | null
+          reaction_threshold_pct?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       internal_notifications: {
         Row: {
           action_url: string | null
@@ -30237,6 +30782,125 @@ export type Database = {
           version?: number | null
         }
         Relationships: []
+      }
+      jurisdiction_requirements: {
+        Row: {
+          additional_days_max: number | null
+          additional_days_min: number | null
+          applies_when: string | null
+          applies_when_detail: string | null
+          cost_currency: string | null
+          cost_estimate_max: number | null
+          cost_estimate_min: number | null
+          cost_notes: string | null
+          created_at: string | null
+          description: string
+          description_en: string | null
+          handling_notes: string | null
+          id: string
+          ipo_office_id: string | null
+          is_active: boolean | null
+          is_confirmed: boolean | null
+          is_mandatory: boolean | null
+          next_review_date: string | null
+          official_requirement_text: string | null
+          requirement_name: string
+          requirement_type: string
+          source_url: string | null
+          timing_notes: string | null
+          typically_handled_by: string | null
+          updated_at: string | null
+          verified_by: string | null
+          verified_date: string | null
+        }
+        Insert: {
+          additional_days_max?: number | null
+          additional_days_min?: number | null
+          applies_when?: string | null
+          applies_when_detail?: string | null
+          cost_currency?: string | null
+          cost_estimate_max?: number | null
+          cost_estimate_min?: number | null
+          cost_notes?: string | null
+          created_at?: string | null
+          description: string
+          description_en?: string | null
+          handling_notes?: string | null
+          id?: string
+          ipo_office_id?: string | null
+          is_active?: boolean | null
+          is_confirmed?: boolean | null
+          is_mandatory?: boolean | null
+          next_review_date?: string | null
+          official_requirement_text?: string | null
+          requirement_name: string
+          requirement_type: string
+          source_url?: string | null
+          timing_notes?: string | null
+          typically_handled_by?: string | null
+          updated_at?: string | null
+          verified_by?: string | null
+          verified_date?: string | null
+        }
+        Update: {
+          additional_days_max?: number | null
+          additional_days_min?: number | null
+          applies_when?: string | null
+          applies_when_detail?: string | null
+          cost_currency?: string | null
+          cost_estimate_max?: number | null
+          cost_estimate_min?: number | null
+          cost_notes?: string | null
+          created_at?: string | null
+          description?: string
+          description_en?: string | null
+          handling_notes?: string | null
+          id?: string
+          ipo_office_id?: string | null
+          is_active?: boolean | null
+          is_confirmed?: boolean | null
+          is_mandatory?: boolean | null
+          next_review_date?: string | null
+          official_requirement_text?: string | null
+          requirement_name?: string
+          requirement_type?: string
+          source_url?: string | null
+          timing_notes?: string | null
+          typically_handled_by?: string | null
+          updated_at?: string | null
+          verified_by?: string | null
+          verified_date?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "jurisdiction_requirements_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "ip_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jurisdiction_requirements_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "ipo_offices"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "jurisdiction_requirements_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "v_office_directory"
+            referencedColumns: ["office_id"]
+          },
+          {
+            foreignKeyName: "jurisdiction_requirements_ipo_office_id_fkey"
+            columns: ["ipo_office_id"]
+            isOneToOne: false
+            referencedRelation: "v_pricing_by_office"
+            referencedColumns: ["office_id"]
+          },
+        ]
       }
       jurisdiction_risk_windows: {
         Row: {
@@ -42391,6 +43055,8 @@ export type Database = {
       }
       partners: {
         Row: {
+          accepts_litigation: boolean | null
+          accepts_opposition_cases: boolean | null
           active_cases: number | null
           address_line1: string | null
           address_line2: string | null
@@ -42412,7 +43078,17 @@ export type Database = {
           created_at: string | null
           created_by: string | null
           credit_limit: number | null
+          efiling_offices: Json | null
+          handles_apostille: boolean | null
+          handles_legalization: boolean | null
+          handles_pow: boolean | null
+          handles_sworn_translations: boolean | null
+          handles_urgent_filing: boolean | null
+          has_efiling_access: boolean | null
+          has_local_correspondents: boolean | null
+          has_rate_agreement: boolean | null
           id: string
+          is_pi_agent: boolean | null
           jurisdictions: string[] | null
           languages: string[] | null
           last_case_date: string | null
@@ -42422,6 +43098,25 @@ export type Database = {
           notes: string | null
           partner_type: string | null
           payment_terms: string | null
+          pi_avg_response_hours: number | null
+          pi_contract_url: string | null
+          pi_has_professional_insurance: boolean | null
+          pi_incidents_notes: string | null
+          pi_invoice_name: string | null
+          pi_is_verified: boolean | null
+          pi_memberships: Json | null
+          pi_minimum_order: number | null
+          pi_payment_methods: Json | null
+          pi_quality_notes: string | null
+          pi_relationship_since: string | null
+          pi_relationship_type: string | null
+          pi_service_types: Json | null
+          pi_success_rate_pct: number | null
+          pi_types: Json | null
+          pi_verified_by: string | null
+          pi_verified_date: string | null
+          pi_volume_discount: boolean | null
+          pi_volume_discount_notes: string | null
           postal_code: string | null
           preferred_currency: string | null
           rating: number | null
@@ -42441,6 +43136,8 @@ export type Database = {
           years_experience: number | null
         }
         Insert: {
+          accepts_litigation?: boolean | null
+          accepts_opposition_cases?: boolean | null
           active_cases?: number | null
           address_line1?: string | null
           address_line2?: string | null
@@ -42462,7 +43159,17 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           credit_limit?: number | null
+          efiling_offices?: Json | null
+          handles_apostille?: boolean | null
+          handles_legalization?: boolean | null
+          handles_pow?: boolean | null
+          handles_sworn_translations?: boolean | null
+          handles_urgent_filing?: boolean | null
+          has_efiling_access?: boolean | null
+          has_local_correspondents?: boolean | null
+          has_rate_agreement?: boolean | null
           id?: string
+          is_pi_agent?: boolean | null
           jurisdictions?: string[] | null
           languages?: string[] | null
           last_case_date?: string | null
@@ -42472,6 +43179,25 @@ export type Database = {
           notes?: string | null
           partner_type?: string | null
           payment_terms?: string | null
+          pi_avg_response_hours?: number | null
+          pi_contract_url?: string | null
+          pi_has_professional_insurance?: boolean | null
+          pi_incidents_notes?: string | null
+          pi_invoice_name?: string | null
+          pi_is_verified?: boolean | null
+          pi_memberships?: Json | null
+          pi_minimum_order?: number | null
+          pi_payment_methods?: Json | null
+          pi_quality_notes?: string | null
+          pi_relationship_since?: string | null
+          pi_relationship_type?: string | null
+          pi_service_types?: Json | null
+          pi_success_rate_pct?: number | null
+          pi_types?: Json | null
+          pi_verified_by?: string | null
+          pi_verified_date?: string | null
+          pi_volume_discount?: boolean | null
+          pi_volume_discount_notes?: string | null
           postal_code?: string | null
           preferred_currency?: string | null
           rating?: number | null
@@ -42491,6 +43217,8 @@ export type Database = {
           years_experience?: number | null
         }
         Update: {
+          accepts_litigation?: boolean | null
+          accepts_opposition_cases?: boolean | null
           active_cases?: number | null
           address_line1?: string | null
           address_line2?: string | null
@@ -42512,7 +43240,17 @@ export type Database = {
           created_at?: string | null
           created_by?: string | null
           credit_limit?: number | null
+          efiling_offices?: Json | null
+          handles_apostille?: boolean | null
+          handles_legalization?: boolean | null
+          handles_pow?: boolean | null
+          handles_sworn_translations?: boolean | null
+          handles_urgent_filing?: boolean | null
+          has_efiling_access?: boolean | null
+          has_local_correspondents?: boolean | null
+          has_rate_agreement?: boolean | null
           id?: string
+          is_pi_agent?: boolean | null
           jurisdictions?: string[] | null
           languages?: string[] | null
           last_case_date?: string | null
@@ -42522,6 +43260,25 @@ export type Database = {
           notes?: string | null
           partner_type?: string | null
           payment_terms?: string | null
+          pi_avg_response_hours?: number | null
+          pi_contract_url?: string | null
+          pi_has_professional_insurance?: boolean | null
+          pi_incidents_notes?: string | null
+          pi_invoice_name?: string | null
+          pi_is_verified?: boolean | null
+          pi_memberships?: Json | null
+          pi_minimum_order?: number | null
+          pi_payment_methods?: Json | null
+          pi_quality_notes?: string | null
+          pi_relationship_since?: string | null
+          pi_relationship_type?: string | null
+          pi_service_types?: Json | null
+          pi_success_rate_pct?: number | null
+          pi_types?: Json | null
+          pi_verified_by?: string | null
+          pi_verified_date?: string | null
+          pi_volume_discount?: boolean | null
+          pi_volume_discount_notes?: string | null
           postal_code?: string | null
           preferred_currency?: string | null
           rating?: number | null
@@ -45095,6 +45852,7 @@ export type Database = {
         Row: {
           additional_class_price: number | null
           allows_additional_classes: boolean | null
+          auto_calculated: boolean | null
           base_classes: number | null
           base_price: number
           benefits: Json | null
@@ -45168,6 +45926,7 @@ export type Database = {
         Insert: {
           additional_class_price?: number | null
           allows_additional_classes?: boolean | null
+          auto_calculated?: boolean | null
           base_classes?: number | null
           base_price: number
           benefits?: Json | null
@@ -45241,6 +46000,7 @@ export type Database = {
         Update: {
           additional_class_price?: number | null
           allows_additional_classes?: boolean | null
+          auto_calculated?: boolean | null
           base_classes?: number | null
           base_price?: number
           benefits?: Json | null
@@ -62027,6 +62787,7 @@ export type Database = {
         Args: { p_api_key_id: string }
         Returns: undefined
       }
+      is_admin: { Args: never; Returns: boolean }
       is_admin_or_staff: { Args: never; Returns: boolean }
       is_admin_user: { Args: never; Returns: boolean }
       is_backoffice_admin: { Args: never; Returns: boolean }
@@ -62574,6 +63335,8 @@ export type Database = {
         | "super_admin"
         | "staff"
         | "agent"
+        | "manager"
+        | "operator"
       classification_system: "nice" | "ipc" | "locarno" | "vienna"
       client_doc_type:
         | "poder_general"
@@ -62931,7 +63694,16 @@ export const Constants = {
   public: {
     Enums: {
       ai_confidence_level: ["high", "medium", "low", "manual"],
-      app_role: ["admin", "moderator", "user", "super_admin", "staff", "agent"],
+      app_role: [
+        "admin",
+        "moderator",
+        "user",
+        "super_admin",
+        "staff",
+        "agent",
+        "manager",
+        "operator",
+      ],
       classification_system: ["nice", "ipc", "locarno", "vienna"],
       client_doc_type: [
         "poder_general",
