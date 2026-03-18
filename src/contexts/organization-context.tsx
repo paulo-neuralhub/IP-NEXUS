@@ -64,20 +64,19 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      // Fetch profile with organization
-      const { data: profileData, error: profileError } = await supabase
-        .from("profiles")
-        .select("organization_id, organizations(*)")
-        .eq("id", effectiveUser.id)
-        .single();
+      const { data: membershipData, error: membershipError } = await supabase
+        .from("memberships")
+        .select("*")
+        .eq("user_id", effectiveUser.id);
 
-      if (profileError) {
-        console.error("Error fetching profile/org:", profileError);
+      if (membershipError) {
+        console.error("Error fetching memberships:", membershipError);
+        // Don't set needsOnboarding on error - might be transient
         setIsLoading(false);
         return;
       }
 
-      if (!profileData?.organization_id || !profileData.organizations) {
+      if (!membershipData || membershipData.length === 0) {
         setMemberships([]);
         setCurrentOrganizationState(null);
         setNeedsOnboarding(true);
@@ -85,25 +84,39 @@ export function OrganizationProvider({ children }: { children: ReactNode }) {
         return;
       }
 
-      const org = profileData.organizations as unknown as Organization;
+      // Fetch organizations for memberships
+      const orgIds = membershipData.map((m) => m.organization_id);
+      const { data: orgData, error: orgError } = await supabase
+        .from("organizations")
+        .select("*")
+        .in("id", orgIds);
 
-      // Build a synthetic membership for compatibility
-      const syntheticMembership: Membership = {
-        id: effectiveUser.id,
-        user_id: effectiveUser.id,
-        organization_id: profileData.organization_id,
-        role: "member",
-        permissions: {},
-        created_at: new Date().toISOString(),
-        organization: org,
-      };
+      if (orgError) {
+        console.error("Error fetching organizations:", orgError);
+        setIsLoading(false);
+        return;
+      }
 
-      setMemberships([syntheticMembership]);
+      // Combine memberships with organizations
+      const membershipsWithOrgs = membershipData.map((m) => ({
+        ...m,
+        organization: orgData?.find((o) => o.id === m.organization_id) as Organization | undefined,
+      }));
+
+      setMemberships(membershipsWithOrgs);
       setNeedsOnboarding(false);
 
       // Auto-select organization
-      setCurrentOrganizationState(org);
-      localStorage.setItem(ORG_STORAGE_KEY, org.id);
+      const savedOrgId = localStorage.getItem(ORG_STORAGE_KEY);
+      const savedOrg = orgData?.find((o) => o.id === savedOrgId);
+
+      if (savedOrg) {
+        setCurrentOrganizationState(savedOrg as Organization);
+      } else if (orgData && orgData.length >= 1) {
+        // Pick first (or only) org
+        setCurrentOrganizationState(orgData[0] as Organization);
+        localStorage.setItem(ORG_STORAGE_KEY, orgData[0].id);
+      }
 
       setIsLoading(false);
     } catch (error) {
