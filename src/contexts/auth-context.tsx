@@ -46,6 +46,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         query = query.abortSignal(signal);
       }
 
+      let query = supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", userId);
+
+      // Only attach abort signal when provided (avoids edge cases with undefined).
+      if (signal) {
+        query = query.abortSignal(signal);
+      }
+
       const { data, error } = await query.maybeSingle();
 
       if (error) {
